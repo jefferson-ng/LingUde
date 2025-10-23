@@ -20,6 +20,13 @@ git branch -M main
 git push -uf origin main
 ```
 
+## Wiki
+
+Das Projekt-Wiki ist über GitLab erreichbar: [Zum Wiki](./Wiki)
+
+- [Brainstorming-Dokument](./Wiki/Brainstorming.md)
+- [Protokoll-Dokument](./Wiki/Protokoll.md)
+
 ## Integrate with your tools
 
 - [ ] [Set up project integrations](https://git.uni-due.de/sep-winter-2025/templates/team-repo/-/settings/integrations)

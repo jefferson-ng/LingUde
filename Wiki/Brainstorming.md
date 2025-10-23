@@ -5,6 +5,7 @@
 - [ ] Passwort-Verwaltung (Reset, Sicherheit)
 - [ ] Landing Page mit Übersicht
 - [ ] Freiwilliger Einstufungstest (A1-C2)
+- [ ] Discord login
 
 ## 📚 Lernstruktur
 - [ ] Unterteilung in Lektionen
