@@ -88,3 +88,14 @@ erste gedanken zu lucid spark in den folgenden sprintplanungen
 
 
 
+30.10.2025
+
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit
+
+
+Review und Retroperspektive
+
+Template erstellen frontend backend issues weiter runter brechen 
+Issues in Views unterteilen 
+Lucid Spark wird betracht gezogen 
