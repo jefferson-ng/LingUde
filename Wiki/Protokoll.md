@@ -20,25 +20,6 @@
 
 ---
 
-
-Datum 27.10.2025 
-
-
-**Teilnehmer:**  John, Jefferson, Tarek, Chaima, Emirhan, Hamit
-
-
-Neue USer stories die entstanden sind werden korrigiert überarbeitet, neu formatiert und präzisiert oder als task ausgelagert
-
-erste wireframes wurden mittels figma erstellt muss noch durchdacht werdne. First view landing page view muss now durchdacht werden 
-farb panel wurfde erntschieden allerdingsd gefält die braiune farbe nicht 100 prozent. höchstens als skenudär farbe
-
-erste gedanknen an llm und ollama 
-
-priorisierung
-
-
-
-Datum 29.10.2025 
 ## Backlog Refinement & Design Meeting
 **Datum:** 27.10.2025
 
@@ -81,21 +62,51 @@ Datum 29.10.2025
 **Nächste Schritte:**
 - Lucid Spark testen und ggf. in die Planung integrieren
 
-**Teilnehmer:**  Tarek, Chaima, Emirhan, Hamit
+---
 
-Priosirieiserungen zuende gebracht
-erste gedanken zu lucid spark in den folgenden sprintplanungen 
-
-
-
-30.10.2025
-
+## Review und Retrospektive
+**Datum:** 30.10.2025
 
 **Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit
 
+**Themen:**
+- Review und Retrospektive
+- Template-Erstellung für Frontend und Backend
+- Issues weiter herunterbrechen
+- Issues in Views unterteilen
+- Lucid Spark wird in Betracht gezogen
 
-Review und Retroperspektive
+**Ergebnisse:**
+- Templates für Frontend- und Backend-Issues wurden definiert
+- Issues wurden weiter in kleinere Aufgaben unterteilt
+- Issues wurden in verschiedene Views strukturiert
+- Lucid Spark als Tool für die Planung evaluiert
 
-Template erstellen frontend backend issues weiter runter brechen 
-Issues in Views unterteilen 
-Lucid Spark wird betracht gezogen 
+**Nächste Schritte:**
+- Templates anwenden
+- Issues weiter verfeinern
+
+---
+
+## 2. Sprintplanung
+**Datum:** 03.11.2025
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit / Herr Korn und Marvin als Lehrende
+
+**Themen:**
+- Zweite Sprintplanung
+- Sprint Backlog anlegen
+- Aufgabenverteilung für den Sprint
+
+**Ergebnisse:**
+- Sprint Backlog wurde angelegt und Issues wurden aufgeteilt:
+  - Jefferson: Backend Database Schema Design (mit Chaima)
+  - Hamit: App View Routing, Router Outlet für die Subseite
+  - John: Landing Page Frontend
+  - Emirhan: Practice View und Learning View Frontend
+  - Tarek: Sign Up und Login
+- Erste Überlegungen zu Spring Security für spätere Sprints
+
+**Nächste Schritte:**
+- Deadline: 06.11.2025
+- Implementierung der zugewiesenen Aufgaben
