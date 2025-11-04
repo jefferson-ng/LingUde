@@ -2,8 +2,14 @@
   <!-- Sidebar Navigation -->
   <aside class="sidebar">
     <div class="sidebar-header">
-      <h1 class="logo">LinguDE</h1>
-      <p class="tagline">Sprachen lernen</p>
+      <div class="user-profile">
+        <div class="user-avatar">{{ userName().charAt(0) }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ userName() }}</span>
+          <span class="user-level">Level {{ userLevel() }} • {{ userXP() }} XP</span>
+        </div>
+      </div>
+      
     </div>
 
     <nav class="nav-menu">
@@ -18,33 +24,16 @@
         </a>
       }
     </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-stats">
-        <div class="level-badge">
-          <span class="level-icon">⭐</span>
-          <span class="level-text">Level {{ userLevel() }}</span>
-        </div>
-        <div class="xp-info">
-          <span class="xp-value">{{ userXP() }} XP</span>
-        </div>
-      </div>
-    </div>
   </aside>
 
   <!-- Main Content Area -->
   <div class="main-content">
     <!-- Header -->
     <header class="app-header">
-      <div class="header-left">
-        <h2 class="page-title">{{ title() }}</h2>
-      </div>
-      <div class="header-right">
-        <div class="user-profile">
-          <div class="user-avatar">{{ userName().charAt(0) }}</div>
-          <span class="user-name">{{ userName() }}</span>
-        </div>
-      </div>
+      <h2 class="page-title">LingUDE</h2>
+      <button class="settings-button" [routerLink]="'/settings'" title="Einstellungen">
+        <span class="settings-icon">⚙️</span>
+      </button>
     </header>
 
     <!-- Router Outlet - Content changes here -->
