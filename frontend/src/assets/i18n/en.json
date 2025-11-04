@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "LinguDE",
+    "settings": "Settings"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "lessons": "Lessons",
+    "goals": "My Goals",
+    "leaderboard": "Leaderboard",
+    "statistics": "Statistics"
+  },
+  "user": {
+    "level": "Level",
+    "xp": "XP"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview and Statistics"
+  },
+  "lessons": {
+    "title": "Lessons",
+    "subtitle": "Your Language Lessons"
+  },
+  "goals": {
+    "title": "My Goals",
+    "subtitle": "Track Your Learning Goals"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Top Learners"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "subtitle": "Your Learning Progress"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "selectLanguage": "Select Language"
+  }
+}
