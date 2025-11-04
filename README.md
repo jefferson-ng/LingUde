@@ -26,6 +26,8 @@ Das Projekt-Wiki ist über GitLab erreichbar: [Zum Wiki](./Wiki)
 
 - [Brainstorming-Dokument](./Wiki/Brainstorming.md)
 - [Protokoll-Dokument](./Wiki/Protokoll.md)
+- [Routing](./Wiki/ROUTING_SETUP.md)
+- [DesignGuideline](./Wiki/design-guidelines.md)
 
 ## Integrate with your tools
 
