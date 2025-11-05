@@ -1,0 +1,111 @@
+<div class="learning-container">
+  <!-- Main Learning Path -->
+  <div class="learning-path">
+    <div class="lessons-path">
+      @for (lesson of lessons(); track lesson.id) {
+        <div 
+          class="path-item"
+          [class.left]="$index % 2 === 0"
+          [class.right]="$index % 2 === 1"
+        >
+          <div 
+            class="lesson-node-wrapper"
+            [class.completed]="lesson.status === 'completed'"
+            [class.current]="lesson.status === 'current'"
+            [class.available]="lesson.status === 'available'"
+            [class.locked]="lesson.status === 'locked'"
+          >
+            <div class="lesson-node" (click)="startLesson(lesson)">
+              <!-- Collapsed View (Circle) -->
+              <div class="node-collapsed">
+              <div class="node-circle">
+                @if (lesson.status === 'completed') {
+                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                }
+                @if (lesson.status === 'locked') {
+                  <svg class="lock-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z"/>
+                  </svg>
+                }
+                @if (lesson.status === 'current') {
+                  <svg class="star-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                }
+              </div>
+              
+              <div class="node-label">{{ lesson.title }}</div>
+
+              @if (lesson.status === 'completed' && lesson.stars) {
+                <div class="lesson-stars-small">
+                  @for (star of [].constructor(lesson.stars); track $index) {
+                    <div class="star-small"></div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Expanded View (Card) -->
+            <div class="node-expanded">
+              <div class="expanded-header">
+                <div class="expanded-tag">{{ currentUnit() }}</div>
+                <h3 class="expanded-title">{{ lesson.title }}</h3>
+              </div>
+              
+              <p class="expanded-description">{{ lesson.description }}</p>
+              
+              @if (lesson.exercises && lesson.exercises.length > 0) {
+                <div class="expanded-exercises">
+                  @for (exercise of lesson.exercises; track $index) {
+                    <div class="exercise-item">
+                      <div 
+                        class="exercise-check"
+                        [class.completed]="lesson.status === 'completed'"
+                      >
+                        @if (lesson.status === 'completed') {
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        }
+                      </div>
+                      <span class="exercise-text">{{ exercise }}</span>
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (lesson.status === 'current' && lesson.progress) {
+                <div class="expanded-progress">
+                  <div class="expanded-progress-bar">
+                    <div class="expanded-progress-fill" [style.width.%]="lesson.progress"></div>
+                  </div>
+                  <span class="expanded-progress-text">{{ lesson.progress }}% abgeschlossen</span>
+                </div>
+              }
+
+              @if (lesson.status !== 'locked') {
+                <button class="expanded-start-button" (click)="startLesson(lesson); $event.stopPropagation()">
+                  {{ lesson.status === 'current' ? 'Fortsetzen' : lesson.status === 'completed' ? 'Wiederholen' : 'Starten' }}
+                </button>
+              }
+
+              @if (lesson.status === 'locked') {
+                <p class="expanded-locked-text">Schließe die vorherige Lektion ab</p>
+              }
+            </div>
+            </div>
+          </div>
+
+          @if ($index < lessons().length - 1) {
+            <div 
+              class="path-connector"
+              [class.completed]="lesson.status === 'completed'"
+            ></div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -16,6 +16,7 @@ export class App {
 
   navItems = [
     { path: '/dashboard', label: 'Startseite', icon: '🏠' },
+    { path: '/learning', label: 'Lernen', icon: '⭐' },
     { path: '/lessons', label: 'Lektionen', icon: '📚' },
     { path: '/goals', label: 'Meine Ziele', icon: '🎯' },
     { path: '/leaderboard', label: 'Bestenliste', icon: '🏆' },

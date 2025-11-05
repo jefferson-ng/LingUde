@@ -11,6 +11,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.Dashboard)
   },
   {
+    path: 'learning',
+    loadComponent: () => import('./pages/learning/learning').then(m => m.Learning)
+  },
+  {
     path: 'lessons',
     loadComponent: () => import('./pages/lessons/lessons').then(m => m.Lessons)
   },
