@@ -15,7 +15,7 @@ interface Lesson {
 
 @Component({
   selector: 'app-learning',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './learning.html',
   styleUrl: './learning.css'
 })
