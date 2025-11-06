@@ -110,3 +110,13 @@
 **Nächste Schritte:**
 - Deadline: 06.11.2025
 - Implementierung der zugewiesenen Aufgaben
+
+---
+
+**Datum:**  06.11.2025
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit /  Marvin als Lehrender
+
+**Themen:** 
+-jede/-r hat erzählt, was er/sie gemacht hat seit Montag (03.11.2025)
+-jede/-r arbeitet an den eigenen Issues weiter
