@@ -115,7 +115,7 @@
 
 **Datum:**  06.11.2025
 
-**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit /  Marvin als Lehrender
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan /  Marvin als Lehrender
 
 **Themen:** 
 -jede/-r hat erzählt, was er/sie gemacht hat seit Montag (03.11.2025)
