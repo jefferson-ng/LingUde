@@ -129,7 +129,7 @@
 
 **Themen:** 
 -jede/-r hat erzählt, was er / sie gemacht hat seit Donnerstag (06.11.2025)
--gemeinsam in der ganzen Gruppe diskuttiert, wie die Aufgaben von der Backend-Logik her aufgebaut sind
+-gemeinsam in der ganzen Gruppe diskutiert, wie die Aufgaben von der Backend-Logik her aufgebaut sind
 -Transloco files erklärt
 -jede/-r arbeitet an den Issues weiter
 
