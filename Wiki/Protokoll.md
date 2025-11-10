@@ -120,3 +120,17 @@
 **Themen:** 
 -jede/-r hat erzählt, was er/sie gemacht hat seit Montag (03.11.2025)
 -jede/-r arbeitet an den eigenen Issues weiter
+
+---
+
+**Datum:** 10.11.2025
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit / Marvin als Lehrender
+
+**Themen:** 
+-jede/-r hat erzählt, was er / sie gemacht hat seit Donnerstag (06.11.2025)
+-gemeinsam in der ganzen Gruppe diskutiert, wie die Aufgaben von der Backend-Logik her aufgebaut sind
+-Transloco files erklärt
+-jede/-r arbeitet an den Issues weiter
+
+---
