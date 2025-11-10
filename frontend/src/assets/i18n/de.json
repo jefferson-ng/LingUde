@@ -5,6 +5,7 @@
   },
   "nav": {
     "dashboard": "Startseite",
+    "learning": "Lernen",
     "lessons": "Lektionen",
     "goals": "Meine Ziele",
     "leaderboard": "Bestenliste",
@@ -21,6 +22,10 @@
   "lessons": {
     "title": "Lektionen",
     "subtitle": "Deine Sprachlektionen"
+  },
+  "learning": {
+    "title": "Lernen",
+    "subtitle": "Dein Lernpfad"
   },
   "goals": {
     "title": "Meine Ziele",

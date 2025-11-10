@@ -5,6 +5,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "learning": "Learning",
     "lessons": "Lessons",
     "goals": "My Goals",
     "leaderboard": "Leaderboard",
@@ -21,6 +22,10 @@
   "lessons": {
     "title": "Lessons",
     "subtitle": "Your Language Lessons"
+  },
+  "learning": {
+    "title": "Learning",
+    "subtitle": "Your Learning Path"
   },
   "goals": {
     "title": "My Goals",

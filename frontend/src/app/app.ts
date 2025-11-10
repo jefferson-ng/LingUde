@@ -17,6 +17,7 @@ export class App {
 
   navItems = [
     { path: '/dashboard', translationKey: 'nav.dashboard', icon: '🏠' },
+    { path: '/learning', translationKey: 'nav.learning', icon: '⭐' },
     { path: '/lessons', translationKey: 'nav.lessons', icon: '📚' },
     { path: '/goals', translationKey: 'nav.goals', icon: '🎯' },
     { path: '/leaderboard', translationKey: 'nav.leaderboard', icon: '🏆' },

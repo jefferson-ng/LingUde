@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 interface Lesson {
   id: number;
@@ -15,7 +16,7 @@ interface Lesson {
 
 @Component({
   selector: 'app-learning',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoDirective],
   templateUrl: './learning.html',
   styleUrl: './learning.css'
 })
