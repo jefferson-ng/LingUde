@@ -1,44 +1,46 @@
-<div class="app-container">
-  <!-- Sidebar Navigation -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="user-profile">
-        <div class="user-avatar">{{ userName().charAt(0) }}</div>
-        <div class="user-info">
-          <span class="user-name">{{ userName() }}</span>
-          <span class="user-level">Level {{ userLevel() }} • {{ userXP() }} XP</span>
+<ng-container *transloco="let t">
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="user-profile">
+          <div class="user-avatar">{{ userName().charAt(0) }}</div>
+          <div class="user-info">
+            <span class="user-name">{{ userName() }}</span>
+            <span class="user-level">{{ t('user.level') }} {{ userLevel() }} • {{ userXP() }} {{ t('user.xp') }}</span>
+          </div>
         </div>
+        
       </div>
-      
+
+      <nav class="nav-menu">
+        @for (item of navItems; track item.path) {
+          <a 
+            [routerLink]="item.path" 
+            routerLinkActive="active"
+            class="nav-item"
+          >
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-label">{{ t(item.translationKey) }}</span>
+          </a>
+        }
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Header -->
+      <header class="app-header">
+        <h2 class="page-title">{{ t('app.title') }}</h2>
+        <button class="settings-button" [routerLink]="'/settings'" [title]="t('app.settings')">
+          <span class="settings-icon">⚙️</span>
+        </button>
+      </header>
+
+      <!-- Router Outlet - Content changes here -->
+      <main class="content">
+        <router-outlet />
+      </main>
     </div>
-
-    <nav class="nav-menu">
-      @for (item of navItems; track item.path) {
-        <a 
-          [routerLink]="item.path" 
-          routerLinkActive="active"
-          class="nav-item"
-        >
-          <span class="nav-icon">{{ item.icon }}</span>
-          <span class="nav-label">{{ item.label }}</span>
-        </a>
-      }
-    </nav>
-  </aside>
-
-  <!-- Main Content Area -->
-  <div class="main-content">
-    <!-- Header -->
-    <header class="app-header">
-      <h2 class="page-title">LingUDE</h2>
-      <button class="settings-button" [routerLink]="'/settings'" title="Einstellungen">
-        <span class="settings-icon">⚙️</span>
-      </button>
-    </header>
-
-    <!-- Router Outlet - Content changes here -->
-    <main class="content">
-      <router-outlet />
-    </main>
   </div>
-</div>
+</ng-container>
