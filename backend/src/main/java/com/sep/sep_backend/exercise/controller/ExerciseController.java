@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-// You can add @RequiredArgsConstructor if you use Lombok
 @Validated
 @RestController
 @RequestMapping("/api/exercises")

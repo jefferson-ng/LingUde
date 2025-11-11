@@ -23,7 +23,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-// --- extra imports needed at the top ---
+// --- extra imports needed  ---
 import com.sep.sep_backend.exercise.entity.UserProgress;
 import com.sep.sep_backend.exercise.entity.ExerciseType;
 import com.sep.sep_backend.user.entity.User;
@@ -142,7 +142,7 @@ class ExerciseServiceTest {
         org.assertj.core.api.Assertions.assertThat(second.getDifficultyLevel()).isEqualTo("A2");
         org.assertj.core.api.Assertions.assertThat(second.getTopic()).isEqualTo("Opposites");
     } /**
-     * ✅ Helper: set private field (e.g., id) via reflection if there is no setter.
+     *  Helper: set private field (e.g., id) via reflection if there is no setter.
      * This avoids depending on your entity having a public setId().
      */
     private static void setPrivate(Object target, String field, Object value) {
@@ -156,7 +156,7 @@ class ExerciseServiceTest {
     }
 
     /**
-     * ✅ TEST 3A — submitMcq: correct answer should award XP and mark progress completed.
+     *  TEST 3A — submitMcq: correct answer should award XP and mark progress completed.
      */
     @org.junit.jupiter.api.Test
     void submitMcq_correctAnswer_awardsXp_and_marksCompleted() {
@@ -208,7 +208,7 @@ class ExerciseServiceTest {
     }
 
     /**
-     * ✅ TEST 3B — submitMcq: wrong answer gives XP=0 and keeps progress not completed.
+     *  TEST 3B — submitMcq: wrong answer gives XP=0 and keeps progress not completed.
      */
     @org.junit.jupiter.api.Test
     void submitMcq_wrongAnswer_awardsZero_and_keepsNotCompleted() {

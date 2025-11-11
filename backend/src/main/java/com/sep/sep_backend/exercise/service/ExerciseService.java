@@ -124,7 +124,7 @@ public class ExerciseService {
     }
 
     private void upsertProgress(User user, UUID exerciseId, ExerciseType type, boolean correct, int xp) {
-        if (user == null) return; // plug in your auth later
+        if (user == null) return; // plug in auth later
         UUID userId = user.getId();
 
         UserProgress existing = progressRepo
