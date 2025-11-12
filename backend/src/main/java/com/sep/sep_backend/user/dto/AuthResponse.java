@@ -6,15 +6,18 @@ public class AuthResponse {
     private UUID userId;
     private String email;
     private String name;
+    private String accessToken;
+    private String refreshToken;
 
-
-    public AuthResponse(UUID userId, String email, String userame) {
+    public AuthResponse(UUID userId, String email, String username, String accessToken, String refreshToken) {
         this.userId = userId;
         this.email = email;
-        this.name = userame;
-
+        this.name = username;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
+    // Getters and Setters
     public UUID getUserId() { return userId; }
     public void setUserId(UUID userId) { this.userId = userId; }
 
@@ -24,5 +27,9 @@ public class AuthResponse {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
+    public String getAccessToken() { return accessToken; }
+    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
 
+    public String getRefreshToken() { return refreshToken; }
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
 }

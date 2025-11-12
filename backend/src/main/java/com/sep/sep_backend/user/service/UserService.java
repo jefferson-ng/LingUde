@@ -1,5 +1,7 @@
 package com.sep.sep_backend.user.service;
 
+import com.sep.sep_backend.auth.JwtUtil;
+import com.sep.sep_backend.auth.service.RefreshTokenService;
 import com.sep.sep_backend.user.exception.AuthFailedException;
 import com.sep.sep_backend.user.exception.EmailAlreadyUsedException;
 import com.sep.sep_backend.user.dto.AuthResponse;
@@ -7,7 +9,7 @@ import com.sep.sep_backend.user.dto.SigninRequest;
 import com.sep.sep_backend.user.dto.SignupRequest;
 import com.sep.sep_backend.user.entity.User;
 import com.sep.sep_backend.user.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +22,27 @@ import java.util.UUID;
 @Transactional
 public class UserService {
 
-
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder encoder;
     private final UserRepository userRepo;
+    private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
-    public UserService(UserRepository userRepo) {
+    public UserService(PasswordEncoder encoder, UserRepository userRepo, JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
+        this.encoder = encoder;
         this.userRepo = userRepo;
+        this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
     }
 
 
-
-    //signup feature
+    /**
+     * Registers a new user in the system by creating a user record,
+     * saving their hashed password, and generating authentication tokens.
+     *
+     * @param req the signup request containing user details such as name, email, and password
+     * @return an AuthResponse containing the user's ID, email, username, access token, and refresh token
+     * @throws EmailAlreadyUsedException if the email is already in use by another user
+     */
     public AuthResponse signup(SignupRequest req) {
         String email = req.getEmail().trim().toLowerCase();
         if (userRepo.existsByEmailIgnoreCase(email)) {
@@ -40,15 +52,25 @@ public class UserService {
         String hash = encoder.encode(req.getPassword());
 
         User user = new User();
-        user.setUsername(req.getName());
+        user.setUsername(req.getUsername());
         user.setEmail(email);
         user.setPasswordHash(hash);
         userRepo.save(user);
 
-        return new AuthResponse(user.getId(), user.getEmail(), user.getUsername());
+        // Generate tokens
+        String accessToken = jwtUtil.generateAccessToken(user.getId());
+        String refreshToken = refreshTokenService.createRefreshToken(user, "Unknown Device");
+
+        return new AuthResponse(user.getId(), user.getEmail(), user.getUsername(), accessToken, refreshToken);
     }
 
-    //signin feature
+    /**
+     * Authenticates the user based on the provided sign-in details and generates authentication tokens.
+     *
+     * @param req the sign-in request containing user credentials such as email and password
+     * @return an AuthResponse containing the user's ID, email, username, access token, and refresh token
+     * @throws AuthFailedException if the authentication fails due to an incorrect email or password
+     */
     public AuthResponse signin(SigninRequest req) {
         String email = req.getEmail().toLowerCase().trim();
 
@@ -58,7 +80,11 @@ public class UserService {
         boolean ok = encoder.matches(req.getPassword(), user.getPasswordHash());
         if (!ok) throw new AuthFailedException();
 
-        return new AuthResponse(user.getId(), user.getEmail(), user.getUsername());
+        // Generate tokens
+        String accessToken = jwtUtil.generateAccessToken(user.getId());
+        String refreshToken = refreshTokenService.createRefreshToken(user, "Unknown Device");
+
+        return new AuthResponse(user.getId(), user.getEmail(), user.getUsername(), accessToken, refreshToken);
     }
 
 
@@ -126,7 +152,7 @@ public class UserService {
     /**
      * Check if a user exists with the given email
      * @param email the email to check
-     * @return true if user exists, false otherwise
+     * @return true if the user exists, false otherwise
      */
     public boolean existsByEmail(String email) {
         return userRepo.existsByEmail(email);
@@ -135,7 +161,7 @@ public class UserService {
     /**
      * Check if a user exists with the given username
      * @param username the username to check
-     * @return true if user exists, false otherwise
+     * @return true if the user exists, false otherwise
      */
     public boolean existsByUsername(String username) {
         return userRepo.existsByUsername(username);
