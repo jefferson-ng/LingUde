@@ -10,7 +10,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('LinguDE');
+  protected readonly title = signal('LingUDE');
   protected readonly userLevel = signal(5);
   protected readonly userXP = signal(1850);
   protected readonly userName = signal('Alex');

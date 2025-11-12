@@ -1,110 +1,88 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { TranslocoDirective, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ExerciseViewerComponent, ExerciseResult } from '../../components/exercise-viewer/exercise-viewer';
+import { Exercise } from '../../models/exercise.model';
+import { ExerciseService } from '../../services/exercise.service';
 
 interface Lesson {
   id: number;
-  title: string;
-  section: string;
+  titleKey: string;  // Translation key instead of direct title
+  sectionKey: string;  // Translation key for section
   status: 'locked' | 'available' | 'completed' | 'current';
   progress?: number;
   stars?: number;
-  exercises?: string[];
-  description?: string;
+  exerciseKeys?: string[];  // Translation keys for exercises
+  descriptionKey?: string;  // Translation key for description
+  // Link to actual exercises
+  difficultyLevel?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+  topic?: string;
 }
 
 @Component({
   selector: 'app-learning',
-  imports: [CommonModule, TranslocoDirective],
+  imports: [CommonModule, TranslocoDirective, TranslocoPipe, ExerciseViewerComponent],
   templateUrl: './learning.html',
   styleUrl: './learning.css'
 })
 export class Learning {
-  protected readonly currentUnit = signal('Stufe 1, Abschnitt 1');
+  private translocoService = inject(TranslocoService);
+  
   protected readonly unitTitle = signal('Bestelle im Cafe');
   
   protected readonly lessons = signal<Lesson[]>([
+    // 👇 Beispiel-Lessons zum Testen der UI - Jetzt mit Translation Keys!
     { 
       id: 1, 
-      title: 'Begrüßungen', 
-      section: 'Grundlagen', 
-      status: 'completed', 
-      progress: 100, 
-      stars: 3,
-      description: 'Lerne grundlegende Begrüßungen und Vorstellungen',
-      exercises: ['Hallo & Tschüss', 'Wie geht es dir?', 'Sich vorstellen']
+      titleKey: 'learning.lessons.lesson1.title',
+      sectionKey: 'learning.lessons.lesson1.section',
+      status: 'available',
+      progress: 0, 
+      stars: 0,
+      descriptionKey: 'learning.lessons.lesson1.description',
+      exerciseKeys: [
+        'learning.lessons.lesson1.exercises.ex1',
+        'learning.lessons.lesson1.exercises.ex2',
+        'learning.lessons.lesson1.exercises.ex3'
+      ],
+      difficultyLevel: 'A1',
+      topic: 'example'
     },
     { 
       id: 2, 
-      title: 'Zahlen', 
-      section: 'Grundlagen', 
-      status: 'completed', 
-      progress: 100, 
-      stars: 2,
-      description: 'Zahlen von 1-100 lernen und verwenden',
-      exercises: ['Zahlen 1-10', 'Zahlen 11-100', 'Preise nennen']
+      titleKey: 'learning.lessons.lesson2.title',
+      sectionKey: 'learning.lessons.lesson2.section',
+      status: 'locked',
+      progress: 0, 
+      stars: 0,
+      descriptionKey: 'learning.lessons.lesson2.description',
+      exerciseKeys: [
+        'learning.lessons.lesson2.exercises.ex1',
+        'learning.lessons.lesson2.exercises.ex2',
+        'learning.lessons.lesson2.exercises.ex3'
+      ],
+      difficultyLevel: 'A1',
+      topic: 'example'
     },
     { 
       id: 3, 
-      title: 'Im Café', 
-      section: 'Grundlagen', 
-      status: 'current', 
-      progress: 60, 
-      stars: 0,
-      description: 'Bestelle Getränke und Essen im Café',
-      exercises: ['Getränke bestellen', 'Essen bestellen', 'Bezahlen']
-    },
-    { 
-      id: 4, 
-      title: 'Familie', 
-      section: 'Grundlagen', 
-      status: 'available', 
-      progress: 0, 
-      stars: 0,
-      description: 'Sprich über deine Familie und Verwandte',
-      exercises: ['Familienmitglieder', 'Beziehungen', 'Über Familie sprechen']
-    },
-    { 
-      id: 5, 
-      title: 'Wiederholung 1', 
-      section: 'Grundlagen', 
-      status: 'available', 
-      progress: 0, 
-      stars: 0,
-      description: 'Wiederhole alles aus den vorherigen Lektionen',
-      exercises: ['Gemischte Übungen', 'Quiz', 'Sprechübung']
-    },
-    { 
-      id: 6, 
-      title: 'Einkaufen', 
-      section: 'Fortgeschritten', 
+      titleKey: 'learning.lessons.lesson3.title',
+      sectionKey: 'learning.lessons.lesson3.section',
       status: 'locked', 
       progress: 0, 
       stars: 0,
-      description: 'Lerne im Geschäft einzukaufen',
-      exercises: ['Kleidung', 'Größen & Farben', 'Im Supermarkt']
+      descriptionKey: 'learning.lessons.lesson3.description',
+      exerciseKeys: [
+        'learning.lessons.lesson3.exercises.ex1',
+        'learning.lessons.lesson3.exercises.ex2',
+        'learning.lessons.lesson3.exercises.ex3'
+      ],
+      difficultyLevel: 'A2',
+      topic: 'example'
     },
-    { 
-      id: 7, 
-      title: 'Wegbeschreibung', 
-      section: 'Fortgeschritten', 
-      status: 'locked', 
-      progress: 0, 
-      stars: 0,
-      description: 'Nach dem Weg fragen und Richtungen verstehen',
-      exercises: ['Richtungen', 'Orte in der Stadt', 'Nach dem Weg fragen']
-    },
-    { 
-      id: 8, 
-      title: 'Abschlusstest', 
-      section: 'Fortgeschritten', 
-      status: 'locked', 
-      progress: 0, 
-      stars: 0,
-      description: 'Teste dein Wissen in allen Bereichen',
-      exercises: ['Hörverständnis', 'Leseverständnis', 'Sprechen']
-    }
+    
+    // 👇 HIER weitere Lessons hinzufügen - Kopiere eine der obigen und ändere die Keys!
   ]);
 
   protected readonly dailyGoal = signal(10);
@@ -112,14 +90,110 @@ export class Learning {
   protected readonly streak = signal(0);
   protected readonly hearts = signal(4);
   protected readonly gems = signal(500);
+  
+  protected selectedLesson = signal<Lesson | null>(null);
+  
+  // Exercise mode
+  protected exerciseMode = signal<boolean>(false);
+  protected currentExercises = signal<Exercise[]>([]);
+  protected currentExerciseIndex = signal<number>(0);
+  protected currentExercise = signal<Exercise | null>(null);
 
+  constructor(private exerciseService: ExerciseService) {}
+
+  selectLesson(lesson: Lesson) {
+    // Side Panel öffnet sich auch bei gesperrten Lessons
+    // Die Nachricht wird im Template angezeigt
+    this.selectedLesson.set(lesson);
+  }
+
+  closePanel() {
+    this.selectedLesson.set(null);
+  }
+
+  /**
+   * Start a lesson - load exercises from backend
+   */
   startLesson(lesson: Lesson) {
     if (lesson.status === 'locked') {
       console.log('Diese Lektion ist noch gesperrt');
       return;
     }
-    console.log('Starte Lektion:', lesson.title);
-    // Hier würde die Lektion gestartet werden
+
+    // Close panel
+    this.closePanel();
+
+    // Load exercises for this lesson
+    // Using lesson's difficulty level and topic
+    const difficulty = lesson.difficultyLevel || 'A1';
+    const topic = lesson.topic || 'example';
+
+    this.exerciseService.getExercises('DE', difficulty, topic).subscribe({
+      next: (exercises) => {
+        if (exercises.length > 0) {
+          this.currentExercises.set(exercises);
+          this.currentExerciseIndex.set(0);
+          this.currentExercise.set(exercises[0]);
+          this.exerciseMode.set(true);
+        } else {
+          console.log('Keine Übungen verfügbar für diese Lektion');
+          // TODO: Show message to user
+        }
+      },
+      error: (error) => {
+        console.error('Error loading exercises:', error);
+        // TODO: Show error message to user
+      }
+    });
+  }
+
+  /**
+   * Handle exercise submission
+   */
+  onExerciseSubmit(result: ExerciseResult) {
+    console.log('Exercise submitted:', result);
+    
+    if (result.isCorrect) {
+      // Update progress, streak, etc.
+      // This will be handled by the exercise service
+    }
+  }
+
+  /**
+   * Move to next exercise
+   */
+  onNextExercise() {
+    const nextIndex = this.currentExerciseIndex() + 1;
+    const exercises = this.currentExercises();
+
+    if (nextIndex < exercises.length) {
+      this.currentExerciseIndex.set(nextIndex);
+      this.currentExercise.set(exercises[nextIndex]);
+    } else {
+      // Lesson completed
+      this.completeLesson();
+    }
+  }
+
+  /**
+   * Complete current lesson
+   */
+  completeLesson() {
+    this.exerciseMode.set(false);
+    this.currentExercise.set(null);
+    this.currentExercises.set([]);
+    this.currentExerciseIndex.set(0);
+    
+    // TODO: Show completion screen with stats
+    console.log('Lektion abgeschlossen!');
+  }
+
+  /**
+   * Exit exercise mode
+   */
+  exitExerciseMode() {
+    this.exerciseMode.set(false);
+    this.currentExercise.set(null);
   }
 
   getLessonIcon(lesson: Lesson): string {

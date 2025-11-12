@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "LinguDE",
+    "title": "LingUDE",
     "settings": "Settings"
   },
   "nav": {
@@ -25,7 +25,51 @@
   },
   "learning": {
     "title": "Learning",
-    "subtitle": "Your Learning Path"
+    "subtitle": "Your Learning Path",
+    "exerciseMode": {
+      "back": "Back",
+      "progress": "Progress",
+      "whatYouWillLearn": "What you will learn:"
+    },
+    "panel": {
+      "progress": "Progress",
+      "continue": "Continue",
+      "repeat": "Repeat",
+      "start": "Start",
+      "locked": "Complete the previous lesson first!"
+    },
+    "lessons": {
+      "lesson1": {
+        "title": "Lesson 1",
+        "description": "Description for Lesson 1",
+        "section": "Basics",
+        "exercises": {
+          "ex1": "Exercise 1",
+          "ex2": "Exercise 2",
+          "ex3": "Exercise 3"
+        }
+      },
+      "lesson2": {
+        "title": "Lesson 2",
+        "description": "Description for Lesson 2",
+        "section": "Basics",
+        "exercises": {
+          "ex1": "Exercise 1",
+          "ex2": "Exercise 2",
+          "ex3": "Exercise 3"
+        }
+      },
+      "lesson3": {
+        "title": "Lesson 3",
+        "description": "Description for Lesson 3",
+        "section": "Advanced",
+        "exercises": {
+          "ex1": "Exercise 1",
+          "ex2": "Exercise 2",
+          "ex3": "Exercise 3"
+        }
+      }
+    }
   },
   "goals": {
     "title": "My Goals",
@@ -43,5 +87,24 @@
     "title": "Settings",
     "language": "Language",
     "selectLanguage": "Select Language"
+  },
+  "exercise": {
+    "types": {
+      "mcq": "Multiple Choice",
+      "fillBlank": "Fill in the Blank"
+    },
+    "instruction": {
+      "fillBlank": "Fill in the blank:"
+    },
+    "feedback": {
+      "correct": "Correct!",
+      "incorrect": "Not quite right",
+      "correctAnswer": "The correct answer is:",
+      "xpEarned": "You earned {{xp}} XP!"
+    },
+    "buttons": {
+      "check": "Check",
+      "next": "Next"
+    }
   }
 }
