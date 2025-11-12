@@ -32,7 +32,6 @@ export class Learning {
   protected readonly unitTitle = signal('Bestelle im Cafe');
   
   protected readonly lessons = signal<Lesson[]>([
-    // 👇 Beispiel-Lessons zum Testen der UI - Jetzt mit Translation Keys!
     { 
       id: 1, 
       titleKey: 'learning.lessons.lesson1.title',
@@ -82,7 +81,6 @@ export class Learning {
       topic: 'example'
     },
     
-    // 👇 HIER weitere Lessons hinzufügen - Kopiere eine der obigen und ändere die Keys!
   ]);
 
   protected readonly dailyGoal = signal(10);
@@ -93,7 +91,6 @@ export class Learning {
   
   protected selectedLesson = signal<Lesson | null>(null);
   
-  // Exercise mode
   protected exerciseMode = signal<boolean>(false);
   protected currentExercises = signal<Exercise[]>([]);
   protected currentExerciseIndex = signal<number>(0);
@@ -102,8 +99,6 @@ export class Learning {
   constructor(private exerciseService: ExerciseService) {}
 
   selectLesson(lesson: Lesson) {
-    // Side Panel öffnet sich auch bei gesperrten Lessons
-    // Die Nachricht wird im Template angezeigt
     this.selectedLesson.set(lesson);
   }
 
@@ -111,20 +106,14 @@ export class Learning {
     this.selectedLesson.set(null);
   }
 
-  /**
-   * Start a lesson - load exercises from backend
-   */
   startLesson(lesson: Lesson) {
     if (lesson.status === 'locked') {
       console.log('Diese Lektion ist noch gesperrt');
       return;
     }
 
-    // Close panel
     this.closePanel();
 
-    // Load exercises for this lesson
-    // Using lesson's difficulty level and topic
     const difficulty = lesson.difficultyLevel || 'A1';
     const topic = lesson.topic || 'example';
 
@@ -137,31 +126,18 @@ export class Learning {
           this.exerciseMode.set(true);
         } else {
           console.log('Keine Übungen verfügbar für diese Lektion');
-          // TODO: Show message to user
         }
       },
       error: (error) => {
         console.error('Error loading exercises:', error);
-        // TODO: Show error message to user
       }
     });
   }
 
-  /**
-   * Handle exercise submission
-   */
   onExerciseSubmit(result: ExerciseResult) {
     console.log('Exercise submitted:', result);
-    
-    if (result.isCorrect) {
-      // Update progress, streak, etc.
-      // This will be handled by the exercise service
-    }
   }
 
-  /**
-   * Move to next exercise
-   */
   onNextExercise() {
     const nextIndex = this.currentExerciseIndex() + 1;
     const exercises = this.currentExercises();
@@ -170,27 +146,19 @@ export class Learning {
       this.currentExerciseIndex.set(nextIndex);
       this.currentExercise.set(exercises[nextIndex]);
     } else {
-      // Lesson completed
       this.completeLesson();
     }
   }
 
-  /**
-   * Complete current lesson
-   */
   completeLesson() {
     this.exerciseMode.set(false);
     this.currentExercise.set(null);
     this.currentExercises.set([]);
     this.currentExerciseIndex.set(0);
     
-    // TODO: Show completion screen with stats
     console.log('Lektion abgeschlossen!');
   }
 
-  /**
-   * Exit exercise mode
-   */
   exitExerciseMode() {
     this.exerciseMode.set(false);
     this.currentExercise.set(null);

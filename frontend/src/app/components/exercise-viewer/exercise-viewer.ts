@@ -33,13 +33,11 @@ export class ExerciseViewerComponent {
   @Output() onSubmit = new EventEmitter<ExerciseResult>();
   @Output() onNext = new EventEmitter<void>();
   
-  // State
   userAnswer = signal<string>('');
   selectedOption = signal<string>('');
   submitted = signal<boolean>(false);
   isCorrect = signal<boolean | null>(null);
   
-  // Computed
   canSubmit = computed(() => {
     if (this.exercise.type === 'MCQ') {
       return this.selectedOption().length > 0;
@@ -47,7 +45,6 @@ export class ExerciseViewerComponent {
     return this.userAnswer().trim().length > 0;
   });
 
-  // MCQ specific - shuffled options
   mcqOptions = computed(() => {
     if (this.exercise?.type === 'MCQ') {
       return getMCQOptions(this.exercise as ExerciseMCQ);
@@ -55,7 +52,6 @@ export class ExerciseViewerComponent {
     return [];
   });
 
-  // Fill Blank specific - parsed sentence
   fillBlankParts = computed(() => {
     if (this.exercise?.type === 'FILL_BLANK') {
       return parseFillBlankSentence((this.exercise as ExerciseFillBlank).sentenceWithBlank);
@@ -65,9 +61,6 @@ export class ExerciseViewerComponent {
 
   constructor(private exerciseService: ExerciseService) {}
 
-  /**
-   * Handle MCQ option selection
-   */
   selectOption(option: string): void {
     if (this.submitted()) return;
     
@@ -78,9 +71,6 @@ export class ExerciseViewerComponent {
     }
   }
 
-  /**
-   * Submit the answer
-   */
   submit(): void {
     if (!this.canSubmit() || this.submitted()) return;
 
@@ -88,7 +78,6 @@ export class ExerciseViewerComponent {
       ? this.selectedOption() 
       : this.userAnswer();
 
-    // Submit to backend
     this.exerciseService.submitAnswer({
       exerciseId: this.exercise.id,
       exerciseType: this.exercise.type,
@@ -113,17 +102,11 @@ export class ExerciseViewerComponent {
     });
   }
 
-  /**
-   * Move to next exercise
-   */
   next(): void {
     this.onNext.emit();
     this.reset();
   }
 
-  /**
-   * Reset component state
-   */
   reset(): void {
     this.userAnswer.set('');
     this.selectedOption.set('');
@@ -131,9 +114,6 @@ export class ExerciseViewerComponent {
     this.isCorrect.set(null);
   }
 
-  /**
-   * Get correct answer for display
-   */
   getCorrectAnswer(): string {
     if (this.exercise.type === 'MCQ') {
       return (this.exercise as ExerciseMCQ).correctAnswer;
@@ -141,17 +121,11 @@ export class ExerciseViewerComponent {
     return (this.exercise as ExerciseFillBlank).correctAnswer;
   }
 
-  /**
-   * Check if current answer is correct (for styling)
-   */
   isOptionCorrect(option: string): boolean {
     if (!this.submitted() || this.exercise.type !== 'MCQ') return false;
     return option === (this.exercise as ExerciseMCQ).correctAnswer;
   }
 
-  /**
-   * Check if option is the user's wrong selection
-   */
   isOptionWrong(option: string): boolean {
     if (!this.submitted() || this.exercise.type !== 'MCQ') return false;
     return option === this.selectedOption() && !this.isCorrect();
