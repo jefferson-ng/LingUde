@@ -1,7 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TranslocoDirective, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ExerciseViewerComponent, ExerciseResult } from '../../components/exercise-viewer/exercise-viewer';
 import { Exercise } from '../../models/exercise.model';
 import { ExerciseService } from '../../services/exercise.service';
@@ -22,7 +22,7 @@ interface Lesson {
 
 @Component({
   selector: 'app-learning',
-  imports: [CommonModule, TranslocoDirective, TranslocoPipe, ExerciseViewerComponent],
+  imports: [CommonModule, TranslocoPipe, ExerciseViewerComponent],
   templateUrl: './learning.html',
   styleUrl: './learning.css'
 })
