@@ -1,2 +1,5 @@
 CLAUDE.md
-.idea/
+.idea/*
+.claude/
+*.http
+*.log
