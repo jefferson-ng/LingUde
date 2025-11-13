@@ -826,14 +826,17 @@
 
 .exercise-mode-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 20px 0;
   margin-bottom: 32px;
   gap: 24px;
+  position: relative;
 }
 
 .exit-button {
+  position: absolute;
+  left: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -860,8 +863,8 @@
 }
 
 .exercise-progress-info {
-  flex: 1;
-  max-width: 400px;
+  max-width: 500px;
+  width: 100%;
 }
 
 .exercise-counter {

@@ -1,21 +1,4 @@
 <div class="exercise-viewer">
-  <!-- Exercise Header -->
-  <div class="exercise-header">
-    <div class="exercise-meta">
-      <span class="exercise-type-badge" [class]="exercise.type.toLowerCase()">
-        {{ exercise.type === 'MCQ' ? ('exercise.types.mcq' | transloco) : ('exercise.types.fillBlank' | transloco) }}
-      </span>
-      <span class="exercise-level">{{ exercise.difficultyLevel }}</span>
-      <span class="exercise-topic">{{ exercise.topic }}</span>
-    </div>
-    <div class="exercise-reward">
-      <svg class="xp-icon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-      </svg>
-      <span>+{{ exercise.xpReward }} XP</span>
-    </div>
-  </div>
-
   <!-- MCQ Exercise -->
   @if (exercise.type === 'MCQ') {
     <div class="mcq-exercise">
@@ -81,35 +64,29 @@
   <!-- Feedback Section -->
   @if (showFeedback && submitted()) {
     <div class="feedback" [class.correct]="isCorrect()" [class.wrong]="!isCorrect()">
-      <div class="feedback-icon">
-        @if (isCorrect()) {
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-        } @else {
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-          </svg>
-        }
-      </div>
-      
-      <div class="feedback-content">
+      <div class="feedback-main">
+        <div class="feedback-icon">
+          @if (isCorrect()) {
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          } @else {
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+          }
+        </div>
+        
         <h3 class="feedback-title">
           {{ isCorrect() ? ('exercise.feedback.correct' | transloco) : ('exercise.feedback.incorrect' | transloco) }}
         </h3>
-        
-        @if (!isCorrect()) {
-          <p class="feedback-text">
-            {{ 'exercise.feedback.correctAnswer' | transloco }} <strong>{{ getCorrectAnswer() }}</strong>
-          </p>
-        }
-        
-        @if (isCorrect()) {
-          <p class="feedback-text">
-            {{ 'exercise.feedback.xpEarned' | transloco: { xp: exercise.xpReward } }}
-          </p>
-        }
       </div>
+      
+      @if (!isCorrect()) {
+        <p class="feedback-text">
+          {{ 'exercise.feedback.correctAnswer' | transloco }} <strong>{{ getCorrectAnswer() }}</strong>
+        </p>
+      }
     </div>
   }
 

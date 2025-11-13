@@ -1,10 +1,13 @@
 .exercise-viewer {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 48px 40px;
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Header */
@@ -77,20 +80,25 @@
 /* MCQ Exercise */
 .mcq-exercise {
   margin-bottom: 32px;
+  width: 100%;
 }
 
 .question-text {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 700;
   color: #1e293b;
-  margin-bottom: 32px;
-  line-height: 1.4;
+  margin-bottom: 40px;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .mcq-options {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .mcq-option {
@@ -158,29 +166,35 @@
 /* Fill in the Blank Exercise */
 .fill-blank-exercise {
   margin-bottom: 32px;
+  width: 100%;
 }
 
 .instruction {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   color: #475569;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  text-align: center;
 }
 
 .sentence-container {
   background: #f8fafc;
-  padding: 32px;
+  padding: 40px;
   border-radius: 16px;
   border: 2px solid #e2e8f0;
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .sentence-parts {
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-  font-size: 22px;
-  line-height: 1.6;
+  font-size: 24px;
+  line-height: 1.8;
   color: #1e293b;
 }
 
@@ -229,12 +243,16 @@
 /* Feedback */
 .feedback {
   display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px;
   border-radius: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   animation: slideDown 0.3s ease;
+  width: 100%;
+  max-width: 700px;
 }
 
 @keyframes slideDown {
@@ -277,14 +295,21 @@
   height: 100%;
 }
 
+.feedback-main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .feedback-content {
   flex: 1;
+  text-align: center;
 }
 
 .feedback-title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin: 0;
 }
 
 .feedback.correct .feedback-title {
@@ -377,11 +402,11 @@
 /* Responsive */
 @media (max-width: 768px) {
   .exercise-viewer {
-    padding: 24px 16px;
+    padding: 32px 20px;
   }
 
   .question-text {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .mcq-option {
@@ -397,10 +422,8 @@
     font-size: 18px;
     min-width: 120px;
   }
-
-  .exercise-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+  
+  .sentence-container {
+    padding: 24px;
   }
 }
