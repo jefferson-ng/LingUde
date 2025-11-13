@@ -12,6 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Central service for exercise handling.
+ * <p>
+ * Responsibilities:
+ * <ul>
+ *   <li>Load MCQ and Fill-in-the-Blank exercises from the database</li>
+ *   <li>Convert entities into API DTOs for list & detail views</li>
+ *   <li>Check user submissions, calculate XP and feedback</li>
+ *   <li>Update or create {@link UserProgress} entries when a user solves an exercise</li>
+ * </ul>
+ * This class is intentionally type-aware: it knows how to handle both
+ * {@link ExerciseType#MCQ} and {@link ExerciseType#FILL_BLANK}.
+ */
 @Service
 public class ExerciseService {
 
@@ -29,6 +42,12 @@ public class ExerciseService {
 
     // ---------- List & detail ----------
 
+    /**
+     * Loads all MCQ exercises from the database and maps them to summary DTOs.
+     * The summary is designed for listing screens (cards).
+     *
+     * @return list of {@link ExerciseSummaryResponse} for MCQ exercises
+     */
     public List<ExerciseSummaryResponse> listMcq() {
         List<ExerciseMcq> all = mcqRepo.findAll();
         List<ExerciseSummaryResponse> out = new ArrayList<>();
@@ -44,7 +63,11 @@ public class ExerciseService {
         }
         return out;
     }
-
+    /**
+     * Loads all Fill-in-the-Blank exercises and maps them to summary DTOs.
+     *
+     * @return list of {@link ExerciseSummaryResponse} for Fill-in-the-Blank exercises
+     */
     public List<ExerciseSummaryResponse> listFillBlank() {
         List<ExerciseFillBlank> all = fillRepo.findAll();
         List<ExerciseSummaryResponse> out = new ArrayList<>();
@@ -61,6 +84,15 @@ public class ExerciseService {
         return out;
     }
 
+    /**
+     * Returns the detailed view for a single MCQ exercise.
+     * The method also shuffles the answer options so that the
+     * correct answer is not always at the same position.
+     *
+     * @param id ID of the MCQ exercise
+     * @return {@link ExerciseDetailResponse} containing all information for the MCQ
+     * @throws NoSuchElementException if no exercise with the given ID exists
+     */
     public ExerciseDetailResponse getMcq(UUID id) {
         ExerciseMcq e = mcqRepo.findById(id).orElseThrow(() -> new NoSuchElementException("MCQ not found"));
         ExerciseDetailResponse dto = new ExerciseDetailResponse();
@@ -71,7 +103,7 @@ public class ExerciseService {
         dto.setTopic(e.getTopic());
         dto.setXpReward(e.getXpReward());
         dto.setQuestionText(e.getQuestionText());
-
+        // collect and shuffle all answer options
         List<String> options = new ArrayList<>(Arrays.asList(
                 e.getCorrectAnswer(), e.getWrongOption1(), e.getWrongOption2(), e.getWrongOption3()
         ));
@@ -80,6 +112,13 @@ public class ExerciseService {
         return dto;
     }
 
+    /**
+     * Returns the detailed view for a single Fill-in-the-Blank exercise.
+     *
+     * @param id ID of the Fill-in-the-Blank exercise
+     * @return {@link ExerciseDetailResponse} containing sentence and meta information
+     * @throws NoSuchElementException if no exercise with the given ID exists
+     */
     public ExerciseDetailResponse getFillBlank(UUID id) {
         ExerciseFillBlank e = fillRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Fill-Blank not found"));
         ExerciseDetailResponse dto = new ExerciseDetailResponse();
@@ -95,6 +134,19 @@ public class ExerciseService {
 
     // ---------- Submission & progress ----------
 
+    /**
+     * Processes a submission for a MCQ exercise.
+     * <ul>
+     *   <li>checks whether the selected answer matches the correct answer</li>
+     *   <li>computes the XP to award</li>
+     *   <li>updates {@link UserProgress} if a user is provided</li>
+     * </ul>
+     *
+     * @param id   ID of the MCQ exercise
+     * @param req  payload containing the selected answer
+     * @param user currently logged-in user (may be {@code null} until auth is implemented)
+     * @return {@link SubmissionResultResponse} with correctness, XP and feedback
+     */
     @Transactional
     public SubmissionResultResponse submitMcq(UUID id, McqSubmissionRequest req, User user) {
         ExerciseMcq e = mcqRepo.findById(id).orElseThrow(() -> new NoSuchElementException("MCQ not found"));
@@ -106,6 +158,16 @@ public class ExerciseService {
         // NOTE: In production, you may omit correctAnswer from response to prevent leaks.
     }
 
+    /**
+     * Processes a submission for a Fill-in-the-Blank exercise.
+     * The comparison is normalized (trimmed, lower-cased, single spaces)
+     * so that small formatting differences do not cause a wrong result.
+     *
+     * @param id   ID of the Fill-in-the-Blank exercise
+     * @param req  payload containing the user answer text
+     * @param user currently logged-in user (may be {@code null} until auth is implemented)
+     * @return {@link SubmissionResultResponse} with correctness, XP and feedback
+     */
     @Transactional
     public SubmissionResultResponse submitFillBlank(UUID id, FillBlankSubmissionRequest req, User user) {
         ExerciseFillBlank e = fillRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Fill-Blank not found"));
@@ -118,19 +180,50 @@ public class ExerciseService {
         return new SubmissionResultResponse(correct, xp, e.getCorrectAnswer(), feedback);
     }
 
+    /**
+     * Normalizes an answer for comparison:
+     * <ul>
+     *   <li>treats {@code null} as empty string</li>
+     *   <li>trims leading/trailing whitespace</li>
+     *   <li>converts to lower case</li>
+     *   <li>collapses multiple spaces into a single space</li>
+     * </ul>
+     *
+     * @param s raw user input or solution
+     * @return normalized string never {@code null}
+     */
     private String normalize(String s) {
         if (s == null) return "";
         return s.trim().toLowerCase().replaceAll("\\s+", " ");
     }
 
+    /**
+     * Creates or updates a {@link UserProgress} entry for the given user and exercise.
+     * <p>
+     * Behaviour:
+     * <ul>
+     *   <li>If {@code user} is {@code null}, the method does nothing
+     *       (authentication will be wired in later).</li>
+     *   <li>If no progress row exists yet, a new one is inserted.</li>
+     *   <li>If a row exists but is not completed and the answer is correct,
+     *       the row is marked as completed and XP is stored.</li>
+     * </ul>
+     *
+     * @param user       current user (may be {@code null})
+     * @param exerciseId ID of the exercise
+     * @param type       type of exercise (MCQ or FILL_BLANK)
+     * @param correct    whether the current submission was correct
+     * @param xp         XP to award if the exercise is newly completed
+     */
     private void upsertProgress(User user, UUID exerciseId, ExerciseType type, boolean correct, int xp) {
+        // Until authentication is integrated we do not track progress for anonymous users.
         if (user == null) return; // plug in auth later
         UUID userId = user.getId();
 
         UserProgress existing = progressRepo
                 .findByUserIdAndExerciseIdAndExerciseType(userId, exerciseId, type)
                 .orElse(null);
-
+        // First submission for this user/exercise
         if (existing == null) {
             UserProgress up = new UserProgress(user, exerciseId, type);
             if (correct) {
@@ -140,6 +233,7 @@ public class ExerciseService {
             }
             progressRepo.save(up);
         } else {
+            // Only update if it was not completed before and the new submission is correct
             if (!Boolean.TRUE.equals(existing.getIsCompleted()) && correct) {
                 existing.setIsCompleted(true);
                 existing.setCompletedAt(LocalDateTime.now());
