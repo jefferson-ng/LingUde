@@ -134,3 +134,11 @@
 -jede/-r arbeitet an den Issues weiter
 
 ---
+
+**Datum:** 13.11.2025
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit / Marvin als Lehrender
+
+**Themen:**
+-jede/-r hat erzählt, was er / sie gemacht hat seit Montag (10.11.2025)
+-als Gruppe entschieden Tailwind erst einmal raus zu nehmen (es kam zu Problemen bei einzelnen Gruppenmitgliedern)
