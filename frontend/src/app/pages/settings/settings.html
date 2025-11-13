@@ -1,4 +1,26 @@
-<div class="page-container">
-  <h1>Einstellungen</h1>
-  <p>Anwendungseinstellungen</p>
-</div>
+<ng-container *transloco="let t">
+  <div class="page-container">
+    <h1>{{ t('settings.title') }}</h1>
+    
+    <div class="settings-section">
+      <h2>{{ t('settings.language') }}</h2>
+      <p>{{ t('settings.selectLanguage') }}</p>
+      
+      <div class="language-selector">
+        @for (lang of availableLanguages; track lang.code) {
+          <button 
+            class="language-button"
+            [class.active]="currentLang === lang.code"
+            (click)="changeLanguage(lang.code)"
+          >
+            <span class="language-flag">{{ lang.flag }}</span>
+            <span class="language-name">{{ lang.name }}</span>
+            @if (currentLang === lang.code) {
+              <span class="checkmark">✓</span>
+            }
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</ng-container>

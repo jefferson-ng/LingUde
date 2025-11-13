@@ -13,6 +13,66 @@
   color: #666;
 }
 
+.settings-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-radius: 12px;
+}
+
+.settings-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.language-selector {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.language-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.language-button:hover {
+  border-color: #4CAF50;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.language-button.active {
+  border-color: #4CAF50;
+  background: #f1f8f4;
+}
+
+.language-flag {
+  font-size: 1.5rem;
+}
+
+.language-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.checkmark {
+  margin-left: auto;
+  color: #4CAF50;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
 @media (max-width: 768px) {
   .page-container {
     padding: 1rem;
@@ -20,5 +80,13 @@
   
   .page-container h1 {
     font-size: 1.5rem;
+  }
+
+  .language-selector {
+    flex-direction: column;
+  }
+
+  .language-button {
+    width: 100%;
   }
 }

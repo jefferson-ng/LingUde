@@ -28,6 +28,8 @@ Das Projekt-Wiki ist über GitLab erreichbar: [Zum Wiki](./Wiki)
 - [Protokoll-Dokument](./Wiki/Protokoll.md)
 - [Routing](./Wiki/ROUTING_SETUP.md)
 - [DesignGuideline](./Wiki/design-guidelines.md)
+- [Transloco Guide](./Wiki/TRANSLOCO_GUIDE.md) - Internationalisierung (i18n) Dokumentation
+- [Language Learning Games](./Wiki/LANGUAGE_LEARNING_GAMES.md) - Sprachlernspiele mit Transloco
 
 ## Integrate with your tools
 
