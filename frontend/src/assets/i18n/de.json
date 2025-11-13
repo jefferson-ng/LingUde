@@ -1,10 +1,11 @@
 {
   "app": {
-    "title": "LinguDE",
+    "title": "LingUDE",
     "settings": "Einstellungen"
   },
   "nav": {
     "dashboard": "Startseite",
+    "learning": "Lernen",
     "lessons": "Lektionen",
     "goals": "Meine Ziele",
     "leaderboard": "Bestenliste",
@@ -22,6 +23,54 @@
     "title": "Lektionen",
     "subtitle": "Deine Sprachlektionen"
   },
+  "learning": {
+    "title": "Lernen",
+    "subtitle": "Dein Lernpfad",
+    "exerciseMode": {
+      "back": "Zurück",
+      "progress": "Fortschritt",
+      "whatYouWillLearn": "Was du lernen wirst:"
+    },
+    "panel": {
+      "progress": "Fortschritt",
+      "continue": "Fortsetzen",
+      "repeat": "Wiederholen",
+      "start": "Starten",
+      "locked": "Bearbeite zuerst die vorherige Lektion!"
+    },
+    "lessons": {
+      "lesson1": {
+        "title": "Lektion 1",
+        "description": "Beschreibung für Lektion 1",
+        "section": "Grundlagen",
+        "exercises": {
+          "ex1": "Übung 1",
+          "ex2": "Übung 2",
+          "ex3": "Übung 3"
+        }
+      },
+      "lesson2": {
+        "title": "Lektion 2",
+        "description": "Beschreibung für Lektion 2",
+        "section": "Grundlagen",
+        "exercises": {
+          "ex1": "Übung 1",
+          "ex2": "Übung 2",
+          "ex3": "Übung 3"
+        }
+      },
+      "lesson3": {
+        "title": "Lektion 3",
+        "description": "Beschreibung für Lektion 3",
+        "section": "Fortgeschritten",
+        "exercises": {
+          "ex1": "Übung 1",
+          "ex2": "Übung 2",
+          "ex3": "Übung 3"
+        }
+      }
+    }
+  },
   "goals": {
     "title": "Meine Ziele",
     "subtitle": "Verfolge deine Lernziele"
@@ -38,5 +87,24 @@
     "title": "Einstellungen",
     "language": "Sprache",
     "selectLanguage": "Sprache auswählen"
+  },
+  "exercise": {
+    "types": {
+      "mcq": "Multiple Choice",
+      "fillBlank": "Lückentext"
+    },
+    "instruction": {
+      "fillBlank": "Fülle die Lücke aus:"
+    },
+    "feedback": {
+      "correct": "Richtig!",
+      "incorrect": "Nicht ganz richtig",
+      "correctAnswer": "Die richtige Antwort ist:",
+      "xpEarned": "Du hast {{xp}} XP verdient!"
+    },
+    "buttons": {
+      "check": "Prüfen",
+      "next": "Weiter"
+    }
   }
 }

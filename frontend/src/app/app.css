@@ -161,6 +161,59 @@
   color: #1a1a1a;
 }
 
+/* Header Actions Container */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* XP Counter Styling */
+.xp-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.xp-counter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+}
+
+.xp-icon {
+  font-size: 1.25rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.xp-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.xp-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
 .settings-button {
   width: 2.5rem;
   height: 2.5rem;
