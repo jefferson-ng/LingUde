@@ -7,6 +7,7 @@ import com.sep.sep_backend.exercise.dto.McqSubmissionRequest;
 import com.sep.sep_backend.exercise.dto.SubmissionResultResponse;
 import com.sep.sep_backend.exercise.entity.ExerciseType;
 import com.sep.sep_backend.exercise.service.ExerciseService;
+import com.sep.sep_backend.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,17 +27,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.sep.sep_backend.exercise.dto.FillBlankSubmissionRequest;
 import com.sep.sep_backend.exercise.entity.ExerciseType;
 
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
 /**
  * Controller-slice tests for ExerciseController.
  * Loads only the MVC layer and mocks ExerciseService.
  */
 
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
 
 @WebMvcTest(controllers = ExerciseController.class)         // only load MVC layer for this controller
 @AutoConfigureMockMvc(addFilters = false)                   //  disable all security filters in THIS test
-//@WebMvcTest(controllers = ExerciseController.class)
+
 class ExerciseControllerTest {
 
     @Resource
@@ -44,6 +49,13 @@ class ExerciseControllerTest {
 
     @MockBean
     private ExerciseService service;  // mocked service layer
+
+    @MockBean
+    private UserRepository userRepository; //  satisfies SepBackendApplication.run(...)
+
+    // This is the important part: override the CommandLineRunner bean
+    @MockBean(name = "run")
+    private CommandLineRunner commandLineRunner;
 
     private final ObjectMapper om = new ObjectMapper(); // JSON (de)serializer
 
