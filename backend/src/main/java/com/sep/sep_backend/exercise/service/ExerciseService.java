@@ -242,4 +242,73 @@ public class ExerciseService {
             }
         }
     }
+
+    /**
+     * Computes the progress of a user within a lesson or exercise session.
+     *
+     * <p>
+     * At the current stage of the implementation, there is no dedicated
+     * domain model for sessions or lessons. Therefore, this method uses
+     * a pragmatic fallback definition:
+     * </p>
+     *
+     * <ul>
+     *     <li>The total number of exercises in the "session" is interpreted
+     *         as the total number of exercises available in the system
+     *         (sum of all MCQ and Fill-in-the-Blank exercises).</li>
+     *     <li>The number of completed exercises is derived from the
+     *         {@link com.sep.sep_backend.exercise.entity.UserProgress}
+     *         entries of the current user where {@code isCompleted = true}.</li>
+     * </ul>
+     *
+     * <p>
+     * Once a dedicated session or lesson concept is introduced (e.g. a
+     * separate entity that groups exercises by a {@code sessionId}), this
+     * method can be adapted to:
+     * </p>
+     *
+     * <ul>
+     *     <li>Filter the available exercises by the provided {@code sessionId}</li>
+     *     <li>Restrict the completed count to only those exercises that
+     *         belong to the corresponding session</li>
+     * </ul>
+     *
+     * <p><b>Behaviour:</b></p>
+     * <ul>
+     *     <li>If {@code user} is {@code null}, the method returns a
+     *         {@link SessionProgressResponse} with {@code 0 / 0} progress,
+     *         because no authenticated user context is available.</li>
+     *     <li>The completed count is capped so it never exceeds the
+     *         total number of exercises (defensive programming).</li>
+     * </ul>
+     *
+     * @param sessionId An identifier of the lesson or session for which
+     *                  progress is requested. Currently not used for
+     *                  filtering but included for future compatibility.
+     * @param user      The current authenticated user. May be
+     *                  {@code null} until authentication is fully wired.
+     * @return A {@link SessionProgressResponse} describing how many
+     *         exercises have been completed and how many exist in total.
+     */
+    @Transactional(readOnly = true)
+    public SessionProgressResponse getSessionProgress(UUID sessionId, User user) {
+        // Without an authenticated user, we cannot meaningfully track progress.
+        if (user == null) {
+            return new SessionProgressResponse(0, 0);
+        }
+
+        UUID userId = user.getId();
+
+        // Count how many exercises this user has completed.
+        long completed = progressRepo.countByUserIdAndIsCompletedTrue(userId);
+
+        // For now, define the "session" as all exercises currently stored.
+        long totalExercises = mcqRepo.count() + fillRepo.count();
+
+        int totalCount = (int) totalExercises;
+        int completedCount = (int) Math.min(completed, totalExercises);
+
+        return new SessionProgressResponse(completedCount, totalCount);
+    }
+
 }
