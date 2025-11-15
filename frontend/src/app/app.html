@@ -32,9 +32,19 @@
       <!-- Header -->
       <header class="app-header">
         <h2 class="page-title">{{ t('app.title') }}</h2>
-        <button class="settings-button" [routerLink]="'/settings'" [title]="t('app.settings')">
-          <span class="settings-icon">⚙️</span>
-        </button>
+        
+        <!-- XP Counter in Header -->
+        <div class="header-actions">
+          <div class="xp-counter" title="Experience Points">
+            <span class="xp-icon">⭐</span>
+            <span class="xp-value">{{ userXP() }}</span>
+            <span class="xp-label">XP</span>
+          </div>
+          
+          <button class="settings-button" [routerLink]="'/settings'" [title]="t('app.settings')">
+            <span class="settings-icon">⚙️</span>
+          </button>
+        </div>
       </header>
 
       <!-- Router Outlet - Content changes here -->

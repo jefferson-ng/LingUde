@@ -22,6 +22,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() //  public endpoints
+                        .requestMatchers("/api/user/learning/**").permitAll() // user learning endpoints (XP, streaks)
                         .requestMatchers("/error").permitAll()       // allow error page
                         .anyRequest().authenticated()                // everything else protected
                 )
