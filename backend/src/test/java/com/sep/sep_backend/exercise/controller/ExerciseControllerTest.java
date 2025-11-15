@@ -30,7 +30,13 @@ import com.sep.sep_backend.exercise.entity.ExerciseType;
  * Controller-slice tests for ExerciseController.
  * Loads only the MVC layer and mocks ExerciseService.
  */
-@WebMvcTest(controllers = ExerciseController.class)
+
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+@WebMvcTest(controllers = ExerciseController.class)         // only load MVC layer for this controller
+@AutoConfigureMockMvc(addFilters = false)                   //  disable all security filters in THIS test
+//@WebMvcTest(controllers = ExerciseController.class)
 class ExerciseControllerTest {
 
     @Resource
