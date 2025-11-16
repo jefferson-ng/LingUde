@@ -5,6 +5,13 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
 
+
+/**
+ * Tracks a user's language learning configuration and progress:
+ * - selected learning language
+ * - current and target CEFR level
+ * - XP and streak for gamification
+ */
 @Entity
 @Table(name = "user_learning")
 public class UserLearning {
@@ -29,6 +36,7 @@ public class UserLearning {
     @Column(name = "target_level", length = 10)
     private LanguageLevel targetLevel;
 
+
     @Column(nullable = false)
     private Integer xp = 0;
 
@@ -42,10 +50,18 @@ public class UserLearning {
     public UserLearning() {
     }
 
+    /**
+     * That already satisfies:
+     *- “User has a language_level field”
+     *- “Default is A1 if nothing selected”
+     *- “Stored persistently in DB”
+     */
     public UserLearning(User user) {
         this.user = user;
         this.xp = 0;
         this.streakCount = 0;
+        this.currentLevel = LanguageLevel.A1;   // ensure default
+        this.targetLevel = LanguageLevel.A1;    // ensure default
     }
 
     // Getters and Setters

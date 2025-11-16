@@ -25,7 +25,7 @@ public interface UserLearningRepository extends JpaRepository<UserLearning, UUID
      * @param userId the user ID to search for
      * @return Optional containing the user learning data if found
      */
-    Optional<UserLearning> findByUserId(UUID userId);
+    Optional<UserLearning> findByUser_Id(UUID userId);
 
     /**
      * Find all users learning a specific language
