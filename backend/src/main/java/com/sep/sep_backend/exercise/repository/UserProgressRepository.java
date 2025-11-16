@@ -8,67 +8,77 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Repository interface for managing persistence and retrieval of
- * {@link UserProgress} entries.
+ * Repository interface for managing persistence and lookup of
+ * {@link UserProgress} entities.
  *
  * <p>
- * This repository provides high-level data access for tracking a user's
- * completion state across exercises. It supports:
+ * A {@link UserProgress} entry represents the relationship between a user
+ * and a specific exercise, including whether the exercise has been
+ * completed and how much XP was earned. This repository provides
+ * convenience methods that the service layer uses to:
  * </p>
  *
  * <ul>
- *     <li>Fetching an existing progress entry for a specific
- *         combination of user, exercise ID, and exercise type</li>
- *     <li>Counting how many exercises a user has already completed</li>
- *     <li>All default CRUD operations inherited from {@link JpaRepository}</li>
+ *     <li>Check if a progress record already exists for a given
+ *         user and exercise.</li>
+ *     <li>Count how many exercises a user has already completed.</li>
+ *     <li>Perform standard CRUD operations via {@link JpaRepository}.</li>
  * </ul>
  *
  * <p>
- * The service layer relies on this repository to update progress after
- * exercise submissions and to compute progress statistics for sessions
- * or lessons.
+ * The interface is intentionally kept small and focused. As the domain
+ * evolves (e.g. when exercises are grouped by lesson or classified into
+ * categories such as vocabulary, synonym, grammar), additional query
+ * methods can be introduced here without breaking existing callers.
  * </p>
  */
-
 public interface UserProgressRepository extends JpaRepository<UserProgress, UUID> {
+
     /**
-     * Retrieves a progress entry for a specific user, exercise, and exercise type.
+     * Finds a single progress entry for the given combination of
+     * user, exercise ID and exercise type.
      *
      * <p>
-     * This method is used by the submission workflow to determine whether
-     * the user has already interacted with this exercise and whether the
-     * existing entry should be updated.
+     * This method is typically used during the submission workflow to
+     * determine whether a {@link UserProgress} row already exists.
+     * If an entry is found, the service can decide whether it needs
+     * to be updated (e.g. marking an exercise as completed) or left
+     * unchanged.
      * </p>
      *
-     * @param userId        The unique identifier of the user.
-     * @param exerciseId    The unique identifier of the exercise.
-     * @param exerciseType  The type of the exercise (e.g., MCQ, FILL_BLANK).
-     * @return An {@link Optional} containing the matching {@link UserProgress}
-     *         entity if it exists, or an empty Optional if not found.
+     * @param userId       The unique identifier of the user.
+     * @param exerciseId   The unique identifier of the exercise.
+     * @param exerciseType The type of the exercise (e.g. MCQ, FILL_BLANK).
+     * @return An {@link Optional} containing the matching
+     *         {@link UserProgress} if found; otherwise, an empty Optional.
      */
-
     Optional<UserProgress> findByUserIdAndExerciseIdAndExerciseType(
-            UUID userId, UUID exerciseId, ExerciseType exerciseType
+            UUID userId,
+            UUID exerciseId,
+            ExerciseType exerciseType
     );
 
     /**
-     * Counts how many exercises have been completed by the user.
+     * Counts how many exercises have been completed by the given user.
      *
      * <p>
-     * This method queries the database for {@link UserProgress} records
-     * belonging to the specified user where the {@code is_completed} flag
-     * is set to {@code true}. It is primarily used for calculating the
-     * user's overall or session-based progress.
+     * This method queries all {@link UserProgress} entries for the
+     * specified user where the {@code isCompleted} flag is set to
+     * {@code true}. The result can be used to build progress indicators,
+     * dashboards, or statistics about the user's learning activity.
      * </p>
      *
      * <p>
-     * For example, if a user has completed 7 out of 12 exercises, this
-     * method will return {@code 7}.
+     * At the moment, this method returns a global count across all
+     * exercises. In the future, as soon as exercises are grouped
+     * (for example by lesson or by category such as vocabulary,
+     * synonym, grammar), more specific counting methods can be added
+     * that include additional filter criteria without changing this
+     * existing signature.
      * </p>
      *
      * @param userId The unique identifier of the user.
-     * @return The total number of exercises marked as completed for this user.
+     * @return The number of exercises marked as completed for this user.
      */
-
     long countByUserIdAndIsCompletedTrue(UUID userId);
 }
