@@ -235,4 +235,87 @@ public class ExerciseService {
             }
         }
     }
+
+    /**
+     * Computes the progress of a user within a given lesson or exercise session.
+     *
+     * <p>
+     * At the current stage of the application, there is no dedicated domain model
+     * for sessions or lessons. Therefore, a \"session\" is interpreted as:
+     * </p>
+     *
+     * <ul>
+     *     <li><b>All available exercises</b> in the system (MCQ + Fill-in-the-Blank).</li>
+     *     <li>This is a temporary definition that will be replaced once sessions,
+     *         lessons or category-based classifications (e.g. vocabulary, synonym,
+     *         grammar) are introduced.</li>
+     * </ul>
+     *
+     * <p><b>Behaviour:</b></p>
+     * <ul>
+     *     <li>If {@code user} is {@code null}, no user context is available and a
+     *         progress of <code>(0 / 0)</code> is returned.</li>
+     *     <li>Otherwise, the method:</li>
+     *     <ul>
+     *         <li>Counts how many exercises the user has completed using
+     *             {@link com.sep.sep_backend.exercise.repository.UserProgressRepository#countByUserIdAndIsCompletedTrue(UUID)}.</li>
+     *         <li>Counts how many exercises exist in total using
+     *             {@link com.sep.sep_backend.exercise.repository.ExerciseMcqRepository#count()}
+     *             and {@link com.sep.sep_backend.exercise.repository.ExerciseFillBlankRepository#count()}.</li>
+     *         <li>Ensures the completed count never exceeds the total count.</li>
+     *     </ul>
+     * </ul>
+     *
+     * <p><b>Future Extension:</b></p>
+     * <p>
+     * When the domain model introduces:
+     * </p>
+     *
+     * <ul>
+     *     <li>Exercise classifications (VOCABULARY, SYNONYM, GRAMMAR), or</li>
+     *     <li>Dedicated lesson/session entities grouping exercises,</li>
+     * </ul>
+     *
+     * <p>
+     * this method can be easily updated to:
+     * </p>
+     *
+     * <ul>
+     *     <li>Filter exercises belonging to the session/category.</li>
+     *     <li>Count only the user's completed exercises within that subset.</li>
+     * </ul>
+     *
+     * <p>
+     * The method signature and the {@link com.sep.sep_backend.exercise.dto.SessionProgressResponse}
+     * DTO do <b>not</b> need to change — only the internal query logic will evolve.
+     * This makes the design stable and future-proof.
+     * </p>
+     *
+     * @param sessionId An identifier for the session or lesson.
+     *                  Currently unused, but preserved for forward compatibility.
+     * @param user      The currently authenticated user (or {@code null} when
+     *                  authentication is not yet integrated).
+     * @return A {@link SessionProgressResponse} containing the number of completed
+     *         exercises and the total number of exercises in the \"session\".
+     */
+    @Transactional(readOnly = true)
+    public SessionProgressResponse getSessionProgress(UUID sessionId, User user) {
+        // Case 1: no authenticated user → cannot track progress
+        if (user == null) {
+            return new SessionProgressResponse(0, 0);
+        }
+
+        UUID userId = user.getId();
+
+        // Count how many exercises this user has already completed
+        long completed = progressRepo.countByUserIdAndIsCompletedTrue(userId);
+
+        // Total number of exercises currently available in the system
+        long totalExercises = mcqRepo.count() + fillRepo.count();
+
+        int totalCount = (int) totalExercises;
+        int completedCount = (int) Math.min(completed, totalExercises);
+
+        return new SessionProgressResponse(completedCount, totalCount);
+    }
 }
