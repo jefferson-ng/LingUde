@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ExerciseViewerComponent, ExerciseResult } from '../../components/exercise-viewer/exercise-viewer';
-import { Exercise } from '../../models/exercise.model';
+import { ExerciseSummaryResponse, ExerciseDetailResponse } from '../../models/exercise.model';
 import { ExerciseService } from '../../services/exercise.service';
 import { UserLearningService } from '../../services/user-learning.service';
 
@@ -94,9 +94,9 @@ export class Learning implements OnInit {
   protected selectedLesson = signal<Lesson | null>(null);
   
   protected exerciseMode = signal<boolean>(false);
-  protected currentExercises = signal<Exercise[]>([]);
+  protected currentExerciseSummaries = signal<ExerciseSummaryResponse[]>([]);
   protected currentExerciseIndex = signal<number>(0);
-  protected currentExercise = signal<Exercise | null>(null);
+  protected currentExercise = signal<ExerciseDetailResponse | null>(null);
 
   // TODO: Replace with actual logged-in user ID from authentication service
   // Current test user ID from database: testuser@test.com
@@ -171,18 +171,33 @@ export class Learning implements OnInit {
     const topic = lesson.topic || 'example';
 
     this.exerciseService.getExercises('DE', difficulty, topic).subscribe({
-      next: (exercises) => {
-        if (exercises.length > 0) {
-          this.currentExercises.set(exercises);
+      next: (exerciseSummaries) => {
+        if (exerciseSummaries.length > 0) {
+          this.currentExerciseSummaries.set(exerciseSummaries);
           this.currentExerciseIndex.set(0);
-          this.currentExercise.set(exercises[0]);
-          this.exerciseMode.set(true);
+          // Fetch full details for the first exercise
+          this.loadExerciseDetail(exerciseSummaries[0]);
         } else {
           console.log('Keine Übungen verfügbar für diese Lektion');
         }
       },
       error: (error) => {
         console.error('Error loading exercises:', error);
+      }
+    });
+  }
+
+  /**
+   * Load full exercise details by ID and type
+   */
+  private loadExerciseDetail(summary: ExerciseSummaryResponse): void {
+    this.exerciseService.getExerciseById(summary.id, summary.type).subscribe({
+      next: (detail) => {
+        this.currentExercise.set(detail);
+        this.exerciseMode.set(true);
+      },
+      error: (error) => {
+        console.error('Error loading exercise detail:', error);
       }
     });
   }
@@ -213,11 +228,11 @@ export class Learning implements OnInit {
 
   onNextExercise() {
     const nextIndex = this.currentExerciseIndex() + 1;
-    const exercises = this.currentExercises();
+    const summaries = this.currentExerciseSummaries();
 
-    if (nextIndex < exercises.length) {
+    if (nextIndex < summaries.length) {
       this.currentExerciseIndex.set(nextIndex);
-      this.currentExercise.set(exercises[nextIndex]);
+      this.loadExerciseDetail(summaries[nextIndex]);
     } else {
       this.completeLesson();
     }
@@ -226,7 +241,7 @@ export class Learning implements OnInit {
   completeLesson() {
     this.exerciseMode.set(false);
     this.currentExercise.set(null);
-    this.currentExercises.set([]);
+    this.currentExerciseSummaries.set([]);
     this.currentExerciseIndex.set(0);
     
     console.log('Lektion abgeschlossen!');

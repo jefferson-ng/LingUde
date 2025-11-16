@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/logout").authenticated()
                         .requestMatchers("/api/auth/**").permitAll()//  public endpoints
+                        .requestMatchers("/api/exercises/**").permitAll() // TEMPORARY: Allow exercises without auth for testing
                         .requestMatchers("/error").permitAll()       // allow error page
                         .anyRequest().authenticated()                // everything else protected
                 )

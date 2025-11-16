@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { 
-  Exercise, 
-  ExerciseMCQ, 
-  ExerciseFillBlank,
+  ExerciseDetailResponse,
   getMCQOptions,
   parseFillBlankSentence
 } from '../../models/exercise.model';
@@ -26,7 +24,7 @@ export interface ExerciseResult {
   styleUrl: './exercise-viewer.css'
 })
 export class ExerciseViewerComponent {
-  @Input({ required: true }) exercise!: Exercise;
+  @Input({ required: true }) exercise!: ExerciseDetailResponse;
   @Input() showFeedback = true;
   @Input() autoSubmit = false;
   
@@ -37,6 +35,7 @@ export class ExerciseViewerComponent {
   selectedOption = signal<string>('');
   submitted = signal<boolean>(false);
   isCorrect = signal<boolean | null>(null);
+  correctAnswerFromBackend = signal<string>('');
   
   canSubmit = computed(() => {
     if (this.exercise.type === 'MCQ') {
@@ -46,15 +45,15 @@ export class ExerciseViewerComponent {
   });
 
   mcqOptions = computed(() => {
-    if (this.exercise?.type === 'MCQ') {
-      return getMCQOptions(this.exercise as ExerciseMCQ);
+    if (this.exercise?.type === 'MCQ' && this.exercise.options) {
+      return this.exercise.options;
     }
     return [];
   });
 
   fillBlankParts = computed(() => {
-    if (this.exercise?.type === 'FILL_BLANK') {
-      return parseFillBlankSentence((this.exercise as ExerciseFillBlank).sentenceWithBlank);
+    if (this.exercise?.type === 'FILL_BLANK' && this.exercise.sentenceWithBlank) {
+      return parseFillBlankSentence(this.exercise.sentenceWithBlank);
     }
     return { before: '', after: '' };
   });
@@ -78,17 +77,14 @@ export class ExerciseViewerComponent {
       ? this.selectedOption() 
       : this.userAnswer();
 
-    this.exerciseService.submitAnswer({
-      exerciseId: this.exercise.id,
-      exerciseType: this.exercise.type,
-      userAnswer: answer
-    }).subscribe({
+    this.exerciseService.submitAnswer(this.exercise.id, this.exercise.type, answer).subscribe({
       next: (result) => {
         this.submitted.set(true);
-        this.isCorrect.set(result.isCorrect);
+        this.isCorrect.set(result.correct);
+        this.correctAnswerFromBackend.set(result.correctAnswer);
         
         const exerciseResult: ExerciseResult = {
-          isCorrect: result.isCorrect,
+          isCorrect: result.correct,
           userAnswer: answer,
           correctAnswer: result.correctAnswer,
           xpEarned: result.xpEarned
@@ -115,15 +111,12 @@ export class ExerciseViewerComponent {
   }
 
   getCorrectAnswer(): string {
-    if (this.exercise.type === 'MCQ') {
-      return (this.exercise as ExerciseMCQ).correctAnswer;
-    }
-    return (this.exercise as ExerciseFillBlank).correctAnswer;
+    return this.correctAnswerFromBackend();
   }
 
   isOptionCorrect(option: string): boolean {
     if (!this.submitted() || this.exercise.type !== 'MCQ') return false;
-    return option === (this.exercise as ExerciseMCQ).correctAnswer;
+    return option === this.correctAnswerFromBackend();
   }
 
   isOptionWrong(option: string): boolean {
