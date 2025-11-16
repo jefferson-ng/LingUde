@@ -13,12 +13,12 @@
         
         <div class="exercise-progress-info">
           <span class="exercise-counter">
-            {{ currentExerciseIndex() + 1 }} / {{ currentExercises().length }}
+            {{ currentExerciseIndex() + 1 }} / {{ currentExerciseSummaries().length }}
           </span>
           <div class="exercise-progress-bar">
             <div 
               class="exercise-progress-fill" 
-              [style.width.%]="((currentExerciseIndex() + 1) / currentExercises().length) * 100"
+              [style.width.%]="((currentExerciseIndex() + 1) / currentExerciseSummaries().length) * 100"
             ></div>
           </div>
         </div>

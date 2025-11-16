@@ -48,7 +48,7 @@ export class Learning implements OnInit {
         'learning.lessons.lesson1.exercises.ex3'
       ],
       difficultyLevel: 'A1',
-      topic: 'example'
+      topic: 'basics'
     },
     { 
       id: 2, 
@@ -63,8 +63,8 @@ export class Learning implements OnInit {
         'learning.lessons.lesson2.exercises.ex2',
         'learning.lessons.lesson2.exercises.ex3'
       ],
-      difficultyLevel: 'A1',
-      topic: 'example'
+      difficultyLevel: 'B1',
+      topic: 'intermediate'
     },
     { 
       id: 3, 
@@ -79,8 +79,8 @@ export class Learning implements OnInit {
         'learning.lessons.lesson3.exercises.ex2',
         'learning.lessons.lesson3.exercises.ex3'
       ],
-      difficultyLevel: 'A2',
-      topic: 'example'
+      difficultyLevel: 'C1',
+      topic: 'advanced'
     },
     
   ]);
@@ -100,7 +100,9 @@ export class Learning implements OnInit {
 
   // TODO: Replace with actual logged-in user ID from authentication service
   // Current test user ID from database: testuser@test.com
-  private readonly TEST_USER_ID = 'ba0c197e-4b42-4ee7-95b4-c84da6be290e';
+  // IMPORTANT: This ID must match the one printed in backend console on startup
+  // Look for: "📊 Test User ID: [uuid]" in the backend logs
+  private readonly TEST_USER_ID = 'f1586c14-a0b9-4dd6-917e-0ca7938595fa';
 
   constructor(private exerciseService: ExerciseService) {}
 
@@ -168,21 +170,28 @@ export class Learning implements OnInit {
     this.closePanel();
 
     const difficulty = lesson.difficultyLevel || 'A1';
-    const topic = lesson.topic || 'example';
+    const topic = lesson.topic || 'basics';
+
+    console.log(`🎯 Starting lesson - Difficulty: ${difficulty}, Topic: ${topic}`);
 
     this.exerciseService.getExercises('DE', difficulty, topic).subscribe({
       next: (exerciseSummaries) => {
+        console.log(`✅ Found ${exerciseSummaries.length} exercises`, exerciseSummaries);
         if (exerciseSummaries.length > 0) {
           this.currentExerciseSummaries.set(exerciseSummaries);
           this.currentExerciseIndex.set(0);
           // Fetch full details for the first exercise
           this.loadExerciseDetail(exerciseSummaries[0]);
         } else {
-          console.log('Keine Übungen verfügbar für diese Lektion');
+          console.warn('⚠️ Keine Übungen verfügbar für diese Lektion. Check if exercises exist in backend with:', {
+            targetLanguage: 'DE',
+            difficultyLevel: difficulty,
+            topic: topic
+          });
         }
       },
       error: (error) => {
-        console.error('Error loading exercises:', error);
+        console.error('❌ Error loading exercises:', error);
       }
     });
   }
@@ -191,13 +200,15 @@ export class Learning implements OnInit {
    * Load full exercise details by ID and type
    */
   private loadExerciseDetail(summary: ExerciseSummaryResponse): void {
+    console.log(`📖 Loading exercise detail:`, summary);
     this.exerciseService.getExerciseById(summary.id, summary.type).subscribe({
       next: (detail) => {
+        console.log(`✅ Exercise detail loaded:`, detail);
         this.currentExercise.set(detail);
         this.exerciseMode.set(true);
       },
       error: (error) => {
-        console.error('Error loading exercise detail:', error);
+        console.error('❌ Error loading exercise detail:', error);
       }
     });
   }

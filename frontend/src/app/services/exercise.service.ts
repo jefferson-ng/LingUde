@@ -33,12 +33,16 @@ export class ExerciseService {
     difficultyLevel?: DifficultyLevel,
     topic?: string
   ): Observable<ExerciseSummaryResponse[]> {
+    console.log(`🔍 Fetching exercises with filters:`, { targetLanguage, difficultyLevel, topic });
+    
     // Call both endpoints in parallel
     return forkJoin({
       mcq: this.http.get<ExerciseSummaryResponse[]>(`${this.apiUrl}/mcq`),
       fillBlank: this.http.get<ExerciseSummaryResponse[]>(`${this.apiUrl}/fillblank`)
     }).pipe(
       map(result => {
+        console.log(`📦 Received from backend - MCQ: ${result.mcq.length}, Fill-Blank: ${result.fillBlank.length}`);
+        
         // Combine both arrays
         let exercises = [...result.mcq, ...result.fillBlank];
         
@@ -53,6 +57,7 @@ export class ExerciseService {
           exercises = exercises.filter(ex => ex.topic === topic);
         }
         
+        console.log(`🎯 After filtering: ${exercises.length} exercises match the criteria`);
         return exercises;
       })
     );
@@ -77,9 +82,14 @@ export class ExerciseService {
    */
   getExerciseById(id: string, type: ExerciseType): Observable<ExerciseDetailResponse> {
     const endpoint = type === 'MCQ' ? 'mcq' : 'fillblank';
-    return this.http.get<ExerciseDetailResponse>(`${this.apiUrl}/${endpoint}/${id}`)
+    const url = `${this.apiUrl}/${endpoint}/${id}`;
+    console.log(`🔍 Fetching exercise detail from: ${url}`);
+    return this.http.get<ExerciseDetailResponse>(url)
       .pipe(
-        tap(exercise => this.currentExercise.set(exercise))
+        tap(exercise => {
+          console.log(`📦 Received exercise detail:`, exercise);
+          this.currentExercise.set(exercise);
+        })
       );
   }
 
