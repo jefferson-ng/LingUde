@@ -4,6 +4,22 @@ import com.sep.sep_backend.exercise.entity.ExerciseType;
 
 import java.util.UUID;
 
+/**
+ * Represents a summarized response for an exercise, providing key details such as type,
+ * language, difficulty level, and other metadata relevant for listing exercises.
+ *
+ * This class is designed to encapsulate brief information about an exercise, primarily
+ * for use in endpoints returning a collection of exercises, such as lists or previews.
+ *
+ * Attributes:
+ * - `id`: Unique identifier of the exercise.
+ * - `type`: Type of the exercise (e.g., MCQ, Fill in the Blank).
+ * - `targetLanguage`: The target language associated with the exercise.
+ * - `difficultyLevel`: Skill level or difficulty of the exercise (e.g., A1, B2).
+ * - `topic`: Subject or context of the exercise (e.g., Vocabulary, Opposites).
+ * - `xpReward`: XP points rewarded for completing the exercise.
+ * - `previewText`: A short description or preview to show as a hint or teaser for the exercise.
+ */
 public class ExerciseSummaryResponse {
     private UUID id;
     private ExerciseType type;

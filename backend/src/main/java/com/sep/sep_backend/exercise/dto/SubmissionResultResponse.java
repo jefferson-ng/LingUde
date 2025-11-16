@@ -1,5 +1,22 @@
 package com.sep.sep_backend.exercise.dto;
 
+/**
+ * Represents a response to a submission result for an exercise.
+ *
+ * This class encapsulates the result of an attempt by a user to complete an exercise.
+ * It provides detailed feedback on whether the submission was correct,
+ * the experience points (XP) earned, the correct answer, and additional feedback
+ * to guide the user or offer further clarification.
+ *
+ * Attributes:
+ * - `correct`: Indicates whether the user's submission was correct.
+ * - `xpEarned`: Represents the number of experience points the user earned for the submission.
+ * - `correctAnswer`: Specifies the correct answer to the exercise, if applicable.
+ * - `feedback`: Provides additional messages or remarks about the submission, such as explanations or tips.
+ *
+ * This response is typically used in systems that assess exercises such as
+ * multiple-choice questions (MCQs) or fill-in-the-blank exercises within a language learning context.
+ */
 public class SubmissionResultResponse {
     private boolean correct;
     private int xpEarned;

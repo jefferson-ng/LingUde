@@ -6,9 +6,11 @@ import com.sep.sep_backend.auth.repository.RefreshTokenRepository;
 import com.sep.sep_backend.user.entity.User;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +21,6 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
-    private final BCryptPasswordEncoder encoder;
 
     @Value("${jwt.refresh-token-expiration}")
     private long REFRESH_TOKEN_EXPIRATION;
@@ -27,7 +28,34 @@ public class RefreshTokenService {
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtUtil jwtUtil) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtUtil = jwtUtil;
-        this.encoder = new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Hashes the given token using SHA-256 algorithm.
+     * The resulting hash is returned as a hexadecimal string.
+     *
+     * @param token the token string to hash
+     * @return the MD5 hash of the token as a hexadecimal string
+     * @throws RuntimeException if MD5-algorithm is not available
+     */
+    private String hashToken(String token) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            byte[] hashBytes = digest.digest(token.getBytes(StandardCharsets.UTF_8));
+
+            // Convert byte array to hexadecimal string
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("MD5 algorithm not available", e);
+        }
     }
 
     /**
@@ -44,8 +72,8 @@ public class RefreshTokenService {
         // Generate the actual JWT refresh token
         String token = jwtUtil.generateRefreshToken(user.getId());
 
-        // The token isn't hashed anymore !!!
-        String tokenHash = token;
+        // Hash the token for secure storage
+        String tokenHash = hashToken(token);
 
         // Calculate expiration time
         LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(REFRESH_TOKEN_EXPIRATION / 1000);
@@ -71,7 +99,7 @@ public class RefreshTokenService {
      */
     public boolean validateRefreshToken(String token) {
         try {
-            // First validate the JWT itself
+            // First, validate the JWT itself
             if (!jwtUtil.validateToken(token)) {
                 return false;
             }
@@ -79,12 +107,15 @@ public class RefreshTokenService {
             // Get userId from token
             UUID userId = jwtUtil.getUserIdFromToken(token);
 
+            // Hash the incoming token to compare with stored hash
+            String tokenHash = hashToken(token);
+
             // Get all refresh tokens for this user
             List<RefreshToken> userTokens = refreshTokenRepository.findByUserId(userId);
 
             // Check if any stored token matches
             for (RefreshToken storedToken : userTokens) {
-                if ( token.equals(storedToken.getTokenHash()) ) {
+                if (tokenHash.equals(storedToken.getTokenHash())) {
                     // Check if token is not expired
                     return storedToken.getExpiresAt().isAfter(LocalDateTime.now());
                 }
@@ -107,10 +138,14 @@ public class RefreshTokenService {
     public Optional<RefreshToken> findValidRefreshToken(String token) {
         try {
             UUID userId = jwtUtil.getUserIdFromToken(token);
+
+            // Hash the incoming token to compare with stored hash
+            String tokenHash = hashToken(token);
+
             List<RefreshToken> userTokens = refreshTokenRepository.findByUserId(userId);
 
             for (RefreshToken storedToken : userTokens) {
-                if (token.equals(storedToken.getTokenHash())
+                if (tokenHash.equals(storedToken.getTokenHash())
                     && storedToken.getExpiresAt().isAfter(LocalDateTime.now())) {
                     return Optional.of(storedToken);
                 }
@@ -164,5 +199,9 @@ public class RefreshTokenService {
      */
     public List<RefreshToken> findByUserId(UUID userId) {
         return refreshTokenRepository.findByUserId(userId);
+    }
+
+    public int countUserSession(UUID userId){
+        return refreshTokenRepository.countRefreshTokenByUser_Id(userId);
     }
 }

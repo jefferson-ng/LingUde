@@ -5,6 +5,17 @@ import com.sep.sep_backend.exercise.entity.ExerciseType;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Represents the detailed response for an exercise, including its core properties and
+ * specific fields based on the exercise type.
+ *
+ * This class provides information about an exercise such as its type, target language,
+ * difficulty level, topic, XP reward, and details specific to the exercise type.
+ *
+ * An exercise can have variations, such as multiple-choice questions (MCQs) or fill-in-the-blank.
+ * Depending on the exercise type, relevant fields like `questionText` and `options` (for MCQs)
+ * or `sentenceWithBlank` (for fill-in-the-blank) are included.
+ */
 public class ExerciseDetailResponse {
     private UUID id;
     private ExerciseType type;

@@ -152,7 +152,7 @@ public class ExerciseService {
         ExerciseMcq e = mcqRepo.findById(id).orElseThrow(() -> new NoSuchElementException("MCQ not found"));
         boolean correct = e.getCorrectAnswer().equals(req.getSelectedAnswer());
         int xp = correct ? e.getXpReward() : 0;
-        upsertProgress(user, id, ExerciseType.MCQ, correct, xp);
+        updateUserProgress(user, id, ExerciseType.MCQ, correct, xp);
         String feedback = correct ? "Great job!" : "Try again.";
         return new SubmissionResultResponse(correct, xp, e.getCorrectAnswer(), feedback);
         // NOTE: In production, you may omit correctAnswer from response to prevent leaks.
@@ -175,7 +175,7 @@ public class ExerciseService {
         String sol = normalize(e.getCorrectAnswer());
         boolean correct = userAns.equals(sol);
         int xp = correct ? e.getXpReward() : 0;
-        upsertProgress(user, id, ExerciseType.FILL_BLANK, correct, xp);
+        updateUserProgress(user, id, ExerciseType.FILL_BLANK, correct, xp);
         String feedback = correct ? "Nice!" : "Remember the correct form.";
         return new SubmissionResultResponse(correct, xp, e.getCorrectAnswer(), feedback);
     }
@@ -198,24 +198,17 @@ public class ExerciseService {
     }
 
     /**
-     * Creates or updates a {@link UserProgress} entry for the given user and exercise.
-     * <p>
-     * Behaviour:
-     * <ul>
-     *   <li>If {@code user} is {@code null}, the method does nothing
-     *       (authentication will be wired in later).</li>
-     *   <li>If no progress row exists yet, a new one is inserted.</li>
-     *   <li>If a row exists but is not completed and the answer is correct,
-     *       the row is marked as completed and XP is stored.</li>
-     * </ul>
+     * Updates the progress of a user for a specific exercise based on their submission result.
+     * If it's the first submission, creates a new progress entry. If the exercise is already
+     * completed, it does not update the progress unless the current submission marks it as correct.
      *
-     * @param user       current user (may be {@code null})
-     * @param exerciseId ID of the exercise
-     * @param type       type of exercise (MCQ or FILL_BLANK)
-     * @param correct    whether the current submission was correct
-     * @param xp         XP to award if the exercise is newly completed
+     * @param user The user whose progress is being updated. If null, progress is not tracked.
+     * @param exerciseId The unique identifier of the exercise being attempted.
+     * @param type The type of the exercise being attempted.
+     * @param correct Indicates whether the user's submission was correct.
+     * @param xp The amount of experience points (XP) earned from the correct submission.
      */
-    private void upsertProgress(User user, UUID exerciseId, ExerciseType type, boolean correct, int xp) {
+    private void updateUserProgress(User user, UUID exerciseId, ExerciseType type, boolean correct, int xp) {
         // Until authentication is integrated we do not track progress for anonymous users.
         if (user == null) return; // plug in auth later
         UUID userId = user.getId();
@@ -242,73 +235,4 @@ public class ExerciseService {
             }
         }
     }
-
-    /**
-     * Computes the progress of a user within a lesson or exercise session.
-     *
-     * <p>
-     * At the current stage of the implementation, there is no dedicated
-     * domain model for sessions or lessons. Therefore, this method uses
-     * a pragmatic fallback definition:
-     * </p>
-     *
-     * <ul>
-     *     <li>The total number of exercises in the "session" is interpreted
-     *         as the total number of exercises available in the system
-     *         (sum of all MCQ and Fill-in-the-Blank exercises).</li>
-     *     <li>The number of completed exercises is derived from the
-     *         {@link com.sep.sep_backend.exercise.entity.UserProgress}
-     *         entries of the current user where {@code isCompleted = true}.</li>
-     * </ul>
-     *
-     * <p>
-     * Once a dedicated session or lesson concept is introduced (e.g. a
-     * separate entity that groups exercises by a {@code sessionId}), this
-     * method can be adapted to:
-     * </p>
-     *
-     * <ul>
-     *     <li>Filter the available exercises by the provided {@code sessionId}</li>
-     *     <li>Restrict the completed count to only those exercises that
-     *         belong to the corresponding session</li>
-     * </ul>
-     *
-     * <p><b>Behaviour:</b></p>
-     * <ul>
-     *     <li>If {@code user} is {@code null}, the method returns a
-     *         {@link SessionProgressResponse} with {@code 0 / 0} progress,
-     *         because no authenticated user context is available.</li>
-     *     <li>The completed count is capped so it never exceeds the
-     *         total number of exercises (defensive programming).</li>
-     * </ul>
-     *
-     * @param sessionId An identifier of the lesson or session for which
-     *                  progress is requested. Currently not used for
-     *                  filtering but included for future compatibility.
-     * @param user      The current authenticated user. May be
-     *                  {@code null} until authentication is fully wired.
-     * @return A {@link SessionProgressResponse} describing how many
-     *         exercises have been completed and how many exist in total.
-     */
-    @Transactional(readOnly = true)
-    public SessionProgressResponse getSessionProgress(UUID sessionId, User user) {
-        // Without an authenticated user, we cannot meaningfully track progress.
-        if (user == null) {
-            return new SessionProgressResponse(0, 0);
-        }
-
-        UUID userId = user.getId();
-
-        // Count how many exercises this user has completed.
-        long completed = progressRepo.countByUserIdAndIsCompletedTrue(userId);
-
-        // For now, define the "session" as all exercises currently stored.
-        long totalExercises = mcqRepo.count() + fillRepo.count();
-
-        int totalCount = (int) totalExercises;
-        int completedCount = (int) Math.min(completed, totalExercises);
-
-        return new SessionProgressResponse(completedCount, totalCount);
-    }
-
 }

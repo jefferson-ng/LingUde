@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
 import java.util.Optional;
 import java.util.UUID;
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 
 
 /**
@@ -364,5 +365,177 @@ class ExerciseServiceTest {
         org.assertj.core.api.Assertions.assertThat(saved.getXpEarned()).isEqualTo(0);
         org.assertj.core.api.Assertions.assertThat(saved.getCompletedAt()).isNull();
 
+    }
+
+    // ------------------------------------------------------
+    // TEST 5 — listFillBlank(): returns summary DTOs
+    // ------------------------------------------------------
+    @Test
+    void listFillBlank_returnsSummaryDtos_mappedFromEntities() {
+        // Arrange: two fill-blank exercises
+        ExerciseFillBlank fb1 = new ExerciseFillBlank();
+        fb1.setSentenceWithBlank("I ___ coffee every morning.");
+        fb1.setCorrectAnswer("drink");
+        fb1.setXpReward(8);
+        fb1.setTopic("Present Simple");
+        fb1.setTargetLanguage(com.sep.sep_backend.user.entity.Language.EN);
+        fb1.setDifficultyLevel(com.sep.sep_backend.user.entity.LanguageLevel.A1);
+
+        ExerciseFillBlank fb2 = new ExerciseFillBlank();
+        fb2.setSentenceWithBlank("She ___ to work by bus.");
+        fb2.setCorrectAnswer("goes");
+        fb2.setXpReward(10);
+        fb2.setTopic("Transportation");
+        fb2.setTargetLanguage(com.sep.sep_backend.user.entity.Language.EN);
+        fb2.setDifficultyLevel(com.sep.sep_backend.user.entity.LanguageLevel.A2);
+
+        when(fillRepo.findAll()).thenReturn(java.util.List.of(fb1, fb2));
+
+        // Act
+        java.util.List<com.sep.sep_backend.exercise.dto.ExerciseSummaryResponse> result = service.listFillBlank();
+
+        // Assert
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getType()).isEqualTo(ExerciseType.FILL_BLANK);
+        assertThat(result.get(0).getPreviewText()).isEqualTo("I ___ coffee every morning.");
+        assertThat(result.get(0).getXpReward()).isEqualTo(8);
+        assertThat(result.get(1).getPreviewText()).isEqualTo("She ___ to work by bus.");
+    }
+
+    // ------------------------------------------------------
+    // TEST 6 — getMcq: exercise not found throws exception
+    // ------------------------------------------------------
+    @Test
+    void getMcq_notFound_throwsNoSuchElementException() {
+        UUID id = UUID.randomUUID();
+        when(mcqRepo.findById(id)).thenReturn(Optional.empty());
+
+        org.junit.jupiter.api.Assertions.assertThrows(
+                java.util.NoSuchElementException.class,
+                () -> service.getMcq(id)
+        );
+    }
+
+    // ------------------------------------------------------
+    // TEST 7 — getFillBlank: exercise not found throws exception
+    // ------------------------------------------------------
+    @Test
+    void getFillBlank_notFound_throwsNoSuchElementException() {
+        UUID id = UUID.randomUUID();
+        when(fillRepo.findById(id)).thenReturn(Optional.empty());
+
+        org.junit.jupiter.api.Assertions.assertThrows(
+                java.util.NoSuchElementException.class,
+                () -> service.getFillBlank(id)
+        );
+    }
+
+    // ------------------------------------------------------
+    // TEST 8 — submitMcq: retry after wrong attempt (existing progress)
+    // ------------------------------------------------------
+    @Test
+    void submitMcq_retryAfterWrongAttempt_updatesProgressOnCorrect() {
+        UUID exId = UUID.randomUUID();
+        ExerciseMcq mcq = new ExerciseMcq();
+        mcq.setQuestionText("Opposite of 'hot'?");
+        mcq.setCorrectAnswer("cold");
+        mcq.setWrongOption1("warm");
+        mcq.setWrongOption2("cool");
+        mcq.setWrongOption3("mild");
+        mcq.setXpReward(15);
+
+        when(mcqRepo.findById(exId)).thenReturn(Optional.of(mcq));
+
+        // Existing progress from a previous wrong attempt
+        User user = new User();
+        try { setPrivate(user, "id", UUID.randomUUID()); } catch (RuntimeException ignore) {}
+
+        UserProgress existing = new UserProgress(user, exId, ExerciseType.MCQ);
+        existing.setIsCompleted(false);
+        existing.setXpEarned(0);
+
+        when(progressRepo.findByUserIdAndExerciseIdAndExerciseType(any(), any(), any()))
+                .thenReturn(Optional.of(existing));
+
+        // Now submitting correct answer
+        com.sep.sep_backend.exercise.dto.McqSubmissionRequest req =
+                new com.sep.sep_backend.exercise.dto.McqSubmissionRequest();
+        req.setSelectedAnswer("cold");
+
+        // Act
+        service.submitMcq(exId, req, user);
+
+        // Assert: existing progress should be updated
+        verify(progressRepo, times(1)).save(existing);
+        assertThat(existing.getIsCompleted()).isTrue();
+        assertThat(existing.getXpEarned()).isEqualTo(15);
+        assertThat(existing.getCompletedAt()).isNotNull();
+    }
+
+    // ------------------------------------------------------
+    // TEST 9 — submitMcq: already completed exercise doesn't update
+    // ------------------------------------------------------
+    @Test
+    void submitMcq_alreadyCompleted_doesNotUpdateProgress() {
+        UUID exId = UUID.randomUUID();
+        ExerciseMcq mcq = new ExerciseMcq();
+        mcq.setQuestionText("Test question?");
+        mcq.setCorrectAnswer("answer");
+        mcq.setWrongOption1("w1");
+        mcq.setWrongOption2("w2");
+        mcq.setWrongOption3("w3");
+        mcq.setXpReward(20);
+
+        when(mcqRepo.findById(exId)).thenReturn(Optional.of(mcq));
+
+        User user = new User();
+        try { setPrivate(user, "id", UUID.randomUUID()); } catch (RuntimeException ignore) {}
+
+        // Already completed progress
+        UserProgress existing = new UserProgress(user, exId, ExerciseType.MCQ);
+        existing.setIsCompleted(true);
+        existing.setXpEarned(20);
+        existing.setCompletedAt(LocalDateTime.now().minusDays(1));
+
+        when(progressRepo.findByUserIdAndExerciseIdAndExerciseType(any(), any(), any()))
+                .thenReturn(Optional.of(existing));
+
+        com.sep.sep_backend.exercise.dto.McqSubmissionRequest req =
+                new com.sep.sep_backend.exercise.dto.McqSubmissionRequest();
+        req.setSelectedAnswer("answer");
+
+        // Act
+        service.submitMcq(exId, req, user);
+
+        // Assert: progress should NOT be saved again
+        verify(progressRepo, never()).save(any());
+    }
+
+    // ------------------------------------------------------
+    // TEST 10 — submitMcq: null user doesn't track progress
+    // ------------------------------------------------------
+    @Test
+    void submitMcq_nullUser_doesNotTrackProgress() {
+        UUID exId = UUID.randomUUID();
+        ExerciseMcq mcq = new ExerciseMcq();
+        mcq.setQuestionText("Question?");
+        mcq.setCorrectAnswer("answer");
+        mcq.setWrongOption1("w1");
+        mcq.setWrongOption2("w2");
+        mcq.setWrongOption3("w3");
+        mcq.setXpReward(10);
+
+        when(mcqRepo.findById(exId)).thenReturn(Optional.of(mcq));
+
+        com.sep.sep_backend.exercise.dto.McqSubmissionRequest req =
+                new com.sep.sep_backend.exercise.dto.McqSubmissionRequest();
+        req.setSelectedAnswer("answer");
+
+        // Act: passing null user
+        service.submitMcq(exId, req, null);
+
+        // Assert: no progress saved
+        verify(progressRepo, never()).save(any());
+        verify(progressRepo, never()).findByUserIdAndExerciseIdAndExerciseType(any(), any(), any());
     }
 }

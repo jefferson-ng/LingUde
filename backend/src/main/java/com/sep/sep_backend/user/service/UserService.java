@@ -181,4 +181,8 @@ public class UserService {
         }
         return Optional.empty();
     }
+
+    public User findById(UUID userId) {
+        return userRepo.findById(userId).orElse(null);
+    }
 }
