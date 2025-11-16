@@ -19,7 +19,8 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -27,9 +28,29 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	runtimeOnly 'org.postgresql:postgresql'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    testImplementation 'com.h2database:h2'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    // Integrates Testcontainers with Spring Boot (auto-detects containers)
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+
+    // JUnit 5 extension for Testcontainers (starts/stops containers automatically)
+    testImplementation 'org.testcontainers:junit-jupiter'
+
+    // Testcontainers library to run PostgreSQL in Docker for integration tests
+    testImplementation 'org.testcontainers:postgresql'
+
+    // Mockito framework for unit testing (mocking repositories/services)
+    testImplementation 'org.mockito:mockito-core'
+
+    // JUnit 5 integration for Mockito (simpler annotations like @ExtendWith)
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+
+    // make the Postgres driver available when tests run
+    testRuntimeOnly 'org.postgresql:postgresql'
+
 }
 
 tasks.named('test') {
