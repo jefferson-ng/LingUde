@@ -5,6 +5,7 @@ import com.sep.sep_backend.user.entity.UserLearning;
 import com.sep.sep_backend.user.service.UserLearningService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -30,14 +31,13 @@ public class UserLearningController {
      * Retrieves the learning data for a specific user by their user ID.
      * This includes XP, streak count, learning language, current level, and target level.
      *
-     * @param userId the UUID of the user whose learning data is being requested
      * @return ResponseEntity containing UserLearningDTO if found, or 404 NOT FOUND if user learning data doesn't exist
      */
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserLearningDTO> getUserLearning(@PathVariable String userId) {
+    @GetMapping("/myLearning")
+    public ResponseEntity<UserLearningDTO> getUserLearning() {
         try {
-            UUID userUuid = UUID.fromString(userId);
-            Optional<UserLearning> learningOptional = userLearningService.findLearningByUserId(userUuid);
+            UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Optional<UserLearning> learningOptional = userLearningService.findLearningByUserId(userId);
             
             if (learningOptional.isPresent()) {
                 UserLearning learning = learningOptional.get();
@@ -61,19 +61,16 @@ public class UserLearningController {
 
     /**
      * Adds XP to a user's learning progress.
-     * This endpoint is primarily for testing purposes and simulating XP gains.
      *
-     * @param userId the UUID of the user to add XP to
      * @param xpAmount the amount of XP to add (passed as request parameter)
      * @return ResponseEntity containing updated UserLearningDTO if successful, or 404 NOT FOUND if user not found
      */
-    @PostMapping("/{userId}/xp")
+    @PostMapping("/addXp")
     public ResponseEntity<UserLearningDTO> addXp(
-            @PathVariable String userId,
             @RequestParam Integer xpAmount) {
         try {
-            UUID userUuid = UUID.fromString(userId);
-            Optional<UserLearning> learningOptional = userLearningService.addXp(userUuid, xpAmount);
+            UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Optional<UserLearning> learningOptional = userLearningService.addXp(userId, xpAmount);
             
             if (learningOptional.isPresent()) {
                 UserLearning learning = learningOptional.get();
@@ -94,4 +91,33 @@ public class UserLearningController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
+    /**
+     * Updates the user's learning language and CEFR levels
+     * (currentLevel and targetLevel) in one request.
+     * <p>
+     * This endpoint is used by the language level selection flow.
+     *
+     * @param dto    DTO with learningLanguage, currentLevel, targetLevel
+     * @return 200 with updated DTO, 404 if no learning data exists,
+     *         or 400 if the userId is not a valid UUID
+     */
+    @PutMapping("/myLearning")
+    public ResponseEntity<UserLearningDTO> updateUserLevels(
+            @RequestBody UserLearningDTO dto) {
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+
+            Optional<UserLearningDTO> updated =
+                    userLearningService.updateLearningConfig(userId, dto);
+
+            return updated
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
 }

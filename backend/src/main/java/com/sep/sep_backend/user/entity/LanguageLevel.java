@@ -1,5 +1,10 @@
 package com.sep.sep_backend.user.entity;
 
+
+/**
+ * CEFR language proficiency levels used to describe
+ * how well a user can understand and use the learning language.
+ */
 public enum LanguageLevel {
     A1("Beginner"),
     A2("Elementary"),
