@@ -11,11 +11,16 @@ import com.sep.sep_backend.user.dto.AuthResponse;
 import com.sep.sep_backend.user.entity.User;
 import com.sep.sep_backend.user.service.UserService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @RestController
@@ -73,5 +78,38 @@ public class UserController {
 
         RefreshTokenResponse response = new RefreshTokenResponse(newAccessToken, newRefreshToken);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Logs out the currently authenticated user by deleting all associated refresh tokens.
+     * The user is logged out from all sessions in consequence.
+     * This operation clears the user's session and invalidates their tokens to prevent unauthorized access.
+     *
+     * @return a {@code ResponseEntity} containing a confirmation message of successful logout
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if ( auth == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        int session_count = refreshTokenService.countUserSession(userId);
+        refreshTokenService.deleteByUserId(userId);
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully from all devices",
+                                        "sessionTerminated", String.valueOf(session_count)));
+    }
+
+    /**
+     * Gets the currently authenticated user's information.
+     * This is a protected endpoint that requires a valid JWT token.
+     *
+     * @return a {@code ResponseEntity} containing the authenticated user's details
+     */
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser() {
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.findById(userId);
+        return ResponseEntity.ok(user);
     }
 }
