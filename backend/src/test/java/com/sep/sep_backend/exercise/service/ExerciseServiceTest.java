@@ -539,3 +539,5 @@ class ExerciseServiceTest {
         verify(progressRepo, never()).findByUserIdAndExerciseIdAndExerciseType(any(), any(), any());
     }
 }
+
+
