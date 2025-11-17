@@ -23,12 +23,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.sep.sep_backend.auth.filter.JwtAuthenticationFilter;
+
 
 import com.sep.sep_backend.exercise.dto.FillBlankSubmissionRequest;
 import org.springframework.boot.CommandLineRunner;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import com.sep.sep_backend.auth.filter.JwtAuthenticationFilter;
+
 
 /**
  * Controller-slice tests for ExerciseController.
