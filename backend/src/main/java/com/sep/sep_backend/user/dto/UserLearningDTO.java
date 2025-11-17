@@ -36,6 +36,8 @@ public class UserLearningDTO {
         this.lastActivityDate = lastActivityDate;
     }
 
+
+
     // Getters and Setters
 
     public String getUserId() {

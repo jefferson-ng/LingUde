@@ -1,10 +1,13 @@
 package com.sep.sep_backend.user.service;
 
+import com.sep.sep_backend.user.dto.UserLearningDTO;
 import com.sep.sep_backend.user.entity.Language;
 import com.sep.sep_backend.user.entity.LanguageLevel;
 import com.sep.sep_backend.user.entity.User;
 import com.sep.sep_backend.user.entity.UserLearning;
 import com.sep.sep_backend.user.repository.UserLearningRepository;
+import com.sep.sep_backend.user.repository.UserRepository;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +22,12 @@ import java.util.UUID;
 public class UserLearningService {
 
     private final UserLearningRepository userLearningRepository;
+    private final UserRepository userRepository;
 
-    public UserLearningService(UserLearningRepository userLearningRepository) {
+    public UserLearningService(UserLearningRepository userLearningRepository,
+                               UserRepository userRepository) {
         this.userLearningRepository = userLearningRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -57,7 +63,7 @@ public class UserLearningService {
      * @return Optional containing the user learning data if found
      */
     public Optional<UserLearning> findLearningByUserId(UUID userId) {
-        return userLearningRepository.findByUserId(userId);
+        return userLearningRepository.findByUser_Id(userId);
     }
 
     /**
@@ -76,7 +82,7 @@ public class UserLearningService {
      * @return Optional containing the updated learning data if found
      */
     public Optional<UserLearning> addXp(UUID userId, Integer xpToAdd) {
-        Optional<UserLearning> learningOptional = userLearningRepository.findByUserId(userId);
+        Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
         if (learningOptional.isPresent()) {
             UserLearning learning = learningOptional.get();
             learning.setXp(learning.getXp() + xpToAdd);
@@ -91,7 +97,7 @@ public class UserLearningService {
      * @return Optional containing the updated learning data if found
      */
     public Optional<UserLearning> updateStreak(UUID userId) {
-        Optional<UserLearning> learningOptional = userLearningRepository.findByUserId(userId);
+        Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
         if (learningOptional.isPresent()) {
             UserLearning learning = learningOptional.get();
             LocalDate today = LocalDate.now();
@@ -125,7 +131,7 @@ public class UserLearningService {
      * @return Optional containing the updated learning data if found
      */
     public Optional<UserLearning> updateLearningLanguage(UUID userId, Language language) {
-        Optional<UserLearning> learningOptional = userLearningRepository.findByUserId(userId);
+        Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
         if (learningOptional.isPresent()) {
             UserLearning learning = learningOptional.get();
             learning.setLearningLanguage(language);
@@ -141,7 +147,7 @@ public class UserLearningService {
      * @return Optional containing the updated learning data if found
      */
     public Optional<UserLearning> updateCurrentLevel(UUID userId, LanguageLevel level) {
-        Optional<UserLearning> learningOptional = userLearningRepository.findByUserId(userId);
+        Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
         if (learningOptional.isPresent()) {
             UserLearning learning = learningOptional.get();
             learning.setCurrentLevel(level);
@@ -157,7 +163,7 @@ public class UserLearningService {
      * @return Optional containing the updated learning data if found
      */
     public Optional<UserLearning> updateTargetLevel(UUID userId, LanguageLevel level) {
-        Optional<UserLearning> learningOptional = userLearningRepository.findByUserId(userId);
+        Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
         if (learningOptional.isPresent()) {
             UserLearning learning = learningOptional.get();
             learning.setTargetLevel(level);
@@ -183,6 +189,76 @@ public class UserLearningService {
     public List<UserLearning> findByLearningLanguage(Language language) {
         return userLearningRepository.findByLearningLanguage(language);
     }
+
+
+    /**
+     * Update the learning language and CEFR levels (current and target)
+     * for a given user in a single operation.
+     * <p>
+     * If the user has no learning record yet, a new one is created.
+     *
+     * @param userId the user ID
+     * @param dto    DTO containing learningLanguage, currentLevel, targetLevel
+     * @return Optional containing the updated DTO if user and learning data exist
+     */
+    public Optional<UserLearningDTO> updateLearningConfig(UUID userId, UserLearningDTO dto) {
+        // Try to load existing learning data
+        Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
+
+        UserLearning learning;
+        if (learningOptional.isPresent()) {
+            learning = learningOptional.get();
+        } else {
+            // No learning row yet -> create one for this user
+            return userRepository.findById(userId)
+                    .map(user -> {
+                        UserLearning newLearning = new UserLearning(user);
+                        // Optionally set defaults
+                        newLearning.setLearningLanguage(dto.getLearningLanguage());
+                        newLearning.setCurrentLevel(dto.getCurrentLevel());
+                        newLearning.setTargetLevel(dto.getTargetLevel());
+                        newLearning.setLastActivityDate(LocalDate.now());
+                        return userLearningRepository.save(newLearning);
+                    })
+                    .map(saved -> new UserLearningDTO(
+                            saved.getUser().getId().toString(),
+                            saved.getLearningLanguage(),
+                            saved.getCurrentLevel(),
+                            saved.getTargetLevel(),
+                            saved.getXp(),
+                            saved.getStreakCount(),
+                            LocalDate.now()
+                    ));
+        }
+
+        // Update existing learning data
+        if (dto.getLearningLanguage() != null) {
+            learning.setLearningLanguage(dto.getLearningLanguage());
+        }
+        if (dto.getCurrentLevel() != null) {
+            learning.setCurrentLevel(dto.getCurrentLevel());
+        }
+        if (dto.getTargetLevel() != null) {
+            learning.setTargetLevel(dto.getTargetLevel());
+        }
+        learning.setLastActivityDate(LocalDate.now());
+
+        UserLearning saved = userLearningRepository.save(learning);
+
+        return Optional.of(new UserLearningDTO(
+                saved.getUser().getId().toString(),
+                saved.getLearningLanguage(),
+                saved.getCurrentLevel(),
+                saved.getTargetLevel(),
+                saved.getXp(),
+                saved.getStreakCount(),
+                saved.getLastActivityDate()
+        ));
+    }
+
+
+
+
 
     /**
      * Delete user learning data by ID
