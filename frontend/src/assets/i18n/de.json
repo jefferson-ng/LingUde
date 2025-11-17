@@ -1,15 +1,17 @@
 {
   "app": {
     "title": "LingUDE",
+    "tagline": "Deine Sprachlern-App",
     "settings": "Einstellungen"
   },
   "nav": {
     "dashboard": "Startseite",
     "learning": "Lernen",
     "lessons": "Lektionen",
-    "goals": "Meine Ziele",
+    "goals": "Ziele",
     "leaderboard": "Bestenliste",
-    "statistics": "Statistiken"
+    "statistics": "Statistiken",
+    "settings": "Einstellungen"
   },
   "user": {
     "level": "Level",

@@ -3,36 +3,71 @@
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="user-profile">
-          <div class="user-avatar">{{ userName().charAt(0) }}</div>
-          <div class="user-info">
-            <span class="user-name">{{ userName() }}</span>
-            <span class="user-level">{{ t('user.level') }} {{ userLevel() }} • {{ userXP() }} {{ t('user.xp') }}</span>
-          </div>
+        <div class="logo-section">
+          <h1 class="app-logo">{{ title() }}</h1>
+          <p class="app-tagline">Learn smarter, not harder</p>
         </div>
         
+        <div class="user-profile">
+          <div class="user-avatar">M</div>
+          <div class="user-info">
+            <span class="user-name">Max Muster...</span>
+            <span class="user-level">🏆 Level 8</span>
+          </div>
+        </div>
       </div>
 
       <nav class="nav-menu">
-        @for (item of navItems; track item.path) {
-          <a 
-            [routerLink]="item.path" 
-            routerLinkActive="active"
-            class="nav-item"
-          >
-            <span class="nav-icon">{{ item.icon }}</span>
-            <span class="nav-label">{{ t(item.translationKey) }}</span>
-          </a>
-        }
+        <ul class="nav-list">
+          @for (item of navItems; track item.path) {
+          <li class="nav-item">
+            <a 
+              [routerLink]="item.path" 
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              @if (item.icon === 'home') {
+              <lucide-icon [img]="HomeIcon" class="nav-icon"></lucide-icon>
+              } @else if (item.icon === 'book-open') {
+              <lucide-icon [img]="BookOpenIcon" class="nav-icon"></lucide-icon>
+              } @else if (item.icon === 'graduation-cap') {
+              <lucide-icon [img]="GraduationCapIcon" class="nav-icon"></lucide-icon>
+              } @else if (item.icon === 'target') {
+              <lucide-icon [img]="TargetIcon" class="nav-icon"></lucide-icon>
+              }
+              <span class="nav-label">{{ t(item.translationKey) }}</span>
+            </a>
+          </li>
+          }
+        </ul>
       </nav>
+      
+      <div class="sidebar-footer">
+        <ul class="nav-list">
+          @for (item of footerItems; track item.path) {
+          <li class="nav-item">
+            <a 
+              [routerLink]="item.path" 
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              @if (item.icon === 'bar-chart-3') {
+              <lucide-icon [img]="BarChart3Icon" class="nav-icon"></lucide-icon>
+              } @else if (item.icon === 'settings') {
+              <lucide-icon [img]="SettingsIcon" class="nav-icon"></lucide-icon>
+              }
+              <span class="nav-label">{{ t(item.translationKey) }}</span>
+            </a>
+          </li>
+          }
+        </ul>
+      </div>
     </aside>
 
     <!-- Main Content Area -->
     <div class="main-content">
       <!-- Header -->
       <header class="app-header">
-        <h2 class="page-title">{{ t('app.title') }}</h2>
-        
         <!-- XP Counter in Header -->
         <div class="header-actions">
           <div class="xp-counter" title="Experience Points">
@@ -40,10 +75,6 @@
             <span class="xp-value">{{ userXP() }}</span>
             <span class="xp-label">XP</span>
           </div>
-          
-          <button class="settings-button" [routerLink]="'/settings'" [title]="t('app.settings')">
-            <span class="settings-icon">⚙️</span>
-          </button>
         </div>
       </header>
 
