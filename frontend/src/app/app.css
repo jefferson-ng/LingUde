@@ -9,13 +9,13 @@
   height: 100vh;
   width: 100%;
   overflow: hidden;
-  background-color: #f5f7fa;
+  background-color: var(--gray-100, #e8edf5);
 }
 
 /* ====== SIDEBAR ====== */
 .sidebar {
-  width: 280px;
-  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  width: 240px;
+  background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -37,29 +37,30 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .user-profile:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .user-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.25rem;
   flex-shrink: 0;
+  border: 3px solid rgba(255, 255, 255, 0.2);
 }
 
 .user-info {
@@ -108,22 +109,23 @@
   align-items: center;
   gap: 1rem;
   padding: 0.875rem 1.5rem;
-  color: #cbd5e1;
+  margin: 0.25rem 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   transition: all 0.2s;
-  border-left: 3px solid transparent;
+  border-radius: 12px;
   font-weight: 500;
 }
 
 .nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
 .nav-item.active {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
-  border-left-color: #3b82f6;
+  font-weight: 600;
 }
 
 .nav-icon {
@@ -148,11 +150,12 @@
 .app-header {
   background: white;
   padding: 1.5rem 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   justify-content: space-between;
   z-index: 5;
+  border-bottom: 1px solid var(--gray-200, #e2e8f0);
 }
 
 .page-title {
@@ -240,7 +243,7 @@
 .content {
   flex: 1;
   overflow-y: auto;
-  background-color: #f5f7fa;
+  background-color: var(--gray-100, #e8edf5);
 }
 
 /* Scrollbar Styling */

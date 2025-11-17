@@ -1,6 +1,188 @@
 <ng-container *transloco="let t">
-  <div class="page-container">
-    <h1>{{ t('goals.title') }}</h1>
-    <p>{{ t('goals.subtitle') }}</p>
+  <div class="goals-container">
+    <!-- Page Header -->
+    <div class="goals-header">
+      <h1 class="goals-title">{{ t('goals.title') }}</h1>
+      <p class="goals-subtitle">{{ t('goals.subtitle') }}</p>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="goals-grid">
+      <!-- Left Column: Weekly Goals & Achievements -->
+      <div class="goals-main">
+        <!-- Weekly Goals Section -->
+        <div class="goals-section">
+          <h2 class="section-title">{{ t('goals.weeklyGoals') }}</h2>
+          
+          <!-- Daily Goal -->
+          <div class="goal-card completed">
+            <div class="goal-icon">📖</div>
+            <div class="goal-content">
+              <h3 class="goal-title">{{ t('goals.dailyGoal.title') }}</h3>
+              <p class="goal-description">{{ t('goals.dailyGoal.description') }}</p>
+              <div class="goal-reward">+50 XP</div>
+            </div>
+            <div class="goal-check">✓</div>
+          </div>
+
+          <!-- XP Goal -->
+          <div class="goal-card in-progress">
+            <div class="goal-icon">⭐</div>
+            <div class="goal-content">
+              <h3 class="goal-title">{{ t('goals.xpGoal.title') }}</h3>
+              <p class="goal-description">{{ t('goals.xpGoal.description') }}</p>
+              <div class="goal-progress-section">
+                <div class="goal-progress-bar">
+                  <div class="goal-progress-fill"></div>
+                </div>
+                <span class="goal-progress-text">75 / 100</span>
+              </div>
+              <div class="goal-reward">+30 XP</div>
+            </div>
+          </div>
+
+          <!-- Streak Goal -->
+          <div class="goal-card active">
+            <div class="goal-icon">🔥</div>
+            <div class="goal-content">
+              <h3 class="goal-title">{{ t('goals.streakGoal.title') }}</h3>
+              <p class="goal-description">{{ t('goals.streakGoal.description') }}</p>
+              <div class="goal-reward">+20 XP</div>
+            </div>
+          </div>
+
+          <!-- Practice Goal -->
+          <div class="goal-card">
+            <div class="goal-icon">⚡</div>
+            <div class="goal-content">
+              <h3 class="goal-title">{{ t('goals.practiceGoal.title') }}</h3>
+              <p class="goal-description">{{ t('goals.practiceGoal.description') }}</p>
+              <div class="goal-progress-section">
+                <div class="goal-progress-bar">
+                  <div class="goal-progress-fill-small"></div>
+                </div>
+                <span class="goal-progress-text">12 / 20</span>
+              </div>
+              <div class="goal-reward">+40 XP</div>
+            </div>
+          </div>
+
+          <!-- Review Goal -->
+          <div class="goal-card">
+            <div class="goal-icon">🔄</div>
+            <div class="goal-content">
+              <h3 class="goal-title">{{ t('goals.reviewGoal.title') }}</h3>
+              <p class="goal-description">{{ t('goals.reviewGoal.description') }}</p>
+              <div class="goal-progress-section">
+                <div class="goal-progress-bar">
+                  <div class="goal-progress-fill-review"></div>
+                </div>
+                <span class="goal-progress-text">3 / 5</span>
+              </div>
+              <div class="goal-reward">+25 XP</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Achievements Section -->
+        <div class="achievements-section">
+          <h2 class="section-title">{{ t('goals.achievements') }}</h2>
+          
+          <div class="achievements-grid">
+            <!-- Achievement 1: Unlocked -->
+            <div class="achievement-card unlocked">
+              <div class="achievement-icon">🏆</div>
+              <h4 class="achievement-title">{{ t('goals.achievement1.title') }}</h4>
+              <p class="achievement-description">{{ t('goals.achievement1.description') }}</p>
+            </div>
+
+            <!-- Achievement 2: Unlocked -->
+            <div class="achievement-card unlocked">
+              <div class="achievement-icon">💪</div>
+              <h4 class="achievement-title">{{ t('goals.achievement2.title') }}</h4>
+              <p class="achievement-description">{{ t('goals.achievement2.description') }}</p>
+            </div>
+
+            <!-- Achievement 3: Unlocked -->
+            <div class="achievement-card unlocked">
+              <div class="achievement-icon">🎯</div>
+              <h4 class="achievement-title">{{ t('goals.achievement3.title') }}</h4>
+              <p class="achievement-description">{{ t('goals.achievement3.description') }}</p>
+            </div>
+
+            <!-- Achievement 4: Locked -->
+            <div class="achievement-card locked">
+              <div class="achievement-icon locked-icon">🔒</div>
+              <h4 class="achievement-title">{{ t('goals.achievement4.title') }}</h4>
+              <p class="achievement-description">{{ t('goals.achievement4.description') }}</p>
+            </div>
+
+            <!-- Achievement 5: Locked -->
+            <div class="achievement-card locked">
+              <div class="achievement-icon locked-icon">🔒</div>
+              <h4 class="achievement-title">{{ t('goals.achievement5.title') }}</h4>
+              <p class="achievement-description">{{ t('goals.achievement5.description') }}</p>
+            </div>
+
+            <!-- Achievement 6: Locked -->
+            <div class="achievement-card locked">
+              <div class="achievement-icon locked-icon">🔒</div>
+              <h4 class="achievement-title">{{ t('goals.achievement6.title') }}</h4>
+              <p class="achievement-description">{{ t('goals.achievement6.description') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Daily Progress -->
+      <div class="goals-sidebar">
+        <!-- Weekly Progress Card -->
+        <div class="weekly-progress-card">
+          <h3 class="card-title-small">{{ t('goals.weeklyProgress') }}</h3>
+          <p class="card-subtitle">{{ t('goals.keepGoing') }}</p>
+          
+          <div class="weekly-days">
+            <div class="day-item completed">
+              <span class="day-label">{{ t('goals.days.mo') }}</span>
+              <div class="day-check">5/5</div>
+            </div>
+            <div class="day-item completed">
+              <span class="day-label">{{ t('goals.days.tu') }}</span>
+              <div class="day-check">5/5</div>
+            </div>
+            <div class="day-item completed">
+              <span class="day-label">{{ t('goals.days.we') }}</span>
+              <div class="day-check">5/5</div>
+            </div>
+            <div class="day-item completed">
+              <span class="day-label">{{ t('goals.days.th') }}</span>
+              <div class="day-check">5/5</div>
+            </div>
+            <div class="day-item completed">
+              <span class="day-label">{{ t('goals.days.fr') }}</span>
+              <div class="day-check">5/5</div>
+            </div>
+            <div class="day-item in-progress">
+              <span class="day-label">{{ t('goals.days.sa') }}</span>
+              <div class="day-check">2/5</div>
+            </div>
+            <div class="day-item">
+              <span class="day-label">{{ t('goals.days.su') }}</span>
+              <div class="day-check">3/5</div>
+            </div>
+          </div>
+
+          <div class="encouragement-card">
+            <div class="encouragement-icon">🎉</div>
+            <p class="encouragement-text">{{ t('goals.encouragement') }}</p>
+            <div class="next-reward">
+              <span class="reward-label">{{ t('goals.nextReward') }}</span>
+              <span class="reward-title">Streak-Champion</span>
+              <span class="reward-time">{{ t('goals.in20Days') }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </ng-container>

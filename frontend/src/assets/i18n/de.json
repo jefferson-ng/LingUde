@@ -17,11 +17,66 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "subtitle": "Übersicht und Statistiken"
+    "subtitle": "Übersicht und Statistiken",
+    "partner": "Dein LingUDE-Partner",
+    "motivationalMessage": "Ich bin stolz auf deine Fortschritte! Lass uns heute gemeinsam lernen.",
+    "xpToNextLevel": "Noch {{xp}} XP bis Level 9",
+    "days": "Tage",
+    "streak": "Lernstreak",
+    "streakMessage": "Fantastisch! Lerne heute, um deinen Streak fortzusetzen.",
+    "leaderboard": "Bestenliste",
+    "you": "Du",
+    "lessons": "Lektionen",
+    "achievements": "Erfolge",
+    "dailyGoals": "Tagesziele",
+    "dailyLesson": "Tägliche Lektion",
+    "dailyLessonText": "Setze deine Lernreise fort mit der heutigen Lektion.",
+    "startLesson": "Lektion starten",
+    "goals": "Tagesziele",
+    "goalsRemaining": "Noch 2 Ziele für heute! Du schaffst das!",
+    "viewGoals": "Ziele ansehen"
   },
   "lessons": {
     "title": "Lektionen",
-    "subtitle": "Deine Sprachlektionen"
+    "subtitle": "Wähle eine Lektion und erweitere dein Wissen",
+    "yourProgress": "Dein Lernfortschritt",
+    "of": "von",
+    "lessonsCompleted": "Lektionen abgeschlossen",
+    "vocabulary": "Wortschatz",
+    "grammar": "Grammatik",
+    "conversation": "Konversation",
+    "listening": "Hörverstehen",
+    "beginner": "Anfänger",
+    "intermediate": "Mittelstufe",
+    "advanced": "Fortgeschritten",
+    "progress": "Fortschritt",
+    "repeat": "Wiederholen",
+    "continue": "Fortsetzen",
+    "start": "Starten",
+    "lesson1": {
+      "title": "Grundwortschatz: Begrüßungen",
+      "description": "Lerne die wichtigsten Begrüßungsformen auf Deutsch"
+    },
+    "lesson2": {
+      "title": "Grammatik: Artikel (der, die, das)",
+      "description": "Verstehe die deutschen Artikel und ihre Verwendung"
+    },
+    "lesson3": {
+      "title": "Konversation: Im Restaurant",
+      "description": "Übe typische Gespräche in einem Restaurant"
+    },
+    "lesson4": {
+      "title": "Hörverstehen: Alltag",
+      "description": "Verstehe deutsche Gespräche im Alltag"
+    },
+    "lesson5": {
+      "title": "Wortschatz: Familie",
+      "description": "Lerne Vokabeln rund um das Thema Familie"
+    },
+    "lesson6": {
+      "title": "Grammatik: Präteritum",
+      "description": "Meistere die Vergangenheitsform im Deutschen"
+    }
   },
   "learning": {
     "title": "Lernen",
@@ -73,7 +128,67 @@
   },
   "goals": {
     "title": "Meine Ziele",
-    "subtitle": "Verfolge deine Lernziele"
+    "subtitle": "Verfolge deine Lernziele",
+    "weeklyGoals": "Wöchentliche Ziele",
+    "achievements": "Erfolge",
+    "weeklyProgress": "Wöchentlicher Fortschritt",
+    "keepGoing": "Du bist auf einem fantastischen Weg! Noch 3 Ziele für heute.",
+    "encouragement": "Du bist auf einem fantastischen Weg! Noch 3 Ziele für heute.",
+    "nextReward": "Nächste Belohnung:",
+    "in20Days": "in 20 Tagen",
+    "days": {
+      "mo": "Mo",
+      "tu": "Di",
+      "we": "Mi",
+      "th": "Do",
+      "fr": "Fr",
+      "sa": "Sa",
+      "su": "So"
+    },
+    "dailyGoal": {
+      "title": "Tägliches Ziel",
+      "description": "Schließe mindestens eine Lektion ab"
+    },
+    "xpGoal": {
+      "title": "XP Ziel",
+      "description": "Sammle 100 XP heute"
+    },
+    "streakGoal": {
+      "title": "Lernstreak",
+      "description": "Setze deinen Lernstreak fort"
+    },
+    "practiceGoal": {
+      "title": "Übungssession",
+      "description": "Übe 20 Minuten"
+    },
+    "reviewGoal": {
+      "title": "Wiederholung",
+      "description": "Wiederhole 5 gelernte Wörter"
+    },
+    "achievement1": {
+      "title": "Erste Woche",
+      "description": "7 Tage Streak"
+    },
+    "achievement2": {
+      "title": "Fleißig",
+      "description": "10 Lektionen"
+    },
+    "achievement3": {
+      "title": "Zielstrebig",
+      "description": "30 Tagesziele"
+    },
+    "achievement4": {
+      "title": "Meister",
+      "description": "50 Lektionen"
+    },
+    "achievement5": {
+      "title": "Champion",
+      "description": "30 Tage Streak"
+    },
+    "achievement6": {
+      "title": "Experte",
+      "description": "100 Lektionen"
+    }
   },
   "leaderboard": {
     "title": "Bestenliste",

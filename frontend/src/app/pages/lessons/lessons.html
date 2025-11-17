@@ -1,6 +1,188 @@
 <ng-container *transloco="let t">
-  <div class="page-container">
-    <h1>{{ t('lessons.title') }}</h1>
-    <p>{{ t('lessons.subtitle') }}</p>
+  <div class="lessons-container">
+    <!-- Header Section -->
+    <div class="lessons-header">
+      <div class="header-content">
+        <h1 class="lessons-title">{{ t('lessons.title') }}</h1>
+        <p class="lessons-subtitle">{{ t('lessons.subtitle') }}</p>
+      </div>
+      
+      <!-- Progress Overview -->
+      <div class="progress-card">
+        <div class="progress-label-row">
+          <span class="progress-label">{{ t('lessons.yourProgress') }}</span>
+          <span class="progress-percent">17%</span>
+        </div>
+        <div class="progress-bar-large">
+          <div class="progress-bar-fill-large"></div>
+        </div>
+        <p class="progress-text">1 {{ t('lessons.of') }} 6 {{ t('lessons.lessonsCompleted') }}</p>
+      </div>
+    </div>
+
+    <!-- Lessons Grid -->
+    <div class="lessons-grid">
+      <!-- Lesson Card 1: Completed -->
+      <div class="lesson-card completed">
+        <div class="lesson-badge vocabulary">
+          <span class="badge-icon">📚</span>
+          <span class="badge-text">{{ t('lessons.vocabulary') }}</span>
+        </div>
+        <div class="lesson-level">{{ t('lessons.beginner') }}</div>
+        
+        <h3 class="lesson-title">{{ t('lessons.lesson1.title') }}</h3>
+        <p class="lesson-description">{{ t('lessons.lesson1.description') }}</p>
+        
+        <div class="lesson-meta">
+          <div class="lesson-duration">
+            <span class="meta-icon">⏱️</span>
+            <span>10 Min</span>
+          </div>
+          <div class="lesson-xp">
+            <span class="meta-icon">⭐</span>
+            <span>50 XP</span>
+          </div>
+        </div>
+        
+        <button class="lesson-button repeat">{{ t('lessons.repeat') }}</button>
+      </div>
+
+      <!-- Lesson Card 2: In Progress -->
+      <div class="lesson-card in-progress">
+        <div class="lesson-badge grammar">
+          <span class="badge-icon">✏️</span>
+          <span class="badge-text">{{ t('lessons.grammar') }}</span>
+        </div>
+        <div class="lesson-level">{{ t('lessons.beginner') }}</div>
+        
+        <h3 class="lesson-title">{{ t('lessons.lesson2.title') }}</h3>
+        <p class="lesson-description">{{ t('lessons.lesson2.description') }}</p>
+        
+        <div class="lesson-progress-section">
+          <div class="progress-label-row">
+            <span class="progress-label-small">{{ t('lessons.progress') }}</span>
+            <span class="progress-percent-small">60%</span>
+          </div>
+          <div class="progress-bar-small">
+            <div class="progress-bar-fill-small"></div>
+          </div>
+        </div>
+        
+        <div class="lesson-meta">
+          <div class="lesson-duration">
+            <span class="meta-icon">⏱️</span>
+            <span>15 Min</span>
+          </div>
+          <div class="lesson-xp">
+            <span class="meta-icon">⭐</span>
+            <span>80 XP</span>
+          </div>
+        </div>
+        
+        <button class="lesson-button continue">{{ t('lessons.continue') }}</button>
+      </div>
+
+      <!-- Lesson Card 3: Available -->
+      <div class="lesson-card available">
+        <div class="lesson-badge conversation">
+          <span class="badge-icon">💬</span>
+          <span class="badge-text">{{ t('lessons.conversation') }}</span>
+        </div>
+        <div class="lesson-level">{{ t('lessons.intermediate') }}</div>
+        
+        <h3 class="lesson-title">{{ t('lessons.lesson3.title') }}</h3>
+        <p class="lesson-description">{{ t('lessons.lesson3.description') }}</p>
+        
+        <div class="lesson-meta">
+          <div class="lesson-duration">
+            <span class="meta-icon">⏱️</span>
+            <span>20 Min</span>
+          </div>
+          <div class="lesson-xp">
+            <span class="meta-icon">⭐</span>
+            <span>100 XP</span>
+          </div>
+        </div>
+        
+        <button class="lesson-button start">{{ t('lessons.start') }}</button>
+      </div>
+
+      <!-- Lesson Card 4: Available -->
+      <div class="lesson-card available">
+        <div class="lesson-badge listening">
+          <span class="badge-icon">👂</span>
+          <span class="badge-text">{{ t('lessons.listening') }}</span>
+        </div>
+        <div class="lesson-level">{{ t('lessons.beginner') }}</div>
+        
+        <h3 class="lesson-title">{{ t('lessons.lesson4.title') }}</h3>
+        <p class="lesson-description">{{ t('lessons.lesson4.description') }}</p>
+        
+        <div class="lesson-meta">
+          <div class="lesson-duration">
+            <span class="meta-icon">⏱️</span>
+            <span>15 Min</span>
+          </div>
+          <div class="lesson-xp">
+            <span class="meta-icon">⭐</span>
+            <span>80 XP</span>
+          </div>
+        </div>
+        
+        <button class="lesson-button start">{{ t('lessons.start') }}</button>
+      </div>
+
+      <!-- Lesson Card 5: Available -->
+      <div class="lesson-card available">
+        <div class="lesson-badge vocabulary">
+          <span class="badge-icon">📚</span>
+          <span class="badge-text">{{ t('lessons.vocabulary') }}</span>
+        </div>
+        <div class="lesson-level">{{ t('lessons.intermediate') }}</div>
+        
+        <h3 class="lesson-title">{{ t('lessons.lesson5.title') }}</h3>
+        <p class="lesson-description">{{ t('lessons.lesson5.description') }}</p>
+        
+        <div class="lesson-meta">
+          <div class="lesson-duration">
+            <span class="meta-icon">⏱️</span>
+            <span>10 Min</span>
+          </div>
+          <div class="lesson-xp">
+            <span class="meta-icon">⭐</span>
+            <span>50 XP</span>
+          </div>
+        </div>
+        
+        <button class="lesson-button start">{{ t('lessons.start') }}</button>
+      </div>
+
+      <!-- Lesson Card 6: Locked -->
+      <div class="lesson-card locked">
+        <div class="lesson-badge grammar">
+          <span class="badge-icon">✏️</span>
+          <span class="badge-text">{{ t('lessons.grammar') }}</span>
+        </div>
+        <div class="lesson-level">{{ t('lessons.advanced') }}</div>
+        
+        <h3 class="lesson-title">{{ t('lessons.lesson6.title') }}</h3>
+        <p class="lesson-description">{{ t('lessons.lesson6.description') }}</p>
+        
+        <div class="lesson-meta">
+          <div class="lesson-duration">
+            <span class="meta-icon">⏱️</span>
+            <span>15 Min</span>
+          </div>
+          <div class="lesson-xp">
+            <span class="meta-icon">⭐</span>
+            <span>80 XP</span>
+          </div>
+        </div>
+        
+        <div class="lesson-locked-overlay">
+          <span class="lock-icon">🔒</span>
+        </div>
+      </div>
+    </div>
   </div>
 </ng-container>
