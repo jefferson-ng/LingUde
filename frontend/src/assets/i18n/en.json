@@ -26,7 +26,6 @@
   "learning": {
     "title": "Learning",
     "subtitle": "Your Learning Path",
-    "selectDifficulty": "Choose Your Difficulty Level",
     "exerciseMode": {
       "back": "Back",
       "progress": "Progress",
@@ -40,136 +39,34 @@
       "locked": "Complete the previous lesson first!"
     },
     "lessons": {
-      "a1": {
-        "lesson1": {
-          "title": "Multiple Choice",
-          "description": "Practice with multiple choice questions",
-          "section": "A1 - Beginner",
-          "exercises": {
-            "ex1": "Basic Greetings",
-            "ex2": "Simple Words",
-            "ex3": "Numbers"
-          }
-        },
-        "lesson2": {
-          "title": "Fill in the Blanks",
-          "description": "Complete the missing words",
-          "section": "A1 - Beginner",
-          "exercises": {
-            "ex1": "Simple Sentences",
-            "ex2": "Basic Vocabulary",
-            "ex3": "Daily Expressions"
-          }
+      "lesson1": {
+        "title": "Lesson 1",
+        "description": "Description for Lesson 1",
+        "section": "Basics",
+        "exercises": {
+          "ex1": "Exercise 1",
+          "ex2": "Exercise 2",
+          "ex3": "Exercise 3"
         }
       },
-      "a2": {
-        "lesson1": {
-          "title": "Multiple Choice",
-          "description": "Practice with multiple choice questions",
-          "section": "A2 - Elementary",
-          "exercises": {
-            "ex1": "Past Tense",
-            "ex2": "Family",
-            "ex3": "Daily Life"
-          }
-        },
-        "lesson2": {
-          "title": "Fill in the Blanks",
-          "description": "Complete the missing words",
-          "section": "A2 - Elementary",
-          "exercises": {
-            "ex1": "Tenses",
-            "ex2": "Descriptions",
-            "ex3": "Conversation"
-          }
+      "lesson2": {
+        "title": "Lesson 2",
+        "description": "Description for Lesson 2",
+        "section": "Basics",
+        "exercises": {
+          "ex1": "Exercise 1",
+          "ex2": "Exercise 2",
+          "ex3": "Exercise 3"
         }
       },
-      "b1": {
-        "lesson1": {
-          "title": "Multiple Choice",
-          "description": "Practice with multiple choice questions",
-          "section": "B1 - Intermediate",
-          "exercises": {
-            "ex1": "Grammar",
-            "ex2": "Idioms",
-            "ex3": "Connections"
-          }
-        },
-        "lesson2": {
-          "title": "Fill in the Blanks",
-          "description": "Complete the missing words",
-          "section": "B1 - Intermediate",
-          "exercises": {
-            "ex1": "Complex Sentences",
-            "ex2": "Technical Terms",
-            "ex3": "Discussion"
-          }
-        }
-      },
-      "b2": {
-        "lesson1": {
-          "title": "Multiple Choice",
-          "description": "Practice with multiple choice questions",
-          "section": "B2 - Upper Intermediate",
-          "exercises": {
-            "ex1": "Phrases",
-            "ex2": "Subjunctive",
-            "ex3": "Style"
-          }
-        },
-        "lesson2": {
-          "title": "Fill in the Blanks",
-          "description": "Complete the missing words",
-          "section": "B2 - Upper Intermediate",
-          "exercises": {
-            "ex1": "Precision",
-            "ex2": "Argumentation",
-            "ex3": "Expression"
-          }
-        }
-      },
-      "c1": {
-        "lesson1": {
-          "title": "Multiple Choice",
-          "description": "Practice with multiple choice questions",
-          "section": "C1 - Advanced",
-          "exercises": {
-            "ex1": "Nuances",
-            "ex2": "Technical Language",
-            "ex3": "Complexity"
-          }
-        },
-        "lesson2": {
-          "title": "Fill in the Blanks",
-          "description": "Complete the missing words",
-          "section": "C1 - Advanced",
-          "exercises": {
-            "ex1": "Precise Expression",
-            "ex2": "Terminology",
-            "ex3": "Abstract Concepts"
-          }
-        }
-      },
-      "c2": {
-        "lesson1": {
-          "title": "Multiple Choice",
-          "description": "Practice with multiple choice questions",
-          "section": "C2 - Mastery",
-          "exercises": {
-            "ex1": "Native Level",
-            "ex2": "Subtleties",
-            "ex3": "Mastery"
-          }
-        },
-        "lesson2": {
-          "title": "Fill in the Blanks",
-          "description": "Complete the missing words",
-          "section": "C2 - Mastery",
-          "exercises": {
-            "ex1": "Perfection",
-            "ex2": "Eloquence",
-            "ex3": "Excellence"
-          }
+      "lesson3": {
+        "title": "Lesson 3",
+        "description": "Description for Lesson 3",
+        "section": "Advanced",
+        "exercises": {
+          "ex1": "Exercise 1",
+          "ex2": "Exercise 2",
+          "ex3": "Exercise 3"
         }
       }
     }

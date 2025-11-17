@@ -24,7 +24,6 @@ import java.util.UUID;
 @Validated
 @RestController
 @RequestMapping("/api/exercises")
-@CrossOrigin(origins = "http://localhost:4200")
 public class ExerciseController {
 
     private final ExerciseService service;

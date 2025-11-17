@@ -1,6 +1,6 @@
 /**
- * Exercise Models - Aligned with Backend DTOs
- * Backend has ExerciseSummaryResponse and ExerciseDetailResponse
+ * Exercise Models - Based on DB Schema (db_design.md)
+ * Supports: EXERCISE_MCQ and EXERCISE_FILL_BLANK
  */
 
 export type ExerciseType = 'MCQ' | 'FILL_BLANK';
@@ -8,67 +8,6 @@ export type ExerciseType = 'MCQ' | 'FILL_BLANK';
 export type DifficultyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
 export type Language = 'DE' | 'EN' | 'FR' | 'ES';
-
-/**
- * Exercise Summary Response from Backend
- * Used for listing exercises (GET /api/exercises/mcq or /api/exercises/fillblank)
- */
-export interface ExerciseSummaryResponse {
-  id: string;
-  type: ExerciseType;
-  targetLanguage: Language;
-  difficultyLevel: DifficultyLevel;
-  topic: string;
-  xpReward: number;
-  previewText: string;  // Backend sends questionText or sentenceWithBlank as preview
-}
-
-/**
- * Exercise Detail Response from Backend
- * Used for individual exercise details
- */
-export interface ExerciseDetailResponse {
-  id: string;
-  type: ExerciseType;
-  targetLanguage: Language;
-  difficultyLevel: DifficultyLevel;
-  topic: string;
-  xpReward: number;
-  
-  // MCQ fields (populated when type === 'MCQ')
-  questionText?: string;
-  options?: string[];  // Already shuffled by backend
-  
-  // Fill-Blank fields (populated when type === 'FILL_BLANK')
-  sentenceWithBlank?: string;
-}
-
-/**
- * Submission Result Response from Backend
- */
-export interface SubmissionResultResponse {
-  correct: boolean;
-  xpEarned: number;
-  correctAnswer: string;
-  feedback: string;
-}
-
-/**
- * MCQ Submission Request to Backend
- */
-export interface McqSubmissionRequest {
-  selectedAnswer: string;
-}
-
-/**
- * Fill-Blank Submission Request to Backend
- */
-export interface FillBlankSubmissionRequest {
-  answerText: string;
-}
-
-// Legacy interfaces for backward compatibility with existing components
-// These map to backend responses but with more specific types
 
 /**
  * Base interface shared by all exercise types
@@ -84,7 +23,7 @@ export interface BaseExercise {
 
 /**
  * Multiple Choice Question Exercise
- * Maps to backend ExerciseDetailResponse when type === MCQ
+ * Maps to EXERCISE_MCQ table
  */
 export interface ExerciseMCQ extends BaseExercise {
   type: 'MCQ';
@@ -97,12 +36,13 @@ export interface ExerciseMCQ extends BaseExercise {
 
 /**
  * Fill in the Blank Exercise
- * Maps to backend ExerciseDetailResponse when type === FILL_BLANK
+ * Maps to EXERCISE_FILL_BLANK table
+ * Blank marker convention: ___ (three underscores)
  */
 export interface ExerciseFillBlank extends BaseExercise {
   type: 'FILL_BLANK';
-  sentenceWithBlank: string;
-  correctAnswer: string;
+  sentenceWithBlank: string;  // e.g., "Der Hund ___ groß"
+  correctAnswer: string;       // e.g., "ist"
 }
 
 /**
@@ -136,11 +76,23 @@ export interface ExerciseSubmission {
 }
 
 /**
- * Helper to get all options from backend detail response
- * Backend already shuffles options, so we just return them
+ * Helper to get all options shuffled for MCQ
  */
-export function getMCQOptions(exercise: ExerciseDetailResponse): string[] {
-  return exercise.options || [];
+export function getMCQOptions(exercise: ExerciseMCQ): string[] {
+  const options = [
+    exercise.correctAnswer,
+    exercise.wrongOption1,
+    exercise.wrongOption2,
+    exercise.wrongOption3
+  ];
+  
+  // Shuffle options (Fisher-Yates algorithm)
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+  
+  return options;
 }
 
 /**
