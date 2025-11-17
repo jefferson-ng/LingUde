@@ -8,6 +8,8 @@ services:
       POSTGRES_USER: sep
       POSTGRES_PASSWORD: sep
       POSTGRES_DB: sep
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   backend:
     build:
@@ -33,3 +35,6 @@ services:
       - "4200:80"
     depends_on:
       - backend
+
+volumes:
+  postgres_data:
