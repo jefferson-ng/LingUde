@@ -29,8 +29,6 @@ import com.sep.sep_backend.exercise.entity.ExerciseType;
 import com.sep.sep_backend.user.entity.User;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.*;
-import java.util.Optional;
-import java.util.UUID;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
