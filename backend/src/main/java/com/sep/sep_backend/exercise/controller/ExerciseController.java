@@ -4,6 +4,7 @@ import com.sep.sep_backend.exercise.dto.*;
 import com.sep.sep_backend.exercise.service.ExerciseService;
 import com.sep.sep_backend.user.entity.User;
 import jakarta.validation.Valid;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
@@ -93,28 +94,30 @@ public class ExerciseController {
     }
 
     // ---------- Submit answers ----------
-    // TODO: Replace dummy User with @AuthenticationPrincipal integration when auth is wired.
-
     /**
-     * Accepts a submission for a MCQ exercise.
+     * Accepts a submission for a MCQ (multiple-choice) exercise.
      *
      * <p>
      * The method:
      * </p>
      * <ul>
-     *     <li>Extracts the authenticated user's ID from the {@link Authentication} object.</li>
-     *     <li>Delegates validation, XP calculation and progress tracking to {@link ExerciseService}.</li>
-     *     <li>Returns a {@link SubmissionResultResponse} containing correctness, XP and feedback.</li>
+     *     <li>Retrieves the authenticated user's ID internally from
+     *         Spring Security's {@link org.springframework.security.core.context.SecurityContextHolder}.</li>
+     *     <li>Delegates answer validation, XP calculation, and progress tracking
+     *         to the {@link ExerciseService}.</li>
+     *     <li>Returns a {@link SubmissionResultResponse} containing correctness,
+     *         XP earned, and feedback.</li>
      * </ul>
      *
      * @param id  UUID of the MCQ exercise being submitted
      * @param req request body containing the selected answer
-     * @param authentication Spring Security authentication containing the authenticated user's ID.
      * @return {@link SubmissionResultResponse} including correctness, XP and feedback
      */
+
     @PostMapping(value = "/mcq/{id}/submit", consumes = "application/json", produces = "application/json")
     public SubmissionResultResponse submitMcq(@PathVariable UUID id,
-                                              @Valid @RequestBody McqSubmissionRequest req,Authentication authentication) {
+                                              @Valid @RequestBody McqSubmissionRequest req) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // Extract the authenticated userId (or null if not available).
         UUID userId = extractUserId(authentication);
 
@@ -129,19 +132,22 @@ public class ExerciseController {
      * The method:
      * </p>
      * <ul>
-     *     <li>Extracts the authenticated user's ID from the {@link Authentication} object.</li>
-     *     <li>Delegates answer comparison and XP reward logic to {@link ExerciseService}.</li>
+     *     <li>Retrieves the authenticated user's ID internally from
+     *         Spring Security's {@link org.springframework.security.core.context.SecurityContextHolder}.</li>
+     *     <li>Delegates answer validation, XP reward logic, and progress tracking
+     *         to the {@link ExerciseService}.</li>
      *     <li>Returns a {@link SubmissionResultResponse} describing the evaluation outcome.</li>
      * </ul>
      *
      * @param id  UUID of the Fill-in-the-Blank exercise
      * @param req request body containing the user's typed answer
-     * @param authentication Spring Security authentication containing the authenticated user's ID.
      * @return {@link SubmissionResultResponse} describing the evaluation outcome
      */
+
     @PostMapping(value = "/fillblank/{id}/submit", consumes = "application/json", produces = "application/json")
     public SubmissionResultResponse submitFillBlank(@PathVariable UUID id,
-                                                    @Valid @RequestBody FillBlankSubmissionRequest req, Authentication authentication) {
+                                                    @Valid @RequestBody FillBlankSubmissionRequest req) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // Extract the authenticated userId (or null if not available).
         UUID userId = extractUserId(authentication);
 
@@ -164,34 +170,34 @@ public class ExerciseController {
      * <p><b>Current behaviour:</b></p>
      * <ul>
      *     <li>Because there is no explicit session/lesson model yet, the
-     *         underlying service currently interprets a "session" as the
-     *         set of all available exercises (MCQ + Fill-in-the-Blank).</li>
-     *     <li>If authentication is missing or the principal is not a {@link UUID},
+     *         underlying service currently interprets a "session" as the set
+     *         of all available exercises (MCQ + Fill-in-the-Blank).</li>
+     *     <li>The authenticated user's ID is extracted internally from
+     *         Spring Security's {@link org.springframework.security.core.context.SecurityContextHolder}.
+     *         If no authentication is available or the principal is not a {@link UUID},
      *         the method returns a progress of {@code 0 / 0} as a safe fallback.</li>
      * </ul>
      *
      * <p><b>Future behaviour:</b></p>
      * <ul>
-     *     <li>Once exercises are grouped into lessons or classified by
-     *         category (e.g. vocabulary, synonym, grammar), the service
-     *         method {@link com.sep.sep_backend.exercise.service.ExerciseService#getSessionProgress(UUID, UUID)}
+     *     <li>Once exercises are grouped into lessons or classified by category
+     *         (e.g., vocabulary, synonym, grammar), the service method
+     *         {@link com.sep.sep_backend.exercise.service.ExerciseService#getSessionProgress(UUID, UUID)}
      *         can be adapted to filter exercises based on {@code sessionId}.</li>
      *     <li>The signature of this controller method and the
-     *         {@link SessionProgressResponse} DTO are expected to remain
-     *         stable, so consumers of this API do not need to change.</li>
+     *         {@link SessionProgressResponse} DTO are expected to remain stable,
+     *         so consumers of this API do not need to change.</li>
      * </ul>
      *
-     * @param sessionId      The identifier of the lesson or session whose progress
-     *                       should be retrieved.
-     * @param authentication The Spring Security authentication object containing
-     *                       the authenticated user's ID as principal.
+     * @param sessionId The identifier of the lesson or session whose progress
+     *                  should be retrieved.
      * @return A {@link SessionProgressResponse} describing the user's progress
      *         in the requested session.
      */
-    @GetMapping(value = "/session/{sessionId}", produces = "application/json")
-    public SessionProgressResponse getSessionProgress(@PathVariable UUID sessionId,
-                                                      Authentication authentication) {
 
+    @GetMapping(value = "/session/{sessionId}", produces = "application/json")
+    public SessionProgressResponse getSessionProgress(@PathVariable UUID sessionId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // Extract the authenticated userId (or null if not available).
         UUID userId = extractUserId(authentication);
 
