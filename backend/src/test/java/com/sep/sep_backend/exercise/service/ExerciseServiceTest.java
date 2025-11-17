@@ -189,9 +189,9 @@ class ExerciseServiceTest {
                 new com.sep.sep_backend.exercise.dto.McqSubmissionRequest();
         req.setSelectedAnswer("glad"); // correct
 
-        // Act
+        // Act: pass the authenticated userId (UUID) to the service
         com.sep.sep_backend.exercise.dto.SubmissionResultResponse result =
-                service.submitMcq(exId, req, user);
+                service.submitMcq(exId, req, user.getId());
 
         // Assert (repository side): we saved one new progress marked completed with XP=15
         ArgumentCaptor<UserProgress> captor = ArgumentCaptor.forClass(UserProgress.class);
@@ -236,9 +236,9 @@ class ExerciseServiceTest {
                 new com.sep.sep_backend.exercise.dto.McqSubmissionRequest();
         req.setSelectedAnswer("small"); // wrong
 
-        // Act
+        // Act: pass the authenticated userId (UUID) to the service
         com.sep.sep_backend.exercise.dto.SubmissionResultResponse result =
-                service.submitMcq(exId, req, user);
+                service.submitMcq(exId, req, user.getId());
 
         // Assert
         ArgumentCaptor<UserProgress> captor = ArgumentCaptor.forClass(UserProgress.class);
@@ -307,9 +307,9 @@ class ExerciseServiceTest {
                 new com.sep.sep_backend.exercise.dto.FillBlankSubmissionRequest();
         req.setAnswerText("   GOES   ");
 
-        // Act
+        // Act: pass the authenticated userId (UUID) to the service
         com.sep.sep_backend.exercise.dto.SubmissionResultResponse result =
-                service.submitFillBlank(exId, req, user);
+                service.submitFillBlank(exId, req, user.getId());
 
         // Assert saved progress
         org.mockito.ArgumentCaptor<com.sep.sep_backend.exercise.entity.UserProgress> cap =
@@ -349,9 +349,9 @@ class ExerciseServiceTest {
                 new com.sep.sep_backend.exercise.dto.FillBlankSubmissionRequest();
         req.setAnswerText("eat"); // wrong
 
-        // Act
+        // Act: pass the authenticated userId (UUID) to the service
         com.sep.sep_backend.exercise.dto.SubmissionResultResponse result =
-                service.submitFillBlank(exId, req, user);
+                service.submitFillBlank(exId, req, user.getId());
 
         // Assert
         org.mockito.ArgumentCaptor<com.sep.sep_backend.exercise.entity.UserProgress> cap =
@@ -462,8 +462,8 @@ class ExerciseServiceTest {
                 new com.sep.sep_backend.exercise.dto.McqSubmissionRequest();
         req.setSelectedAnswer("cold");
 
-        // Act
-        service.submitMcq(exId, req, user);
+        // Act: use userId instead of the full User
+        service.submitMcq(exId, req, user.getId());
 
         // Assert: existing progress should be updated
         verify(progressRepo, times(1)).save(existing);
@@ -505,7 +505,7 @@ class ExerciseServiceTest {
         req.setSelectedAnswer("answer");
 
         // Act
-        service.submitMcq(exId, req, user);
+        service.submitMcq(exId, req, user.getId());
 
         // Assert: progress should NOT be saved again
         verify(progressRepo, never()).save(any());
@@ -531,7 +531,7 @@ class ExerciseServiceTest {
                 new com.sep.sep_backend.exercise.dto.McqSubmissionRequest();
         req.setSelectedAnswer("answer");
 
-        // Act: passing null user
+        // Act: passing null userId (no authenticated user)
         service.submitMcq(exId, req, null);
 
         // Assert: no progress saved
