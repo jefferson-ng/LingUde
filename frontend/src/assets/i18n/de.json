@@ -81,6 +81,7 @@
   "learning": {
     "title": "Lernen",
     "subtitle": "Dein Lernpfad",
+    "selectDifficulty": "Wähle dein Schwierigkeitsniveau",
     "exerciseMode": {
       "back": "Zurück",
       "progress": "Fortschritt",
@@ -94,34 +95,136 @@
       "locked": "Bearbeite zuerst die vorherige Lektion!"
     },
     "lessons": {
-      "lesson1": {
-        "title": "Lektion 1",
-        "description": "Beschreibung für Lektion 1",
-        "section": "Grundlagen",
-        "exercises": {
-          "ex1": "Übung 1",
-          "ex2": "Übung 2",
-          "ex3": "Übung 3"
+      "a1": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "A1 - Anfänger",
+          "exercises": {
+            "ex1": "Grundlegende Grüße",
+            "ex2": "Einfache Wörter",
+            "ex3": "Zahlen"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "A1 - Anfänger",
+          "exercises": {
+            "ex1": "Einfache Sätze",
+            "ex2": "Grundvokabular",
+            "ex3": "Alltagsausdrücke"
+          }
         }
       },
-      "lesson2": {
-        "title": "Lektion 2",
-        "description": "Beschreibung für Lektion 2",
-        "section": "Grundlagen",
-        "exercises": {
-          "ex1": "Übung 1",
-          "ex2": "Übung 2",
-          "ex3": "Übung 3"
+      "a2": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "A2 - Grundlagen",
+          "exercises": {
+            "ex1": "Vergangenheitsformen",
+            "ex2": "Familie",
+            "ex3": "Alltag"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "A2 - Grundlagen",
+          "exercises": {
+            "ex1": "Zeitformen",
+            "ex2": "Beschreibungen",
+            "ex3": "Konversation"
+          }
         }
       },
-      "lesson3": {
-        "title": "Lektion 3",
-        "description": "Beschreibung für Lektion 3",
-        "section": "Fortgeschritten",
-        "exercises": {
-          "ex1": "Übung 1",
-          "ex2": "Übung 2",
-          "ex3": "Übung 3"
+      "b1": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "B1 - Mittelstufe",
+          "exercises": {
+            "ex1": "Grammatik",
+            "ex2": "Idiome",
+            "ex3": "Zusammenhänge"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "B1 - Mittelstufe",
+          "exercises": {
+            "ex1": "Komplexe Sätze",
+            "ex2": "Fachausdrücke",
+            "ex3": "Diskussion"
+          }
+        }
+      },
+      "b2": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "B2 - Mittelstufe",
+          "exercises": {
+            "ex1": "Redewendungen",
+            "ex2": "Konjunktiv",
+            "ex3": "Stilmittel"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "B2 - Mittelstufe",
+          "exercises": {
+            "ex1": "Präzision",
+            "ex2": "Argumentation",
+            "ex3": "Ausdruck"
+          }
+        }
+      },
+      "c1": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "C1 - Fortgeschritten",
+          "exercises": {
+            "ex1": "Nuancen",
+            "ex2": "Fachsprache",
+            "ex3": "Komplexität"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "C1 - Fortgeschritten",
+          "exercises": {
+            "ex1": "Präziser Ausdruck",
+            "ex2": "Fachterminologie",
+            "ex3": "Abstrakte Konzepte"
+          }
+        }
+      },
+      "c2": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "C2 - Experte",
+          "exercises": {
+            "ex1": "Muttersprachniveau",
+            "ex2": "Feinheiten",
+            "ex3": "Meisterschaft"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "C2 - Experte",
+          "exercises": {
+            "ex1": "Perfektion",
+            "ex2": "Eloquenz",
+            "ex3": "Exzellenz"
+          }
         }
       }
     }
