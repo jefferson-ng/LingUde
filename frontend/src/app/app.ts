@@ -19,9 +19,8 @@ export class App implements OnInit {
   protected readonly userName = signal('Alex');
   
   // TODO: Replace with actual logged-in user ID from authentication service
-  // IMPORTANT: This ID must match the one printed in backend console on startup
-  // Look for: "📊 Test User ID: [uuid]" in the backend logs
-  private readonly TEST_USER_ID = 'f1586c14-a0b9-4dd6-917e-0ca7938595fa';
+  // Fixed UUID that matches backend - will always be the same
+  private readonly TEST_USER_ID = '7b88460b-04f2-4138-bb75-7658e27d1ba7';
 
   /**
    * Initialize component and load user XP data from backend

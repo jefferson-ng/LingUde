@@ -35,6 +35,23 @@
     </div>
   } @else {
     <!-- Normal Learning Path View -->
+    
+    <!-- Difficulty Selector -->
+    <div class="difficulty-selector">
+      <h2 class="difficulty-title">{{ 'learning.selectDifficulty' | transloco }}</h2>
+      <div class="difficulty-tabs">
+        @for (difficulty of difficulties; track difficulty) {
+          <button 
+            class="difficulty-tab"
+            [class.active]="selectedDifficulty() === difficulty"
+            (click)="selectDifficulty(difficulty)"
+          >
+            {{ difficulty }}
+          </button>
+        }
+      </div>
+    </div>
+    
     <div class="learning-path">
       <div class="lessons-path">
       @for (lesson of lessons(); track lesson.id) {
@@ -45,34 +62,14 @@
         >
           <div 
             class="lesson-node-wrapper"
-            [class.completed]="lesson.status === 'completed'"
-            [class.current]="lesson.status === 'current'"
             [class.available]="lesson.status === 'available'"
-            [class.locked]="lesson.status === 'locked'"
             [class.selected]="selectedLesson()?.id === lesson.id"
           >
             <div class="lesson-node" (click)="selectLesson(lesson)">
               <div class="node-circle">
-                @if (lesson.status === 'completed') {
-                  <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                }
-                @if (lesson.status === 'locked') {
-                  <svg class="lock-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z"/>
-                  </svg>
-                }
-                @if (lesson.status === 'current') {
-                  <svg class="star-icon current" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                }
-                @if (lesson.status === 'available') {
-                  <svg class="star-icon available" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                }
+                <svg class="star-icon available" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
               </div>
               
               <div class="node-label">{{ lesson.titleKey | transloco }}</div>
@@ -80,10 +77,7 @@
           </div>
 
           @if ($index < lessons().length - 1) {
-            <div 
-              class="path-connector"
-              [class.completed]="lesson.status === 'completed'"
-            ></div>
+            <div class="path-connector"></div>
           }
         </div>
       }
@@ -106,69 +100,27 @@
         
         <p class="panel-description">{{ lesson.descriptionKey | transloco }}</p>
         
-        @if (lesson.status !== 'locked' && lesson.exerciseKeys && lesson.exerciseKeys.length > 0) {
+        @if (lesson.exerciseKeys && lesson.exerciseKeys.length > 0) {
           <div class="panel-exercises">
             <h3 class="exercises-title">{{ 'learning.exerciseMode.whatYouWillLearn' | transloco }}</h3>
             @for (exerciseKey of lesson.exerciseKeys; track $index) {
               <div class="exercise-item">
-                <div 
-                  class="exercise-check"
-                  [class.completed]="lesson.status === 'completed'"
-                >
-                  @if (lesson.status === 'completed') {
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  } @else {
-                    <span class="exercise-number">{{ $index + 1 }}</span>
-                  }
+                <div class="exercise-check">
+                  <span class="exercise-number">{{ $index + 1 }}</span>
                 </div>
                 <span class="exercise-text">{{ exerciseKey | transloco }}</span>
               </div>
             }
           </div>
         }
-        
-        @if (lesson.status === 'current' && lesson.progress) {
-          <div class="panel-progress">
-            <div class="progress-header">
-              <span class="progress-label">{{ 'learning.panel.progress' | transloco }}</span>
-              <span class="progress-percent">{{ lesson.progress }}%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" [style.width.%]="lesson.progress"></div>
-            </div>
-          </div>
-        }
 
         <div class="panel-actions">
-          @if (lesson.status !== 'locked') {
-            <button class="btn-primary" (click)="startLesson(lesson)">
-              @if (lesson.status === 'current') {
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
-                {{ 'learning.panel.continue' | transloco }}
-              } @else if (lesson.status === 'completed') {
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 12a8 8 0 0 1 8-8V0l4 4-4 4V4a6 6 0 1 0 6 6h2a8 8 0 0 1-16 0z"/>
-                </svg>
-                {{ 'learning.panel.repeat' | transloco }}
-              } @else {
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
-                {{ 'learning.panel.start' | transloco }}
-              }
-            </button>
-          } @else {
-            <div class="locked-message">
-              <svg class="lock-icon-large" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z"/>
-              </svg>
-              <p>{{ 'learning.panel.locked' | transloco }}</p>
-            </div>
-          }
+          <button class="btn-primary" (click)="startLesson(lesson)">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            {{ 'learning.panel.start' | transloco }}
+          </button>
         </div>
       </div>
     }

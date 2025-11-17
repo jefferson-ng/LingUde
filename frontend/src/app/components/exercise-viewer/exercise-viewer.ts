@@ -33,7 +33,7 @@ export class ExerciseViewerComponent implements OnChanges {
     return this.exerciseSignal();
   }
   
-  private exerciseSignal = signal<ExerciseDetailResponse>(null as any);
+  protected exerciseSignal = signal<ExerciseDetailResponse>(null as any);
   
   @Input() showFeedback = true;
   @Input() autoSubmit = false;
