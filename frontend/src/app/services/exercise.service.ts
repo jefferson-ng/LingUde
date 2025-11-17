@@ -1,129 +1,136 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, forkJoin, map } from 'rxjs';
+import { Observable, tap, of, delay } from 'rxjs';
 import { 
-  ExerciseSummaryResponse,
-  ExerciseDetailResponse,
-  SubmissionResultResponse,
-  McqSubmissionRequest,
-  FillBlankSubmissionRequest,
-  ExerciseType,
+  Exercise, 
+  ExerciseMCQ, 
+  ExerciseFillBlank, 
+  UserProgress, 
+  ExerciseSubmission,
   DifficultyLevel,
   Language
 } from '../models/exercise.model';
-import { environment } from '../../environments/environment';
+import { 
+  getMockExercisesByTopic,
+  getMockExercisesByDifficulty,
+  mockSubmitAnswer,
+  mockMixedExercises
+} from './exercise.mock';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExerciseService {
-  private readonly apiUrl = `${environment.apiUrl}/api/exercises`;
+  private readonly apiUrl = '/api/exercises';  // Adjust based on your backend
+  
+  // Toggle für Mock-Modus (auf false setzen wenn Backend bereit ist)
+  private readonly useMockData = true;
   
   // Current exercise state
-  currentExercise = signal<ExerciseDetailResponse | null>(null);
+  currentExercise = signal<Exercise | null>(null);
+  currentProgress = signal<UserProgress | null>(null);
   
   constructor(private http: HttpClient) {}
 
   /**
-   * Fetch all exercises (both MCQ and Fill-Blank combined)
-   * Backend has separate endpoints, so we call both and merge
+   * Fetch exercises by criteria
    */
   getExercises(
-    targetLanguage?: Language,
-    difficultyLevel?: DifficultyLevel,
+    targetLanguage: Language,
+    difficultyLevel: DifficultyLevel,
     topic?: string
-  ): Observable<ExerciseSummaryResponse[]> {
-    console.log(`🔍 Fetching exercises with filters:`, { targetLanguage, difficultyLevel, topic });
+  ): Observable<Exercise[]> {
+    if (this.useMockData) {
+      // Mock-Daten zurückgeben
+      let exercises = topic 
+        ? getMockExercisesByTopic(topic)
+        : getMockExercisesByDifficulty(difficultyLevel);
+      
+      // Falls keine Exercises für das Topic, gib gemischte zurück
+      if (exercises.length === 0) {
+        exercises = mockMixedExercises;
+      }
+      
+      return of(exercises).pipe(delay(500)); // Simuliere Netzwerk-Delay
+    }
     
-    // Call both endpoints in parallel
-    return forkJoin({
-      mcq: this.http.get<ExerciseSummaryResponse[]>(`${this.apiUrl}/mcq`),
-      fillBlank: this.http.get<ExerciseSummaryResponse[]>(`${this.apiUrl}/fillblank`)
-    }).pipe(
-      map(result => {
-        console.log(`📦 Received from backend - MCQ: ${result.mcq.length}, Fill-Blank: ${result.fillBlank.length}`);
-        
-        // Combine both arrays
-        let exercises = [...result.mcq, ...result.fillBlank];
-        
-        // Client-side filtering (backend doesn't have filter params yet)
-        if (targetLanguage) {
-          exercises = exercises.filter(ex => ex.targetLanguage === targetLanguage);
-        }
-        if (difficultyLevel) {
-          exercises = exercises.filter(ex => ex.difficultyLevel === difficultyLevel);
-        }
-        if (topic) {
-          exercises = exercises.filter(ex => ex.topic === topic);
-        }
-        
-        console.log(`🎯 After filtering: ${exercises.length} exercises match the criteria`);
-        return exercises;
-      })
-    );
-  }
-
-  /**
-   * Fetch MCQ exercises only
-   */
-  getMcqExercises(): Observable<ExerciseSummaryResponse[]> {
-    return this.http.get<ExerciseSummaryResponse[]>(`${this.apiUrl}/mcq`);
-  }
-
-  /**
-   * Fetch Fill-Blank exercises only
-   */
-  getFillBlankExercises(): Observable<ExerciseSummaryResponse[]> {
-    return this.http.get<ExerciseSummaryResponse[]>(`${this.apiUrl}/fillblank`);
+    const params: any = {
+      targetLanguage,
+      difficultyLevel
+    };
+    
+    if (topic) {
+      params.topic = topic;
+    }
+    
+    return this.http.get<Exercise[]>(this.apiUrl, { params });
   }
 
   /**
    * Fetch a single exercise by ID and type
    */
-  getExerciseById(id: string, type: ExerciseType): Observable<ExerciseDetailResponse> {
-    const endpoint = type === 'MCQ' ? 'mcq' : 'fillblank';
-    const url = `${this.apiUrl}/${endpoint}/${id}`;
-    console.log(`🔍 Fetching exercise detail from: ${url}`);
-    return this.http.get<ExerciseDetailResponse>(url)
+  getExerciseById(id: string, type: 'MCQ' | 'FILL_BLANK'): Observable<Exercise> {
+    return this.http.get<Exercise>(`${this.apiUrl}/${type.toLowerCase()}/${id}`)
       .pipe(
-        tap(exercise => {
-          console.log(`📦 Received exercise detail:`, exercise);
-          this.currentExercise.set(exercise);
+        tap(exercise => this.currentExercise.set(exercise))
+      );
+  }
+
+  /**
+   * Submit user's answer for validation
+   */
+  submitAnswer(submission: ExerciseSubmission): Observable<{
+    isCorrect: boolean;
+    correctAnswer: string;
+    xpEarned: number;
+    progress: UserProgress;
+  }> {
+    if (this.useMockData) {
+      // Mock-Response zurückgeben
+      const result = mockSubmitAnswer(submission.exerciseId, submission.userAnswer);
+      return of(result).pipe(
+        delay(300),
+        tap(result => {
+          if (result.progress) {
+            this.currentProgress.set(result.progress);
+          }
+        })
+      );
+    }
+    
+    return this.http.post<any>(`${this.apiUrl}/submit`, submission)
+      .pipe(
+        tap(result => {
+          if (result.progress) {
+            this.currentProgress.set(result.progress);
+          }
         })
       );
   }
 
   /**
-   * Submit answer for MCQ exercise
+   * Get user's progress for specific exercise
    */
-  submitMcqAnswer(exerciseId: string, selectedAnswer: string): Observable<SubmissionResultResponse> {
-    const request: McqSubmissionRequest = { selectedAnswer };
-    return this.http.post<SubmissionResultResponse>(
-      `${this.apiUrl}/mcq/${exerciseId}/submit`,
-      request
-    );
+  getUserProgress(exerciseId: string, exerciseType: 'MCQ' | 'FILL_BLANK'): Observable<UserProgress> {
+    return this.http.get<UserProgress>(`${this.apiUrl}/progress/${exerciseType.toLowerCase()}/${exerciseId}`)
+      .pipe(
+        tap(progress => this.currentProgress.set(progress))
+      );
   }
 
   /**
-   * Submit answer for Fill-Blank exercise
+   * Get all user progress (for a specific language/level)
    */
-  submitFillBlankAnswer(exerciseId: string, answerText: string): Observable<SubmissionResultResponse> {
-    const request: FillBlankSubmissionRequest = { answerText };
-    return this.http.post<SubmissionResultResponse>(
-      `${this.apiUrl}/fillblank/${exerciseId}/submit`,
-      request
-    );
-  }
-
-  /**
-   * Generic submit answer method (determines type automatically)
-   */
-  submitAnswer(exerciseId: string, exerciseType: ExerciseType, userAnswer: string): Observable<SubmissionResultResponse> {
-    if (exerciseType === 'MCQ') {
-      return this.submitMcqAnswer(exerciseId, userAnswer);
-    } else {
-      return this.submitFillBlankAnswer(exerciseId, userAnswer);
-    }
+  getAllUserProgress(
+    targetLanguage?: Language,
+    difficultyLevel?: DifficultyLevel
+  ): Observable<UserProgress[]> {
+    const params: any = {};
+    
+    if (targetLanguage) params.targetLanguage = targetLanguage;
+    if (difficultyLevel) params.difficultyLevel = difficultyLevel;
+    
+    return this.http.get<UserProgress[]>(`${this.apiUrl}/progress`, { params });
   }
 
   /**
@@ -131,19 +138,20 @@ export class ExerciseService {
    */
   resetCurrentExercise(): void {
     this.currentExercise.set(null);
+    this.currentProgress.set(null);
   }
 
   /**
    * Type guard for MCQ exercises
    */
-  isMCQ(exercise: ExerciseDetailResponse): boolean {
+  isMCQ(exercise: Exercise): exercise is ExerciseMCQ {
     return exercise.type === 'MCQ';
   }
 
   /**
    * Type guard for Fill Blank exercises
    */
-  isFillBlank(exercise: ExerciseDetailResponse): boolean {
+  isFillBlank(exercise: Exercise): exercise is ExerciseFillBlank {
     return exercise.type === 'FILL_BLANK';
   }
 }

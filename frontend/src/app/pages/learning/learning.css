@@ -1,59 +1,10 @@
 .learning-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
   padding: 32px;
   background-color: #f5f7fa;
   min-height: calc(100vh - 60px);
   position: relative;
-}
-
-/* Difficulty Selector */
-.difficulty-selector {
-  width: 100%;
-  max-width: 800px;
-  margin-bottom: 32px;
-  text-align: center;
-}
-
-.difficulty-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 20px;
-}
-
-.difficulty-tabs {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.difficulty-tab {
-  padding: 12px 24px;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.difficulty-tab:hover {
-  border-color: #fbbf24;
-  color: #f59e0b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
-}
-
-.difficulty-tab.active {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  border-color: #f59e0b;
-  color: white;
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
 }
 
 /* Stats Sidebar */

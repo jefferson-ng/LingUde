@@ -1,8 +1,8 @@
 <div class="exercise-viewer">
   <!-- MCQ Exercise -->
-  @if (exerciseSignal()?.type === 'MCQ') {
+  @if (exercise.type === 'MCQ') {
     <div class="mcq-exercise">
-      <h2 class="question-text">{{ exerciseSignal().questionText }}</h2>
+      <h2 class="question-text">{{ (exercise).questionText }}</h2>
       
       <div class="mcq-options">
         @for (option of mcqOptions(); track option) {
@@ -36,7 +36,7 @@
   }
 
   <!-- Fill in the Blank Exercise -->
-  @if (exerciseSignal()?.type === 'FILL_BLANK') {
+  @if (exercise.type === 'FILL_BLANK') {
     <div class="fill-blank-exercise">
       <h2 class="instruction">{{ 'exercise.instruction.fillBlank' | transloco }}</h2>
       
