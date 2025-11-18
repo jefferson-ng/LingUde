@@ -57,7 +57,7 @@ export class ExerciseService {
           exercises = exercises.filter(ex => ex.topic === topic);
         }
         
-        console.log(`🎯 After filtering: ${exercises.length} exercises match the criteria`);
+        console.log(`After filtering: ${exercises.length} exercises match the criteria`);
         return exercises;
       })
     );

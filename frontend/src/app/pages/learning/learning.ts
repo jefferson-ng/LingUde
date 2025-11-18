@@ -109,10 +109,8 @@ export class Learning implements OnInit {
 
   // TODO: Replace with actual logged-in user ID from authentication service
   // Current test user ID from database: testuser@test.com
-  // Fixed UUID that matches backend - will always be the same
-  private readonly TEST_USER_ID = '7b88460b-04f2-4138-bb75-7658e27d1ba7';
-
-  constructor(private exerciseService: ExerciseService) {}
+  // This will be replaced when proper authentication is implemented
+  private readonly TEST_USER_ID = 'e53351ef-fed0-487e-a93b-604a94e89b0d';  constructor(private exerciseService: ExerciseService) {}
 
   /**
    * Initialize component and fetch user learning data from backend.
@@ -132,28 +130,17 @@ export class Learning implements OnInit {
 
   /**
    * Loads user learning data from the backend.
-   * NOTE: Currently uses a hardcoded TEST_USER_ID. 
-   * When authentication is implemented, replace with the actual logged-in user's ID.
-   * 
-   * To get the test user ID:
-   * 1. Start the backend
-   * 2. Check console logs for "Test User ID: [uuid]"
-   * 3. Copy that UUID and replace TEST_USER_ID constant above
    */
   private loadUserLearningData(): void {
-    // TODO: Get user ID from authentication service when available
-    // For now, the backend creates a test user on startup
-    // Check backend console logs for: "Test User ID: [uuid]"
-    
-    this.userLearningService.getUserLearning(this.TEST_USER_ID).subscribe({
+    this.userLearningService.getUserLearning().subscribe({
       next: (data) => {
-        console.log('✅ Loaded user learning data:', data);
+        console.log('Loaded user learning data:', data);
         this.dailyProgress.set(data.xp);
         this.streak.set(data.streakCount);
       },
       error: (error) => {
-        console.error('❌ Error loading user learning data:', error);
-        console.log('💡 Make sure to:');
+        console.error('Error loading user learning data:', error);
+        console.log('Make sure to:');
         console.log('   1. Start the backend');
         console.log('   2. Check that backend is running on http://localhost:8080');
         // Keep using mock data on error
@@ -181,7 +168,7 @@ export class Learning implements OnInit {
     const topic = lesson.topic;
     const exerciseType = lesson.exerciseType;
 
-    console.log(`🎯 Starting lesson - Difficulty: ${difficulty}, Topic: ${topic}, Type: ${exerciseType}`);
+    console.log(`Starting lesson - Difficulty: ${difficulty}, Topic: ${topic}, Type: ${exerciseType}`);
 
     // Fetch exercises and filter by type
     this.exerciseService.getExercises('DE', difficulty, topic).subscribe({
@@ -189,7 +176,7 @@ export class Learning implements OnInit {
         // Filter by exercise type (MCQ or FILL_BLANK)
         const filteredExercises = exerciseSummaries.filter(ex => ex.type === exerciseType);
         
-        console.log(`✅ Found ${filteredExercises.length} ${exerciseType} exercises`, filteredExercises);
+        console.log(`Found ${filteredExercises.length} ${exerciseType} exercises`, filteredExercises);
         if (filteredExercises.length > 0) {
           this.currentExerciseSummaries.set(filteredExercises);
           this.currentExerciseIndex.set(0);
@@ -205,7 +192,7 @@ export class Learning implements OnInit {
         }
       },
       error: (error) => {
-        console.error('❌ Error loading exercises:', error);
+        console.error('Error loading exercises:', error);
       }
     });
   }
@@ -214,15 +201,15 @@ export class Learning implements OnInit {
    * Load full exercise details by ID and type
    */
   private loadExerciseDetail(summary: ExerciseSummaryResponse): void {
-    console.log(`📖 Loading exercise detail:`, summary);
+    console.log(`Loading exercise detail:`, summary);
     this.exerciseService.getExerciseById(summary.id, summary.type).subscribe({
       next: (detail) => {
-        console.log(`✅ Exercise detail loaded:`, detail);
+        console.log(`Exercise detail loaded:`, detail);
         this.currentExercise.set(detail);
         this.exerciseMode.set(true);
       },
       error: (error) => {
-        console.error('❌ Error loading exercise detail:', error);
+        console.error('Error loading exercise detail:', error);
       }
     });
   }
@@ -239,13 +226,13 @@ export class Learning implements OnInit {
     // Award XP if exercise was completed correctly
     if (result.isCorrect) {
       const xpEarned = result.xpEarned || 10; // Default 10 XP
-      this.userLearningService.addXp(this.TEST_USER_ID, xpEarned).subscribe({
+      this.userLearningService.addXp(xpEarned).subscribe({
         next: (data) => {
-          console.log(`✅ Awarded ${xpEarned} XP! Total XP: ${data.xp}`);
+          console.log(`Awarded ${xpEarned} XP! Total XP: ${data.xp}`);
           this.dailyProgress.set(data.xp);
         },
         error: (error) => {
-          console.error('❌ Error awarding XP:', error);
+          console.error('Error awarding XP:', error);
         }
       });
     }
