@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "LingUDE",
-    "tagline": "Deine Sprachlern-App",
+    "tagline": "Deine Sprachen. Deine UDE.",
     "settings": "Einstellungen"
   },
   "nav": {
@@ -15,7 +15,8 @@
   },
   "user": {
     "level": "Level",
-    "xp": "XP"
+    "xp": "XP",
+    "logout": "Abmelden"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -297,7 +298,27 @@
   },
   "leaderboard": {
     "title": "Bestenliste",
-    "subtitle": "Top-Lerner"
+    "subtitle": "Top-Lerner",
+    "today": "Heute",
+    "thisWeek": "Diese Woche",
+    "thisMonth": "Dieser Monat",
+    "allTime": "Gesamt",
+    "fullRankings": "Vollständige Rangliste",
+    "you": "Du",
+    "yourRanking": "Deine Platzierung",
+    "rankDescription": "Du bist auf einem guten Weg! Weiter so!",
+    "nextRank": "Bis Platz 1",
+    "weeklyChallenge": "Wöchentliche Challenge",
+    "challengeDescription": "Sammle die meisten XP diese Woche und gewinne einen Bonus!",
+    "daysLeft": "Tage übrig",
+    "participants": "Teilnehmer",
+    "joinChallenge": "Challenge beitreten",
+    "topAchievers": "Top Erreicher",
+    "level": "Level",
+    "lessons": "Lektionen",
+    "dayStreak": "{{count}}-Tage-Streak",
+    "lessonsThisWeek": "{{count}} Lektionen diese Woche",
+    "perfectScoreStreak": "Perfekte Serie"
   },
   "statistics": {
     "title": "Statistiken",

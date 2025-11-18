@@ -36,12 +36,19 @@
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
+  padding: 0;
 }
 
 .mascot-avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.mascot-image {
+  display: block;
 }
 
 .mascot-placeholder {
@@ -137,6 +144,15 @@
 .streak-icon {
   font-size: 2.5rem;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #60a5fa;
+}
+
+.streak-icon lucide-icon {
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 .streak-content {
@@ -186,6 +202,15 @@
 
 .trophy-icon {
   font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #60a5fa;
+}
+
+.trophy-icon lucide-icon {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .leaderboard-list {
@@ -382,8 +407,8 @@
 
 /* Daily Goals */
 .daily-goals {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  border: 2px solid #f59e0b;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  border: 2px solid #3b82f6;
 }
 
 /* ====== RESPONSIVE ====== */

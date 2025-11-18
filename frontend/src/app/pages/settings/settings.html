@@ -7,19 +7,32 @@
       <p>{{ t('settings.selectLanguage') }}</p>
       
       <div class="language-selector">
-        @for (lang of availableLanguages; track lang.code) {
-          <button 
-            class="language-button"
-            [class.active]="currentLang === lang.code"
-            (click)="changeLanguage(lang.code)"
-          >
-            <span class="language-flag">{{ lang.flag }}</span>
-            <span class="language-name">{{ lang.name }}</span>
-            @if (currentLang === lang.code) {
-              <span class="checkmark">✓</span>
+        <div class="custom-select" [class.open]="isDropdownOpen">
+          <div class="select-trigger" (click)="toggleDropdown()">
+            <span [class]="'fi fi-' + getSelectedLanguage().flag"></span>
+            <span class="selected-text">{{ getSelectedLanguage().name }}</span>
+            <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="select-options">
+            @for (lang of availableLanguages; track lang.code) {
+              <div 
+                class="select-option" 
+                [class.selected]="currentLang === lang.code"
+                (click)="selectLanguage(lang.code)"
+              >
+                <span [class]="'fi fi-' + lang.flag"></span>
+                <span class="option-text">{{ lang.name }}</span>
+                @if (currentLang === lang.code) {
+                  <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                }
+              </div>
             }
-          </button>
-        }
+          </div>
+        </div>
       </div>
     </div>
   </div>

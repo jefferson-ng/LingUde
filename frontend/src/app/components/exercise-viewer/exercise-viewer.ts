@@ -60,7 +60,7 @@ export class ExerciseViewerComponent implements OnChanges {
     const options = ex?.type === 'MCQ' && ex.options 
       ? ex.options 
       : [];
-    console.log('🎯 MCQ Options computed:', {
+    console.log('MCQ Options computed:', {
       exerciseId: ex?.id,
       exerciseType: ex?.type,
       options: options

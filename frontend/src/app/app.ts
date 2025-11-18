@@ -1,9 +1,9 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, HostListener } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
-import { LucideAngularModule, Home, BookOpen, Target, BarChart3, Settings, GraduationCap } from 'lucide-angular';
+import { LucideAngularModule, Home, BookOpen, Target, Trophy, Settings, GraduationCap, LogOut } from 'lucide-angular';
 
 @Component({
   selector: 'app-root',
@@ -18,14 +18,17 @@ export class App implements OnInit {
   readonly HomeIcon = Home;
   readonly BookOpenIcon = BookOpen;
   readonly TargetIcon = Target;
-  readonly BarChart3Icon = BarChart3;
+  readonly TrophyIcon = Trophy;
   readonly SettingsIcon = Settings;
   readonly GraduationCapIcon = GraduationCap;
+  readonly LogOutIcon = LogOut;
   
   protected readonly title = signal('LingUDE');
   protected readonly userLevel = signal(5);
   protected readonly userXP = signal(0); // Will be loaded from backend
+  protected readonly userStreak = signal(0); // Will be loaded from backend
   protected readonly userName = signal('Alex');
+  protected readonly isUserDropdownOpen = signal(false);
   
   // TODO: Replace with actual logged-in user ID from authentication service
   // Fixed UUID that matches backend - will always be the same
@@ -41,7 +44,8 @@ export class App implements OnInit {
     this.userLearningService.userLearning$.subscribe(data => {
       if (data) {
         this.userXP.set(data.xp);
-        console.log('🎯 XP updated in header:', data.xp);
+        this.userStreak.set(data.streakCount);
+        console.log('XP and Streak updated in header:', data.xp, data.streakCount);
       }
     });
   }
@@ -50,27 +54,55 @@ export class App implements OnInit {
    * Load user XP from backend
    */
   private loadUserXP(): void {
-    this.userLearningService.getUserLearning(this.TEST_USER_ID).subscribe({
+    this.userLearningService.getUserLearning().subscribe({
       next: (data) => {
         this.userXP.set(data.xp);
-        console.log('✅ Loaded user XP in app header:', data.xp);
+        this.userStreak.set(data.streakCount);
+        console.log('Loaded user XP and Streak in app header:', data.xp, data.streakCount);
       },
       error: (error) => {
-        console.error('❌ Error loading user XP:', error);
+        console.error('Error loading user XP:', error);
         // Keep default value on error
       }
     });
   }
 
+  /**
+   * Toggle user dropdown visibility
+   */
+  toggleUserDropdown(): void {
+    this.isUserDropdownOpen.set(!this.isUserDropdownOpen());
+  }
+
+  /**
+   * Close user dropdown
+   */
+  closeUserDropdown(): void {
+    this.isUserDropdownOpen.set(false);
+  }
+
+  /**
+   * Close dropdown when clicking outside
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const clickedInside = target.closest('.user-profile');
+    
+    if (!clickedInside && this.isUserDropdownOpen()) {
+      this.closeUserDropdown();
+    }
+  }
+
   navItems = [
     { path: '/dashboard', translationKey: 'nav.dashboard', icon: 'home' },
-    { path: '/lessons', translationKey: 'nav.lessons', icon: 'book-open' },
     { path: '/learning', translationKey: 'nav.learning', icon: 'graduation-cap' },
-    { path: '/goals', translationKey: 'nav.goals', icon: 'target' }
+    { path: '/lessons', translationKey: 'nav.lessons', icon: 'book-open' },
+    { path: '/goals', translationKey: 'nav.goals', icon: 'target' },
+    { path: '/leaderboard', translationKey: 'nav.leaderboard', icon: 'trophy' }
   ];
   
   footerItems = [
-    { path: '/statistics', translationKey: 'nav.statistics', icon: 'bar-chart-3' },
     { path: '/settings', translationKey: 'nav.settings', icon: 'settings' }
   ];
 }

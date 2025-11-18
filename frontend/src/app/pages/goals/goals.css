@@ -77,8 +77,8 @@
 }
 
 .goal-card.active {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  border-color: #f59e0b;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  border-color: #3b82f6;
 }
 
 .goal-icon {
@@ -157,7 +157,7 @@
 .goal-reward {
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  background: #fbbf24;
+  background: #3b82f6;
   color: white;
   font-weight: 700;
   font-size: 0.875rem;
@@ -206,7 +206,7 @@
 }
 
 .achievement-card.unlocked {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
 }
 
 .achievement-card.locked {

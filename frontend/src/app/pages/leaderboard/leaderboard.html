@@ -1,6 +1,258 @@
 <ng-container *transloco="let t">
-  <div class="page-container">
-    <h1>{{ t('leaderboard.title') }}</h1>
-    <p>{{ t('leaderboard.subtitle') }}</p>
+  <div class="leaderboard-container">
+    <!-- Page Header -->
+    <div class="leaderboard-header">
+      <h1 class="leaderboard-title">{{ t('leaderboard.title') }}</h1>
+      <p class="leaderboard-subtitle">{{ t('leaderboard.subtitle') }}</p>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="leaderboard-grid">
+      <!-- Left Column: Full Leaderboard -->
+      <div class="leaderboard-main">
+        <!-- Top 3 Podium -->
+        <div class="podium-section">
+          <!-- 2nd Place - You -->
+          <div class="podium-card second-place">
+            <div class="podium-rank">2</div>
+            <div class="podium-avatar current">{{ t('leaderboard.you')[0] }}</div>
+            <h3 class="podium-name">{{ t('leaderboard.you') }}</h3>
+            <p class="podium-xp">2,650 XP</p>
+          </div>
+
+          <!-- 1st Place -->
+          <div class="podium-card first-place">
+            <lucide-icon [img]="CrownIcon" class="podium-crown-icon"></lucide-icon>
+            <div class="podium-rank">1</div>
+            <div class="podium-avatar">AS</div>
+            <h3 class="podium-name">Anna Schmidt</h3>
+            <p class="podium-xp">2,840 XP</p>
+          </div>
+
+          <!-- 3rd Place -->
+          <div class="podium-card third-place">
+            <div class="podium-rank">3</div>
+            <div class="podium-avatar">MS</div>
+            <h3 class="podium-name">Maria Silva</h3>
+            <p class="podium-xp">2,120 XP</p>
+          </div>
+        </div>
+
+        <!-- Full Rankings List -->
+        <div class="rankings-card">
+          <h2 class="rankings-title">{{ t('leaderboard.fullRankings') }}</h2>
+          
+          <div class="rankings-list">
+            <!-- Rank 1-3 (repeated from podium for completeness) -->
+            <div class="ranking-item top-rank">
+              <div class="rank-badge rank-1">1</div>
+              <div class="user-avatar">AS</div>
+              <div class="user-info">
+                <span class="user-name">Anna Schmidt</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 15 • 24 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">2,840 XP</div>
+            </div>
+
+            <div class="ranking-item top-rank">
+              <div class="rank-badge rank-2">2</div>
+              <div class="user-avatar current">{{ t('leaderboard.you')[0] }}</div>
+              <div class="user-info">
+                <span class="user-name">{{ t('leaderboard.you') }}</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 14 • 22 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">2,650 XP</div>
+            </div>
+
+            <div class="ranking-item top-rank">
+              <div class="rank-badge rank-3">3</div>
+              <div class="user-avatar">MS</div>
+              <div class="user-info">
+                <span class="user-name">Maria Silva</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 13 • 20 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">2,120 XP</div>
+            </div>
+
+            <!-- Ranks 4-15 -->
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">4</div>
+              <div class="user-avatar">MM</div>
+              <div class="user-info">
+                <span class="user-name">Max Müller</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 8 • 12 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">1,240 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">5</div>
+              <div class="user-avatar">LK</div>
+              <div class="user-info">
+                <span class="user-name">Lisa Klein</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 8 • 11 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">1,180 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">6</div>
+              <div class="user-avatar">TB</div>
+              <div class="user-info">
+                <span class="user-name">Tom Becker</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 7 • 10 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">1,050 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">7</div>
+              <div class="user-avatar">SW</div>
+              <div class="user-info">
+                <span class="user-name">Sarah Weber</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 7 • 9 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">980 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">8</div>
+              <div class="user-avatar">JH</div>
+              <div class="user-info">
+                <span class="user-name">Jonas Hoffmann</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 6 • 8 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">850 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">9</div>
+              <div class="user-avatar">EF</div>
+              <div class="user-info">
+                <span class="user-name">Emma Fischer</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 6 • 8 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">820 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">10</div>
+              <div class="user-avatar">LS</div>
+              <div class="user-info">
+                <span class="user-name">Leon Schmidt</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 5 • 7 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">750 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">11</div>
+              <div class="user-avatar">MK</div>
+              <div class="user-info">
+                <span class="user-name">Mia Koch</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 5 • 6 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">680 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">12</div>
+              <div class="user-avatar">PW</div>
+              <div class="user-info">
+                <span class="user-name">Paul Wagner</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 5 • 6 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">650 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">13</div>
+              <div class="user-avatar">HB</div>
+              <div class="user-info">
+                <span class="user-name">Hannah Bauer</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 4 • 5 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">580 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">14</div>
+              <div class="user-avatar">FM</div>
+              <div class="user-info">
+                <span class="user-name">Felix Meyer</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 4 • 5 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">550 XP</div>
+            </div>
+
+            <div class="ranking-item">
+              <div class="rank-badge rank-other">15</div>
+              <div class="user-avatar">LS</div>
+              <div class="user-info">
+                <span class="user-name">Laura Schulz</span>
+                <span class="user-stats">{{ t('leaderboard.level') }} 4 • 4 {{ t('leaderboard.lessons') }}</span>
+              </div>
+              <div class="user-xp">520 XP</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Stats & Info -->
+      <div class="leaderboard-sidebar">
+        <!-- Your Ranking Card -->
+        <div class="your-rank-card">
+          <h3 class="card-title-small">{{ t('leaderboard.yourRanking') }}</h3>
+          <div class="rank-circle">
+            <span class="rank-number">2.</span>
+            <span class="rank-suffix"></span>
+          </div>
+          <p class="rank-description">{{ t('leaderboard.rankDescription') }}</p>
+          <div class="rank-progress">
+            <div class="progress-label-row">
+              <span>{{ t('leaderboard.nextRank') }}</span>
+              <span>190 XP</span>
+            </div>
+            <div class="rank-progress-bar">
+              <div class="rank-progress-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Achievers Card -->
+        <div class="achievers-card">
+          <h3 class="card-title-small">{{ t('leaderboard.topAchievers') }}</h3>
+          <div class="achievers-list">
+            <div class="achiever-item">
+              <div class="achiever-badge">
+                <lucide-icon [img]="FlameIcon" class="achiever-icon"></lucide-icon>
+              </div>
+              <div class="achiever-info">
+                <span class="achiever-name">Anna Schmidt</span>
+                <span class="achiever-desc">{{ t('leaderboard.dayStreak', { count: 15 }) }}</span>
+              </div>
+            </div>
+            <div class="achiever-item">
+              <div class="achiever-badge">
+                <lucide-icon [img]="ZapIcon" class="achiever-icon"></lucide-icon>
+              </div>
+              <div class="achiever-info">
+                <span class="achiever-name">{{ t('leaderboard.you') }}</span>
+                <span class="achiever-desc">{{ t('leaderboard.lessonsThisWeek', { count: 30 }) }}</span>
+              </div>
+            </div>
+            <div class="achiever-item">
+              <div class="achiever-badge">
+                <lucide-icon [img]="TargetIcon" class="achiever-icon"></lucide-icon>
+              </div>
+              <div class="achiever-info">
+                <span class="achiever-name">Maria Silva</span>
+                <span class="achiever-desc">{{ t('leaderboard.perfectScoreStreak') }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </ng-container>
