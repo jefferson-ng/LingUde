@@ -1,4 +1,5 @@
 /* Global Styles für LingUDE */
+@import 'flag-icons/css/flag-icons.min.css';
 
 * {
   margin: 0;

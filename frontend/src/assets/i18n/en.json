@@ -327,7 +327,24 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "selectLanguage": "Select Language"
+    "selectLanguage": "Select Language",
+    "theme": "Theme",
+    "selectTheme": "Choose your preferred theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeAuto": "Auto (System)",
+    "notifications": "Notifications",
+    "notificationsEnabled": "Enable notifications",
+    "notificationsDescription": "Receive updates about your learning progress",
+    "saveSuccess": "Settings saved successfully",
+    "saveError": "Failed to save settings",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano"
+    }
   },
   "exercise": {
     "types": {

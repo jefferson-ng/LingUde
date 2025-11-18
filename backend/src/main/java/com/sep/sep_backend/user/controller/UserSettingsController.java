@@ -18,6 +18,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/settings")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserSettingsController {
 
     private final JwtUtil jwtUtil;

@@ -1,6 +1,7 @@
 package com.sep.sep_backend.user.dto;
 
 import com.sep.sep_backend.user.entity.Language;
+import jakarta.validation.constraints.Pattern;
 
 /**
  * Single DTO used for both sending and receiving user settings data.
@@ -18,6 +19,8 @@ public class UserSettingsDTO {
 
     private Language uiLanguage;
     private Boolean notificationsEnabled;
+    
+    @Pattern(regexp = "^(LIGHT|DARK|AUTO)$", message = "Theme must be LIGHT, DARK, or AUTO")
     private String theme;
 
     public UserSettingsDTO() {

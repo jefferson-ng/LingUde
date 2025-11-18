@@ -327,7 +327,24 @@
   "settings": {
     "title": "Einstellungen",
     "language": "Sprache",
-    "selectLanguage": "Sprache auswählen"
+    "selectLanguage": "Sprache auswählen",
+    "theme": "Design",
+    "selectTheme": "Wähle dein bevorzugtes Design",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "themeAuto": "Auto (System)",
+    "notifications": "Benachrichtigungen",
+    "notificationsEnabled": "Benachrichtigungen aktivieren",
+    "notificationsDescription": "Erhalte Updates über deinen Lernfortschritt",
+    "saveSuccess": "Einstellungen erfolgreich gespeichert",
+    "saveError": "Fehler beim Speichern der Einstellungen",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano"
+    }
   },
   "exercise": {
     "types": {

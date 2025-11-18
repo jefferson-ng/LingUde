@@ -2,13 +2,14 @@
   <div class="page-container">
     <h1>{{ t('settings.title') }}</h1>
     
+    <!-- Language Settings -->
     <div class="settings-section">
       <h2>{{ t('settings.language') }}</h2>
       <p>{{ t('settings.selectLanguage') }}</p>
       
       <div class="language-selector">
-        <div class="custom-select" [class.open]="isDropdownOpen">
-          <div class="select-trigger" (click)="toggleDropdown()">
+        <div class="custom-select" [class.open]="isLanguageDropdownOpen">
+          <div class="select-trigger" (click)="toggleLanguageDropdown()">
             <span [class]="'fi fi-' + getSelectedLanguage().flag"></span>
             <span class="selected-text">{{ getSelectedLanguage().name }}</span>
             <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -20,7 +21,7 @@
               <div 
                 class="select-option" 
                 [class.selected]="currentLang === lang.code"
-                (click)="selectLanguage(lang.code)"
+                (click)="selectLanguage(lang.code, lang.backendCode)"
               >
                 <span [class]="'fi fi-' + lang.flag"></span>
                 <span class="option-text">{{ lang.name }}</span>
@@ -33,6 +34,57 @@
             }
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Theme Settings -->
+    <div class="settings-section">
+      <h2>{{ t('settings.theme') }}</h2>
+      <p>{{ t('settings.selectTheme') }}</p>
+      
+      <div class="theme-selector">
+        <div class="custom-select" [class.open]="isThemeDropdownOpen">
+          <div class="select-trigger" (click)="toggleThemeDropdown()">
+            <span class="selected-text">{{ t('settings.' + getSelectedTheme().key) }}</span>
+            <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="select-options">
+            @for (theme of availableThemes; track theme.value) {
+              <div 
+                class="select-option" 
+                [class.selected]="selectedTheme === theme.value"
+                (click)="selectTheme(theme.value)"
+              >
+                <span class="option-text">{{ t('settings.' + theme.key) }}</span>
+                @if (selectedTheme === theme.value) {
+                  <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications Settings -->
+    <div class="settings-section">
+      <h2>{{ t('settings.notifications') }}</h2>
+      <p>{{ t('settings.notificationsDescription') }}</p>
+      
+      <div class="toggle-container">
+        <label class="toggle-switch">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="notificationsEnabled"
+            (ngModelChange)="onNotificationChange($event)"
+          >
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">{{ t('settings.notificationsEnabled') }}</span>
       </div>
     </div>
   </div>
