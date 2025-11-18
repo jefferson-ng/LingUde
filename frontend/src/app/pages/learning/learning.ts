@@ -109,10 +109,8 @@ export class Learning implements OnInit {
 
   // TODO: Replace with actual logged-in user ID from authentication service
   // Current test user ID from database: testuser@test.com
-  // Fixed UUID that matches backend - will always be the same
-  private readonly TEST_USER_ID = '7b88460b-04f2-4138-bb75-7658e27d1ba7';
-
-  constructor(private exerciseService: ExerciseService) {}
+  // This will be replaced when proper authentication is implemented
+  private readonly TEST_USER_ID = 'e53351ef-fed0-487e-a93b-604a94e89b0d';  constructor(private exerciseService: ExerciseService) {}
 
   /**
    * Initialize component and fetch user learning data from backend.

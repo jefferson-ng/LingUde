@@ -17,19 +17,21 @@
       <!-- Level Progress -->
       <div class="level-card">
         <div class="level-header">
-          <span class="level-label">Level 8</span>
-          <span class="level-xp">1240 XP</span>
+          <span class="level-label">Level {{ userLevel() }}</span>
+          <span class="level-xp">{{ userXP() }} XP</span>
         </div>
         <div class="level-progress-bar">
-          <div class="level-progress-fill" style="width: 62%;"></div>
+          <div class="level-progress-fill" [style.width.%]="progressPercent()"></div>
         </div>
-        <p class="level-text">{{ t('dashboard.xpToNextLevel', { xp: 760 }) }}</p>
       </div>
 
       <!-- Streak Card -->
       <div class="streak-card">
+        <div class="streak-icon">
+          <lucide-icon [img]="FlameIcon" [size]="40"></lucide-icon>
+        </div>
         <div class="streak-content">
-          <h3 class="streak-title">12 {{ t('dashboard.days') }}</h3>
+          <h3 class="streak-title">{{ userStreak() }} {{ t('dashboard.days') }}</h3>
           <p class="streak-subtitle">{{ t('dashboard.streak') }}</p>
         </div>
         <p class="streak-message">{{ t('dashboard.streakMessage') }}</p>

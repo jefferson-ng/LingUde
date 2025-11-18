@@ -30,9 +30,9 @@ export class App implements OnInit {
   protected readonly userName = signal('Alex');
   protected readonly isUserDropdownOpen = signal(false);
   
-  // TODO: Replace with actual logged-in user ID from authentication service
-  // Fixed UUID that matches backend - will always be the same
-  private readonly TEST_USER_ID = '7b88460b-04f2-4138-bb75-7658e27d1ba7';
+    // TODO: Replace with actual logged-in user ID from authentication service
+  // This is a temporary test user ID
+  private readonly TEST_USER_ID = 'e53351ef-fed0-487e-a93b-604a94e89b0d';
 
   /**
    * Initialize component and load user XP data from backend
