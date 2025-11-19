@@ -9,16 +9,15 @@
               <div class="user-avatar">M</div>
             </button>
             
-            @if (isUserDropdownOpen()) {
+            @if (isUserDropdownOpen() && isLoggedIn()) {
               <div class="user-dropdown">
                 <div class="user-dropdown-header">
-                  <div class="user-avatar-large">M</div>
+                  <div class="user-avatar-large">{{ userName() ? userName().charAt(0).toUpperCase() : '?' }}</div>
                   <div class="user-details">
-                    <span class="user-name">Max Mustermann</span>
-                    <span class="user-email">max@example.com</span>
+                    <span class="user-name">{{ userName() }}</span>
+                    <span class="user-email">{{ userEmail() }}</span>
                   </div>
                 </div>
-                
                 <div class="user-dropdown-stats">
                   <div class="stat-item">
                     <span class="stat-label">Level</span>
@@ -33,9 +32,8 @@
                     <span class="stat-value">{{ userStreak() }} Tage</span>
                   </div>
                 </div>
-                
                 <div class="user-dropdown-actions">
-                  <button class="dropdown-action logout-action" type="button">
+                  <button class="dropdown-action logout-action" type="button" (click)="onLogout()">
                     <lucide-icon [img]="LogOutIcon" class="action-icon"></lucide-icon>
                     <span>{{ t('user.logout') }}</span>
                   </button>

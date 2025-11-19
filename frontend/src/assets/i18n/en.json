@@ -1,4 +1,15 @@
 {
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Register",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "loginBtn": "Login",
+    "registerBtn": "Register",
+    "noAccount": "No account yet? Register",
+    "hasAccount": "Already have an account? Login"
+  },
   "app": {
     "title": "LingUDE",
     "tagline": "Your Languages. Your UDE.",

@@ -1,0 +1,16 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-white);
+  padding: var(--spacing-sm) var(--spacing-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #ccc;
+}
+
+@media (min-width: 768px) {
+  .header {
+    /* Restore larger padding for desktop */
+    padding: var(--spacing-sm) var(--spacing-lg);
+  }
+}

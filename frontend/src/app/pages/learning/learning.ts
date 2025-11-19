@@ -107,10 +107,8 @@ export class Learning implements OnInit {
   protected currentExerciseIndex = signal<number>(0);
   protected currentExercise = signal<ExerciseDetailResponse | null>(null);
 
-  // TODO: Replace with actual logged-in user ID from authentication service
-  // Current test user ID from database: testuser@test.com
-  // This will be replaced when proper authentication is implemented
-  private readonly TEST_USER_ID = 'e53351ef-fed0-487e-a93b-604a94e89b0d';  constructor(private exerciseService: ExerciseService) {}
+  // Use authenticated user; no hardcoded test user ID
+  constructor(private exerciseService: ExerciseService) {}
 
   /**
    * Initialize component and fetch user learning data from backend.

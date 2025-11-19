@@ -1,4 +1,5 @@
 import { Component, signal, inject, OnInit, HostListener } from '@angular/core';
+import { AuthService, UserInfo } from './services/auth.service';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -24,30 +25,47 @@ export class App implements OnInit {
   readonly LogOutIcon = LogOut;
   
   protected readonly title = signal('LingUDE');
-  protected readonly userLevel = signal(5);
-  protected readonly userXP = signal(0); // Will be loaded from backend
-  protected readonly userStreak = signal(0); // Will be loaded from backend
-  protected readonly userName = signal('Alex');
+  protected readonly userLevel = signal(1);
+  protected readonly userXP = signal(0);
+  protected readonly userStreak = signal(0);
+  protected readonly userName = signal('');
+  protected readonly userEmail = signal('');
+  protected readonly isLoggedIn = signal(false);
+  private auth = inject(AuthService);
   protected readonly isUserDropdownOpen = signal(false);
   
     // TODO: Replace with actual logged-in user ID from authentication service
   // This is a temporary test user ID
-  private readonly TEST_USER_ID = 'e53351ef-fed0-487e-a93b-604a94e89b0d';
+  // Removed TEST_USER_ID; use authenticated user only
 
   /**
    * Initialize component and load user XP data from backend
    */
   ngOnInit(): void {
+    this.auth.user$.subscribe((user: UserInfo | null) => {
+      if (user) {
+        this.userName.set(user.username);
+        this.userEmail.set(user.email);
+        this.isLoggedIn.set(true);
+      } else {
+        this.userName.set('');
+        this.userEmail.set('');
+        this.isLoggedIn.set(false);
+      }
+    });
     this.loadUserXP();
-    
-    // Subscribe to XP updates from anywhere in the app
     this.userLearningService.userLearning$.subscribe(data => {
       if (data) {
         this.userXP.set(data.xp);
         this.userStreak.set(data.streakCount);
-        console.log('XP and Streak updated in header:', data.xp, data.streakCount);
       }
     });
+  }
+  async onLogout(): Promise<void> {
+    this.userLearningService.clearCache();
+    this.userXP.set(0);
+    this.userStreak.set(0);
+    await this.auth.logout();
   }
 
   /**
