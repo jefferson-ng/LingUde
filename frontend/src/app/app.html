@@ -1,7 +1,19 @@
 <ng-container *transloco="let t">
   <div class="app-container">
+    <!-- Mobile Menu Button -->
+    @if (!isSidebarOpen()) {
+      <button class="mobile-menu-toggle" (click)="toggleSidebar()" type="button" title="Menu öffnen">
+        <lucide-icon [img]="MenuIcon" class="menu-icon"></lucide-icon>
+      </button>
+    }
+
+    <!-- Mobile Overlay -->
+    @if (isSidebarOpen()) {
+      <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+    }
+
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+    <aside class="sidebar" [class.mobile-open]="isSidebarOpen()">
       <div class="sidebar-header">
         <div class="logo-section">
           <div class="user-profile">
@@ -52,12 +64,13 @@
       <nav class="nav-menu">
         <ul class="nav-list">
           @for (item of navItems; track item.path) {
-          <li class="nav-item">
-            <a 
-              [routerLink]="item.path" 
-              routerLinkActive="active"
-              class="nav-link"
-            >
+            <li class="nav-item">
+              <a 
+                [routerLink]="item.path" 
+                routerLinkActive="active"
+                class="nav-link"
+                (click)="closeSidebar()"
+              >
               @if (item.icon === 'home') {
               <lucide-icon [img]="HomeIcon" class="nav-icon"></lucide-icon>
               } @else if (item.icon === 'book-open') {
@@ -79,12 +92,13 @@
       <div class="sidebar-footer">
         <ul class="nav-list">
           @for (item of footerItems; track item.path) {
-          <li class="nav-item">
-            <a 
-              [routerLink]="item.path" 
-              routerLinkActive="active"
-              class="nav-link"
-            >
+            <li class="nav-item">
+              <a 
+                [routerLink]="item.path" 
+                routerLinkActive="active"
+                class="nav-link"
+                (click)="closeSidebar()"
+              >
               @if (item.icon === 'trophy') {
               <lucide-icon [img]="TrophyIcon" class="nav-icon"></lucide-icon>
               } @else if (item.icon === 'settings') {

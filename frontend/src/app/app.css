@@ -10,6 +10,81 @@
   width: 100%;
   overflow: hidden;
   background-color: var(--gray-100, #e8edf5);
+  position: relative;
+}
+
+/* ====== MOBILE MENU TOGGLE ====== */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1100;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  border: none;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+  transition: all 0.3s ease;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: slideInButton 0.3s ease 0.3s forwards;
+}
+
+@keyframes slideInButton {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.mobile-menu-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(30, 58, 138, 0.4);
+}
+
+.mobile-menu-toggle:active {
+  transform: scale(0.95);
+}
+
+.menu-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.mobile-menu-toggle:hover .menu-icon {
+  transform: rotate(90deg);
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ====== SIDEBAR ====== */
@@ -536,29 +611,59 @@
 }
 
 @media (max-width: 768px) {
+  /* Show mobile menu toggle */
+  .mobile-menu-toggle {
+    display: flex;
+  }
+  
+  /* Show overlay when sidebar is open */
+  .sidebar-overlay {
+    display: block;
+  }
+  
+  /* Sidebar mobile behavior */
   .sidebar {
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
+    width: 280px;
     transform: translateX(-100%);
     z-index: 1000;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
   }
   
   .sidebar.mobile-open {
     transform: translateX(0);
   }
   
+  /* Main content takes full width */
   .main-content {
     width: 100%;
   }
   
+  /* Add padding to header for menu button */
   .app-header {
-    padding: 1rem;
+    padding: 1rem 1rem 1rem 4.5rem;
   }
   
   .page-title {
     font-size: 1.25rem;
+  }
+  
+  /* Adjust header actions */
+  .header-actions {
+    gap: 0.5rem;
+  }
+  
+  .xp-counter,
+  .streak-counter {
+    padding: 0.4rem 0.75rem;
+  }
+  
+  .xp-value,
+  .streak-value {
+    font-size: 1rem;
   }
 }
 
@@ -573,5 +678,19 @@
   
   .user-level {
     font-size: 0.7rem;
+  }
+  
+  /* Compact header actions on very small screens */
+  .xp-label {
+    display: none;
+  }
+  
+  .xp-counter,
+  .streak-counter {
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .sidebar {
+    width: 260px;
   }
 }

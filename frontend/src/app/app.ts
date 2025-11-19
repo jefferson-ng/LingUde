@@ -4,7 +4,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
-import { LucideAngularModule, Home, BookOpen, Target, Trophy, Settings, GraduationCap, LogOut } from 'lucide-angular';
+import { LucideAngularModule, Home, BookOpen, Target, Trophy, Settings, GraduationCap, LogOut, Menu, X } from 'lucide-angular';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +23,8 @@ export class App implements OnInit {
   readonly SettingsIcon = Settings;
   readonly GraduationCapIcon = GraduationCap;
   readonly LogOutIcon = LogOut;
+  readonly MenuIcon = Menu;
+  readonly XIcon = X;
   
   protected readonly title = signal('LingUDE');
   protected readonly userLevel = signal(1);
@@ -33,6 +35,7 @@ export class App implements OnInit {
   protected readonly isLoggedIn = signal(false);
   private auth = inject(AuthService);
   protected readonly isUserDropdownOpen = signal(false);
+  protected readonly isSidebarOpen = signal(false);
   
     // TODO: Replace with actual logged-in user ID from authentication service
   // This is a temporary test user ID
@@ -97,6 +100,20 @@ export class App implements OnInit {
    */
   closeUserDropdown(): void {
     this.isUserDropdownOpen.set(false);
+  }
+
+  /**
+   * Toggle sidebar visibility on mobile
+   */
+  toggleSidebar(): void {
+    this.isSidebarOpen.set(!this.isSidebarOpen());
+  }
+
+  /**
+   * Close sidebar
+   */
+  closeSidebar(): void {
+    this.isSidebarOpen.set(false);
   }
 
   /**

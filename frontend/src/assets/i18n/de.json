@@ -96,6 +96,32 @@
     "title": "Lernen",
     "subtitle": "Dein Lernpfad",
     "selectDifficulty": "Wähle dein Schwierigkeitsniveau",
+    "difficulty": {
+      "a1": {
+        "label": "Anfänger",
+        "description": "Kann vertraute, alltägliche Ausdrücke und sehr einfache Sätze verstehen und verwenden"
+      },
+      "a2": {
+        "label": "Grundlegende Kenntnisse",
+        "description": "Kann sich in einfachen, routinemäßigen Situationen verständigen"
+      },
+      "b1": {
+        "label": "Fortgeschritten",
+        "description": "Kann die Hauptpunkte verstehen, wenn klare Standardsprache verwendet wird"
+      },
+      "b2": {
+        "label": "Selbständig",
+        "description": "Kann sich spontan und fließend verständigen"
+      },
+      "c1": {
+        "label": "Fachkundige Sprachkenntnisse",
+        "description": "Kann sich spontan und fließend ausdrücken, ohne öfter nach Worten suchen zu müssen"
+      },
+      "c2": {
+        "label": "Annähernd muttersprachlich",
+        "description": "Kann praktisch alles mühelos verstehen und sich präzise ausdrücken"
+      }
+    },
     "exerciseMode": {
       "back": "Zurück",
       "progress": "Fortschritt",
