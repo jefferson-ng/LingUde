@@ -85,6 +85,32 @@
     "title": "Learning",
     "subtitle": "Your Learning Path",
     "selectDifficulty": "Choose Your Difficulty Level",
+    "difficulty": {
+      "a1": {
+        "label": "Beginner",
+        "description": "Can understand and use familiar everyday expressions and very basic phrases"
+      },
+      "a2": {
+        "label": "Elementary",
+        "description": "Can communicate in simple and routine tasks requiring simple exchanges"
+      },
+      "b1": {
+        "label": "Intermediate",
+        "description": "Can understand the main points when clear standard language is used"
+      },
+      "b2": {
+        "label": "Upper-Intermediate",
+        "description": "Can interact with a degree of fluency and spontaneity"
+      },
+      "c1": {
+        "label": "Advanced",
+        "description": "Can express ideas fluently and spontaneously without much obvious searching for expressions"
+      },
+      "c2": {
+        "label": "Near-Native",
+        "description": "Can understand virtually everything and express themselves precisely"
+      }
+    },
     "exerciseMode": {
       "back": "Back",
       "progress": "Progress",

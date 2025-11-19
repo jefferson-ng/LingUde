@@ -153,6 +153,14 @@ export class Learning implements OnInit {
     this.closePanel();
   }
 
+  getDifficultyLabel(difficulty: DifficultyLevel): string {
+    return this.translocoService.translate(`learning.difficulty.${difficulty.toLowerCase()}.label`);
+  }
+
+  getDifficultyDescription(difficulty: DifficultyLevel): string {
+    return this.translocoService.translate(`learning.difficulty.${difficulty.toLowerCase()}.description`);
+  }
+
   selectLesson(lesson: Lesson) {
     this.selectedLesson.set(lesson);
   }
