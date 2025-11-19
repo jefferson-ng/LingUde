@@ -1,4 +1,15 @@
 {
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Register",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "loginBtn": "Login",
+    "registerBtn": "Register",
+    "noAccount": "No account yet? Register",
+    "hasAccount": "Already have an account? Login"
+  },
   "app": {
     "title": "LingUDE",
     "tagline": "Your Languages. Your UDE.",
@@ -85,6 +96,32 @@
     "title": "Learning",
     "subtitle": "Your Learning Path",
     "selectDifficulty": "Choose Your Difficulty Level",
+    "difficulty": {
+      "a1": {
+        "label": "Beginner",
+        "description": "Can understand and use familiar everyday expressions and very basic phrases"
+      },
+      "a2": {
+        "label": "Elementary",
+        "description": "Can communicate in simple and routine tasks requiring simple exchanges"
+      },
+      "b1": {
+        "label": "Intermediate",
+        "description": "Can understand the main points when clear standard language is used"
+      },
+      "b2": {
+        "label": "Upper-Intermediate",
+        "description": "Can interact with a degree of fluency and spontaneity"
+      },
+      "c1": {
+        "label": "Advanced",
+        "description": "Can express ideas fluently and spontaneously without much obvious searching for expressions"
+      },
+      "c2": {
+        "label": "Near-Native",
+        "description": "Can understand virtually everything and express themselves precisely"
+      }
+    },
     "exerciseMode": {
       "back": "Back",
       "progress": "Progress",
@@ -327,7 +364,24 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "selectLanguage": "Select Language"
+    "selectLanguage": "Select Language",
+    "theme": "Theme",
+    "selectTheme": "Choose your preferred theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeAuto": "Auto (System)",
+    "notifications": "Notifications",
+    "notificationsEnabled": "Enable notifications",
+    "notificationsDescription": "Receive updates about your learning progress",
+    "saveSuccess": "Settings saved successfully",
+    "saveError": "Failed to save settings",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano"
+    }
   },
   "exercise": {
     "types": {

@@ -63,7 +63,18 @@ public class UserLearningService {
      * @return Optional containing the user learning data if found
      */
     public Optional<UserLearning> findLearningByUserId(UUID userId) {
-        return userLearningRepository.findByUser_Id(userId);
+        Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
+        if (learningOptional.isPresent()) {
+            return learningOptional;
+        } else {
+            // Auto-create UserLearning for new users
+            Optional<User> userOptional = userRepository.findById(userId);
+            if (userOptional.isEmpty()) {
+                return Optional.empty();
+            }
+            UserLearning learning = new UserLearning(userOptional.get());
+            return Optional.of(userLearningRepository.save(learning));
+        }
     }
 
     /**
@@ -83,12 +94,19 @@ public class UserLearningService {
      */
     public Optional<UserLearning> addXp(UUID userId, Integer xpToAdd) {
         Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
+        UserLearning learning;
         if (learningOptional.isPresent()) {
-            UserLearning learning = learningOptional.get();
-            learning.setXp(learning.getXp() + xpToAdd);
-            return Optional.of(userLearningRepository.save(learning));
+            learning = learningOptional.get();
+        } else {
+            // Auto-create UserLearning for new users
+            Optional<User> userOptional = userRepository.findById(userId);
+            if (userOptional.isEmpty()) {
+                return Optional.empty();
+            }
+            learning = new UserLearning(userOptional.get());
         }
-        return Optional.empty();
+        learning.setXp(learning.getXp() + xpToAdd);
+        return Optional.of(userLearningRepository.save(learning));
     }
 
     /**

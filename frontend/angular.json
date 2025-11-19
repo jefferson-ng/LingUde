@@ -30,9 +30,9 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/flag-icons/css/flag-icons.min.css"
-            ]
+              "src/styles.css"
+            ],
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -44,8 +44,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "12kB",
-                  "maximumError": "16kB"
+                  "maximumWarning": "40kB",
+                  "maximumError": "48kB"
                 }
               ],
               "outputHashing": "all"

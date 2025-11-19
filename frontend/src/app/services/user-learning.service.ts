@@ -23,7 +23,7 @@ export interface UserLearningData {
   providedIn: 'root'
 })
 export class UserLearningService {
-  private readonly apiUrl = 'http://localhost:8080/api/user/learning';
+  private readonly apiUrl = '/api/user/learning';
   
   // Observable state for current user's learning data
   private userLearningSubject = new BehaviorSubject<UserLearningData | null>(null);

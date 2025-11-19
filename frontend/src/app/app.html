@@ -1,7 +1,19 @@
 <ng-container *transloco="let t">
   <div class="app-container">
+    <!-- Mobile Menu Button -->
+    @if (!isSidebarOpen()) {
+      <button class="mobile-menu-toggle" (click)="toggleSidebar()" type="button" title="Menu öffnen">
+        <lucide-icon [img]="MenuIcon" class="menu-icon"></lucide-icon>
+      </button>
+    }
+
+    <!-- Mobile Overlay -->
+    @if (isSidebarOpen()) {
+      <div class="sidebar-overlay" (click)="closeSidebar()"></div>
+    }
+
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+    <aside class="sidebar" [class.mobile-open]="isSidebarOpen()">
       <div class="sidebar-header">
         <div class="logo-section">
           <div class="user-profile">
@@ -9,16 +21,15 @@
               <div class="user-avatar">M</div>
             </button>
             
-            @if (isUserDropdownOpen()) {
+            @if (isUserDropdownOpen() && isLoggedIn()) {
               <div class="user-dropdown">
                 <div class="user-dropdown-header">
-                  <div class="user-avatar-large">M</div>
+                  <div class="user-avatar-large">{{ userName() ? userName().charAt(0).toUpperCase() : '?' }}</div>
                   <div class="user-details">
-                    <span class="user-name">Max Mustermann</span>
-                    <span class="user-email">max@example.com</span>
+                    <span class="user-name">{{ userName() }}</span>
+                    <span class="user-email">{{ userEmail() }}</span>
                   </div>
                 </div>
-                
                 <div class="user-dropdown-stats">
                   <div class="stat-item">
                     <span class="stat-label">Level</span>
@@ -33,9 +44,8 @@
                     <span class="stat-value">{{ userStreak() }} Tage</span>
                   </div>
                 </div>
-                
                 <div class="user-dropdown-actions">
-                  <button class="dropdown-action logout-action" type="button">
+                  <button class="dropdown-action logout-action" type="button" (click)="onLogout()">
                     <lucide-icon [img]="LogOutIcon" class="action-icon"></lucide-icon>
                     <span>{{ t('user.logout') }}</span>
                   </button>
@@ -54,12 +64,13 @@
       <nav class="nav-menu">
         <ul class="nav-list">
           @for (item of navItems; track item.path) {
-          <li class="nav-item">
-            <a 
-              [routerLink]="item.path" 
-              routerLinkActive="active"
-              class="nav-link"
-            >
+            <li class="nav-item">
+              <a 
+                [routerLink]="item.path" 
+                routerLinkActive="active"
+                class="nav-link"
+                (click)="closeSidebar()"
+              >
               @if (item.icon === 'home') {
               <lucide-icon [img]="HomeIcon" class="nav-icon"></lucide-icon>
               } @else if (item.icon === 'book-open') {
@@ -81,12 +92,13 @@
       <div class="sidebar-footer">
         <ul class="nav-list">
           @for (item of footerItems; track item.path) {
-          <li class="nav-item">
-            <a 
-              [routerLink]="item.path" 
-              routerLinkActive="active"
-              class="nav-link"
-            >
+            <li class="nav-item">
+              <a 
+                [routerLink]="item.path" 
+                routerLinkActive="active"
+                class="nav-link"
+                (click)="closeSidebar()"
+              >
               @if (item.icon === 'trophy') {
               <lucide-icon [img]="TrophyIcon" class="nav-icon"></lucide-icon>
               } @else if (item.icon === 'settings') {

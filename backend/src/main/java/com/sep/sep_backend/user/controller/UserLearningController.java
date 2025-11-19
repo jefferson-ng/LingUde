@@ -36,17 +36,8 @@ public class UserLearningController {
     @GetMapping("/myLearning")
     public ResponseEntity<UserLearningDTO> getUserLearning() {
         try {
-            // TEMPORARY: Use hardcoded test user ID when not authenticated
-            UUID userId;
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal instanceof UUID) {
-                userId = (UUID) principal;
-            } else {
-                // Use test user ID when not authenticated
-                userId = UUID.fromString("e53351ef-fed0-487e-a93b-604a94e89b0d");
-            }
+            UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
             Optional<UserLearning> learningOptional = userLearningService.findLearningByUserId(userId);
-            
             if (learningOptional.isPresent()) {
                 UserLearning learning = learningOptional.get();
                 UserLearningDTO dto = new UserLearningDTO(
@@ -77,17 +68,8 @@ public class UserLearningController {
     public ResponseEntity<UserLearningDTO> addXp(
             @RequestParam Integer xpAmount) {
         try {
-            // TEMPORARY: Use hardcoded test user ID when not authenticated
-            UUID userId;
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal instanceof UUID) {
-                userId = (UUID) principal;
-            } else {
-                // Use test user ID when not authenticated
-                userId = UUID.fromString("e53351ef-fed0-487e-a93b-604a94e89b0d");
-            }
+            UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
             Optional<UserLearning> learningOptional = userLearningService.addXp(userId, xpAmount);
-            
             if (learningOptional.isPresent()) {
                 UserLearning learning = learningOptional.get();
                 UserLearningDTO dto = new UserLearningDTO(
@@ -121,24 +103,13 @@ public class UserLearningController {
     @PutMapping("/myLearning")
     public ResponseEntity<UserLearningDTO> updateUserLevels(
             @RequestBody UserLearningDTO dto) {
-        // TEMPORARY: Use hardcoded test user ID when not authenticated
-        UUID userId;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UUID) {
-            userId = (UUID) principal;
-        } else {
-            // Use test user ID when not authenticated
-            userId = UUID.fromString("e53351ef-fed0-487e-a93b-604a94e89b0d");
-        }
         try {
-
+            UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
             Optional<UserLearningDTO> updated =
-                    userLearningService.updateLearningConfig(userId, dto);
-
+                userLearningService.updateLearningConfig(userId, dto);
             return updated
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
