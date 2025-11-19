@@ -23,7 +23,7 @@ export interface UserLearningData {
   providedIn: 'root'
 })
 export class UserLearningService {
-  private readonly apiUrl = 'http://localhost:8080/api/user/learning';
+  private readonly apiUrl = '/api/user/learning';
   
   // Observable state for current user's learning data
   private userLearningSubject = new BehaviorSubject<UserLearningData | null>(null);
@@ -32,30 +32,27 @@ export class UserLearningService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Fetches user learning data from the backend for a specific user.
+   * Fetches user learning data from the backend for the authenticated user.
    * Updates the internal state with the fetched data.
    *
-   * @param userId - The UUID of the user
    * @returns Observable of UserLearningData
    */
-  getUserLearning(userId: string): Observable<UserLearningData> {
-    return this.http.get<UserLearningData>(`${this.apiUrl}/${userId}`)
+  getUserLearning(): Observable<UserLearningData> {
+    return this.http.get<UserLearningData>(`${this.apiUrl}/myLearning`)
       .pipe(
         tap(data => this.userLearningSubject.next(data))
       );
   }
 
   /**
-   * Adds XP to a user's learning progress.
-   * This is useful for testing or manual XP adjustments.
+   * Adds XP to the authenticated user's learning progress.
    *
-   * @param userId - The UUID of the user
    * @param xpAmount - The amount of XP to add
    * @returns Observable of updated UserLearningData
    */
-  addXp(userId: string, xpAmount: number): Observable<UserLearningData> {
+  addXp(xpAmount: number): Observable<UserLearningData> {
     return this.http.post<UserLearningData>(
-      `${this.apiUrl}/${userId}/xp?xpAmount=${xpAmount}`,
+      `${this.apiUrl}/addXp?xpAmount=${xpAmount}`,
       {}
     ).pipe(
       tap(data => this.userLearningSubject.next(data))

@@ -23,6 +23,10 @@ public class UserSettings {
     @Column(name = "notifications_enabled", nullable = false)
     private Boolean notificationsEnabled = true;
 
+    /**
+     * UI theme preference.
+     * Valid values: "LIGHT", "DARK", "AUTO"
+     */
     @Column(length = 10)
     private String theme = "AUTO";
 

@@ -9,6 +9,8 @@ import com.sep.sep_backend.user.dto.SigninRequest;
 import com.sep.sep_backend.user.dto.SignupRequest;
 import com.sep.sep_backend.user.entity.User;
 import com.sep.sep_backend.user.repository.UserRepository;
+import com.sep.sep_backend.user.entity.UserLearning;
+import com.sep.sep_backend.user.repository.UserLearningRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,12 +28,14 @@ public class UserService {
     private final UserRepository userRepo;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final UserLearningRepository userLearningRepo;
 
-    public UserService(PasswordEncoder encoder, UserRepository userRepo, JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
+    public UserService(PasswordEncoder encoder, UserRepository userRepo, JwtUtil jwtUtil, RefreshTokenService refreshTokenService, UserLearningRepository userLearningRepo) {
         this.encoder = encoder;
         this.userRepo = userRepo;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
+        this.userLearningRepo = userLearningRepo;
     }
 
 
@@ -56,6 +60,10 @@ public class UserService {
         user.setEmail(email);
         user.setPasswordHash(hash);
         userRepo.save(user);
+
+        // Create UserLearning for this user
+        UserLearning userLearning = new UserLearning(user);
+        userLearningRepo.save(userLearning);
 
         // Generate tokens
         String accessToken = jwtUtil.generateAccessToken(user.getId());

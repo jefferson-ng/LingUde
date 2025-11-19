@@ -1,6 +1,18 @@
 {
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Register",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "loginBtn": "Login",
+    "registerBtn": "Register",
+    "noAccount": "No account yet? Register",
+    "hasAccount": "Already have an account? Login"
+  },
   "app": {
     "title": "LingUDE",
+    "tagline": "Your Languages. Your UDE.",
     "settings": "Settings"
   },
   "nav": {
@@ -9,23 +21,107 @@
     "lessons": "Lessons",
     "goals": "My Goals",
     "leaderboard": "Leaderboard",
-    "statistics": "Statistics"
+    "statistics": "Statistics",
+    "settings": "Settings"
   },
   "user": {
     "level": "Level",
-    "xp": "XP"
+    "xp": "XP",
+    "logout": "Log out"
   },
   "dashboard": {
     "title": "Dashboard",
-    "subtitle": "Overview and Statistics"
+    "subtitle": "Overview and Statistics",
+    "partner": "Your LingUDE Partner",
+    "motivationalMessage": "I'm proud of your progress! Let's learn together today.",
+    "xpToNextLevel": "{{xp}} XP until Level 9",
+    "days": "Days",
+    "streak": "Learning Streak",
+    "streakMessage": "Fantastic! Learn today to continue your streak.",
+    "leaderboard": "Leaderboard",
+    "you": "You",
+    "lessons": "Lessons",
+    "achievements": "Achievements",
+    "dailyGoals": "Daily Goals",
+    "dailyLesson": "Daily Lesson",
+    "dailyLessonText": "Continue your learning journey with today's lesson.",
+    "startLesson": "Start Lesson",
+    "goals": "Daily Goals",
+    "goalsRemaining": "2 more goals for today! You can do it!",
+    "viewGoals": "View Goals"
   },
   "lessons": {
     "title": "Lessons",
-    "subtitle": "Your Language Lessons"
+    "subtitle": "Choose a lesson and expand your knowledge",
+    "yourProgress": "Your Learning Progress",
+    "of": "of",
+    "lessonsCompleted": "lessons completed",
+    "vocabulary": "Vocabulary",
+    "grammar": "Grammar",
+    "conversation": "Conversation",
+    "listening": "Listening",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "progress": "Progress",
+    "repeat": "Repeat",
+    "continue": "Continue",
+    "start": "Start",
+    "lesson1": {
+      "title": "Basic Vocabulary: Greetings",
+      "description": "Learn the most important German greetings"
+    },
+    "lesson2": {
+      "title": "Grammar: Articles (der, die, das)",
+      "description": "Understand German articles and their usage"
+    },
+    "lesson3": {
+      "title": "Conversation: At the Restaurant",
+      "description": "Practice typical conversations in a restaurant"
+    },
+    "lesson4": {
+      "title": "Listening: Everyday Life",
+      "description": "Understand German conversations in everyday life"
+    },
+    "lesson5": {
+      "title": "Vocabulary: Family",
+      "description": "Learn vocabulary around the topic of family"
+    },
+    "lesson6": {
+      "title": "Grammar: Past Tense",
+      "description": "Master the past tense in German"
+    }
   },
   "learning": {
     "title": "Learning",
     "subtitle": "Your Learning Path",
+    "selectDifficulty": "Choose Your Difficulty Level",
+    "difficulty": {
+      "a1": {
+        "label": "Beginner",
+        "description": "Can understand and use familiar everyday expressions and very basic phrases"
+      },
+      "a2": {
+        "label": "Elementary",
+        "description": "Can communicate in simple and routine tasks requiring simple exchanges"
+      },
+      "b1": {
+        "label": "Intermediate",
+        "description": "Can understand the main points when clear standard language is used"
+      },
+      "b2": {
+        "label": "Upper-Intermediate",
+        "description": "Can interact with a degree of fluency and spontaneity"
+      },
+      "c1": {
+        "label": "Advanced",
+        "description": "Can express ideas fluently and spontaneously without much obvious searching for expressions"
+      },
+      "c2": {
+        "label": "Near-Native",
+        "description": "Can understand virtually everything and express themselves precisely"
+      }
+    },
     "exerciseMode": {
       "back": "Back",
       "progress": "Progress",
@@ -39,45 +135,227 @@
       "locked": "Complete the previous lesson first!"
     },
     "lessons": {
-      "lesson1": {
-        "title": "Lesson 1",
-        "description": "Description for Lesson 1",
-        "section": "Basics",
-        "exercises": {
-          "ex1": "Exercise 1",
-          "ex2": "Exercise 2",
-          "ex3": "Exercise 3"
+      "a1": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Practice with multiple choice questions",
+          "section": "A1 - Beginner",
+          "exercises": {
+            "ex1": "Basic Greetings",
+            "ex2": "Simple Words",
+            "ex3": "Numbers"
+          }
+        },
+        "lesson2": {
+          "title": "Fill in the Blanks",
+          "description": "Complete the missing words",
+          "section": "A1 - Beginner",
+          "exercises": {
+            "ex1": "Simple Sentences",
+            "ex2": "Basic Vocabulary",
+            "ex3": "Daily Expressions"
+          }
         }
       },
-      "lesson2": {
-        "title": "Lesson 2",
-        "description": "Description for Lesson 2",
-        "section": "Basics",
-        "exercises": {
-          "ex1": "Exercise 1",
-          "ex2": "Exercise 2",
-          "ex3": "Exercise 3"
+      "a2": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Practice with multiple choice questions",
+          "section": "A2 - Elementary",
+          "exercises": {
+            "ex1": "Past Tense",
+            "ex2": "Family",
+            "ex3": "Daily Life"
+          }
+        },
+        "lesson2": {
+          "title": "Fill in the Blanks",
+          "description": "Complete the missing words",
+          "section": "A2 - Elementary",
+          "exercises": {
+            "ex1": "Tenses",
+            "ex2": "Descriptions",
+            "ex3": "Conversation"
+          }
         }
       },
-      "lesson3": {
-        "title": "Lesson 3",
-        "description": "Description for Lesson 3",
-        "section": "Advanced",
-        "exercises": {
-          "ex1": "Exercise 1",
-          "ex2": "Exercise 2",
-          "ex3": "Exercise 3"
+      "b1": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Practice with multiple choice questions",
+          "section": "B1 - Intermediate",
+          "exercises": {
+            "ex1": "Grammar",
+            "ex2": "Idioms",
+            "ex3": "Connections"
+          }
+        },
+        "lesson2": {
+          "title": "Fill in the Blanks",
+          "description": "Complete the missing words",
+          "section": "B1 - Intermediate",
+          "exercises": {
+            "ex1": "Complex Sentences",
+            "ex2": "Technical Terms",
+            "ex3": "Discussion"
+          }
+        }
+      },
+      "b2": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Practice with multiple choice questions",
+          "section": "B2 - Upper Intermediate",
+          "exercises": {
+            "ex1": "Phrases",
+            "ex2": "Subjunctive",
+            "ex3": "Style"
+          }
+        },
+        "lesson2": {
+          "title": "Fill in the Blanks",
+          "description": "Complete the missing words",
+          "section": "B2 - Upper Intermediate",
+          "exercises": {
+            "ex1": "Precision",
+            "ex2": "Argumentation",
+            "ex3": "Expression"
+          }
+        }
+      },
+      "c1": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Practice with multiple choice questions",
+          "section": "C1 - Advanced",
+          "exercises": {
+            "ex1": "Nuances",
+            "ex2": "Technical Language",
+            "ex3": "Complexity"
+          }
+        },
+        "lesson2": {
+          "title": "Fill in the Blanks",
+          "description": "Complete the missing words",
+          "section": "C1 - Advanced",
+          "exercises": {
+            "ex1": "Precise Expression",
+            "ex2": "Terminology",
+            "ex3": "Abstract Concepts"
+          }
+        }
+      },
+      "c2": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Practice with multiple choice questions",
+          "section": "C2 - Mastery",
+          "exercises": {
+            "ex1": "Native Level",
+            "ex2": "Subtleties",
+            "ex3": "Mastery"
+          }
+        },
+        "lesson2": {
+          "title": "Fill in the Blanks",
+          "description": "Complete the missing words",
+          "section": "C2 - Mastery",
+          "exercises": {
+            "ex1": "Perfection",
+            "ex2": "Eloquence",
+            "ex3": "Excellence"
+          }
         }
       }
     }
   },
   "goals": {
     "title": "My Goals",
-    "subtitle": "Track Your Learning Goals"
+    "subtitle": "Track Your Learning Goals",
+    "weeklyGoals": "Weekly Goals",
+    "achievements": "Achievements",
+    "weeklyProgress": "Weekly Progress",
+    "keepGoing": "You're on a fantastic path! 3 more goals for today.",
+    "encouragement": "You're on a fantastic path! 3 more goals for today.",
+    "nextReward": "Next Reward:",
+    "in20Days": "in 20 days",
+    "days": {
+      "mo": "Mon",
+      "tu": "Tue",
+      "we": "Wed",
+      "th": "Thu",
+      "fr": "Fri",
+      "sa": "Sat",
+      "su": "Sun"
+    },
+    "dailyGoal": {
+      "title": "Daily Goal",
+      "description": "Complete at least one lesson"
+    },
+    "xpGoal": {
+      "title": "XP Goal",
+      "description": "Earn 100 XP today"
+    },
+    "streakGoal": {
+      "title": "Learning Streak",
+      "description": "Continue your learning streak"
+    },
+    "practiceGoal": {
+      "title": "Practice Session",
+      "description": "Practice for 20 minutes"
+    },
+    "reviewGoal": {
+      "title": "Review",
+      "description": "Review 5 learned words"
+    },
+    "achievement1": {
+      "title": "First Week",
+      "description": "7-day streak"
+    },
+    "achievement2": {
+      "title": "Diligent",
+      "description": "10 lessons"
+    },
+    "achievement3": {
+      "title": "Determined",
+      "description": "30 daily goals"
+    },
+    "achievement4": {
+      "title": "Master",
+      "description": "50 lessons"
+    },
+    "achievement5": {
+      "title": "Champion",
+      "description": "30-day streak"
+    },
+    "achievement6": {
+      "title": "Expert",
+      "description": "100 lessons"
+    }
   },
   "leaderboard": {
     "title": "Leaderboard",
-    "subtitle": "Top Learners"
+    "subtitle": "Top Learners",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "allTime": "All Time",
+    "fullRankings": "Full Rankings",
+    "you": "You",
+    "yourRanking": "Your Ranking",
+    "rankDescription": "You're doing great! Keep it up!",
+    "nextRank": "To Rank 1",
+    "weeklyChallenge": "Weekly Challenge",
+    "challengeDescription": "Earn the most XP this week and win a bonus!",
+    "daysLeft": "Days Left",
+    "participants": "Participants",
+    "joinChallenge": "Join Challenge",
+    "topAchievers": "Top Achievers",
+    "level": "Level",
+    "lessons": "lessons",
+    "dayStreak": "{{count}}-day streak",
+    "lessonsThisWeek": "{{count}} lessons this week",
+    "perfectScoreStreak": "Perfect score streak"
   },
   "statistics": {
     "title": "Statistics",
@@ -86,7 +364,24 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "selectLanguage": "Select Language"
+    "selectLanguage": "Select Language",
+    "theme": "Theme",
+    "selectTheme": "Choose your preferred theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeAuto": "Auto (System)",
+    "notifications": "Notifications",
+    "notificationsEnabled": "Enable notifications",
+    "notificationsDescription": "Receive updates about your learning progress",
+    "saveSuccess": "Settings saved successfully",
+    "saveError": "Failed to save settings",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano"
+    }
   },
   "exercise": {
     "types": {
