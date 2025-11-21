@@ -165,14 +165,14 @@
 **Themen:** 
 - was wurde in diesem Sprint gemacht
 - Demo vorgeführt
-	--> paar Unvollständigkeiten entdeckt: Log-Out:
+	--> paar Unvollständigkeiten entdeckt: 
 		-beim refresh der Seite landet man wieder auf der Landingpage
 		-Streaks inkrementieren
-		-Settings nicht mit Backeend verknüpft
+		-Settings nicht mit Backend verknüpft
 - Retrospective:
 	--> was lief nicht so gut? : 
     - Frontend und Backend arbeiten versetzt --> Frontend muss aufholen (Unterstützung, da schon mehr 		    Backend Komponente implementiert sind)
-	  - mehr Dokumentation --> Warum wurde etwas so umgesetzt --> mehr Hintergrund
+	  - mehr Dokumentation --> Warum wurde etwas wie umgesetzt --> mehr Hintergrund
 	  - Dokumentieren (Contract between Front-/ Backeend)
 	  -mehr Kommuikation untereinander
 
