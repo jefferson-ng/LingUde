@@ -1,4 +1,98 @@
-<div class="page-container">
-  <h1>Dashboard</h1>
-  <p>Startseite - Übersicht und Statistiken</p>
-</div>
+<ng-container *transloco="let t">
+  <div class="dashboard-container">
+    <!-- Left Column: Main Content -->
+    <div class="dashboard-main">
+      <!-- Robert the Otter -->
+      <div class="mascot-card">
+        <div class="mascot-avatar">
+          <img src="assets/robert-otter.png" alt="Robert Otter" class="mascot-image">
+        </div>
+        <div class="mascot-speech">
+          <h3 class="mascot-name">Robert "Rob" Otter</h3>
+          <p class="mascot-subtitle">{{ t('dashboard.partner') }}</p>
+          <p class="mascot-message">{{ t('dashboard.motivationalMessage') }}</p>
+        </div>
+      </div>
+
+      <!-- Level Progress -->
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-label">Level {{ userLevel() }}</span>
+          <span class="level-xp">{{ userXP() }} XP</span>
+        </div>
+        <div class="level-progress-bar">
+          <div class="level-progress-fill" [style.width.%]="progressPercent()"></div>
+        </div>
+      </div>
+
+      <!-- Streak Card -->
+      <div class="streak-card">
+        <div class="streak-icon">
+          <lucide-icon [img]="FlameIcon" [size]="40"></lucide-icon>
+        </div>
+        <div class="streak-content">
+          <h3 class="streak-title">{{ userStreak() }} {{ t('dashboard.days') }}</h3>
+          <p class="streak-subtitle">{{ t('dashboard.streak') }}</p>
+        </div>
+        <p class="streak-message">{{ t('dashboard.streakMessage') }}</p>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="leaderboard-card">
+        <div class="card-header">
+          <h3 class="card-title">{{ t('dashboard.leaderboard') }}</h3>
+        </div>
+        <div class="leaderboard-list">
+          <div class="leaderboard-item">
+            <div class="rank-badge rank-1">1</div>
+            <span class="leaderboard-name">Anna Schmidt</span>
+            <span class="leaderboard-xp">2840 XP</span>
+          </div>
+          <div class="leaderboard-item current-user">
+            <div class="rank-badge rank-2">2</div>
+            <span class="leaderboard-name">{{ t('dashboard.you') }}</span>
+            <span class="leaderboard-xp">2650 XP</span>
+          </div>
+          <div class="leaderboard-item">
+            <div class="rank-badge rank-3">3</div>
+            <span class="leaderboard-name">Maria Silva</span>
+            <span class="leaderboard-xp">2120 XP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Stats & Actions -->
+    <div class="dashboard-sidebar">
+      <!-- Stats Row -->
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-value">24</div>
+          <div class="stat-label">{{ t('dashboard.lessons') }}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">12</div>
+          <div class="stat-label">{{ t('dashboard.achievements') }}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">3/5</div>
+          <div class="stat-label">{{ t('dashboard.dailyGoals') }}</div>
+        </div>
+      </div>
+
+      <!-- Daily Lesson Card -->
+      <div class="action-card daily-lesson">
+        <h4 class="action-title">{{ t('dashboard.dailyLesson') }}</h4>
+        <p class="action-description">{{ t('dashboard.dailyLessonText') }}</p>
+        <button class="btn-start-lesson">{{ t('dashboard.startLesson') }}</button>
+      </div>
+
+      <!-- Daily Goals Card -->
+      <div class="action-card daily-goals">
+        <h4 class="action-title">{{ t('dashboard.goals') }}</h4>
+        <p class="action-description">{{ t('dashboard.goalsRemaining') }}</p>
+        <button class="btn-view-goals">{{ t('dashboard.viewGoals') }}</button>
+      </div>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,11 @@
+<div class="auth-container" *transloco="let t">
+  <h2>{{ t('auth.registerTitle') }}</h2>
+  <form (ngSubmit)="onRegister()">
+    <input type="email" [(ngModel)]="email" name="email" [placeholder]="t('auth.email')" required />
+    <input type="text" [(ngModel)]="username" name="username" [placeholder]="t('auth.username')" required />
+    <input type="password" [(ngModel)]="password" name="password" [placeholder]="t('auth.password')" required />
+    <button type="submit">{{ t('auth.registerBtn') }}</button>
+    <div class="error" *ngIf="error">{{ error }}</div>
+  </form>
+  <a routerLink="/login">{{ t('auth.hasAccount') }}</a>
+</div>

@@ -1,0 +1,405 @@
+{
+  "auth": {
+    "loginTitle": "Anmelden",
+    "registerTitle": "Registrieren",
+    "email": "E-Mail",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "loginBtn": "Anmelden",
+    "registerBtn": "Registrieren",
+    "noAccount": "Noch kein Konto? Registrieren",
+    "hasAccount": "Bereits ein Konto? Anmelden"
+  },
+  "app": {
+    "title": "LingUDE",
+    "tagline": "Deine Sprachen. Deine UDE.",
+    "settings": "Einstellungen"
+  },
+  "nav": {
+    "dashboard": "Startseite",
+    "learning": "Lernen",
+    "lessons": "Lektionen",
+    "goals": "Ziele",
+    "leaderboard": "Bestenliste",
+    "statistics": "Statistiken",
+    "settings": "Einstellungen"
+  },
+  "user": {
+    "level": "Level",
+    "xp": "XP",
+    "logout": "Abmelden"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Übersicht und Statistiken",
+    "partner": "Dein LingUDE-Partner",
+    "motivationalMessage": "Ich bin stolz auf deine Fortschritte! Lass uns heute gemeinsam lernen.",
+    "xpToNextLevel": "Noch {{xp}} XP bis Level 9",
+    "days": "Tage",
+    "streak": "Lernstreak",
+    "streakMessage": "Fantastisch! Lerne heute, um deinen Streak fortzusetzen.",
+    "leaderboard": "Bestenliste",
+    "you": "Du",
+    "lessons": "Lektionen",
+    "achievements": "Erfolge",
+    "dailyGoals": "Tagesziele",
+    "dailyLesson": "Tägliche Lektion",
+    "dailyLessonText": "Setze deine Lernreise fort mit der heutigen Lektion.",
+    "startLesson": "Lektion starten",
+    "goals": "Tagesziele",
+    "goalsRemaining": "Noch 2 Ziele für heute! Du schaffst das!",
+    "viewGoals": "Ziele ansehen"
+  },
+  "lessons": {
+    "title": "Lektionen",
+    "subtitle": "Wähle eine Lektion und erweitere dein Wissen",
+    "yourProgress": "Dein Lernfortschritt",
+    "of": "von",
+    "lessonsCompleted": "Lektionen abgeschlossen",
+    "vocabulary": "Wortschatz",
+    "grammar": "Grammatik",
+    "conversation": "Konversation",
+    "listening": "Hörverstehen",
+    "beginner": "Anfänger",
+    "intermediate": "Mittelstufe",
+    "advanced": "Fortgeschritten",
+    "progress": "Fortschritt",
+    "repeat": "Wiederholen",
+    "continue": "Fortsetzen",
+    "start": "Starten",
+    "lesson1": {
+      "title": "Grundwortschatz: Begrüßungen",
+      "description": "Lerne die wichtigsten Begrüßungsformen auf Deutsch"
+    },
+    "lesson2": {
+      "title": "Grammatik: Artikel (der, die, das)",
+      "description": "Verstehe die deutschen Artikel und ihre Verwendung"
+    },
+    "lesson3": {
+      "title": "Konversation: Im Restaurant",
+      "description": "Übe typische Gespräche in einem Restaurant"
+    },
+    "lesson4": {
+      "title": "Hörverstehen: Alltag",
+      "description": "Verstehe deutsche Gespräche im Alltag"
+    },
+    "lesson5": {
+      "title": "Wortschatz: Familie",
+      "description": "Lerne Vokabeln rund um das Thema Familie"
+    },
+    "lesson6": {
+      "title": "Grammatik: Präteritum",
+      "description": "Meistere die Vergangenheitsform im Deutschen"
+    }
+  },
+  "learning": {
+    "title": "Lernen",
+    "subtitle": "Dein Lernpfad",
+    "selectDifficulty": "Wähle dein Schwierigkeitsniveau",
+    "difficulty": {
+      "a1": {
+        "label": "Anfänger",
+        "description": "Kann vertraute, alltägliche Ausdrücke und sehr einfache Sätze verstehen und verwenden"
+      },
+      "a2": {
+        "label": "Grundlegende Kenntnisse",
+        "description": "Kann sich in einfachen, routinemäßigen Situationen verständigen"
+      },
+      "b1": {
+        "label": "Fortgeschritten",
+        "description": "Kann die Hauptpunkte verstehen, wenn klare Standardsprache verwendet wird"
+      },
+      "b2": {
+        "label": "Selbständig",
+        "description": "Kann sich spontan und fließend verständigen"
+      },
+      "c1": {
+        "label": "Fachkundige Sprachkenntnisse",
+        "description": "Kann sich spontan und fließend ausdrücken, ohne öfter nach Worten suchen zu müssen"
+      },
+      "c2": {
+        "label": "Annähernd muttersprachlich",
+        "description": "Kann praktisch alles mühelos verstehen und sich präzise ausdrücken"
+      }
+    },
+    "exerciseMode": {
+      "back": "Zurück",
+      "progress": "Fortschritt",
+      "whatYouWillLearn": "Was du lernen wirst:"
+    },
+    "panel": {
+      "progress": "Fortschritt",
+      "continue": "Fortsetzen",
+      "repeat": "Wiederholen",
+      "start": "Starten",
+      "locked": "Bearbeite zuerst die vorherige Lektion!"
+    },
+    "lessons": {
+      "a1": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "A1 - Anfänger",
+          "exercises": {
+            "ex1": "Grundlegende Grüße",
+            "ex2": "Einfache Wörter",
+            "ex3": "Zahlen"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "A1 - Anfänger",
+          "exercises": {
+            "ex1": "Einfache Sätze",
+            "ex2": "Grundvokabular",
+            "ex3": "Alltagsausdrücke"
+          }
+        }
+      },
+      "a2": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "A2 - Grundlagen",
+          "exercises": {
+            "ex1": "Vergangenheitsformen",
+            "ex2": "Familie",
+            "ex3": "Alltag"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "A2 - Grundlagen",
+          "exercises": {
+            "ex1": "Zeitformen",
+            "ex2": "Beschreibungen",
+            "ex3": "Konversation"
+          }
+        }
+      },
+      "b1": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "B1 - Mittelstufe",
+          "exercises": {
+            "ex1": "Grammatik",
+            "ex2": "Idiome",
+            "ex3": "Zusammenhänge"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "B1 - Mittelstufe",
+          "exercises": {
+            "ex1": "Komplexe Sätze",
+            "ex2": "Fachausdrücke",
+            "ex3": "Diskussion"
+          }
+        }
+      },
+      "b2": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "B2 - Mittelstufe",
+          "exercises": {
+            "ex1": "Redewendungen",
+            "ex2": "Konjunktiv",
+            "ex3": "Stilmittel"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "B2 - Mittelstufe",
+          "exercises": {
+            "ex1": "Präzision",
+            "ex2": "Argumentation",
+            "ex3": "Ausdruck"
+          }
+        }
+      },
+      "c1": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "C1 - Fortgeschritten",
+          "exercises": {
+            "ex1": "Nuancen",
+            "ex2": "Fachsprache",
+            "ex3": "Komplexität"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "C1 - Fortgeschritten",
+          "exercises": {
+            "ex1": "Präziser Ausdruck",
+            "ex2": "Fachterminologie",
+            "ex3": "Abstrakte Konzepte"
+          }
+        }
+      },
+      "c2": {
+        "lesson1": {
+          "title": "Multiple Choice",
+          "description": "Übe mit Multiple-Choice-Fragen",
+          "section": "C2 - Experte",
+          "exercises": {
+            "ex1": "Muttersprachniveau",
+            "ex2": "Feinheiten",
+            "ex3": "Meisterschaft"
+          }
+        },
+        "lesson2": {
+          "title": "Lückentexte",
+          "description": "Fülle die fehlenden Wörter ein",
+          "section": "C2 - Experte",
+          "exercises": {
+            "ex1": "Perfektion",
+            "ex2": "Eloquenz",
+            "ex3": "Exzellenz"
+          }
+        }
+      }
+    }
+  },
+  "goals": {
+    "title": "Meine Ziele",
+    "subtitle": "Verfolge deine Lernziele",
+    "weeklyGoals": "Wöchentliche Ziele",
+    "achievements": "Erfolge",
+    "weeklyProgress": "Wöchentlicher Fortschritt",
+    "keepGoing": "Du bist auf einem fantastischen Weg! Noch 3 Ziele für heute.",
+    "encouragement": "Du bist auf einem fantastischen Weg! Noch 3 Ziele für heute.",
+    "nextReward": "Nächste Belohnung:",
+    "in20Days": "in 20 Tagen",
+    "days": {
+      "mo": "Mo",
+      "tu": "Di",
+      "we": "Mi",
+      "th": "Do",
+      "fr": "Fr",
+      "sa": "Sa",
+      "su": "So"
+    },
+    "dailyGoal": {
+      "title": "Tägliches Ziel",
+      "description": "Schließe mindestens eine Lektion ab"
+    },
+    "xpGoal": {
+      "title": "XP Ziel",
+      "description": "Sammle 100 XP heute"
+    },
+    "streakGoal": {
+      "title": "Lernstreak",
+      "description": "Setze deinen Lernstreak fort"
+    },
+    "practiceGoal": {
+      "title": "Übungssession",
+      "description": "Übe 20 Minuten"
+    },
+    "reviewGoal": {
+      "title": "Wiederholung",
+      "description": "Wiederhole 5 gelernte Wörter"
+    },
+    "achievement1": {
+      "title": "Erste Woche",
+      "description": "7 Tage Streak"
+    },
+    "achievement2": {
+      "title": "Fleißig",
+      "description": "10 Lektionen"
+    },
+    "achievement3": {
+      "title": "Zielstrebig",
+      "description": "30 Tagesziele"
+    },
+    "achievement4": {
+      "title": "Meister",
+      "description": "50 Lektionen"
+    },
+    "achievement5": {
+      "title": "Champion",
+      "description": "30 Tage Streak"
+    },
+    "achievement6": {
+      "title": "Experte",
+      "description": "100 Lektionen"
+    }
+  },
+  "leaderboard": {
+    "title": "Bestenliste",
+    "subtitle": "Top-Lerner",
+    "today": "Heute",
+    "thisWeek": "Diese Woche",
+    "thisMonth": "Dieser Monat",
+    "allTime": "Gesamt",
+    "fullRankings": "Vollständige Rangliste",
+    "you": "Du",
+    "yourRanking": "Deine Platzierung",
+    "rankDescription": "Du bist auf einem guten Weg! Weiter so!",
+    "nextRank": "Bis Platz 1",
+    "weeklyChallenge": "Wöchentliche Challenge",
+    "challengeDescription": "Sammle die meisten XP diese Woche und gewinne einen Bonus!",
+    "daysLeft": "Tage übrig",
+    "participants": "Teilnehmer",
+    "joinChallenge": "Challenge beitreten",
+    "topAchievers": "Top Erreicher",
+    "level": "Level",
+    "lessons": "Lektionen",
+    "dayStreak": "{{count}}-Tage-Streak",
+    "lessonsThisWeek": "{{count}} Lektionen diese Woche",
+    "perfectScoreStreak": "Perfekte Serie"
+  },
+  "statistics": {
+    "title": "Statistiken",
+    "subtitle": "Dein Lernfortschritt"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "selectLanguage": "Sprache auswählen",
+    "theme": "Design",
+    "selectTheme": "Wähle dein bevorzugtes Design",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "themeAuto": "Auto (System)",
+    "notifications": "Benachrichtigungen",
+    "notificationsEnabled": "Benachrichtigungen aktivieren",
+    "notificationsDescription": "Erhalte Updates über deinen Lernfortschritt",
+    "saveSuccess": "Einstellungen erfolgreich gespeichert",
+    "saveError": "Fehler beim Speichern der Einstellungen",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano"
+    }
+  },
+  "exercise": {
+    "types": {
+      "mcq": "Multiple Choice",
+      "fillBlank": "Lückentext"
+    },
+    "instruction": {
+      "fillBlank": "Fülle die Lücke aus:"
+    },
+    "feedback": {
+      "correct": "Richtig!",
+      "incorrect": "Nicht ganz richtig",
+      "correctAnswer": "Die richtige Antwort ist:",
+      "xpEarned": "Du hast {{xp}} XP verdient!"
+    },
+    "buttons": {
+      "check": "Prüfen",
+      "next": "Weiter"
+    }
+  }
+}

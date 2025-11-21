@@ -1,0 +1,115 @@
+<div class="exercise-viewer">
+  <!-- MCQ Exercise -->
+  @if (exerciseSignal()?.type === 'MCQ') {
+    <div class="mcq-exercise">
+      <h2 class="question-text">{{ exerciseSignal().questionText }}</h2>
+      
+      <div class="mcq-options">
+        @for (option of mcqOptions(); track option) {
+          <button
+            class="mcq-option"
+            [class.selected]="selectedOption() === option && !submitted()"
+            [class.correct]="isOptionCorrect(option)"
+            [class.wrong]="isOptionWrong(option)"
+            [class.disabled]="submitted()"
+            (click)="selectOption(option)"
+            [disabled]="submitted()"
+          >
+            <span class="option-text">{{ option }}</span>
+            
+            @if (submitted()) {
+              @if (isOptionCorrect(option)) {
+                <svg class="option-icon check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              }
+              @if (isOptionWrong(option)) {
+                <svg class="option-icon cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              }
+            }
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Fill in the Blank Exercise -->
+  @if (exerciseSignal()?.type === 'FILL_BLANK') {
+    <div class="fill-blank-exercise">
+      <h2 class="instruction">{{ 'exercise.instruction.fillBlank' | transloco }}</h2>
+      
+      <div class="sentence-container">
+        <div class="sentence-parts">
+          <span class="sentence-before">{{ fillBlankParts().before }}</span>
+          
+          <input
+            type="text"
+            class="blank-input"
+            [class.correct]="submitted() && isCorrect()"
+            [class.wrong]="submitted() && !isCorrect()"
+            [(ngModel)]="userAnswer"
+            [disabled]="submitted()"
+            placeholder="___"
+            (keyup.enter)="submit()"
+          />
+          
+          <span class="sentence-after">{{ fillBlankParts().after }}</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Feedback Section -->
+  @if (showFeedback && submitted()) {
+    <div class="feedback" [class.correct]="isCorrect()" [class.wrong]="!isCorrect()">
+      <div class="feedback-main">
+        <div class="feedback-icon">
+          @if (isCorrect()) {
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          } @else {
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+          }
+        </div>
+        
+        <h3 class="feedback-title">
+          {{ isCorrect() ? ('exercise.feedback.correct' | transloco) : ('exercise.feedback.incorrect' | transloco) }}
+        </h3>
+      </div>
+      
+      @if (!isCorrect()) {
+        <p class="feedback-text">
+          {{ 'exercise.feedback.correctAnswer' | transloco }} <strong>{{ getCorrectAnswer() }}</strong>
+        </p>
+      }
+    </div>
+  }
+
+  <!-- Action Buttons -->
+  <div class="exercise-actions">
+    @if (!submitted()) {
+      <button 
+        class="btn btn-primary btn-submit"
+        [disabled]="!canSubmit()"
+        (click)="submit()"
+      >
+        {{ 'exercise.buttons.check' | transloco }}
+      </button>
+    } @else {
+      <button 
+        class="btn btn-primary btn-next"
+        (click)="next()"
+      >
+        {{ 'exercise.buttons.next' | transloco }}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    }
+  </div>
+</div>

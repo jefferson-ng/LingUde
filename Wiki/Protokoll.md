@@ -133,8 +133,6 @@
 -Transloco files erklärt
 -jede/-r arbeitet an den Issues weiter
 
----
-
 **Datum:** 13.11.2025
 
 **Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit / Marvin als Lehrender
@@ -142,3 +140,45 @@
 **Themen:**
 -jede/-r hat erzählt, was er / sie gemacht hat seit Montag (10.11.2025)
 -als Gruppe entschieden Tailwind erst einmal raus zu nehmen (es kam zu Problemen bei einzelnen Gruppenmitgliedern)
+
+---
+
+**Datum:** 19.11.2025
+
+**Teilnehmer:**  Tarek, Chaima, Emirhan, Hamit 
+
+**Themen:**
+-Johns branch gemerged
+- UI overhaul Emirhan
+- Back end Frontend anbindungen Hamit 
+- Progress communication with Backend Tarek, CHaima 
+- Almost Release Ready 
+
+---
+
+## Sprint 2 Retrospective  
+
+**Datum:** 20.11.2025
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit / Herr Korn und Marvin als Lehrende
+
+**Themen:** 
+- was wurde in diesem Sprint gemacht
+- Demo vorgeführt
+	--> paar Unvollständigkeiten entdeckt: Log-Out:
+		-beim refresh der Seite landet man wieder auf der Landingpage
+		-Streaks inkrementieren
+		-Settings nicht mit Backeend verknüpft
+- Retrospective:
+	--> was lief nicht so gut? : 
+    - Frontend und Backend arbeiten versetzt --> Frontend muss aufholen (Unterstützung, da schon mehr 		    Backend Komponente implementiert sind)
+	  - mehr Dokumentation --> Warum wurde etwas so umgesetzt --> mehr Hintergrund
+	  - Dokumentieren (Contract between Front-/ Backeend)
+	  -mehr Kommuikation untereinander
+
+
+
+
+
+
+
