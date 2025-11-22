@@ -167,8 +167,24 @@ npm install @jsverse/transloco
 
 ## 📚 Weitere Ressourcen
 
-- [Transloco Offizielle Dokumentation](https://jsverse.github.io/transloco/)
-- [Angular i18n Best Practices](https://angular.dev/guide/i18n)
+
+## ⚙️ Setup in app.config.ts
+
+Die Transloco-Konfiguration wird in `app.config.ts` mit `provideTransloco` eingerichtet:
+
+```typescript
+provideTransloco({
+  config: {
+    availableLangs: ['de', 'en'],
+    defaultLang: 'de',
+    reRenderOnLangChange: true,
+    prodMode: !isDevMode(),
+  },
+  loader: TranslocoHttpLoader
+})
+```
+
+**Verfügbare Sprachen:** `de`, `en` (siehe Transloco-Konfiguration und assets/i18n)
 
 ## 👥 Fragen?
 

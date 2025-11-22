@@ -15,8 +15,10 @@ export interface UserInfo {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = '/api/auth';
-  private userSubject = new BehaviorSubject<UserInfo | null>(null);
+  public userSubject = new BehaviorSubject<UserInfo | null>(null);
   user$ = this.userSubject.asObservable();
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {
     this.loadUserFromStorage();
@@ -46,10 +48,20 @@ export class AuthService {
 
   async fetchUserInfo() {
     const token = localStorage.getItem('accessToken');
-    if (!token) return;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-    const user: any = await firstValueFrom(this.http.get(`${this.apiUrl}/me`, { headers }));
-    this.userSubject.next(user);
+    if (!token) {
+      this.loadingSubject.next(false);
+      return;
+    }
+    this.loadingSubject.next(true);
+    try {
+      const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+      const user: any = await firstValueFrom(this.http.get(`${this.apiUrl}/me`, { headers }));
+      this.userSubject.next(user);
+    } catch (error) {
+      this.userSubject.next(null);
+    } finally {
+      this.loadingSubject.next(false);
+    }
   }
 
   private setSession(res: any) {
@@ -62,10 +74,12 @@ export class AuthService {
     });
   }
 
-  private loadUserFromStorage() {
+  public loadUserFromStorage() {
     const token = localStorage.getItem('accessToken');
     if (token) {
       this.fetchUserInfo();
+    } else {
+      this.loadingSubject.next(false);
     }
   }
 }

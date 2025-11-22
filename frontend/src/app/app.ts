@@ -45,6 +45,8 @@ export class App implements OnInit {
    * Initialize component and load user XP data from backend
    */
   ngOnInit(): void {
+      // Ensure user info is loaded from storage on app startup
+      this.auth.loadUserFromStorage();
     this.auth.user$.subscribe((user: UserInfo | null) => {
       if (user) {
         this.userName.set(user.username);

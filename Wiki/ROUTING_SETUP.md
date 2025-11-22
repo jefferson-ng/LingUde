@@ -57,15 +57,29 @@ noch nicht durchdacht
 
 ## 📝 Routing-Konfiguration
 
+
 ```typescript
-/                    → /dashboard (redirect)
+// Public routes (no AuthGuard):
+/                    → /home (redirect)
+/home                → Home Component
+/login               → Login Component
+/register            → Register Component
+
+// Protected routes (require AuthGuard):
 /dashboard           → Dashboard Component
+/learning            → Learning Component
 /lessons             → Lessons Component
 /goals               → Goals Component
 /leaderboard         → Leaderboard Component
 /statistics          → Statistics Component
-/**                  → /dashboard (404 redirect)
+/settings            → Settings Component
+/**                  → /dashboard (404 redirect, protected)
 ```
+
+
+Hinweis: Die meisten Seiten sind durch AuthGuard geschützt und nur nach Login erreichbar.
+Die Routing-Konfiguration nutzt `loadComponent` für Lazy Loading und Layout-Komponenten (`LandingLayout`, `App`) für die Strukturierung der öffentlichen und geschützten Bereiche.
+Siehe app.routes.ts für die vollständige Konfiguration und Lazy Loading.
 
 
 
