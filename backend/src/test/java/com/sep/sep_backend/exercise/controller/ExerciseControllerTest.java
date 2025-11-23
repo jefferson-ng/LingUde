@@ -23,14 +23,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.sep.sep_backend.auth.filter.JwtAuthenticationFilter;
+
 
 import com.sep.sep_backend.exercise.dto.FillBlankSubmissionRequest;
-import com.sep.sep_backend.exercise.entity.ExerciseType;
-
 import org.springframework.boot.CommandLineRunner;
+
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
 
 /**
  * Controller-slice tests for ExerciseController.
@@ -56,6 +56,13 @@ class ExerciseControllerTest {
     // This is the important part: override the CommandLineRunner bean
     @MockBean(name = "run")
     private CommandLineRunner commandLineRunner;
+
+    // Mock JWT authentication filter so that SecurityConfig can be created in the test context
+    // @MockBean tells Spring Boot Test to register a Mockito mock as a bean in the application context
+    @MockBean
+    // This mock instance will be injected into SecurityConfig's constructor instead of a real filter
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
 
     private final ObjectMapper om = new ObjectMapper(); // JSON (de)serializer
 

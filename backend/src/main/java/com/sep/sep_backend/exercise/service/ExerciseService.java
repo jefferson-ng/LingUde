@@ -23,7 +23,12 @@ import java.util.*;
  *   <li>Update or create {@link UserProgress} entries when a user solves an exercise</li>
  * </ul>
  * This class is intentionally type-aware: it knows how to handle both
- * {@link ExerciseType#MCQ} and {@link ExerciseType#FILL_BLANK}.
+ * {@link ExerciseType#MCQ} and {@link ExerciseType#FILL_BLANK}. It is
+ * authentication-agnostic in the sense that it only works with a userId
+ * ({@link java.util.UUID}) provided by upper layers (e.g. controllers
+ * reading from Spring Security), and does not access the security context
+ * directly.
+ * </p>
  */
 @Service
 public class ExerciseService {
@@ -142,17 +147,25 @@ public class ExerciseService {
      *   <li>updates {@link UserProgress} if a user is provided</li>
      * </ul>
      *
+     <p>
+     * Authentication is handled at the controller level. The controller is expected
+     * to extract the authenticated user's ID (e.g. from Spring Security) and pass it
+     * to this method. If {@code userId} is {@code null}, progress is not recorded,
+     * but the correctness and XP calculation still work.
+     * </p>
+     *
      * @param id   ID of the MCQ exercise
      * @param req  payload containing the selected answer
-     * @param user currently logged-in user (may be {@code null} until auth is implemented)
+     * @param userId Unique identifier of the authenticated user, or {@code null}
+     *               if progress tracking should be skipped.
      * @return {@link SubmissionResultResponse} with correctness, XP and feedback
      */
     @Transactional
-    public SubmissionResultResponse submitMcq(UUID id, McqSubmissionRequest req, User user) {
+    public SubmissionResultResponse submitMcq(UUID id, McqSubmissionRequest req, UUID userId) {
         ExerciseMcq e = mcqRepo.findById(id).orElseThrow(() -> new NoSuchElementException("MCQ not found"));
         boolean correct = e.getCorrectAnswer().equals(req.getSelectedAnswer());
         int xp = correct ? e.getXpReward() : 0;
-        updateUserProgress(user, id, ExerciseType.MCQ, correct, xp);
+        updateUserProgress(userId, id, ExerciseType.MCQ, correct, xp);
         String feedback = correct ? "Great job!" : "Try again.";
         return new SubmissionResultResponse(correct, xp, e.getCorrectAnswer(), feedback);
         // NOTE: In production, you may omit correctAnswer from response to prevent leaks.
@@ -163,19 +176,27 @@ public class ExerciseService {
      * The comparison is normalized (trimmed, lower-cased, single spaces)
      * so that small formatting differences do not cause a wrong result.
      *
+     * <p>
+     * Authentication is handled at the controller level. The controller is expected
+     * to extract the authenticated user's ID (e.g. from Spring Security) and pass it
+     * to this method. If {@code userId} is {@code null}, progress is not recorded,
+     * but answer evaluation still works.
+     * </p>
+     *
      * @param id   ID of the Fill-in-the-Blank exercise
      * @param req  payload containing the user answer text
-     * @param user currently logged-in user (may be {@code null} until auth is implemented)
+     * @param userId Unique identifier of the authenticated user, or {@code null}
+     *               if progress tracking should be skipped.
      * @return {@link SubmissionResultResponse} with correctness, XP and feedback
      */
     @Transactional
-    public SubmissionResultResponse submitFillBlank(UUID id, FillBlankSubmissionRequest req, User user) {
+    public SubmissionResultResponse submitFillBlank(UUID id, FillBlankSubmissionRequest req, UUID userId) {
         ExerciseFillBlank e = fillRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Fill-Blank not found"));
         String userAns = normalize(req.getAnswerText());
         String sol = normalize(e.getCorrectAnswer());
         boolean correct = userAns.equals(sol);
         int xp = correct ? e.getXpReward() : 0;
-        updateUserProgress(user, id, ExerciseType.FILL_BLANK, correct, xp);
+        updateUserProgress(userId, id, ExerciseType.FILL_BLANK, correct, xp);
         String feedback = correct ? "Nice!" : "Remember the correct form.";
         return new SubmissionResultResponse(correct, xp, e.getCorrectAnswer(), feedback);
     }
@@ -199,26 +220,42 @@ public class ExerciseService {
 
     /**
      * Updates the progress of a user for a specific exercise based on their submission result.
-     * If it's the first submission, creates a new progress entry. If the exercise is already
-     * completed, it does not update the progress unless the current submission marks it as correct.
      *
-     * @param user The user whose progress is being updated. If null, progress is not tracked.
+     * <p>
+     * This method is responsible for creating or updating a {@link UserProgress} entry
+     * for the given user and exercise. If it is the first submission, a new progress
+     * record is inserted. If a record already exists and was not yet completed, it can
+     * be updated when the user finally submits a correct answer.
+     * </p>
+     *
+     * <p>
+     * If {@code userId} is {@code null}, the method returns immediately and no
+     * progress is recorded. This allows the service to be called in contexts
+     * where tracking is not required (although in the current application all
+     * exercise endpoints are authenticated).
+     * </p>
+     * @param userId     The unique identifier of the user whose progress is being updated.
      * @param exerciseId The unique identifier of the exercise being attempted.
      * @param type The type of the exercise being attempted.
      * @param correct Indicates whether the user's submission was correct.
      * @param xp The amount of experience points (XP) earned from the correct submission.
      */
-    private void updateUserProgress(User user, UUID exerciseId, ExerciseType type, boolean correct, int xp) {
-        // Until authentication is integrated we do not track progress for anonymous users.
-        if (user == null) return; // plug in auth later
-        UUID userId = user.getId();
+    private void updateUserProgress(UUID userId, UUID exerciseId, ExerciseType type, boolean correct, int xp) {
+        if (userId == null) return;
 
+        // Look up an existing progress entry for this user and exercise.
         UserProgress existing = progressRepo
                 .findByUserIdAndExerciseIdAndExerciseType(userId, exerciseId, type)
                 .orElse(null);
-        // First submission for this user/exercise
+
         if (existing == null) {
-            UserProgress up = new UserProgress(user, exerciseId, type);
+            // First submission for this user/exercise
+            // We create a lightweight User reference with only the ID set, so JPA can
+            // persist the foreign key without needing to load the full User entity.
+            User userRef = new User();
+            userRef.setId(userId);
+
+            UserProgress up = new UserProgress(userRef, exerciseId, type);
             if (correct) {
                 up.setIsCompleted(true);
                 up.setCompletedAt(LocalDateTime.now());
@@ -234,5 +271,96 @@ public class ExerciseService {
                 progressRepo.save(existing);
             }
         }
+    }
+    /**
+     * Computes the progress of a user within a given lesson or exercise session.
+     *
+     * <p>
+     * At the current stage of the application, there is no dedicated domain model
+     * for sessions or lessons. Therefore, a "session" is interpreted as:
+     * </p>
+     *
+     * <ul>
+     *     <li><b>All available exercises</b> in the system (MCQ + Fill-in-the-Blank).</li>
+     *     <li>This is a temporary definition that will be replaced once sessions,
+     *         lessons or category-based classifications (e.g. vocabulary, synonym,
+     *         grammar) are introduced.</li>
+     * </ul>
+     *
+     * <p><b>Behaviour:</b></p>
+     * <ul>
+     *     <li>If {@code userId} is {@code null}, no user context is available and a
+     *         progress of <code>(0 / 0)</code> is returned.</li>
+     *     <li>Otherwise, the method:</li>
+     *     <ul>
+     *         <li>Counts how many exercises the user has completed using
+     *             {@link com.sep.sep_backend.exercise.repository.UserProgressRepository#countByUserIdAndIsCompletedTrue(UUID)}.</li>
+     *         <li>Counts how many exercises exist in total using
+     *             {@link com.sep.sep_backend.exercise.repository.ExerciseMcqRepository#count()}
+     *             and {@link com.sep.sep_backend.exercise.repository.ExerciseFillBlankRepository#count()}.</li>
+     *         <li>Ensures the completed count never exceeds the total count.</li>
+     *     </ul>
+     * </ul>
+     *
+     * <p><b>Future extension:</b></p>
+     * <p>
+     * When the domain model introduces:
+     * </p>
+     * <ul>
+     *     <li>Exercise classifications (VOCABULARY, SYNONYM, GRAMMAR), or</li>
+     *     <li>Dedicated lesson/session entities grouping exercises,</li>
+     * </ul>
+     * <p>
+     * this method can be easily updated to:
+     * </p>
+     * <ul>
+     *     <li>Filter exercises belonging to the session/category.</li>
+     *     <li>Count only the user's completed exercises within that subset.</li>
+     * </ul>
+     *
+     * <p>
+     * The method signature and the {@link SessionProgressResponse}
+     * DTO are expected to remain stable — only the internal query logic will evolve.
+     * This makes the design stable and future-proof.
+     * </p>
+     *
+     * @param sessionId An identifier for the session or lesson.
+     *                  Currently unused, but preserved for forward compatibility.
+     * @param userId    The unique identifier of the authenticated user whose
+     *                  progress should be computed. May be {@code null} in edge cases.
+     * @return A {@link SessionProgressResponse} containing the number of completed
+     *         exercises and the total number of exercises in the "session".
+     */
+    @Transactional(readOnly = true)
+    public SessionProgressResponse getSessionProgress(UUID sessionId, UUID userId) {
+
+        // If no authenticated userId is provided, progress cannot be tracked.
+        // Return 0/0 as a safe fallback.
+        if (userId == null) {
+            return new SessionProgressResponse(0, 0);
+        }
+
+        // Count how many exercises this user has completed.
+        // This checks the user_progress table for rows where:
+        // user_id = userId AND is_completed = true
+        long completed = progressRepo.countByUserIdAndIsCompletedTrue(userId);
+
+        // Count ALL available exercises in the system.
+        // This is MCQ count + Fill-in-the-Blank count.
+        // (In the future this will be filtered by session/category.)
+        long totalExercises = mcqRepo.count()    // number of MCQ exercises
+                + fillRepo.count();              // number of Fill-in-the-Blank exercises
+
+        // Convert total exercises to int for the DTO.
+        int totalCount = (int) totalExercises;
+
+        // Defensive: ensure completedCount does not exceed totalCount.
+        // (Should never happen, but safe.)
+        int completedCount = (int) Math.min(completed, totalExercises);
+
+        // Return the final progress object containing:
+        // - completed exercises
+        // - total exercises
+        return new SessionProgressResponse(completedCount, totalCount);
     }
 }
