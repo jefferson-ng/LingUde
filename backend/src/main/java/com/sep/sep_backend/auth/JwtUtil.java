@@ -114,4 +114,29 @@ public class JwtUtil {
             return true;
         }
     }
+    /**
+     * Extracts the user ID of the currently authenticated user
+     * from the SecurityContext, by reading the Authorization header
+     * that was already processed by JwtAuthenticationFilter.
+     *
+     * @return UUID of the authenticated user
+     * @throws RuntimeException if the token is missing or invalid
+     */
+    public UUID getCurrentUserId() {
+        // Get authentication from security context
+        var authentication = org.springframework.security.core.context.SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        if (authentication == null || authentication.getCredentials() == null) {
+            throw new RuntimeException("No authenticated user found");
+        }
+
+        // The filter stores the raw JWT token in credentials
+        String token = authentication.getCredentials().toString();
+
+        // Extract and return user ID
+        return getUserIdFromToken(token);
+    }
+
 }

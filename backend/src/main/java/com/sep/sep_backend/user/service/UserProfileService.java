@@ -1,11 +1,16 @@
 package com.sep.sep_backend.user.service;
 
-import com.sep.sep_backend.user.entity.User;
-import com.sep.sep_backend.user.entity.UserProfile;
+import com.sep.sep_backend.user.dto.AchievementSummaryDTO;
+import com.sep.sep_backend.user.dto.UserProfileResponse;
+import com.sep.sep_backend.user.entity.*;
+import com.sep.sep_backend.user.repository.AchievementRepository;
+import com.sep.sep_backend.user.repository.UserAchievementRepository;
+import com.sep.sep_backend.user.repository.UserLearningRepository;
 import com.sep.sep_backend.user.repository.UserProfileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,10 +19,24 @@ import java.util.UUID;
 public class UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
+    private final UserLearningRepository userLearningRepository;
+    private final UserAchievementRepository userAchievementRepository;
+    private final AchievementRepository achievementRepository;
+    private final UserService userService;
 
-    public UserProfileService(UserProfileRepository userProfileRepository) {
+
+    public UserProfileService(UserProfileRepository userProfileRepository,
+                              UserLearningRepository userLearningRepository,
+                              UserAchievementRepository userAchievementRepository,
+                              AchievementRepository achievementRepository,
+                              UserService userService) {
         this.userProfileRepository = userProfileRepository;
+        this.userLearningRepository = userLearningRepository;
+        this.userAchievementRepository = userAchievementRepository;
+        this.achievementRepository = achievementRepository;
+        this.userService = userService;
     }
+
 
     /**
      * Create a new user profile
@@ -88,6 +107,66 @@ public class UserProfileService {
         }
         return Optional.empty();
     }
+    /**
+     * Builds and returns the complete profile response for the currently logged-in user.
+     * <p>
+     * This method collects data from:
+     * <ul>
+     *     <li>The User entity (username)</li>
+     *     <li>UserProfile (display name & avatar)</li>
+     *     <li>UserLearning (XP and language level)</li>
+     *     <li>UserAchievement (list of earned achievements)</li>
+     * </ul>
+     * Then it maps them into a {@link com.sep.sep_backend.user.dto.UserProfileResponse}
+     * which is returned to the controller and sent to the frontend.
+     * </p>
+     *
+     * @return UserProfileResponse containing profile & gamification data
+     */
+    @Transactional(readOnly = true)
+    public UserProfileResponse getCurrentUserProfile() {
+
+        // 1. Get the currently authenticated user
+        User user = userSegit rvice.getCurrentUser();
+
+        // 2. UserProfile may or may not exist yet
+        UserProfile profile = userProfileRepository
+                .findByUser(user)
+                .orElseGet(() -> new UserProfile(user)); // fallback with empty fields
+
+        // 3. UserLearning must exist (created during signup)
+        UserLearning learning = userLearningRepository
+                .findByUser(user)
+                .orElseThrow(() -> new IllegalStateException("UserLearning not found for user"));
+
+        // 4. Fetch all achievements earned by this user
+        List<UserAchievement> earned = userAchievementRepository.findByUser(user);
+
+        // 5. Map achievements to DTOs
+        List<AchievementSummaryDTO> achievementDTOs = earned.stream()
+                .map(ua -> {
+                    Achievement a = ua.getAchievement();
+                    return new AchievementSummaryDTO(
+                            a.getCode(),
+                            a.getTitle(),
+                            a.getDescription(),
+                            a.getIconUrl(),
+                            a.getType()
+                    );
+                })
+                .toList();
+
+        // 6. Build and return the full API response
+        return new UserProfileResponse(
+                user.getUsername(),
+                profile.getDisplayName(),
+                profile.getAvatarUrl(),
+                learning.getXp(),
+                learning.getCurrentLevel(),
+                achievementDTOs
+        );
+    }
+
 
     /**
      * Delete a user profile by ID
