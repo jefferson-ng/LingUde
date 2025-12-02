@@ -123,21 +123,27 @@ public class UserProfileService {
      *
      * @return UserProfileResponse containing profile & gamification data
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public UserProfileResponse getCurrentUserProfile() {
 
         // 1. Get the currently authenticated user
-        User user = userSegit rvice.getCurrentUser();
+        User user = userService.getCurrentUser();
 
-        // 2. UserProfile may or may not exist yet
+        // 2. Ensure UserProfile exists (create if missing)
         UserProfile profile = userProfileRepository
                 .findByUser(user)
-                .orElseGet(() -> new UserProfile(user)); // fallback with empty fields
+                .orElseGet(() -> {
+                    UserProfile p = new UserProfile(user);
+                    return userProfileRepository.save(p);
+                });
 
-        // 3. UserLearning must exist (created during signup)
+        // 3. Ensure UserLearning exists (create if missing)
         UserLearning learning = userLearningRepository
                 .findByUser(user)
-                .orElseThrow(() -> new IllegalStateException("UserLearning not found for user"));
+                .orElseGet(() -> {
+                    UserLearning l = new UserLearning(user);
+                    return userLearningRepository.save(l);
+                });
 
         // 4. Fetch all achievements earned by this user
         List<UserAchievement> earned = userAchievementRepository.findByUser(user);
@@ -166,6 +172,7 @@ public class UserProfileService {
                 achievementDTOs
         );
     }
+
 
 
     /**
