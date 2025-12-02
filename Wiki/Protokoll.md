@@ -178,6 +178,32 @@
 	  - Dokumentieren (Contract between Front-/ Backeend)
 	  -mehr Kommuikation untereinander
 
+	  ---
+
+## 1. Prüfung 
+
+**Datum:** 24.11.2025
+
+**Themen:** 
+- Präsentation + Demo
+- Einzelprüfung
+
+---
+
+## 3. Sprintplanung
+
+**Datum:** 01.12.2025
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit / Herr Korn und Marvin als Lehrende
+
+**Themen:**
+- Demo nochmal vorgestellt
+- was sind die nächsten Schritte?
+	- Hardcode auslagern (bei den ExerciseDataInitializer) --> GSON dafür verwenden
+	- Frontend und Backend auf den gleichen Nenner bringen (Backend features in Frontend und andersherum)
+- Zeitaufwand der neuen Issues einschätzen (XS,S,M,L,XL,XXL)
+
+
 
 
 
