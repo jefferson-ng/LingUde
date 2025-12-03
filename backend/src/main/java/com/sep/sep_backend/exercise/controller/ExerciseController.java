@@ -11,16 +11,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import com.sep.sep_backend.exercise.dto.CompletedExerciseResponse;
-import com.sep.sep_backend.exercise.dto.CompletionStatusResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import java.util.ArrayList;
-
 
 /**
  * REST controller exposing API endpoints for exercise functionality.
@@ -249,60 +242,55 @@ public class ExerciseController {
         // Fallback: unexpected principal type → treat as unauthenticated.
         return null;
     }
-    // --------------------
+
     /**
-     * Returns a list of completed exercises for the authenticated user.
+     * Returns all completed exercises for the authenticated user.
      *
-     * Steps:
-     *  1) Read the userId from the Authentication object.
-     *  2) Ask the service for all completed UserProgress entries.
-     *  3) Convert each UserProgress into a CompletedExerciseResponse DTO.
+     * Flow:
+     *  1) Extract the userId from Authentication (auth.getName()).
+     *  2) Fetch all completed progress entries via the service.
+     *  3) Convert them into CompletedExerciseResponse DTOs.
      *
-     * The DTO hides internal entity details and exposes only the data
-     * needed by the frontend for progress views and ✔ markers.
-     *
-     * @param auth Authentication object containing the user's UUID.
-     * @return list of CompletedExerciseResponse DTOs.
+     * Used for:
+     *  - Progress page
+     *  - Marking completed exercises with ✔
+     *  - Achievement/badge features
      */
     @GetMapping("/completed")
     public List<CompletedExerciseResponse> getCompletedExercisesForUser(Authentication auth) {
 
-        // Step 1: Extract authenticated user ID (String → UUID).
+        // The userId is stored as a UUID string inside auth.getName()
         UUID userId = UUID.fromString(auth.getName());
 
-        // Step 2: Fetch all completed progress rows for this user.
         List<UserProgress> progressList = service.getCompletedExercisesForUser(userId);
 
-        // Step 3: Map entities to DTOs so we do not expose JPA internals.
-        List<CompletedExerciseResponse> responseList = new ArrayList<>();
+        List<CompletedExerciseResponse> response = new ArrayList<>();
         for (UserProgress up : progressList) {
-            responseList.add(new CompletedExerciseResponse(
-                    up.getExerciseId(),                              // exercise UUID
-                    up.getExerciseType(),                            // exercise type
-                    up.getXpEarned() != null ? up.getXpEarned() : 0, // XP (null-safe)
-                    up.getCompletedAt()                              // completion timestamp
+            response.add(new CompletedExerciseResponse(
+                    up.getExerciseId(),
+                    up.getExerciseType(),
+                    up.getXpEarned(),
+                    up.getCompletedAt()
             ));
         }
 
-        // Return clean DTOs to the frontend.
-        return responseList;
+        return response;
     }
 
     /**
-     * Returns the completion status of a specific exercise for the
-     * authenticated user, wrapped in a DTO.
+     * Checks whether a specific exercise is completed for the authenticated user.
      *
-     * Steps:
-     *  1) Read exerciseId from the URL path.
-     *  2) Read exercise type from query parameter (?type=MCQ / FILL_BLANK).
-     *  3) Extract userId from Authentication.
-     *  4) Ask the service if this exercise is completed.
-     *  5) Return a CompletionStatusResponse containing id, type, and flag.
+     * Flow:
+     *  1) Extract userId from Authentication.
+     *  2) Read exerciseId from the URL.
+     *  3) Read exerciseType from URL query param (?type=MCQ).
+     *  4) Ask service if user completed this exercise.
+     *  5) Return a CompletionStatusResponse DTO.
      *
-     * @param exerciseId ID of the exercise being checked.
-     * @param type       type of the exercise (MCQ, FILL_BLANK, ...).
-     * @param auth       Authentication object with the user's UUID.
-     * @return DTO with exerciseId, type and completed=true/false.
+     * Used for:
+     *  - Fast UI checks
+     *  - Showing ✔ beside an exercise
+     *  - Prevent awarding XP multiple times
      */
     @GetMapping("/{exerciseId}/completed")
     public CompletionStatusResponse hasUserCompletedExercise(
@@ -310,17 +298,12 @@ public class ExerciseController {
             @RequestParam ExerciseType type,
             Authentication auth
     ) {
-        // Step 1: Get userId from the JWT-authenticated principal.
         UUID userId = UUID.fromString(auth.getName());
 
-        // Step 2: Ask the service if this user has completed the exercise.
         boolean completed = service.hasUserCompletedExercise(userId, exerciseId, type);
 
-        // Step 3: Wrap result into a DTO for a clean API response.
         return new CompletionStatusResponse(exerciseId, type, completed);
     }
-
-
 
 
 }
