@@ -1,6 +1,8 @@
 package com.sep.sep_backend.exercise.controller;
 
 import com.sep.sep_backend.exercise.dto.*;
+import com.sep.sep_backend.exercise.entity.ExerciseType;
+import com.sep.sep_backend.exercise.entity.UserProgress;
 import com.sep.sep_backend.exercise.service.ExerciseService;
 import com.sep.sep_backend.user.entity.User;
 import jakarta.validation.Valid;
@@ -239,5 +241,54 @@ public class ExerciseController {
         // Fallback: unexpected principal type → treat as unauthenticated.
         return null;
     }
+
+    /**
+     * Returns all exercises that the authenticated user has completed.
+     *
+     * Used by the frontend to display:
+     *  - a list of completed exercises
+     *  - progress pages / statistics
+     *  - completed ✔ markers in the UI
+     *
+     * @param auth Authentication object containing the user's UUID.
+     * @return list of UserProgress entries where isCompleted = true.
+     */
+    @GetMapping("/completed")
+    public List<UserProgress> getCompletedExercisesForUser(Authentication auth) {
+
+        // Extract the authenticated user's UUID from the security context.
+        UUID userId = UUID.fromString(auth.getName());
+
+        // Call the service layer to retrieve ALL completed exercises
+        // (UserProgress rows where isCompleted = true).
+        return service.getCompletedExercisesForUser(userId);
+    }
+
+    /**
+     * Checks whether the authenticated user has completed a specific exercise.
+     *
+     * This is a quick YES/NO endpoint used by the frontend to decide
+     * whether an exercise should show a completed checkmark (✔).
+     *
+     * @param exerciseId The UUID of the exercise to check.
+     * @param type       The type of the exercise (MCQ, FILL_BLANK, ...).
+     * @param auth       Authentication object containing the user's UUID.
+     * @return true if the user completed the exercise, false otherwise.
+     */
+    @GetMapping("/{exerciseId}/completed")
+    public boolean hasUserCompletedExercise(
+            @PathVariable UUID exerciseId,   // read exerciseId from the URL path
+            @RequestParam ExerciseType type, // read exercise type from query parameter
+            Authentication auth              // authenticated user (from JWT)
+    ) {
+        // Extract the authenticated user ID from the JWT token
+        UUID userId = UUID.fromString(auth.getName());
+
+        // Ask the service layer:
+        // "Does a completed UserProgress entry exist for this user + exercise + type?"
+        return service.hasUserCompletedExercise(userId, exerciseId, type);
+    }
+
+
 
 }
