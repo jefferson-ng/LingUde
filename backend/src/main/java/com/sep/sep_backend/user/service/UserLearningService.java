@@ -145,10 +145,11 @@ public class UserLearningService {
             achievementService.grantAchievementIfNotOwned(user, "XP_100");
         }
 
-        // In the future, additional milestones can be added here, e.g.:
-        // if (oldXp < 500 && newXp >= 500) {
-        //     achievementService.grantAchievementIfNotOwned(user, "XP_500");
-        // }
+        // additional milestones can be added here, e.g.:
+        if (oldXp < 500 && newXp >= 500) {
+            achievementService.grantAchievementIfNotOwned(user, "XP_500");
+        }
+
 
         return Optional.of(saved);
     }
