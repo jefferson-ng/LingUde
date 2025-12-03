@@ -1,5 +1,6 @@
 package com.sep.sep_backend.user.repository;
 
+import com.sep.sep_backend.user.entity.Achievement;
 import com.sep.sep_backend.user.entity.User;
 import com.sep.sep_backend.user.entity.UserAchievement;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,12 +11,12 @@ import java.util.UUID;
 /**
  * Repository for managing {@link UserAchievement} entities.
  * <p>
- * This links users to the achievements they have earned.
+ * Links users to the achievements they have earned.
  * Typical use cases:
  * </p>
  * <ul>
- *     <li>Find all achievements earned by a specific user.</li>
- *     <li>Check if a user already has a certain achievement (custom method later).</li>
+ *     <li>Load all achievements for a given user.</li>
+ *     <li>Check if a user already has a specific achievement.</li>
  * </ul>
  */
 public interface UserAchievementRepository extends JpaRepository<UserAchievement, UUID> {
@@ -27,4 +28,13 @@ public interface UserAchievementRepository extends JpaRepository<UserAchievement
      * @return list of UserAchievement entries for that user
      */
     List<UserAchievement> findByUser(User user);
+
+    /**
+     * Checks whether the given user already has the specified achievement.
+     *
+     * @param user        the user to check
+     * @param achievement the achievement to check
+     * @return true if a UserAchievement entry exists, false otherwise
+     */
+    boolean existsByUserAndAchievement(User user, Achievement achievement);
 }
