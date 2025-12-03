@@ -91,6 +91,37 @@ public class UserLearningController {
     }
 
     /**
+     * Updates the user's streak based on the current date and last activity.
+     * Should be called after completing a lesson.
+     *
+     * @return ResponseEntity containing updated UserLearningDTO if successful, or 404 NOT FOUND if user not found
+     */
+    @PostMapping("/updateStreak")
+    public ResponseEntity<UserLearningDTO> updateStreak() {
+        try {
+            UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+            Optional<UserLearning> learningOptional = userLearningService.updateStreak(userId);
+            if (learningOptional.isPresent()) {
+                UserLearning learning = learningOptional.get();
+                UserLearningDTO dto = new UserLearningDTO(
+                    learning.getUser().getId().toString(),
+                    learning.getLearningLanguage(),
+                    learning.getCurrentLevel(),
+                    learning.getTargetLevel(),
+                    learning.getXp(),
+                    learning.getStreakCount(),
+                    learning.getLastActivityDate()
+                );
+                return ResponseEntity.ok(dto);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    /**
      * Updates the user's learning language and CEFR levels
      * (currentLevel and targetLevel) in one request.
      * <p>

@@ -127,6 +127,11 @@
       "progress": "Fortschritt",
       "whatYouWillLearn": "Was du lernen wirst:"
     },
+    "streakCelebration": {
+      "dayStreak": "Tag Streak",
+      "daysStreak": "Tage Streak",
+      "keepGoing": "Lerne morgen weiter, um deine Streak auszubauen!"
+    },
     "panel": {
       "progress": "Fortschritt",
       "continue": "Fortsetzen",

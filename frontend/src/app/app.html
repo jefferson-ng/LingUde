@@ -18,7 +18,7 @@
         <div class="logo-section">
           <div class="user-profile">
             <button class="user-avatar-button" (click)="toggleUserDropdown()" type="button">
-              <div class="user-avatar">M</div>
+              <div class="user-avatar">{{ userName() ? userName().charAt(0).toUpperCase() : 'M' }}</div>
             </button>
             
             @if (isUserDropdownOpen() && isLoggedIn()) {

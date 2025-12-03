@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService, TranslocoDirective } from '@jsverse/transloco';
 import { ExerciseViewerComponent, ExerciseResult } from '../../components/exercise-viewer/exercise-viewer';
 import { ExerciseSummaryResponse, ExerciseDetailResponse } from '../../models/exercise.model';
 import { ExerciseService } from '../../services/exercise.service';
@@ -25,7 +25,7 @@ type DifficultyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
 @Component({
   selector: 'app-learning',
-  imports: [CommonModule, TranslocoPipe, ExerciseViewerComponent],
+  imports: [CommonModule, TranslocoPipe, TranslocoDirective, ExerciseViewerComponent],
   templateUrl: './learning.html',
   styleUrl: './learning.css'
 })
@@ -100,6 +100,14 @@ export class Learning implements OnInit {
   protected readonly hearts = signal(4);
   protected readonly gems = signal(500);
   
+  // Streak celebration modal
+  protected showStreakCelebration = signal(false);
+  protected newStreakValue = signal(0);
+  private previousStreakValue = 0;
+  
+  // Track correct answers in current lesson
+  private correctAnswersCount = 0;
+  
   protected selectedLesson = signal<Lesson | null>(null);
   
   protected exerciseMode = signal<boolean>(false);
@@ -135,6 +143,7 @@ export class Learning implements OnInit {
         console.log('Loaded user learning data:', data);
         this.dailyProgress.set(data.xp);
         this.streak.set(data.streakCount);
+        this.previousStreakValue = data.streakCount; // Remember for comparison
       },
       error: (error) => {
         console.error('Error loading user learning data:', error);
@@ -169,6 +178,7 @@ export class Learning implements OnInit {
 
   startLesson(lesson: Lesson) {
     this.closePanel();
+    this.correctAnswersCount = 0; // Reset correct answers counter
 
     const difficulty = lesson.difficultyLevel;
     const topic = lesson.topic;
@@ -222,25 +232,18 @@ export class Learning implements OnInit {
 
   /**
    * Handles exercise submission results.
-   * If the exercise is completed successfully, awards XP to the user.
+   * The backend now automatically awards XP when exercises are completed.
+   * We track correct answers to determine if streak should be updated.
    * 
    * @param result - The result of the exercise submission
    */
   onExerciseSubmit(result: ExerciseResult) {
     console.log('Exercise submitted:', result);
     
-    // Award XP if exercise was completed correctly
+    // Track correct answers
     if (result.isCorrect) {
-      const xpEarned = result.xpEarned || 10; // Default 10 XP
-      this.userLearningService.addXp(xpEarned).subscribe({
-        next: (data) => {
-          console.log(`Awarded ${xpEarned} XP! Total XP: ${data.xp}`);
-          this.dailyProgress.set(data.xp);
-        },
-        error: (error) => {
-          console.error('Error awarding XP:', error);
-        }
-      });
+      this.correctAnswersCount++;
+      this.loadUserLearningData();
     }
   }
 
@@ -263,6 +266,41 @@ export class Learning implements OnInit {
     this.currentExerciseIndex.set(0);
     
     console.log('Lektion abgeschlossen!');
+    console.log(`Correct answers: ${this.correctAnswersCount}`);
+    
+    // Only update streak if at least one question was answered correctly
+    if (this.correctAnswersCount > 0) {
+      this.userLearningService.updateStreak().subscribe({
+        next: (data) => {
+          console.log('Streak updated after lesson completion:', data.streakCount);
+          
+          // Check if streak increased (first lesson of the day)
+          if (data.streakCount > this.previousStreakValue) {
+            this.newStreakValue.set(data.streakCount);
+            
+            // Small delay to ensure translations are loaded
+            setTimeout(() => {
+              this.showStreakCelebration.set(true);
+            }, 100);
+          }
+          
+          this.streak.set(data.streakCount);
+          this.previousStreakValue = data.streakCount;
+        },
+        error: (error) => {
+          console.error('Error updating streak:', error);
+        }
+      });
+    } else {
+      console.log('No correct answers - streak not updated');
+    }
+    
+    // Reset counter for next lesson
+    this.correctAnswersCount = 0;
+  }
+
+  closeStreakCelebration() {
+    this.showStreakCelebration.set(false);
   }
 
   exitExerciseMode() {
