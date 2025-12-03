@@ -536,6 +536,93 @@ class ExerciseServiceTest {
         verify(progressRepo, never()).save(any());
         verify(progressRepo, never()).findByUserIdAndExerciseIdAndExerciseType(any(), any(), any());
     }
+
+    // ------------------------------------------------------
+    // TEST 11 — getCompletedExercisesForUser: null userId
+    // ------------------------------------------------------
+    @Test
+    void getCompletedExercisesForUser_nullUser_returnsEmptyListAndSkipsRepository() {
+        // Act
+        java.util.List<UserProgress> result = service.getCompletedExercisesForUser(null);
+
+        // Assert: empty list and no repository call
+        assertThat(result).isEmpty();
+        verify(progressRepo, never()).findAllByUserIdAndIsCompletedTrue(any());
+    }
+
+    // ------------------------------------------------------
+    // TEST 12 — getCompletedExercisesForUser: valid userId
+    // ------------------------------------------------------
+    @Test
+    void getCompletedExercisesForUser_withUserId_returnsProgressListFromRepository() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+
+        UserProgress p1 = new UserProgress();
+        p1.setIsCompleted(true);
+
+        UserProgress p2 = new UserProgress();
+        p2.setIsCompleted(true);
+
+        when(progressRepo.findAllByUserIdAndIsCompletedTrue(userId))
+                .thenReturn(java.util.List.of(p1, p2));
+
+        // Act
+        java.util.List<UserProgress> result = service.getCompletedExercisesForUser(userId);
+
+        // Assert
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactly(p1, p2);
+        verify(progressRepo, times(1)).findAllByUserIdAndIsCompletedTrue(userId);
+    }
+
+    // ------------------------------------------------------
+    // TEST 13 — hasUserCompletedExercise: null userId
+    // ------------------------------------------------------
+    @Test
+    void hasUserCompletedExercise_nullUser_returnsFalseAndSkipsRepository() {
+        // Act
+        boolean result = service.hasUserCompletedExercise(
+                null,
+                UUID.randomUUID(),
+                ExerciseType.MCQ
+        );
+
+        // Assert
+        assertThat(result).isFalse();
+        verify(progressRepo, never())
+                .existsByUserIdAndExerciseIdAndExerciseTypeAndIsCompletedTrue(any(), any(), any());
+    }
+
+    // ------------------------------------------------------
+    // TEST 14 — hasUserCompletedExercise: delegates to repository
+    // ------------------------------------------------------
+    @Test
+    void hasUserCompletedExercise_withUserId_delegatesToRepository() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        UUID exerciseId = UUID.randomUUID();
+
+        when(progressRepo.existsByUserIdAndExerciseIdAndExerciseTypeAndIsCompletedTrue(
+                userId,
+                exerciseId,
+                ExerciseType.FILL_BLANK
+        )).thenReturn(true);
+
+        // Act
+        boolean result = service.hasUserCompletedExercise(userId, exerciseId, ExerciseType.FILL_BLANK);
+
+        // Assert
+        assertThat(result).isTrue();
+        verify(progressRepo, times(1))
+                .existsByUserIdAndExerciseIdAndExerciseTypeAndIsCompletedTrue(
+                        userId,
+                        exerciseId,
+                        ExerciseType.FILL_BLANK
+                );
+    }
+
+
 }
 
 
