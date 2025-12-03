@@ -136,6 +136,18 @@ public class UserService {
      * Get all users
      * @return List of all users
      */
+
+    /**
+     * Returns the currently logged-in user by extracting the user ID
+     * from the JWT access token stored in the SecurityContext.
+     */
+    public User getCurrentUser() {
+        UUID userId = jwtUtil.getCurrentUserId();  // works now!
+
+        return userRepo.findById(userId)
+                .orElseThrow(AuthFailedException::new);
+    }
+
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }
