@@ -1,5 +1,11 @@
 package com.sep.sep_backend.exercise.controller;
 
+import com.sep.sep_backend.exercise.dto.CompletedExerciseResponse;
+import com.sep.sep_backend.exercise.dto.CompletionStatusResponse;
+
+
+
+
 import com.sep.sep_backend.exercise.dto.*;
 import com.sep.sep_backend.exercise.entity.ExerciseType;
 import com.sep.sep_backend.exercise.entity.UserProgress;
@@ -257,10 +263,13 @@ public class ExerciseController {
      *  - Achievement/badge features
      */
     @GetMapping("/completed")
-    public List<CompletedExerciseResponse> getCompletedExercisesForUser(Authentication auth) {
+    public List<CompletedExerciseResponse> getCompletedExercisesForUser() {
 
-        // The userId is stored as a UUID string inside auth.getName()
-        UUID userId = UUID.fromString(auth.getName());
+        // Get auth object from the security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Extract userId from token (may return null in tests)
+        UUID userId = extractUserId(authentication);
 
         List<UserProgress> progressList = service.getCompletedExercisesForUser(userId);
 
@@ -276,6 +285,7 @@ public class ExerciseController {
 
         return response;
     }
+
 
     /**
      * Checks whether a specific exercise is completed for the authenticated user.
@@ -295,10 +305,12 @@ public class ExerciseController {
     @GetMapping("/{exerciseId}/completed")
     public CompletionStatusResponse hasUserCompletedExercise(
             @PathVariable UUID exerciseId,
-            @RequestParam ExerciseType type,
-            Authentication auth
+            @RequestParam ExerciseType type
     ) {
-        UUID userId = UUID.fromString(auth.getName());
+        // Get authentication from SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        UUID userId = extractUserId(authentication);
 
         boolean completed = service.hasUserCompletedExercise(userId, exerciseId, type);
 
