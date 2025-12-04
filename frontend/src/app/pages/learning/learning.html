@@ -190,9 +190,12 @@
             <div class="fire-glow"></div>
           </div>
           
-          <!-- Streak counter -->
+          <!-- Streak counter with animated transition -->
           <div class="streak-counter-display">
-            <span class="streak-number">{{ newStreakValue() }}</span>
+            <div class="streak-number-wrapper">
+              <span class="streak-number streak-number-old">{{ previousStreakForDisplay() }}</span>
+              <span class="streak-number streak-number-new">{{ newStreakValue() }}</span>
+            </div>
           </div>
         </div>
       </div>

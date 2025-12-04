@@ -103,6 +103,7 @@ export class Learning implements OnInit {
   // Streak celebration modal
   protected showStreakCelebration = signal(false);
   protected newStreakValue = signal(0);
+  protected previousStreakForDisplay = signal(0);
   protected isStreakShrinking = signal(false);
   protected isStreakFlying = signal(false);
   private previousStreakValue = 0;
@@ -278,6 +279,7 @@ export class Learning implements OnInit {
           
           // Check if streak increased (first lesson of the day)
           if (data.streakCount > this.previousStreakValue) {
+            this.previousStreakForDisplay.set(this.previousStreakValue);
             this.newStreakValue.set(data.streakCount);
             
             // Small delay to ensure translations are loaded
@@ -304,30 +306,24 @@ export class Learning implements OnInit {
 
   /**
    * Starts the streak celebration animation sequence:
-   * 1. Show modal with pop-up animation (2s display)
-   * 2. Start shrinking (0.8s duration)
-   * 3. Fly to target position (0.6s duration)
-   * 4. Hide modal
+   * 1. Show modal with pop-up animation (2.5s display)
+   * 2. Slide out elegantly to the right (0.7s)
+   * 3. Hide modal
    */
   private startStreakAnimation() {
     // Reset states
     this.isStreakShrinking.set(false);
     this.isStreakFlying.set(false);
     
-    // Step 1: Show modal for 2 seconds
-    setTimeout(() => {
-      this.isStreakShrinking.set(true);
-    }, 2000);
-    
-    // Step 2: Start flying AFTER shrinking completes (2000ms + 800ms shrink)
+    // Step 1: Show modal for 2.5 seconds
     setTimeout(() => {
       this.isStreakFlying.set(true);
-    }, 2800);
+    }, 2500);
     
-    // Step 3: Hide modal after all animations complete (2000 + 800 + 600 + 100 buffer)
+    // Step 2: Hide modal after slide-out completes (2500ms + 700ms slide + 100ms buffer)
     setTimeout(() => {
       this.closeStreakCelebration();
-    }, 3500);
+    }, 3300);
   }
   
   closeStreakCelebration() {
