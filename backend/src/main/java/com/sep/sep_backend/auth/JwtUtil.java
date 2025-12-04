@@ -114,4 +114,39 @@ public class JwtUtil {
             return true;
         }
     }
+
+    /**
+     * Extracts the user ID of the currently authenticated user
+     * from the SecurityContext.
+     *
+     * The JwtAuthenticationFilter stores the userId in the Authentication's
+     * principal field, so we simply read it from there.
+     *
+     * @return UUID of the authenticated user
+     * @throws RuntimeException if no authenticated user is found
+     */
+    public UUID getCurrentUserId() {
+        var authentication = org.springframework.security.core.context.SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        if (authentication == null) {
+            throw new RuntimeException("No authenticated user found");
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof UUID uuid) {
+            return uuid;
+        }
+
+        if (principal instanceof String str) {
+            // Just in case principal is stored as String
+            return UUID.fromString(str);
+        }
+
+        throw new RuntimeException("Unexpected principal type: " + principal.getClass());
+    }
+
+
 }
