@@ -40,21 +40,10 @@ export class Learning implements OnInit {
   
   // All difficulty levels
   protected readonly difficulties: DifficultyLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-  
-  // Mapping of difficulty to topic
-  private readonly difficultyToTopic: Record<DifficultyLevel, string> = {
-    'A1': 'basics',
-    'A2': 'basics',
-    'B1': 'intermediate',
-    'B2': 'intermediate',
-    'C1': 'advanced',
-    'C2': 'advanced'
-  };
-  
+
   // Computed lessons based on selected difficulty
   protected lessons = computed<Lesson[]>(() => {
     const difficulty = this.selectedDifficulty();
-    const topic = this.difficultyToTopic[difficulty];
     
     return [
       {
@@ -71,7 +60,7 @@ export class Learning implements OnInit {
           `learning.lessons.${difficulty.toLowerCase()}.lesson1.exercises.ex3`
         ],
         difficultyLevel: difficulty,
-        topic: topic,
+        topic: '', // Topic filtering removed - exercises filtered by difficulty only
         exerciseType: 'MCQ'
       },
       {
@@ -88,7 +77,7 @@ export class Learning implements OnInit {
           `learning.lessons.${difficulty.toLowerCase()}.lesson2.exercises.ex3`
         ],
         difficultyLevel: difficulty,
-        topic: topic,
+        topic: '', // Topic filtering removed - exercises filtered by difficulty only
         exerciseType: 'FILL_BLANK'
       }
     ];
@@ -171,13 +160,12 @@ export class Learning implements OnInit {
     this.closePanel();
 
     const difficulty = lesson.difficultyLevel;
-    const topic = lesson.topic;
     const exerciseType = lesson.exerciseType;
 
-    console.log(`Starting lesson - Difficulty: ${difficulty}, Topic: ${topic}, Type: ${exerciseType}`);
+    console.log(`Starting lesson - Difficulty: ${difficulty}, Type: ${exerciseType}`);
 
-    // Fetch exercises and filter by type
-    this.exerciseService.getExercises('DE', difficulty, topic).subscribe({
+    // Fetch exercises filtered by difficulty only (not topic)
+    this.exerciseService.getExercises('DE', difficulty, undefined).subscribe({
       next: (exerciseSummaries) => {
         // Filter by exercise type (MCQ or FILL_BLANK)
         const filteredExercises = exerciseSummaries.filter(ex => ex.type === exerciseType);
@@ -192,7 +180,6 @@ export class Learning implements OnInit {
           console.warn('⚠️ Keine Übungen verfügbar für diese Lektion. Check if exercises exist in backend with:', {
             targetLanguage: 'DE',
             difficultyLevel: difficulty,
-            topic: topic,
             exerciseType: exerciseType
           });
         }
