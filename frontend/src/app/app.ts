@@ -30,6 +30,7 @@ export class App implements OnInit {
   protected readonly userLevel = signal(1);
   protected readonly userXP = signal(0);
   protected readonly userStreak = signal(0);
+  protected readonly isStreakActiveToday = signal(false);
   protected readonly userName = signal('');
   protected readonly userEmail = signal('');
   protected readonly isLoggedIn = signal(false);
@@ -63,6 +64,10 @@ export class App implements OnInit {
       if (data) {
         this.userXP.set(data.xp);
         this.userStreak.set(data.streakCount);
+        // Streak ist aktiv, wenn lastActivityDate heute ist
+        const today = new Date().toISOString().split('T')[0];
+        const lastActivityDate = data.lastActivityDate?.split('T')[0];
+        this.isStreakActiveToday.set(lastActivityDate === today);
       }
     });
   }
@@ -81,7 +86,11 @@ export class App implements OnInit {
       next: (data) => {
         this.userXP.set(data.xp);
         this.userStreak.set(data.streakCount);
-        console.log('Loaded user XP and Streak in app header:', data.xp, data.streakCount);
+        // Streak ist aktiv, wenn lastActivityDate heute ist
+        const today = new Date().toISOString().split('T')[0];
+        const lastActivityDate = data.lastActivityDate?.split('T')[0];
+        this.isStreakActiveToday.set(lastActivityDate === today);
+        console.log('Loaded user XP and Streak in app header:', data.xp, data.streakCount, 'Active today:', lastActivityDate === today);
       },
       error: (error) => {
         console.error('Error loading user XP:', error);
