@@ -68,8 +68,7 @@ export const routes: Routes = [
       },
       {
         path: '**',
-        redirectTo: 'dashboard',
-        canActivate: [AuthGuard]
+        redirectTo: 'dashboard'
       }
     ]
   }
