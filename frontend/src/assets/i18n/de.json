@@ -38,6 +38,7 @@
     "days": "Tage",
     "streak": "Lernstreak",
     "streakMessage": "Fantastisch! Lerne heute, um deinen Streak fortzusetzen.",
+    "streakInactive": "Löse heute eine Aufgabe, um deinen Streak zu behalten!",
     "leaderboard": "Bestenliste",
     "you": "Du",
     "lessons": "Lektionen",
@@ -126,6 +127,11 @@
       "back": "Zurück",
       "progress": "Fortschritt",
       "whatYouWillLearn": "Was du lernen wirst:"
+    },
+    "streakCelebration": {
+      "dayStreak": "Tag Streak",
+      "daysStreak": "Tage Streak",
+      "keepGoing": "Lerne morgen weiter, um deine Streak auszubauen!"
     },
     "panel": {
       "progress": "Fortschritt",

@@ -19,6 +19,7 @@ export class Dashboard implements OnInit {
   // User progress data
   protected userXP = signal(0);
   protected userStreak = signal(0);
+  protected isStreakActiveToday = signal(false);
   protected userLevel = signal(1);
   protected xpForCurrentLevel = signal(0);
   protected xpForNextLevel = signal(100);
@@ -31,6 +32,10 @@ export class Dashboard implements OnInit {
     this.userLearningService.userLearning$.subscribe(data => {
       if (data) {
         this.updateUserProgress(data.xp, data.streakCount);
+        // Update streak active status
+        const today = new Date().toISOString().split('T')[0];
+        const lastActivityDate = data.lastActivityDate?.split('T')[0];
+        this.isStreakActiveToday.set(lastActivityDate === today);
       }
     });
   }
@@ -39,6 +44,10 @@ export class Dashboard implements OnInit {
     this.userLearningService.getUserLearning().subscribe({
       next: (data) => {
         this.updateUserProgress(data.xp, data.streakCount);
+        // Update streak active status
+        const today = new Date().toISOString().split('T')[0];
+        const lastActivityDate = data.lastActivityDate?.split('T')[0];
+        this.isStreakActiveToday.set(lastActivityDate === today);
       },
       error: (error) => {
         console.error('Error loading user data:', error);

@@ -139,6 +139,18 @@
   flex-direction: column;
   gap: 0.75rem;
   box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Inactive Streak Card - grau wenn heute noch keine Aufgabe gelöst */
+.streak-card.inactive {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.2);
+  opacity: 0.85;
+}
+
+.streak-card.inactive .streak-icon {
+  opacity: 0.6;
 }
 
 .streak-icon {

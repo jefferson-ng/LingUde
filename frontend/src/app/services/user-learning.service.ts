@@ -60,6 +60,21 @@ export class UserLearningService {
   }
 
   /**
+   * Updates the streak for the authenticated user.
+   * Should be called after completing a full lesson.
+   *
+   * @returns Observable of updated UserLearningData
+   */
+  updateStreak(): Observable<UserLearningData> {
+    return this.http.post<UserLearningData>(
+      `${this.apiUrl}/updateStreak`,
+      {}
+    ).pipe(
+      tap(data => this.userLearningSubject.next(data))
+    );
+  }
+
+  /**
    * Gets the current XP value from the cached state.
    * Returns 0 if no data is loaded yet.
    *
