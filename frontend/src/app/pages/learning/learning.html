@@ -179,8 +179,8 @@
 
   <!-- Streak Celebration Modal -->
   @if (showStreakCelebration()) {
-    <div class="streak-celebration-overlay" (click)="closeStreakCelebration()">
-      <div class="streak-celebration-modal" (click)="$event.stopPropagation()">
+    <div class="streak-celebration-overlay" [class.fly-out]="isStreakFlying()">
+      <div class="streak-celebration-modal" [class.shrinking]="isStreakShrinking()" [class.flying]="isStreakFlying()">
         <div class="celebration-content">
           <!-- Fire icon with particles -->
           <div class="fire-icon-container">
