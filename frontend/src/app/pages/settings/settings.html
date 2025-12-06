@@ -74,17 +74,113 @@
     <div class="settings-section">
       <h2>{{ t('settings.notifications') }}</h2>
       <p>{{ t('settings.notificationsDescription') }}</p>
-      
+
       <div class="toggle-container">
         <label class="toggle-switch">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             [(ngModel)]="notificationsEnabled"
             (ngModelChange)="onNotificationChange($event)"
           >
           <span class="toggle-slider"></span>
         </label>
         <span class="toggle-label">{{ t('settings.notificationsEnabled') }}</span>
+      </div>
+    </div>
+
+    <!-- Learning Preferences -->
+    <div class="settings-section" *ngIf="learningData">
+      <h2>{{ t('settings.learningPreferences') || 'Learning Preferences' }}</h2>
+      <p>{{ t('settings.learningPreferencesDescription') || 'Manage your target language and proficiency levels' }}</p>
+
+      <!-- Target Learning Language -->
+      <div class="subsection">
+        <h3>{{ t('settings.targetLanguage') || 'Target Language' }}</h3>
+        <div class="custom-select" [class.open]="isLearningLanguageDropdownOpen">
+          <div class="select-trigger" (click)="toggleLearningLanguageDropdown()">
+            <span [class]="'fi fi-' + getSelectedLearningLanguage().flagCode"></span>
+            <span class="selected-text">{{ getSelectedLearningLanguage().name }}</span>
+            <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+          <div class="select-options">
+            @for (lang of learningLanguages; track lang.code) {
+              <div
+                class="select-option"
+                [class.selected]="selectedLearningLanguage === lang.code"
+                (click)="selectLearningLanguage(lang.code)"
+              >
+                <span [class]="'fi fi-' + lang.flagCode"></span>
+                <span class="option-text">{{ lang.name }}</span>
+                @if (selectedLearningLanguage === lang.code) {
+                  <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Level -->
+      <div class="subsection">
+        <h3>{{ t('settings.currentLevel') || 'Current Level' }}</h3>
+        <p class="subsection-hint">{{ t('settings.currentLevelHint') || 'Select your current proficiency level' }}</p>
+        <div class="level-slider">
+          <div class="slider-track"></div>
+          <div class="slider-stops">
+            @for (level of levels; track level.code; let i = $index) {
+              <div
+                class="slider-stop"
+                [class.selected]="selectedCurrentLevel === level.code"
+                (click)="selectCurrentLevel(level.code)"
+              >
+                <div class="stop-dot"></div>
+                <div class="stop-label">{{ level.code }}</div>
+              </div>
+            }
+          </div>
+        </div>
+        @if (selectedCurrentLevel) {
+          <div class="level-description">
+            <strong>{{ t(getSelectedCurrentLevel().name) }}</strong> - {{ t(getSelectedCurrentLevel().description) }}
+          </div>
+        }
+      </div>
+
+      <!-- Target Level -->
+      <div class="subsection">
+        <h3>{{ t('settings.targetLevel') || 'Target Level' }}</h3>
+        <p class="subsection-hint">{{ t('settings.targetLevelHint') || 'Choose the level you want to achieve' }}</p>
+        <div class="level-slider">
+          <div class="slider-track"></div>
+          <div class="slider-stops">
+            @for (level of levels; track level.code; let i = $index) {
+              <div
+                class="slider-stop"
+                [class.selected]="selectedTargetLevel === level.code"
+                [class.disabled]="isTargetLevelDisabled(level.code)"
+                (click)="selectTargetLevel(level.code)"
+              >
+                <div class="stop-dot"></div>
+                <div class="stop-label">{{ level.code }}</div>
+                @if (isTargetLevelDisabled(level.code)) {
+                  <svg class="stop-disabled-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                }
+              </div>
+            }
+          </div>
+        </div>
+        @if (selectedTargetLevel) {
+          <div class="level-description">
+            <strong>{{ t(getSelectedTargetLevel().name) }}</strong> - {{ t(getSelectedTargetLevel().description) }}
+          </div>
+        }
       </div>
     </div>
   </div>

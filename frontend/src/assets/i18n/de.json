@@ -37,8 +37,9 @@
     "xpToNextLevel": "Noch {{xp}} XP bis Level 9",
     "days": "Tage",
     "streak": "Lernstreak",
-    "streakMessage": "Fantastisch! Lerne heute, um deinen Streak fortzusetzen.",
-    "streakInactive": "Löse heute eine Aufgabe, um deinen Streak zu behalten!",
+    "streakActive": "Großartig! Komm morgen wieder, um deine Serie fortzusetzen.",
+    "streakInactive": "Schließe heute eine Aufgabe ab, um deine Serie fortzusetzen!",
+    "streakInactiveZero": "Schließe heute eine Aufgabe ab, um deine Serie zu starten!",
     "leaderboard": "Bestenliste",
     "you": "Du",
     "lessons": "Lektionen",
@@ -138,139 +139,95 @@
       "continue": "Fortsetzen",
       "repeat": "Wiederholen",
       "start": "Starten",
-      "locked": "Bearbeite zuerst die vorherige Lektion!"
+      "locked": "Bearbeite zuerst die vorherige Lektion!",
+      "loadingExercises": "Lade Übungen...",
+      "noExercisesAvailable": "Keine Übungen für diese Lektion verfügbar."
+    },
+    "topics": {
+      "greetings": "Grundlegende Grüße",
+      "daily_routines": "Tägliche Routinen",
+      "travel": "Reisevokabular",
+      "opinions": "Meinungen ausdrücken",
+      "complex_ideas": "Komplexe Ideen",
+      "idioms": "Redewendungen und Ausdrücke",
+      "introductions": "Vorstellungen",
+      "descriptions": "Beschreibungen",
+      "experiences": "Vergangene Erfahrungen",
+      "abstract_concepts": "Abstrakte Konzepte",
+      "nuanced_language": "Nuancierte Sprache",
+      "sophisticated_language": "Anspruchsvolle Sprache"
     },
     "lessons": {
       "a1": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Übe mit Multiple-Choice-Fragen",
-          "section": "A1 - Anfänger",
-          "exercises": {
-            "ex1": "Grundlegende Grüße",
-            "ex2": "Einfache Wörter",
-            "ex3": "Zahlen"
-          }
+          "section": "A1 - Anfänger"
         },
         "lesson2": {
           "title": "Lückentexte",
           "description": "Fülle die fehlenden Wörter ein",
-          "section": "A1 - Anfänger",
-          "exercises": {
-            "ex1": "Einfache Sätze",
-            "ex2": "Grundvokabular",
-            "ex3": "Alltagsausdrücke"
-          }
+          "section": "A1 - Anfänger"
         }
       },
       "a2": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Übe mit Multiple-Choice-Fragen",
-          "section": "A2 - Grundlagen",
-          "exercises": {
-            "ex1": "Vergangenheitsformen",
-            "ex2": "Familie",
-            "ex3": "Alltag"
-          }
+          "section": "A2 - Grundlagen"
         },
         "lesson2": {
           "title": "Lückentexte",
           "description": "Fülle die fehlenden Wörter ein",
-          "section": "A2 - Grundlagen",
-          "exercises": {
-            "ex1": "Zeitformen",
-            "ex2": "Beschreibungen",
-            "ex3": "Konversation"
-          }
+          "section": "A2 - Grundlagen"
         }
       },
       "b1": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Übe mit Multiple-Choice-Fragen",
-          "section": "B1 - Mittelstufe",
-          "exercises": {
-            "ex1": "Grammatik",
-            "ex2": "Idiome",
-            "ex3": "Zusammenhänge"
-          }
+          "section": "B1 - Mittelstufe"
         },
         "lesson2": {
           "title": "Lückentexte",
           "description": "Fülle die fehlenden Wörter ein",
-          "section": "B1 - Mittelstufe",
-          "exercises": {
-            "ex1": "Komplexe Sätze",
-            "ex2": "Fachausdrücke",
-            "ex3": "Diskussion"
-          }
+          "section": "B1 - Mittelstufe"
         }
       },
       "b2": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Übe mit Multiple-Choice-Fragen",
-          "section": "B2 - Mittelstufe",
-          "exercises": {
-            "ex1": "Redewendungen",
-            "ex2": "Konjunktiv",
-            "ex3": "Stilmittel"
-          }
+          "section": "B2 - Mittelstufe"
         },
         "lesson2": {
           "title": "Lückentexte",
           "description": "Fülle die fehlenden Wörter ein",
-          "section": "B2 - Mittelstufe",
-          "exercises": {
-            "ex1": "Präzision",
-            "ex2": "Argumentation",
-            "ex3": "Ausdruck"
-          }
+          "section": "B2 - Mittelstufe"
         }
       },
       "c1": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Übe mit Multiple-Choice-Fragen",
-          "section": "C1 - Fortgeschritten",
-          "exercises": {
-            "ex1": "Nuancen",
-            "ex2": "Fachsprache",
-            "ex3": "Komplexität"
-          }
+          "section": "C1 - Fortgeschritten"
         },
         "lesson2": {
           "title": "Lückentexte",
           "description": "Fülle die fehlenden Wörter ein",
-          "section": "C1 - Fortgeschritten",
-          "exercises": {
-            "ex1": "Präziser Ausdruck",
-            "ex2": "Fachterminologie",
-            "ex3": "Abstrakte Konzepte"
-          }
+          "section": "C1 - Fortgeschritten"
         }
       },
       "c2": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Übe mit Multiple-Choice-Fragen",
-          "section": "C2 - Experte",
-          "exercises": {
-            "ex1": "Muttersprachniveau",
-            "ex2": "Feinheiten",
-            "ex3": "Meisterschaft"
-          }
+          "section": "C2 - Experte"
         },
         "lesson2": {
           "title": "Lückentexte",
           "description": "Fülle die fehlenden Wörter ein",
-          "section": "C2 - Experte",
-          "exercises": {
-            "ex1": "Perfektion",
-            "ex2": "Eloquenz",
-            "ex3": "Exzellenz"
-          }
+          "section": "C2 - Experte"
         }
       }
     }
@@ -379,6 +336,13 @@
     "notifications": "Benachrichtigungen",
     "notificationsEnabled": "Benachrichtigungen aktivieren",
     "notificationsDescription": "Erhalte Updates über deinen Lernfortschritt",
+    "learningPreferences": "Lernpräferenzen",
+    "learningPreferencesDescription": "Verwalte deine Zielsprache und Kompetenzstufen",
+    "targetLanguage": "Zielsprache",
+    "currentLevel": "Aktuelles Niveau",
+    "targetLevel": "Zielniveau",
+    "currentLevelHint": "Wähle dein aktuelles Kompetenzniveau",
+    "targetLevelHint": "Wähle das Niveau, das du erreichen möchtest",
     "saveSuccess": "Einstellungen erfolgreich gespeichert",
     "saveError": "Fehler beim Speichern der Einstellungen",
     "languages": {
@@ -407,5 +371,23 @@
       "check": "Prüfen",
       "next": "Weiter"
     }
+  },
+  "levelSelection": {
+    "welcome": "Willkommen bei LingUDE!",
+    "subtitle": "Lass uns deine Sprachlernreise einrichten",
+    "language": "Sprache",
+    "currentLevel": "Aktuelles Niveau",
+    "targetLevel": "Zielniveau",
+    "chooseLanguage": "Wähle deine Lernsprache",
+    "chooseCurrentLevel": "Was ist dein aktuelles Niveau?",
+    "currentLevelHelper": "Wähle das Niveau, das am besten zu deinen aktuellen Sprachkenntnissen passt",
+    "chooseTargetLevel": "Welches Niveau möchtest du erreichen?",
+    "targetLevelHelper": "Setze dein Lernziel - du kannst es später jederzeit ändern",
+    "comingSoon": "Demnächst verfügbar"
+  },
+  "common": {
+    "back": "Zurück",
+    "continue": "Weiter",
+    "saving": "Speichern..."
   }
 }

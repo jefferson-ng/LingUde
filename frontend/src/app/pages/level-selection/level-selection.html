@@ -1,0 +1,88 @@
+<div class="level-selection-container" *transloco="let t">
+  <div class="level-selection-card">
+    <h1 class="title">{{ t('levelSelection.welcome') }}</h1>
+    <p class="subtitle">{{ t('levelSelection.subtitle') }}</p>
+
+    <!-- Progress indicator -->
+    <div class="progress-steps">
+      <div class="step" [class.active]="step === 'language'" [class.completed]="selectedLanguage !== null">
+        <div class="step-number">1</div>
+        <div class="step-label">{{ t('levelSelection.language') }}</div>
+      </div>
+      <div class="step" [class.active]="step === 'current-level'" [class.completed]="selectedCurrentLevel !== null">
+        <div class="step-number">2</div>
+        <div class="step-label">{{ t('levelSelection.currentLevel') }}</div>
+      </div>
+      <div class="step" [class.active]="step === 'target-level'" [class.completed]="selectedTargetLevel !== null">
+        <div class="step-number">3</div>
+        <div class="step-label">{{ t('levelSelection.targetLevel') }}</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Language Selection -->
+    <div class="step-content" *ngIf="step === 'language'">
+      <h2>{{ t('levelSelection.chooseLanguage') }}</h2>
+      <div class="language-grid">
+        <div
+          *ngFor="let lang of languages"
+          class="language-card"
+          [class.selected]="selectedLanguage === lang.code"
+          [class.disabled]="lang.disabled"
+          (click)="selectLanguage(lang.code)"
+        >
+          <span [class]="'fi fi-' + lang.flagCode + ' flag-icon'"></span>
+          <div class="language-name">{{ lang.name }}</div>
+          <div class="coming-soon" *ngIf="lang.disabled">{{ t('levelSelection.comingSoon') }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Current Level Selection -->
+    <div class="step-content" *ngIf="step === 'current-level'">
+      <h2>{{ t('levelSelection.chooseCurrentLevel') }}</h2>
+      <p class="helper-text">{{ t('levelSelection.currentLevelHelper') }}</p>
+      <div class="level-grid">
+        <div
+          *ngFor="let level of levels"
+          class="level-card"
+          [class.selected]="selectedCurrentLevel === level.code"
+          (click)="selectCurrentLevel(level.code)"
+        >
+          <div class="level-code">{{ level.code }}</div>
+          <div class="level-name">{{ t('learning.difficulty.' + level.code.toLowerCase() + '.label') }}</div>
+          <div class="level-description">{{ t('learning.difficulty.' + level.code.toLowerCase() + '.description') }}</div>
+        </div>
+      </div>
+      <button class="btn-back" (click)="goBack()">{{ t('common.back') }}</button>
+    </div>
+
+    <!-- Step 3: Target Level Selection -->
+    <div class="step-content" *ngIf="step === 'target-level'">
+      <h2>{{ t('levelSelection.chooseTargetLevel') }}</h2>
+      <p class="helper-text">{{ t('levelSelection.targetLevelHelper') }}</p>
+      <div class="level-grid">
+        <div
+          *ngFor="let level of levels"
+          class="level-card"
+          [class.selected]="selectedTargetLevel === level.code"
+          (click)="selectTargetLevel(level.code)"
+        >
+          <div class="level-code">{{ level.code }}</div>
+          <div class="level-name">{{ t('learning.difficulty.' + level.code.toLowerCase() + '.label') }}</div>
+          <div class="level-description">{{ t('learning.difficulty.' + level.code.toLowerCase() + '.description') }}</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-back" (click)="goBack()">{{ t('common.back') }}</button>
+        <button
+          class="btn-submit"
+          [disabled]="!canSubmit() || loading"
+          (click)="submit()"
+        >
+          {{ loading ? t('common.saving') : t('common.continue') }}
+        </button>
+      </div>
+      <div class="error" *ngIf="error">{{ error }}</div>
+    </div>
+  </div>
+</div>

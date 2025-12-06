@@ -24,10 +24,15 @@ export class Dashboard implements OnInit {
   protected xpForCurrentLevel = signal(0);
   protected xpForNextLevel = signal(100);
   protected progressPercent = signal(0);
-  
+
+  // User learning preferences
+  protected learningLanguage = signal<string>('');
+  protected currentLevel = signal<string>('');
+  protected targetLevel = signal<string>('');
+
   ngOnInit(): void {
     this.loadUserData();
-    
+
     // Subscribe to XP updates
     this.userLearningService.userLearning$.subscribe(data => {
       if (data) {
@@ -36,10 +41,11 @@ export class Dashboard implements OnInit {
         const today = new Date().toISOString().split('T')[0];
         const lastActivityDate = data.lastActivityDate?.split('T')[0];
         this.isStreakActiveToday.set(lastActivityDate === today);
+        this.updateLearningInfo(data.learningLanguage, data.currentLevel, data.targetLevel);
       }
     });
   }
-  
+
   private loadUserData(): void {
     this.userLearningService.getUserLearning().subscribe({
       next: (data) => {
@@ -48,28 +54,46 @@ export class Dashboard implements OnInit {
         const today = new Date().toISOString().split('T')[0];
         const lastActivityDate = data.lastActivityDate?.split('T')[0];
         this.isStreakActiveToday.set(lastActivityDate === today);
+        this.updateLearningInfo(data.learningLanguage, data.currentLevel, data.targetLevel);
       },
       error: (error) => {
         console.error('Error loading user data:', error);
       }
     });
   }
-  
+
   private updateUserProgress(xp: number, streak: number): void {
     this.userXP.set(xp);
     this.userStreak.set(streak);
-    
+
     // Calculate level (100 XP per level)
     const level = Math.floor(xp / 100) + 1;
     this.userLevel.set(level);
-    
+
     // Calculate XP progress within current level
     const xpInCurrentLevel = xp % 100;
     this.xpForCurrentLevel.set(xpInCurrentLevel);
     this.xpForNextLevel.set(100 - xpInCurrentLevel);
-    
+
     // Calculate progress percentage
     const percent = (xpInCurrentLevel / 100) * 100;
     this.progressPercent.set(percent);
+  }
+
+  private updateLearningInfo(language: string | null, current: string, target: string): void {
+    this.learningLanguage.set(this.getLanguageName(language));
+    this.currentLevel.set(current);
+    this.targetLevel.set(target);
+  }
+
+  private getLanguageName(code: string | null): string {
+    const languageMap: Record<string, string> = {
+      'DE': 'German',
+      'EN': 'English',
+      'FR': 'French',
+      'ES': 'Spanish',
+      'IT': 'Italian'
+    };
+    return code ? languageMap[code] || code : 'Not selected';
   }
 }
