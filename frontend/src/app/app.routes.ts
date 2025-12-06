@@ -72,6 +72,21 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'friends',
+        loadComponent: () => import('./pages/friends/friends-list/friends-list').then(m => m.FriendsList),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'friends/search',
+        loadComponent: () => import('./pages/friends/friends-search/friends-search').then(m => m.FriendsSearch),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'friends/requests',
+        loadComponent: () => import('./pages/friends/friend-requests/friend-requests').then(m => m.FriendRequests),
+        canActivate: [AuthGuard]
+      },
+      {
         path: '**',
         redirectTo: 'dashboard'
       }
