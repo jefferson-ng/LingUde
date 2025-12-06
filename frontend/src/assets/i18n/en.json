@@ -37,8 +37,9 @@
     "xpToNextLevel": "{{xp}} XP until Level 9",
     "days": "Days",
     "streak": "Learning Streak",
-    "streakMessage": "Fantastic! Learn today to continue your streak.",
-    "streakInactive": "Complete a task today to keep your streak!",
+    "streakActive": "Amazing! Come back tomorrow to keep your streak going.",
+    "streakInactive": "Complete a task today to continue your streak!",
+    "streakInactiveZero": "Complete a task today to start your streak!",
     "leaderboard": "Leaderboard",
     "you": "You",
     "lessons": "Lessons",
@@ -138,139 +139,95 @@
       "continue": "Continue",
       "repeat": "Repeat",
       "start": "Start",
-      "locked": "Complete the previous lesson first!"
+      "locked": "Complete the previous lesson first!",
+      "loadingExercises": "Loading exercises...",
+      "noExercisesAvailable": "No exercises available for this lesson."
+    },
+    "topics": {
+      "greetings": "Basic Greetings",
+      "daily_routines": "Daily Routines",
+      "travel": "Travel Vocabulary",
+      "opinions": "Expressing Opinions",
+      "complex_ideas": "Complex Ideas",
+      "idioms": "Idioms and Expressions",
+      "introductions": "Introductions",
+      "descriptions": "Descriptions",
+      "experiences": "Past Experiences",
+      "abstract_concepts": "Abstract Concepts",
+      "nuanced_language": "Nuanced Language",
+      "sophisticated_language": "Sophisticated Language"
     },
     "lessons": {
       "a1": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Practice with multiple choice questions",
-          "section": "A1 - Beginner",
-          "exercises": {
-            "ex1": "Basic Greetings",
-            "ex2": "Simple Words",
-            "ex3": "Numbers"
-          }
+          "section": "A1 - Beginner"
         },
         "lesson2": {
           "title": "Fill in the Blanks",
           "description": "Complete the missing words",
-          "section": "A1 - Beginner",
-          "exercises": {
-            "ex1": "Simple Sentences",
-            "ex2": "Basic Vocabulary",
-            "ex3": "Daily Expressions"
-          }
+          "section": "A1 - Beginner"
         }
       },
       "a2": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Practice with multiple choice questions",
-          "section": "A2 - Elementary",
-          "exercises": {
-            "ex1": "Past Tense",
-            "ex2": "Family",
-            "ex3": "Daily Life"
-          }
+          "section": "A2 - Elementary"
         },
         "lesson2": {
           "title": "Fill in the Blanks",
           "description": "Complete the missing words",
-          "section": "A2 - Elementary",
-          "exercises": {
-            "ex1": "Tenses",
-            "ex2": "Descriptions",
-            "ex3": "Conversation"
-          }
+          "section": "A2 - Elementary"
         }
       },
       "b1": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Practice with multiple choice questions",
-          "section": "B1 - Intermediate",
-          "exercises": {
-            "ex1": "Grammar",
-            "ex2": "Idioms",
-            "ex3": "Connections"
-          }
+          "section": "B1 - Intermediate"
         },
         "lesson2": {
           "title": "Fill in the Blanks",
           "description": "Complete the missing words",
-          "section": "B1 - Intermediate",
-          "exercises": {
-            "ex1": "Complex Sentences",
-            "ex2": "Technical Terms",
-            "ex3": "Discussion"
-          }
+          "section": "B1 - Intermediate"
         }
       },
       "b2": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Practice with multiple choice questions",
-          "section": "B2 - Upper Intermediate",
-          "exercises": {
-            "ex1": "Phrases",
-            "ex2": "Subjunctive",
-            "ex3": "Style"
-          }
+          "section": "B2 - Upper Intermediate"
         },
         "lesson2": {
           "title": "Fill in the Blanks",
           "description": "Complete the missing words",
-          "section": "B2 - Upper Intermediate",
-          "exercises": {
-            "ex1": "Precision",
-            "ex2": "Argumentation",
-            "ex3": "Expression"
-          }
+          "section": "B2 - Upper Intermediate"
         }
       },
       "c1": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Practice with multiple choice questions",
-          "section": "C1 - Advanced",
-          "exercises": {
-            "ex1": "Nuances",
-            "ex2": "Technical Language",
-            "ex3": "Complexity"
-          }
+          "section": "C1 - Advanced"
         },
         "lesson2": {
           "title": "Fill in the Blanks",
           "description": "Complete the missing words",
-          "section": "C1 - Advanced",
-          "exercises": {
-            "ex1": "Precise Expression",
-            "ex2": "Terminology",
-            "ex3": "Abstract Concepts"
-          }
+          "section": "C1 - Advanced"
         }
       },
       "c2": {
         "lesson1": {
           "title": "Multiple Choice",
           "description": "Practice with multiple choice questions",
-          "section": "C2 - Mastery",
-          "exercises": {
-            "ex1": "Native Level",
-            "ex2": "Subtleties",
-            "ex3": "Mastery"
-          }
+          "section": "C2 - Mastery"
         },
         "lesson2": {
           "title": "Fill in the Blanks",
           "description": "Complete the missing words",
-          "section": "C2 - Mastery",
-          "exercises": {
-            "ex1": "Perfection",
-            "ex2": "Eloquence",
-            "ex3": "Excellence"
-          }
+          "section": "C2 - Mastery"
         }
       }
     }
@@ -379,6 +336,13 @@
     "notifications": "Notifications",
     "notificationsEnabled": "Enable notifications",
     "notificationsDescription": "Receive updates about your learning progress",
+    "learningPreferences": "Learning Preferences",
+    "learningPreferencesDescription": "Manage your target language and proficiency levels",
+    "targetLanguage": "Target Language",
+    "currentLevel": "Current Level",
+    "targetLevel": "Target Level",
+    "currentLevelHint": "Select your current proficiency level",
+    "targetLevelHint": "Choose the level you want to achieve",
     "saveSuccess": "Settings saved successfully",
     "saveError": "Failed to save settings",
     "languages": {
@@ -407,5 +371,23 @@
       "check": "Check",
       "next": "Next"
     }
+  },
+  "levelSelection": {
+    "welcome": "Welcome to LingUDE!",
+    "subtitle": "Let's set up your language learning journey",
+    "language": "Language",
+    "currentLevel": "Current Level",
+    "targetLevel": "Target Level",
+    "chooseLanguage": "Choose Your Learning Language",
+    "chooseCurrentLevel": "What is your current level?",
+    "currentLevelHelper": "Select the level that best matches your current language skills",
+    "chooseTargetLevel": "What level do you want to reach?",
+    "targetLevelHelper": "Set your learning goal - you can always change this later",
+    "comingSoon": "Coming Soon"
+  },
+  "common": {
+    "back": "Back",
+    "continue": "Continue",
+    "saving": "Saving..."
   }
 }

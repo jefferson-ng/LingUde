@@ -45,6 +45,21 @@ export class UserLearningService {
   }
 
   /**
+   * Updates the user's learning configuration (language, current level, target level).
+   *
+   * @param data - Partial user learning data to update
+   * @returns Observable of updated UserLearningData
+   */
+  updateLearningConfig(data: Partial<UserLearningData>): Observable<UserLearningData> {
+    return this.http.put<UserLearningData>(
+      `${this.apiUrl}/myLearning`,
+      data
+    ).pipe(
+      tap(updated => this.userLearningSubject.next(updated))
+    );
+  }
+
+  /**
    * Adds XP to the authenticated user's learning progress.
    *
    * @param xpAmount - The amount of XP to add

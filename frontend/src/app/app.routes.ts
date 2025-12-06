@@ -32,6 +32,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
+        path: 'level-selection',
+        loadComponent: () => import('./pages/level-selection/level-selection').then(m => m.LevelSelectionComponent),
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'dashboard',
         loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.Dashboard),
         canActivate: [AuthGuard]
