@@ -1,0 +1,13 @@
+<ng-container *transloco="let t">
+  <nav class="friends-nav">
+    <a routerLink="/friends" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-tab">
+      {{ t('friends.nav.myFriends') }}
+    </a>
+    <a routerLink="/friends/search" routerLinkActive="active" class="nav-tab">
+      {{ t('friends.nav.searchUsers') }}
+    </a>
+    <a routerLink="/friends/requests" routerLinkActive="active" class="nav-tab">
+      {{ t('friends.nav.friendRequests') }}
+    </a>
+  </nav>
+</ng-container>

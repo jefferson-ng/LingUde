@@ -390,5 +390,12 @@
     "back": "Zurück",
     "continue": "Weiter",
     "saving": "Speichern..."
+  },
+  "friends": {
+    "nav": {
+      "myFriends": "Meine Freunde",
+      "searchUsers": "Benutzer suchen",
+      "friendRequests": "Freundschaftsanfragen"
+    }
   }
 }

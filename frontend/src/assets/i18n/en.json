@@ -390,5 +390,12 @@
     "back": "Back",
     "continue": "Continue",
     "saving": "Saving..."
+  },
+  "friends": {
+    "nav": {
+      "myFriends": "My Friends",
+      "searchUsers": "Search Users",
+      "friendRequests": "Friend Requests"
+    }
   }
 }
