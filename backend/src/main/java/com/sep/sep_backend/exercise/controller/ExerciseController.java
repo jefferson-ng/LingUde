@@ -1,6 +1,14 @@
 package com.sep.sep_backend.exercise.controller;
 
+import com.sep.sep_backend.exercise.dto.CompletedExerciseResponse;
+import com.sep.sep_backend.exercise.dto.CompletionStatusResponse;
+
+
+
+
 import com.sep.sep_backend.exercise.dto.*;
+import com.sep.sep_backend.exercise.entity.ExerciseType;
+import com.sep.sep_backend.exercise.entity.UserProgress;
 import com.sep.sep_backend.exercise.service.ExerciseService;
 import com.sep.sep_backend.user.entity.User;
 import jakarta.validation.Valid;
@@ -9,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -239,5 +248,74 @@ public class ExerciseController {
         // Fallback: unexpected principal type → treat as unauthenticated.
         return null;
     }
+
+    /**
+     * Returns all completed exercises for the authenticated user.
+     *
+     * Flow:
+     *  1) Extract the userId from Authentication (auth.getName()).
+     *  2) Fetch all completed progress entries via the service.
+     *  3) Convert them into CompletedExerciseResponse DTOs.
+     *
+     * Used for:
+     *  - Progress page
+     *  - Marking completed exercises with ✔
+     *  - Achievement/badge features
+     */
+    @GetMapping("/completed")
+    public List<CompletedExerciseResponse> getCompletedExercisesForUser() {
+
+        // Get auth object from the security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Extract userId from token (may return null in tests)
+        UUID userId = extractUserId(authentication);
+
+        List<UserProgress> progressList = service.getCompletedExercisesForUser(userId);
+
+        List<CompletedExerciseResponse> response = new ArrayList<>();
+        for (UserProgress up : progressList) {
+            response.add(new CompletedExerciseResponse(
+                    up.getExerciseId(),
+                    up.getExerciseType(),
+                    up.getXpEarned(),
+                    up.getCompletedAt()
+            ));
+        }
+
+        return response;
+    }
+
+
+    /**
+     * Checks whether a specific exercise is completed for the authenticated user.
+     *
+     * Flow:
+     *  1) Extract userId from Authentication.
+     *  2) Read exerciseId from the URL.
+     *  3) Read exerciseType from URL query param (?type=MCQ).
+     *  4) Ask service if user completed this exercise.
+     *  5) Return a CompletionStatusResponse DTO.
+     *
+     * Used for:
+     *  - Fast UI checks
+     *  - Showing ✔ beside an exercise
+     *  - Prevent awarding XP multiple times
+     */
+    @GetMapping("/{exerciseId}/completed")
+    public CompletionStatusResponse hasUserCompletedExercise(
+            @PathVariable UUID exerciseId,
+            @RequestParam ExerciseType type
+    ) {
+        // Get authentication from SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        UUID userId = extractUserId(authentication);
+
+        boolean completed = service.hasUserCompletedExercise(userId, exerciseId, type);
+
+        return new CompletionStatusResponse(exerciseId, type, completed);
+    }
+
 
 }
