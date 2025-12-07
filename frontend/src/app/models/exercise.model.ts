@@ -7,7 +7,7 @@ export type ExerciseType = 'MCQ' | 'FILL_BLANK';
 
 export type DifficultyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
-export type Language = 'DE' | 'EN' | 'FR' | 'ES';
+export type Language = 'DE' | 'EN';
 
 /**
  * Exercise Summary Response from Backend

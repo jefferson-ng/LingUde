@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService, TranslocoDirective } from '@jsverse/transloco';
 import { ExerciseViewerComponent, ExerciseResult } from '../../components/exercise-viewer/exercise-viewer';
 import { ExerciseSummaryResponse, ExerciseDetailResponse } from '../../models/exercise.model';
 import { ExerciseService } from '../../services/exercise.service';
@@ -14,18 +14,18 @@ interface Lesson {
   status: 'available';  // All available for now, until progress tracking is implemented
   progress?: number;
   stars?: number;
-  exerciseKeys?: string[];
   descriptionKey?: string;
   difficultyLevel: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
   topic: string;
   exerciseType: 'MCQ' | 'FILL_BLANK';  // New: separates by exercise type
+  exercisePreviews?: ExerciseSummaryResponse[];  // Dynamically loaded exercise summaries
 }
 
 type DifficultyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
 @Component({
   selector: 'app-learning',
-  imports: [CommonModule, TranslocoPipe, ExerciseViewerComponent],
+  imports: [CommonModule, TranslocoPipe, TranslocoDirective, ExerciseViewerComponent],
   templateUrl: './learning.html',
   styleUrl: './learning.css'
 })
@@ -40,22 +40,11 @@ export class Learning implements OnInit {
   
   // All difficulty levels
   protected readonly difficulties: DifficultyLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-  
-  // Mapping of difficulty to topic
-  private readonly difficultyToTopic: Record<DifficultyLevel, string> = {
-    'A1': 'basics',
-    'A2': 'basics',
-    'B1': 'intermediate',
-    'B2': 'intermediate',
-    'C1': 'advanced',
-    'C2': 'advanced'
-  };
-  
+
   // Computed lessons based on selected difficulty
   protected lessons = computed<Lesson[]>(() => {
     const difficulty = this.selectedDifficulty();
-    const topic = this.difficultyToTopic[difficulty];
-    
+
     return [
       {
         id: 1,
@@ -65,13 +54,8 @@ export class Learning implements OnInit {
         progress: 0,
         stars: 0,
         descriptionKey: `learning.lessons.${difficulty.toLowerCase()}.lesson1.description`,
-        exerciseKeys: [
-          `learning.lessons.${difficulty.toLowerCase()}.lesson1.exercises.ex1`,
-          `learning.lessons.${difficulty.toLowerCase()}.lesson1.exercises.ex2`,
-          `learning.lessons.${difficulty.toLowerCase()}.lesson1.exercises.ex3`
-        ],
         difficultyLevel: difficulty,
-        topic: topic,
+        topic: '', // Topic filtering removed - exercises filtered by difficulty only
         exerciseType: 'MCQ'
       },
       {
@@ -82,13 +66,8 @@ export class Learning implements OnInit {
         progress: 0,
         stars: 0,
         descriptionKey: `learning.lessons.${difficulty.toLowerCase()}.lesson2.description`,
-        exerciseKeys: [
-          `learning.lessons.${difficulty.toLowerCase()}.lesson2.exercises.ex1`,
-          `learning.lessons.${difficulty.toLowerCase()}.lesson2.exercises.ex2`,
-          `learning.lessons.${difficulty.toLowerCase()}.lesson2.exercises.ex3`
-        ],
         difficultyLevel: difficulty,
-        topic: topic,
+        topic: '', // Topic filtering removed - exercises filtered by difficulty only
         exerciseType: 'FILL_BLANK'
       }
     ];
@@ -100,12 +79,26 @@ export class Learning implements OnInit {
   protected readonly hearts = signal(4);
   protected readonly gems = signal(500);
   
-  protected selectedLesson = signal<Lesson | null>(null);
+  // Streak celebration modal
+  protected showStreakCelebration = signal(false);
+  protected newStreakValue = signal(0);
+  protected previousStreakForDisplay = signal(0);
+  protected isStreakShrinking = signal(false);
+  protected isStreakFlying = signal(false);
+  private previousStreakValue = 0;
   
+  // Track correct answers in current lesson
+  private correctAnswersCount = 0;
+  
+  protected selectedLesson = signal<Lesson | null>(null);
+
   protected exerciseMode = signal<boolean>(false);
   protected currentExerciseSummaries = signal<ExerciseSummaryResponse[]>([]);
   protected currentExerciseIndex = signal<number>(0);
   protected currentExercise = signal<ExerciseDetailResponse | null>(null);
+
+  // Store user's selected learning language (default to 'DE' if not set)
+  protected userLanguage = signal<'DE' | 'EN'>('DE');
 
   // Use authenticated user; no hardcoded test user ID
   constructor(private exerciseService: ExerciseService) {}
@@ -135,6 +128,14 @@ export class Learning implements OnInit {
         console.log('Loaded user learning data:', data);
         this.dailyProgress.set(data.xp);
         this.streak.set(data.streakCount);
+        // Update user's selected language (only DE and EN supported for exercises)
+        if (data.learningLanguage === 'DE' || data.learningLanguage === 'EN') {
+          this.userLanguage.set(data.learningLanguage);
+        } else {
+          // Default to DE if user selected unsupported language
+          this.userLanguage.set('DE');
+        }
+        this.previousStreakValue = data.streakCount; // Remember for comparison
       },
       error: (error) => {
         console.error('Error loading user learning data:', error);
@@ -161,6 +162,30 @@ export class Learning implements OnInit {
 
   selectLesson(lesson: Lesson) {
     this.selectedLesson.set(lesson);
+    // Load exercise previews dynamically when lesson is selected
+    this.loadExercisePreviews(lesson);
+  }
+
+  /**
+   * Load exercise summaries for the selected lesson to display in the side panel.
+   * This replaces hardcoded exercise names with actual exercises from the backend.
+   */
+  private loadExercisePreviews(lesson: Lesson): void {
+    this.exerciseService.getExercises(this.userLanguage(), lesson.difficultyLevel, undefined).subscribe({
+      next: (exerciseSummaries) => {
+        // Filter by exercise type (MCQ or FILL_BLANK)
+        const filteredExercises = exerciseSummaries.filter(ex => ex.type === lesson.exerciseType);
+
+        console.log(`Loaded ${filteredExercises.length} exercise previews for ${lesson.exerciseType}`, filteredExercises);
+
+        // Update the selected lesson with the exercise previews
+        const updatedLesson = { ...lesson, exercisePreviews: filteredExercises };
+        this.selectedLesson.set(updatedLesson);
+      },
+      error: (error) => {
+        console.error('Error loading exercise previews:', error);
+      }
+    });
   }
 
   closePanel() {
@@ -169,15 +194,15 @@ export class Learning implements OnInit {
 
   startLesson(lesson: Lesson) {
     this.closePanel();
+    this.correctAnswersCount = 0; // Reset correct answers counter
 
     const difficulty = lesson.difficultyLevel;
-    const topic = lesson.topic;
     const exerciseType = lesson.exerciseType;
 
-    console.log(`Starting lesson - Difficulty: ${difficulty}, Topic: ${topic}, Type: ${exerciseType}`);
+    console.log(`Starting lesson - Difficulty: ${difficulty}, Type: ${exerciseType}`);
 
-    // Fetch exercises and filter by type
-    this.exerciseService.getExercises('DE', difficulty, topic).subscribe({
+    // Fetch exercises filtered by difficulty only (not topic)
+    this.exerciseService.getExercises(this.userLanguage(), difficulty, undefined).subscribe({
       next: (exerciseSummaries) => {
         // Filter by exercise type (MCQ or FILL_BLANK)
         const filteredExercises = exerciseSummaries.filter(ex => ex.type === exerciseType);
@@ -190,9 +215,8 @@ export class Learning implements OnInit {
           this.loadExerciseDetail(filteredExercises[0]);
         } else {
           console.warn('⚠️ Keine Übungen verfügbar für diese Lektion. Check if exercises exist in backend with:', {
-            targetLanguage: 'DE',
+            targetLanguage: this.userLanguage(),
             difficultyLevel: difficulty,
-            topic: topic,
             exerciseType: exerciseType
           });
         }
@@ -222,25 +246,18 @@ export class Learning implements OnInit {
 
   /**
    * Handles exercise submission results.
-   * If the exercise is completed successfully, awards XP to the user.
+   * The backend now automatically awards XP when exercises are completed.
+   * We track correct answers to determine if streak should be updated.
    * 
    * @param result - The result of the exercise submission
    */
   onExerciseSubmit(result: ExerciseResult) {
     console.log('Exercise submitted:', result);
     
-    // Award XP if exercise was completed correctly
+    // Track correct answers
     if (result.isCorrect) {
-      const xpEarned = result.xpEarned || 10; // Default 10 XP
-      this.userLearningService.addXp(xpEarned).subscribe({
-        next: (data) => {
-          console.log(`Awarded ${xpEarned} XP! Total XP: ${data.xp}`);
-          this.dailyProgress.set(data.xp);
-        },
-        error: (error) => {
-          console.error('Error awarding XP:', error);
-        }
-      });
+      this.correctAnswersCount++;
+      this.loadUserLearningData();
     }
   }
 
@@ -263,6 +280,67 @@ export class Learning implements OnInit {
     this.currentExerciseIndex.set(0);
     
     console.log('Lektion abgeschlossen!');
+    console.log(`Correct answers: ${this.correctAnswersCount}`);
+    
+    // Only update streak if at least one question was answered correctly
+    if (this.correctAnswersCount > 0) {
+      this.userLearningService.updateStreak().subscribe({
+        next: (data) => {
+          console.log('Streak updated after lesson completion:', data.streakCount);
+          
+          // Check if streak increased (first lesson of the day)
+          if (data.streakCount > this.previousStreakValue) {
+            this.previousStreakForDisplay.set(this.previousStreakValue);
+            this.newStreakValue.set(data.streakCount);
+            
+            // Small delay to ensure translations are loaded
+            setTimeout(() => {
+              this.showStreakCelebration.set(true);
+              this.startStreakAnimation();
+            }, 100);
+          }
+          
+          this.streak.set(data.streakCount);
+          this.previousStreakValue = data.streakCount;
+        },
+        error: (error) => {
+          console.error('Error updating streak:', error);
+        }
+      });
+    } else {
+      console.log('No correct answers - streak not updated');
+    }
+    
+    // Reset counter for next lesson
+    this.correctAnswersCount = 0;
+  }
+
+  /**
+   * Starts the streak celebration animation sequence:
+   * 1. Show modal with pop-up animation (2.5s display)
+   * 2. Slide out elegantly to the right (0.7s)
+   * 3. Hide modal
+   */
+  private startStreakAnimation() {
+    // Reset states
+    this.isStreakShrinking.set(false);
+    this.isStreakFlying.set(false);
+    
+    // Step 1: Show modal for 2.5 seconds
+    setTimeout(() => {
+      this.isStreakFlying.set(true);
+    }, 2500);
+    
+    // Step 2: Hide modal after slide-out completes (2500ms + 700ms slide + 100ms buffer)
+    setTimeout(() => {
+      this.closeStreakCelebration();
+    }, 3300);
+  }
+  
+  closeStreakCelebration() {
+    this.showStreakCelebration.set(false);
+    this.isStreakShrinking.set(false);
+    this.isStreakFlying.set(false);
   }
 
   exitExerciseMode() {

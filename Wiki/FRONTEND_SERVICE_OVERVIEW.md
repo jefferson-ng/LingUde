@@ -53,3 +53,33 @@ Handles fetching and submitting exercises (MCQ and Fill-Blank). (Exercises will 
 
 ---
 
+## Language-Based Exercise Filtering
+
+The application now supports filtering exercises by the user's target language preference. This feature ensures users only see exercises in their selected learning language (German or English).
+
+### How It Works
+
+1. **User Preference Storage**
+   - User selects target language during registration (`level-selection` page) or in settings
+   - Language preference stored in backend (`UserLearning.learningLanguage` field)
+   - API: `GET /api/user/learning/myLearning` returns user's language preference
+
+2. **Exercise Filtering Flow**
+   - Learning page loads and fetches user's language preference via `UserLearningService`
+   - When user starts a lesson, `ExerciseService.getExercises()` is called with the user's language
+   - Backend returns all exercises; frontend filters by `targetLanguage` field (client-side)
+   - Only exercises matching user's selected language are displayed
+
+3. **Supported Languages**
+   - Currently: German (`DE`) and English (`EN`)
+   - Language type defined in `exercise.model.ts`: `type Language = 'DE' | 'EN'`
+   - Future languages can be added by updating the type and adding exercise seed data
+
+4. **Key Files**
+   - `learning.ts` (line 175): Uses `this.userLanguage()` to filter exercises
+   - `settings.ts` (lines 32-35): Language selection dropdown
+   - `level-selection.ts` (lines 26-29): Language selection during registration
+   - `exercise.model.ts` (line 10): Language type definition
+
+---
+

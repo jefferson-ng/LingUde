@@ -316,7 +316,7 @@ public class UserLearningService {
                         newLearning.setLearningLanguage(dto.getLearningLanguage());
                         newLearning.setCurrentLevel(dto.getCurrentLevel());
                         newLearning.setTargetLevel(dto.getTargetLevel());
-                        newLearning.setLastActivityDate(LocalDate.now());
+                        // Don't set lastActivityDate here - it should only be set on actual learning activity
                         return userLearningRepository.save(newLearning);
                     })
                     .map(saved -> new UserLearningDTO(
@@ -326,7 +326,7 @@ public class UserLearningService {
                             saved.getTargetLevel(),
                             saved.getXp(),
                             saved.getStreakCount(),
-                            LocalDate.now()
+                            saved.getLastActivityDate()
                     ));
         }
 
@@ -340,7 +340,7 @@ public class UserLearningService {
         if (dto.getTargetLevel() != null) {
             learning.setTargetLevel(dto.getTargetLevel());
         }
-        learning.setLastActivityDate(LocalDate.now());
+        // Don't set lastActivityDate here - only set it on actual learning activity
 
         UserLearning saved = userLearningRepository.save(learning);
 
