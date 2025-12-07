@@ -11,6 +11,7 @@ import com.sep.sep_backend.exercise.repository.ExerciseMcqRepository;
 import com.sep.sep_backend.exercise.repository.UserProgressRepository;
 
 // ===== Imports for testing (JUnit 5 + Mockito + AssertJ) =====
+import com.sep.sep_backend.user.service.UserLearningService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +24,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-// --- extra imports needed  ---
+// --- extra imports needed---
 import com.sep.sep_backend.exercise.entity.UserProgress;
 import com.sep.sep_backend.exercise.entity.ExerciseType;
 import com.sep.sep_backend.user.entity.User;
@@ -33,21 +34,27 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 
+import static org.mockito.ArgumentMatchers.any;
+
+
 /**
  * Unit tests for ExerciseService.
  * We mock repositories so NO real database is used.
  */
-@ExtendWith(MockitoExtension.class) // Enable Mockito in JUnit 5
+@ExtendWith(MockitoExtension.class) // tells JUnit to let Mockito handle the annotations.
 class ExerciseServiceTest {
 
     // Mocked repositories (fake DB layer)
+    // @Mock → creates fake objects for your repositories and UserLearningService.
     @Mock private ExerciseMcqRepository mcqRepo;
     @Mock private ExerciseFillBlankRepository fillRepo;
     @Mock private UserProgressRepository progressRepo;
+    @Mock private UserLearningService userLearningService;
 
     // Service under test, with mocks injected automatically
-    @InjectMocks
+    @InjectMocks // creates a real ExerciseService and injects those mocks into its constructor.
     private ExerciseService service;
+
 
     /**
      * 1
@@ -536,6 +543,93 @@ class ExerciseServiceTest {
         verify(progressRepo, never()).save(any());
         verify(progressRepo, never()).findByUserIdAndExerciseIdAndExerciseType(any(), any(), any());
     }
+
+    // ------------------------------------------------------
+    // TEST 11 — getCompletedExercisesForUser: null userId
+    // ------------------------------------------------------
+    @Test
+    void getCompletedExercisesForUser_nullUser_returnsEmptyListAndSkipsRepository() {
+        // Act
+        java.util.List<UserProgress> result = service.getCompletedExercisesForUser(null);
+
+        // Assert: empty list and no repository call
+        assertThat(result).isEmpty();
+        verify(progressRepo, never()).findAllByUserIdAndIsCompletedTrue(any());
+    }
+
+    // ------------------------------------------------------
+    // TEST 12 — getCompletedExercisesForUser: valid userId
+    // ------------------------------------------------------
+    @Test
+    void getCompletedExercisesForUser_withUserId_returnsProgressListFromRepository() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+
+        UserProgress p1 = new UserProgress();
+        p1.setIsCompleted(true);
+
+        UserProgress p2 = new UserProgress();
+        p2.setIsCompleted(true);
+
+        when(progressRepo.findAllByUserIdAndIsCompletedTrue(userId))
+                .thenReturn(java.util.List.of(p1, p2));
+
+        // Act
+        java.util.List<UserProgress> result = service.getCompletedExercisesForUser(userId);
+
+        // Assert
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactly(p1, p2);
+        verify(progressRepo, times(1)).findAllByUserIdAndIsCompletedTrue(userId);
+    }
+
+    // ------------------------------------------------------
+    // TEST 13 — hasUserCompletedExercise: null userId
+    // ------------------------------------------------------
+    @Test
+    void hasUserCompletedExercise_nullUser_returnsFalseAndSkipsRepository() {
+        // Act
+        boolean result = service.hasUserCompletedExercise(
+                null,
+                UUID.randomUUID(),
+                ExerciseType.MCQ
+        );
+
+        // Assert
+        assertThat(result).isFalse();
+        verify(progressRepo, never())
+                .existsByUserIdAndExerciseIdAndExerciseTypeAndIsCompletedTrue(any(), any(), any());
+    }
+
+    // ------------------------------------------------------
+    // TEST 14 — hasUserCompletedExercise: delegates to repository
+    // ------------------------------------------------------
+    @Test
+    void hasUserCompletedExercise_withUserId_delegatesToRepository() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        UUID exerciseId = UUID.randomUUID();
+
+        when(progressRepo.existsByUserIdAndExerciseIdAndExerciseTypeAndIsCompletedTrue(
+                userId,
+                exerciseId,
+                ExerciseType.FILL_BLANK
+        )).thenReturn(true);
+
+        // Act
+        boolean result = service.hasUserCompletedExercise(userId, exerciseId, ExerciseType.FILL_BLANK);
+
+        // Assert
+        assertThat(result).isTrue();
+        verify(progressRepo, times(1))
+                .existsByUserIdAndExerciseIdAndExerciseTypeAndIsCompletedTrue(
+                        userId,
+                        exerciseId,
+                        ExerciseType.FILL_BLANK
+                );
+    }
+
+
 }
 
 
