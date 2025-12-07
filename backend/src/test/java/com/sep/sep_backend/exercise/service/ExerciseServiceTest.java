@@ -11,6 +11,7 @@ import com.sep.sep_backend.exercise.repository.ExerciseMcqRepository;
 import com.sep.sep_backend.exercise.repository.UserProgressRepository;
 
 // ===== Imports for testing (JUnit 5 + Mockito + AssertJ) =====
+import com.sep.sep_backend.user.service.UserLearningService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +24,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-// --- extra imports needed  ---
+// --- extra imports needed---
 import com.sep.sep_backend.exercise.entity.UserProgress;
 import com.sep.sep_backend.exercise.entity.ExerciseType;
 import com.sep.sep_backend.user.entity.User;
@@ -33,21 +34,27 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 
+import static org.mockito.ArgumentMatchers.any;
+
+
 /**
  * Unit tests for ExerciseService.
  * We mock repositories so NO real database is used.
  */
-@ExtendWith(MockitoExtension.class) // Enable Mockito in JUnit 5
+@ExtendWith(MockitoExtension.class) // tells JUnit to let Mockito handle the annotations.
 class ExerciseServiceTest {
 
     // Mocked repositories (fake DB layer)
+    // @Mock → creates fake objects for your repositories and UserLearningService.
     @Mock private ExerciseMcqRepository mcqRepo;
     @Mock private ExerciseFillBlankRepository fillRepo;
     @Mock private UserProgressRepository progressRepo;
+    @Mock private UserLearningService userLearningService;
 
     // Service under test, with mocks injected automatically
-    @InjectMocks
+    @InjectMocks // creates a real ExerciseService and injects those mocks into its constructor.
     private ExerciseService service;
+
 
     /**
      * 1
