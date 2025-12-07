@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { UserLearningService } from '../../services/user-learning.service';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslocoDirective],
+  imports: [CommonModule, FormsModule, TranslocoDirective, RouterLink],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
@@ -17,13 +18,33 @@ export class LoginComponent {
   password = '';
   error = '';
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private userLearningService: UserLearningService,
+    private router: Router
+  ) {}
 
   async onLogin() {
     this.error = '';
     try {
       await this.auth.login(this.email, this.password);
-      this.router.navigate(['/dashboard']);
+
+      // Check if user has already selected their learning language
+      this.userLearningService.getUserLearning().subscribe({
+        next: (data) => {
+          if (data.learningLanguage) {
+            // User has already configured their preferences
+            this.router.navigate(['/dashboard']);
+          } else {
+            // First time login, redirect to level selection
+            this.router.navigate(['/level-selection']);
+          }
+        },
+        error: () => {
+          // On error, redirect to level selection to be safe
+          this.router.navigate(['/level-selection']);
+        }
+      });
     } catch (e: any) {
       this.error = e?.error?.message || 'Login fehlgeschlagen';
     }

@@ -45,6 +45,21 @@ export class UserLearningService {
   }
 
   /**
+   * Updates the user's learning configuration (language, current level, target level).
+   *
+   * @param data - Partial user learning data to update
+   * @returns Observable of updated UserLearningData
+   */
+  updateLearningConfig(data: Partial<UserLearningData>): Observable<UserLearningData> {
+    return this.http.put<UserLearningData>(
+      `${this.apiUrl}/myLearning`,
+      data
+    ).pipe(
+      tap(updated => this.userLearningSubject.next(updated))
+    );
+  }
+
+  /**
    * Adds XP to the authenticated user's learning progress.
    *
    * @param xpAmount - The amount of XP to add
@@ -53,6 +68,21 @@ export class UserLearningService {
   addXp(xpAmount: number): Observable<UserLearningData> {
     return this.http.post<UserLearningData>(
       `${this.apiUrl}/addXp?xpAmount=${xpAmount}`,
+      {}
+    ).pipe(
+      tap(data => this.userLearningSubject.next(data))
+    );
+  }
+
+  /**
+   * Updates the streak for the authenticated user.
+   * Should be called after completing a full lesson.
+   *
+   * @returns Observable of updated UserLearningData
+   */
+  updateStreak(): Observable<UserLearningData> {
+    return this.http.post<UserLearningData>(
+      `${this.apiUrl}/updateStreak`,
       {}
     ).pipe(
       tap(data => this.userLearningSubject.next(data))

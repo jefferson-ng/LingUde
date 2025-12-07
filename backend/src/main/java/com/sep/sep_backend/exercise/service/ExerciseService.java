@@ -6,6 +6,7 @@ import com.sep.sep_backend.exercise.repository.ExerciseFillBlankRepository;
 import com.sep.sep_backend.exercise.repository.ExerciseMcqRepository;
 import com.sep.sep_backend.exercise.repository.UserProgressRepository;
 import com.sep.sep_backend.user.entity.User;
+import com.sep.sep_backend.user.service.UserLearningService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,13 +37,16 @@ public class ExerciseService {
     private final ExerciseMcqRepository mcqRepo;
     private final ExerciseFillBlankRepository fillRepo;
     private final UserProgressRepository progressRepo;
+    private final UserLearningService userLearningService;
 
     public ExerciseService(ExerciseMcqRepository mcqRepo,
                            ExerciseFillBlankRepository fillRepo,
-                           UserProgressRepository progressRepo) {
+                           UserProgressRepository progressRepo,
+                           UserLearningService userLearningService) {
         this.mcqRepo = mcqRepo;
         this.fillRepo = fillRepo;
         this.progressRepo = progressRepo;
+        this.userLearningService = userLearningService;
     }
 
     // ---------- List & detail ----------
@@ -248,6 +252,8 @@ public class ExerciseService {
                 .findByUserIdAndExerciseIdAndExerciseType(userId, exerciseId, type)
                 .orElse(null);
 
+        boolean shouldUpdateStreak = false;
+
         if (existing == null) {
             // First submission for this user/exercise
             // We create a lightweight User reference with only the ID set, so JPA can
@@ -260,6 +266,7 @@ public class ExerciseService {
                 up.setIsCompleted(true);
                 up.setCompletedAt(LocalDateTime.now());
                 up.setXpEarned(xp);
+                shouldUpdateStreak = true; // First successful completion today
             }
             progressRepo.save(up);
         } else {
@@ -268,8 +275,14 @@ public class ExerciseService {
                 existing.setIsCompleted(true);
                 existing.setCompletedAt(LocalDateTime.now());
                 existing.setXpEarned(xp);
+                shouldUpdateStreak = true; // First successful completion today
                 progressRepo.save(existing);
             }
+        }
+
+        // Add XP only when first successful exercise completion happens
+        if (shouldUpdateStreak) {
+            userLearningService.addXp(userId, xp);
         }
     }
     /**

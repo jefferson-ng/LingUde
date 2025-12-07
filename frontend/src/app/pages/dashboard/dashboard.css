@@ -139,6 +139,18 @@
   flex-direction: column;
   gap: 0.75rem;
   box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Inactive Streak Card - grau wenn heute noch keine Aufgabe gelöst */
+.streak-card.inactive {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.2);
+  opacity: 0.85;
+}
+
+.streak-card.inactive .streak-icon {
+  opacity: 0.6;
 }
 
 .streak-icon {
@@ -282,6 +294,59 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+/* Learning Info Card */
+.learning-info-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid #3b82f6;
+}
+
+.info-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.info-value.cefr-level {
+  background: #dbeafe;
+  color: #3b82f6;
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.info-value.cefr-level.target {
+  background: #dcfce7;
+  color: #16a34a;
 }
 
 /* Stats Row */

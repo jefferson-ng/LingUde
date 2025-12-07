@@ -26,7 +26,7 @@
       </div>
 
       <!-- Streak Card -->
-      <div class="streak-card">
+      <div class="streak-card" [class.inactive]="!isStreakActiveToday()">
         <div class="streak-icon">
           <lucide-icon [img]="FlameIcon" [size]="40"></lucide-icon>
         </div>
@@ -34,7 +34,15 @@
           <h3 class="streak-title">{{ userStreak() }} {{ t('dashboard.days') }}</h3>
           <p class="streak-subtitle">{{ t('dashboard.streak') }}</p>
         </div>
-        <p class="streak-message">{{ t('dashboard.streakMessage') }}</p>
+        <p class="streak-message">
+          @if (isStreakActiveToday()) {
+            {{ t('dashboard.streakActive') }}
+          } @else if (userStreak() === 0) {
+            {{ t('dashboard.streakInactiveZero') }}
+          } @else {
+            {{ t('dashboard.streakInactive') }}
+          }
+        </p>
       </div>
 
       <!-- Leaderboard -->
@@ -64,6 +72,23 @@
 
     <!-- Right Column: Stats & Actions -->
     <div class="dashboard-sidebar">
+      <!-- Learning Info Card -->
+      <div class="learning-info-card">
+        <h4 class="info-title">Your Learning Path</h4>
+        <div class="info-item">
+          <span class="info-label">Language:</span>
+          <span class="info-value">{{ learningLanguage() }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Current Level:</span>
+          <span class="info-value cefr-level">{{ currentLevel() }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Target Level:</span>
+          <span class="info-value cefr-level target">{{ targetLevel() }}</span>
+        </div>
+      </div>
+
       <!-- Stats Row -->
       <div class="stats-row">
         <div class="stat-box">

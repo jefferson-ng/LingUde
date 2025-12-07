@@ -1,10 +1,11 @@
 import { Component, signal, inject, OnInit, HostListener } from '@angular/core';
 import { AuthService, UserInfo } from './services/auth.service';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
 import { LucideAngularModule, Home, BookOpen, Target, Trophy, Settings, GraduationCap, LogOut, Menu, X } from 'lucide-angular';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { LucideAngularModule, Home, BookOpen, Target, Trophy, Settings, Graduati
 })
 export class App implements OnInit {
   private userLearningService = inject(UserLearningService);
+  private router = inject(Router);
   
   // Lucide Icons
   readonly HomeIcon = Home;
@@ -30,12 +32,14 @@ export class App implements OnInit {
   protected readonly userLevel = signal(1);
   protected readonly userXP = signal(0);
   protected readonly userStreak = signal(0);
+  protected readonly isStreakActiveToday = signal(false);
   protected readonly userName = signal('');
   protected readonly userEmail = signal('');
   protected readonly isLoggedIn = signal(false);
   private auth = inject(AuthService);
   protected readonly isUserDropdownOpen = signal(false);
   protected readonly isSidebarOpen = signal(false);
+  protected readonly isOnLevelSelection = signal(false);
   
     // TODO: Replace with actual logged-in user ID from authentication service
   // This is a temporary test user ID
@@ -47,6 +51,17 @@ export class App implements OnInit {
   ngOnInit(): void {
       // Ensure user info is loaded from storage on app startup
       this.auth.loadUserFromStorage();
+    
+    // Track current route to hide sidebar on level-selection
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.isOnLevelSelection.set(event.url.includes('/level-selection'));
+    });
+    
+    // Check initial route
+    this.isOnLevelSelection.set(this.router.url.includes('/level-selection'));
+    
     this.auth.user$.subscribe((user: UserInfo | null) => {
       if (user) {
         this.userName.set(user.username);
@@ -63,6 +78,10 @@ export class App implements OnInit {
       if (data) {
         this.userXP.set(data.xp);
         this.userStreak.set(data.streakCount);
+        // Streak ist aktiv, wenn lastActivityDate heute ist
+        const today = new Date().toISOString().split('T')[0];
+        const lastActivityDate = data.lastActivityDate?.split('T')[0];
+        this.isStreakActiveToday.set(lastActivityDate === today);
       }
     });
   }
@@ -81,7 +100,11 @@ export class App implements OnInit {
       next: (data) => {
         this.userXP.set(data.xp);
         this.userStreak.set(data.streakCount);
-        console.log('Loaded user XP and Streak in app header:', data.xp, data.streakCount);
+        // Streak ist aktiv, wenn lastActivityDate heute ist
+        const today = new Date().toISOString().split('T')[0];
+        const lastActivityDate = data.lastActivityDate?.split('T')[0];
+        this.isStreakActiveToday.set(lastActivityDate === today);
+        console.log('Loaded user XP and Streak in app header:', data.xp, data.streakCount, 'Active today:', lastActivityDate === today);
       },
       error: (error) => {
         console.error('Error loading user XP:', error);

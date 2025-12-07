@@ -1,3 +1,4 @@
+<ng-container *transloco="let t">
 <div class="learning-container">
   <!-- Exercise Mode View -->
   @if (exerciseMode() && currentExercise()) {
@@ -144,17 +145,25 @@
         
         <p class="panel-description">{{ lesson.descriptionKey | transloco }}</p>
         
-        @if (lesson.exerciseKeys && lesson.exerciseKeys.length > 0) {
+        @if (lesson.exercisePreviews && lesson.exercisePreviews.length > 0) {
           <div class="panel-exercises">
             <h3 class="exercises-title">{{ 'learning.exerciseMode.whatYouWillLearn' | transloco }}</h3>
-            @for (exerciseKey of lesson.exerciseKeys; track $index) {
+            @for (exercise of lesson.exercisePreviews; track exercise.id) {
               <div class="exercise-item">
                 <div class="exercise-check">
                   <span class="exercise-number">{{ $index + 1 }}</span>
                 </div>
-                <span class="exercise-text">{{ exerciseKey | transloco }}</span>
+                <span class="exercise-text">{{ 'learning.topics.' + exercise.topic | transloco }}</span>
               </div>
             }
+          </div>
+        } @else if (!lesson.exercisePreviews) {
+          <div class="panel-exercises">
+            <p class="loading-text">{{ 'learning.panel.loadingExercises' | transloco }}</p>
+          </div>
+        } @else {
+          <div class="panel-exercises">
+            <p class="no-exercises-text">{{ 'learning.panel.noExercisesAvailable' | transloco }}</p>
           </div>
         }
 
@@ -175,4 +184,30 @@
     <div class="overlay" (click)="closePanel()"></div>
   }
   }
+
+  <!-- Streak Celebration Modal -->
+  @if (showStreakCelebration()) {
+    <div class="streak-celebration-overlay" [class.fly-out]="isStreakFlying()">
+      <div class="streak-celebration-modal" [class.shrinking]="isStreakShrinking()" [class.flying]="isStreakFlying()">
+        <div class="celebration-content">
+          <!-- Fire icon with particles -->
+          <div class="fire-icon-container">
+            <svg class="fire-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+            </svg>
+            <div class="fire-glow"></div>
+          </div>
+          
+          <!-- Streak counter with animated transition -->
+          <div class="streak-counter-display">
+            <div class="streak-number-wrapper">
+              <span class="streak-number streak-number-old">{{ previousStreakForDisplay() }}</span>
+              <span class="streak-number streak-number-new">{{ newStreakValue() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>
+</ng-container>
