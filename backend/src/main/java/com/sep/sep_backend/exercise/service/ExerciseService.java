@@ -63,6 +63,7 @@ public class ExerciseService {
         for (ExerciseMcq e : all) {
             out.add(new ExerciseSummaryResponse(
                     e.getId(), ExerciseType.MCQ,
+                    e.getContentType(),
                     (e.getTargetLanguage()  != null ? e.getTargetLanguage().name()  : null),
                     (e.getDifficultyLevel() != null ? e.getDifficultyLevel().name() : null),
                     e.getTopic(), e.getXpReward(),
@@ -83,6 +84,7 @@ public class ExerciseService {
         for (ExerciseFillBlank e : all) {
             out.add(new ExerciseSummaryResponse(
                     e.getId(), ExerciseType.FILL_BLANK,
+                    e.getContentType(),
                     (e.getTargetLanguage()  != null ? e.getTargetLanguage().name()  : null),
                     (e.getDifficultyLevel() != null ? e.getDifficultyLevel().name() : null),
                     e.getTopic(), e.getXpReward(),
@@ -107,6 +109,7 @@ public class ExerciseService {
         ExerciseDetailResponse dto = new ExerciseDetailResponse();
         dto.setId(e.getId());
         dto.setType(ExerciseType.MCQ);
+        dto.setContentType(e.getContentType());
         dto.setTargetLanguage(e.getTargetLanguage() != null ? e.getTargetLanguage().name() : null);
         dto.setDifficultyLevel(e.getDifficultyLevel() != null ? e.getDifficultyLevel().name() : null);
         dto.setTopic(e.getTopic());
@@ -133,6 +136,7 @@ public class ExerciseService {
         ExerciseDetailResponse dto = new ExerciseDetailResponse();
         dto.setId(e.getId());
         dto.setType(ExerciseType.FILL_BLANK);
+        dto.setContentType(e.getContentType());
         dto.setTargetLanguage(e.getTargetLanguage() != null ? e.getTargetLanguage().name() : null);
         dto.setDifficultyLevel(e.getDifficultyLevel() != null ? e.getDifficultyLevel().name() : null);
         dto.setTopic(e.getTopic());
