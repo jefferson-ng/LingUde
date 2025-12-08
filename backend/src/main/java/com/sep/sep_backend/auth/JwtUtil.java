@@ -37,16 +37,21 @@ public class JwtUtil {
      * Generates an access token for the specified user.
      *
      * @param userId the unique identifier of the user for whom the access token is generated
+     * @param role   the role of the user (e.g. "USER", "ADMIN")
      * @return a JWT access token as a string
      */
-    public String generateAccessToken(UUID userId) {
+    public String generateAccessToken(UUID userId, String role) {
         return Jwts.builder()
+                // "sub" (subject) will still be the user ID
                 .setSubject(userId.toString())
+                // custom claim to tell the backend which role this user has
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
 
     /**
      * Generates a refresh token for the specified user.
@@ -95,6 +100,24 @@ public class JwtUtil {
                 .getPayload();
         return UUID.fromString(claims.getSubject());
     }
+
+    /**
+     * Extracts the role from the specified JWT token.
+     *
+     * @param token the JWT token from which the role is to be extracted
+     * @return the role contained in the token (e.g. "USER", "ADMIN"),
+     *         or {@code null} if the claim is missing
+     */
+    public String getRoleFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.get("role", String.class);
+    }
+
 
     /**
      * Checks whether the specified JWT token is expired.
