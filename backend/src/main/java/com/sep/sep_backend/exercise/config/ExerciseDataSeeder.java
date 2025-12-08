@@ -1,5 +1,6 @@
 package com.sep.sep_backend.exercise.config;
 
+import com.sep.sep_backend.exercise.entity.ExerciseContentType;
 import com.sep.sep_backend.exercise.entity.ExerciseFillBlank;
 import com.sep.sep_backend.exercise.entity.ExerciseMcq;
 import com.sep.sep_backend.exercise.repository.ExerciseFillBlankRepository;
@@ -74,6 +75,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1Mcq.setWrongOption2("am");
         enA1Mcq.setWrongOption3("be");
         enA1Mcq.setXpReward(10);
+        enA1Mcq.setContentType(ExerciseContentType.GRAMMAR);
         mcqRepository.save(enA1Mcq);
 
         ExerciseFillBlank enA1Fill = new ExerciseFillBlank();
@@ -83,6 +85,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1Fill.setSentenceWithBlank("My name ___ Sarah.");
         enA1Fill.setCorrectAnswer("is");
         enA1Fill.setXpReward(10);
+        enA1Fill.setContentType(ExerciseContentType.GRAMMAR);
         fillBlankRepository.save(enA1Fill);
 
         // A2 Level - Daily Routines & Simple Descriptions
@@ -96,6 +99,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2Mcq.setWrongOption2("eating");
         enA2Mcq.setWrongOption3("ate");
         enA2Mcq.setXpReward(15);
+        enA2Mcq.setContentType(ExerciseContentType.GRAMMAR);
         mcqRepository.save(enA2Mcq);
 
         ExerciseFillBlank enA2Fill = new ExerciseFillBlank();
@@ -105,6 +109,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2Fill.setSentenceWithBlank("The weather today is very ___.");
         enA2Fill.setCorrectAnswer("nice");
         enA2Fill.setXpReward(15);
+        enA2Fill.setContentType(ExerciseContentType.VOCABULARY);
         fillBlankRepository.save(enA2Fill);
 
         // B1 Level - Travel & Past Experiences
@@ -118,6 +123,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1Mcq.setWrongOption2("going");
         enB1Mcq.setWrongOption3("gone");
         enB1Mcq.setXpReward(20);
+        enB1Mcq.setContentType(ExerciseContentType.GRAMMAR);
         mcqRepository.save(enB1Mcq);
 
         ExerciseFillBlank enB1Fill = new ExerciseFillBlank();
@@ -127,6 +133,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1Fill.setSentenceWithBlank("I have ___ visited that museum before.");
         enB1Fill.setCorrectAnswer("never");
         enB1Fill.setXpReward(20);
+        enB1Fill.setContentType(ExerciseContentType.GRAMMAR);
         fillBlankRepository.save(enB1Fill);
 
         // B2 Level - Opinions & Abstract Concepts
@@ -140,6 +147,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2Mcq.setWrongOption2("improves");
         enB2Mcq.setWrongOption3("improve");
         enB2Mcq.setXpReward(25);
+        enB2Mcq.setContentType(ExerciseContentType.GRAMMAR);
         mcqRepository.save(enB2Mcq);
 
         ExerciseFillBlank enB2Fill = new ExerciseFillBlank();
@@ -149,6 +157,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2Fill.setSentenceWithBlank("Success requires both talent and ___.");
         enB2Fill.setCorrectAnswer("perseverance");
         enB2Fill.setXpReward(25);
+        enB2Fill.setContentType(ExerciseContentType.VOCABULARY);
         fillBlankRepository.save(enB2Fill);
 
         // C1 Level - Complex Ideas & Nuanced Language
@@ -162,6 +171,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1Mcq.setWrongOption2("indicating");
         enC1Mcq.setWrongOption3("indicated");
         enC1Mcq.setXpReward(30);
+        enC1Mcq.setContentType(ExerciseContentType.GRAMMAR);
         mcqRepository.save(enC1Mcq);
 
         ExerciseFillBlank enC1Fill = new ExerciseFillBlank();
@@ -171,6 +181,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1Fill.setSentenceWithBlank("Her argument was ___ despite the opposing evidence.");
         enC1Fill.setCorrectAnswer("compelling");
         enC1Fill.setXpReward(30);
+        enC1Fill.setContentType(ExerciseContentType.VOCABULARY);
         fillBlankRepository.save(enC1Fill);
 
         // C2 Level - Idiomatic Expressions & Sophisticated Language
@@ -184,6 +195,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2Mcq.setWrongOption2("ending");
         enC2Mcq.setWrongOption3("conclusion");
         enC2Mcq.setXpReward(35);
+        enC2Mcq.setContentType(ExerciseContentType.VOCABULARY);
         mcqRepository.save(enC2Mcq);
 
         ExerciseFillBlank enC2Fill = new ExerciseFillBlank();
@@ -193,6 +205,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2Fill.setSentenceWithBlank("The author's prose was characterized by its ___ eloquence.");
         enC2Fill.setCorrectAnswer("unparalleled");
         enC2Fill.setXpReward(35);
+        enC2Fill.setContentType(ExerciseContentType.VOCABULARY);
         fillBlankRepository.save(enC2Fill);
 
         logger.info("English exercises seeded: 6 MCQ + 6 Fill-Blank = 12 total");
@@ -212,6 +225,8 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1Mcq.setWrongOption2("gehst");
         deA1Mcq.setWrongOption3("ging");
         deA1Mcq.setXpReward(10);
+        deA1Mcq.setContentType(ExerciseContentType.GRAMMAR);
+
         mcqRepository.save(deA1Mcq);
 
         ExerciseFillBlank deA1Fill = new ExerciseFillBlank();
@@ -221,6 +236,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1Fill.setSentenceWithBlank("Mein Name ___ Sarah.");
         deA1Fill.setCorrectAnswer("ist");
         deA1Fill.setXpReward(10);
+        deA1Fill.setContentType(ExerciseContentType.GRAMMAR);
         fillBlankRepository.save(deA1Fill);
 
         // A2 Level - Alltag (Daily Routines & Simple Descriptions)
@@ -234,6 +250,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2Mcq.setWrongOption2("essen");
         deA2Mcq.setWrongOption3("aß");
         deA2Mcq.setXpReward(15);
+        deA2Mcq.setContentType(ExerciseContentType.GRAMMAR);
         mcqRepository.save(deA2Mcq);
 
         ExerciseFillBlank deA2Fill = new ExerciseFillBlank();
@@ -243,6 +260,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2Fill.setSentenceWithBlank("Das Wetter heute ist sehr ___.");
         deA2Fill.setCorrectAnswer("schön");
         deA2Fill.setXpReward(15);
+        deA2Fill.setContentType(ExerciseContentType.VOCABULARY);
         fillBlankRepository.save(deA2Fill);
 
         // B1 Level - Reisen (Travel & Past Experiences)
@@ -256,6 +274,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1Mcq.setWrongOption2("fahren");
         deB1Mcq.setWrongOption3("gefahren");
         deB1Mcq.setXpReward(20);
+        deB1Mcq.setContentType(ExerciseContentType.GRAMMAR);
         mcqRepository.save(deB1Mcq);
 
         ExerciseFillBlank deB1Fill = new ExerciseFillBlank();
@@ -265,6 +284,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1Fill.setSentenceWithBlank("Ich habe dieses Museum noch ___ besucht.");
         deB1Fill.setCorrectAnswer("nie");
         deB1Fill.setXpReward(20);
+        deB1Fill.setContentType(ExerciseContentType.GRAMMAR);
         fillBlankRepository.save(deB1Fill);
 
         // B2 Level - Meinungen (Opinions & Abstract Concepts)
@@ -278,6 +298,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2Mcq.setWrongOption2("verbessernd");
         deB2Mcq.setWrongOption3("verbesserte");
         deB2Mcq.setXpReward(25);
+        deB2Mcq.setContentType(ExerciseContentType.GRAMMAR);
         mcqRepository.save(deB2Mcq);
 
         ExerciseFillBlank deB2Fill = new ExerciseFillBlank();
@@ -287,6 +308,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2Fill.setSentenceWithBlank("Erfolg erfordert sowohl Talent als auch ___.");
         deB2Fill.setCorrectAnswer("Ausdauer");
         deB2Fill.setXpReward(25);
+        deA2Fill.setContentType(ExerciseContentType.VOCABULARY);
         fillBlankRepository.save(deB2Fill);
 
         // C1 Level - Komplexe Ideen (Complex Ideas & Nuanced Language)
@@ -300,6 +322,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1Mcq.setWrongOption2("deutend");
         deC1Mcq.setWrongOption3("gedeutet");
         deC1Mcq.setXpReward(30);
+        deC1Mcq.setContentType(ExerciseContentType.GRAMMAR);
         mcqRepository.save(deC1Mcq);
 
         ExerciseFillBlank deC1Fill = new ExerciseFillBlank();
@@ -309,6 +332,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1Fill.setSentenceWithBlank("Ihr Argument war trotz der gegenteiligen Beweise ___.");
         deC1Fill.setCorrectAnswer("überzeugend");
         deC1Fill.setXpReward(30);
+        deC1Fill.setContentType(ExerciseContentType.VOCABULARY);
         fillBlankRepository.save(deC1Fill);
 
         // C2 Level - Gehobene Sprache (Idiomatic Expressions & Sophisticated Language)
@@ -322,6 +346,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2Mcq.setWrongOption2("Abschluss");
         deC2Mcq.setWrongOption3("Fertigstellung");
         deC2Mcq.setXpReward(35);
+        deC2Mcq.setContentType(ExerciseContentType.VOCABULARY);
         mcqRepository.save(deC2Mcq);
 
         ExerciseFillBlank deC2Fill = new ExerciseFillBlank();
@@ -331,6 +356,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2Fill.setSentenceWithBlank("Die Prosa des Autors zeichnete sich durch ihre ___ Eloquenz aus.");
         deC2Fill.setCorrectAnswer("unvergleichliche");
         deC2Fill.setXpReward(35);
+        deC2Fill.setContentType(ExerciseContentType.VOCABULARY);
         fillBlankRepository.save(deC2Fill);
 
         logger.info("German exercises seeded: 6 MCQ + 6 Fill-Blank = 12 total");
