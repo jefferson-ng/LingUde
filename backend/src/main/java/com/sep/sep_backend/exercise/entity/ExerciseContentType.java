@@ -1,4 +1,7 @@
 package com.sep.sep_backend.exercise.entity;
 
-public class ExerciseContentType {
+public enum ExerciseContentType {
+    VOCABULARY,
+    SYNONYM,
+    GRAMMAR
 }
