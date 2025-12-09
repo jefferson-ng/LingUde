@@ -308,7 +308,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2Fill.setSentenceWithBlank("Erfolg erfordert sowohl Talent als auch ___.");
         deB2Fill.setCorrectAnswer("Ausdauer");
         deB2Fill.setXpReward(25);
-        deA2Fill.setContentType(ExerciseContentType.VOCABULARY);
+        deB2Fill.setContentType(ExerciseContentType.VOCABULARY);
         fillBlankRepository.save(deB2Fill);
 
         // C1 Level - Komplexe Ideen (Complex Ideas & Nuanced Language)
