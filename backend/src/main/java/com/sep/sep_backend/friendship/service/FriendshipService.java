@@ -224,6 +224,35 @@ public class FriendshipService {
     }
 
     /**
+     * Get list of friend user IDs for a given user.
+     * Returns UUIDs of all users who have an ACCEPTED friendship with the given user.
+     * Handles bidirectional friendships by checking if user is requester or receiver.
+     *
+     * @param userId the UUID of the user to get friends for
+     * @return List of friend user IDs (not including the user themselves)
+     */
+    @Transactional(readOnly = true)
+    public List<UUID> getFriendUserIds(UUID userId) {
+        List<Friendship> friendships = friendshipRepo.findAcceptedFriendships(
+            userId,
+            FriendshipStatus.ACCEPTED
+        );
+
+        return friendships.stream()
+            .map(friendship -> {
+                // Determine which user is the friend (the OTHER person)
+                if (friendship.getUser().getId().equals(userId)) {
+                    // Current user is the requester, so friend is the receiver
+                    return friendship.getFriend().getId();
+                } else {
+                    // Current user is the receiver, so friend is the requester
+                    return friendship.getUser().getId();
+                }
+            })
+            .collect(Collectors.toList());
+    }
+
+    /**
      * Removes an existing friendship.
      * Permanently deletes the friendship record from the database.
      * Only users who are part of the friendship can remove it.

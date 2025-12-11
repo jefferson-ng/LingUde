@@ -1,5 +1,6 @@
 package com.sep.sep_backend.user.service;
 
+import com.sep.sep_backend.friendship.service.FriendshipService;
 import com.sep.sep_backend.user.dto.LeaderboardEntryDTO;
 import com.sep.sep_backend.user.entity.UserLearning;
 import com.sep.sep_backend.user.entity.UserProfile;
@@ -24,13 +25,14 @@ public class LeaderboardService {
 
     private final UserLearningRepository userLearningRepository;
     private final UserProfileRepository userProfileRepository;
-    // TODO: Add FriendshipService injection when friendship backend is ready
-    // private final FriendshipService friendshipService;
+    private final FriendshipService friendshipService;
 
     public LeaderboardService(UserLearningRepository userLearningRepository,
-                            UserProfileRepository userProfileRepository) {
+                            UserProfileRepository userProfileRepository,
+                            FriendshipService friendshipService) {
         this.userLearningRepository = userLearningRepository;
         this.userProfileRepository = userProfileRepository;
+        this.friendshipService = friendshipService;
     }
 
     /**
@@ -40,12 +42,11 @@ public class LeaderboardService {
      * @return List of leaderboard entries sorted by XP descending with ranks
      */
     public List<LeaderboardEntryDTO> getFriendsLeaderboard(UUID userId) {
-        // TODO: When FriendshipService is available, uncomment this:
-        // List<UUID> friendIds = friendshipService.getFriendUserIds(userId);
+        // Get friend user IDs (excludes current user)
+        List<UUID> friendIds = friendshipService.getFriendUserIds(userId);
 
-        // TEMPORARY: For now, just return the current user
-        // Once friendship backend is ready, this will include all friends
-        List<UUID> allUserIds = new ArrayList<>();
+        // Add current user to the list for leaderboard
+        List<UUID> allUserIds = new ArrayList<>(friendIds);
         allUserIds.add(userId);
 
         return buildLeaderboard(allUserIds);
