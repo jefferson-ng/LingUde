@@ -319,7 +319,9 @@
     "lessons": "Lektionen",
     "dayStreak": "{{count}}-Tage-Streak",
     "lessonsThisWeek": "{{count}} Lektionen diese Woche",
-    "perfectScoreStreak": "Perfekte Serie"
+    "perfectScoreStreak": "Perfekte Serie",
+    "xpBased": "XP-Bestenliste",
+    "streakBased": "Streak-Bestenliste"
   },
   "statistics": {
     "title": "Statistiken",

@@ -319,7 +319,9 @@
     "lessons": "lessons",
     "dayStreak": "{{count}}-day streak",
     "lessonsThisWeek": "{{count}} lessons this week",
-    "perfectScoreStreak": "Perfect score streak"
+    "perfectScoreStreak": "Perfect score streak",
+    "xpBased": "XP Leaderboard",
+    "streakBased": "Streak Leaderboard"
   },
   "statistics": {
     "title": "Statistics",
