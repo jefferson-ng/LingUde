@@ -68,7 +68,12 @@ public class UserController {
         User user = token.getUser();
 
         // Generate new access token
-        String newAccessToken = jwtUtil.generateAccessToken(user.getId());
+        // We preserve the user's role so refreshed tokens still know if the user is ADMIN or USER
+        String newAccessToken = jwtUtil.generateAccessToken(
+                user.getId(),
+                user.getRole().name()
+        );
+
 
         // Optionally, generate a new refresh token (rotate refresh tokens for better security)
         String newRefreshToken = refreshTokenService.createRefreshToken(user, token.getDeviceInfo());
