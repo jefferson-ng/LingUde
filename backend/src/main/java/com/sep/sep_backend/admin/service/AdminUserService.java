@@ -149,14 +149,16 @@ public class AdminUserService {
                 achievementDTOs
         );
     }
+    @Transactional(readOnly = false)
     public AdminUserSummaryResponse updateUserRole(UUID userId, UserRole newRole) {
 
         // 1) Load current admin (for self-change protection)
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String currentEmail = auth.getName(); // usually email/username from JWT
+        UUID currentAdminId = UUID.fromString(auth.getName());
 
-        User currentAdmin = userRepository.findByEmail(currentEmail)
-                .orElseThrow(() -> new IllegalStateException("Authenticated user not found in DB: " + currentEmail));
+        User currentAdmin = userRepository.findById(currentAdminId)
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found in DB: " + currentAdminId));
+
 
         // 2) Prevent admin from changing their own role
         if (currentAdmin.getId().equals(userId)) {
