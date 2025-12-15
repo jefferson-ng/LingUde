@@ -1,0 +1,122 @@
+.search-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #717182;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border-radius: 0.75rem;
+  border: 1px solid #E5E7EB;
+  font-size: 1rem;
+  color: #1C1C1C;
+  transition: all 0.2s;
+}
+
+.search-input::placeholder {
+  color: #717182;
+}
+
+.search-input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #2D72D9;
+  border-color: transparent;
+}
+
+.search-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #F2F4F7;
+}
+
+.send-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  background-color: #2D72D9;
+  color: white;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.send-button:hover:not(:disabled) {
+  background-color: #1E4D8B;
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.send-button lucide-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Message Styles */
+.message {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid;
+}
+
+.message-success {
+  background-color: #ECFDF5;
+  color: #065F46;
+  border-color: #A7F3D0;
+}
+
+.message-error {
+  background-color: #FEF2F2;
+  color: #991B1B;
+  border-color: #FECACA;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.empty-icon {
+  width: 3rem;
+  height: 3rem;
+  color: #B3DAFF;
+  margin: 0 auto 1rem;
+}
+
+.empty-state h3 {
+  color: #1C1C1C;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #717182;
+  font-size: 0.875rem;
+}

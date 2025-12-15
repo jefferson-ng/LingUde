@@ -1,0 +1,208 @@
+/* friend-requests.component.css */
+
+.friend-requests-container {
+  padding: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #1C1C1C;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.section-title:first-of-type {
+  margin-top: 0;
+}
+
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.request-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: #F2F4F7;
+  border-radius: 16px;
+  border: 1px solid #E5E7EB;
+  transition: background-color 0.2s;
+}
+
+.request-card:hover {
+  background: #E8EAED;
+}
+
+/* User Info Section */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+/* Avatar Styles */
+.avatar-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #B3DAFF;
+}
+
+.avatar-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #B3DAFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2D72D9;
+}
+
+/* User Details */
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-name {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #1C1C1C;
+  margin: 0;
+}
+
+.user-subtitle {
+  font-size: 0.875rem;
+  color: #717182;
+  margin: 0;
+}
+
+/* Action Buttons Container */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Icon Buttons (Accept/Reject) */
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0.5rem;
+  border: none;
+}
+
+.btn-icon .icon {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.5;
+}
+
+/* Accept Button - Blue background with white check */
+.btn-accept {
+  background: #2D72D9;
+  color: white;
+}
+
+.btn-accept .icon {
+  color: white;
+}
+
+/* Accept Hover - Darker blue (#1E4D8B), check stays white */
+.btn-accept:hover {
+  background: #1E4D8B;
+}
+
+.btn-accept:active {
+  background: #163A6F;
+}
+
+/* Reject Button - White background with border and dark X */
+.btn-reject {
+  background: #eae3e3;
+  border: 1px solid #E5E7EB;
+  color: rgba(104, 104, 114, 0.84);
+}
+
+.btn-reject .icon {
+  color: #717182;
+}
+
+/* Reject Hover - X turns red, background stays white */
+.btn-reject:hover {
+  background: #FEF2F2;
+}
+
+.btn-reject:hover .icon {
+  color: #DC2626;
+}
+
+.btn-reject:active {
+  background: #FEE2E2;
+}
+
+/* Text Button (Cancel) */
+.btn-text {
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #E5E7EB;
+  color: #717182;
+  font-size: 0.875rem;
+  font-weight: 400;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.btn-text:hover {
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+.btn-text:active {
+  background: #FEE2E2;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  color: #717182;
+  padding: 3rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* Loading & Error States */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.875rem;
+  color: #717182;
+}
+
+.error-message {
+  color: #DC2626;
+  background: #FEF2F2;
+  border: 1px solid #FEE2E2;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
