@@ -1,0 +1,77 @@
+<ng-container *transloco="let t">
+  <div class="friends-list-container">
+
+    <!-- Loading state -->
+    @if (isLoading()){
+      <div class="loading-state">
+        <p>{{ t('friends.list.loading') }}</p>
+      </div>
+    }
+
+    <!-- Error state -->
+    @if(error()){
+      <div class="error-state">
+        <p>{{ t(error()!) }}</p>
+        <button (click)="loadFriends()">{{ t('friends.list.retry') }}</button>
+      </div>
+    }
+
+    <!--Friends list-->
+    @if(!isLoading() && !error()){
+      <div class="frinds-content">
+
+        <!-- Empty state -->
+        @if(friends().length === 0){
+          <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#B3DAFF" stroke-width="2" style="margin: 0 auto 16px;">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <p>{{ t('friends.list.noFriends') }}</p>
+            <p class="subtitle">{{ t('friends.list.noFriendsSubtitle') }}</p>
+          </div>
+        }
+
+        <!-- Friends Items-->
+        @if(friends().length > 0){
+          <div class="friend-items">
+            @for(friendship of friends(); track friendship.friendshipId){
+              <div class="friend-item">
+
+                <!-- Left: Avatar + Name -->
+                <div class="friend-info">
+                  <img
+                    [src]=" getFriendInfo(friendship).avatarUrl  "
+                    [alt]=" getFriendInfo(friendship).username"
+                    class="avatar"
+                  />
+                  <span class="friend-name"> {{ getFriendInfo(friendship).username}}</span>
+                </div>
+
+                <!-- Right: Unfriend Icon -->
+
+                <button
+                  class="btn-unfriend"
+                  (click)="onUnfriend(friendship.friendshipId)"
+                  [title]="t('friends.list.removeFriend')">
+
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-minus-icon lucide-user-minus">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <line x1="22" x2="16" y1="11" y2="11"/>
+                  </svg>
+                </button>
+
+
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+
+  </div>
+</ng-container>

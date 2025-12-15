@@ -1,6 +1,7 @@
 package com.sep.sep_backend.user.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.EnumType;
@@ -19,7 +20,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, unique = true, length = 50)
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$") // No @ allowed
     private String username;
 
     @Column(nullable = false, unique = true, length = 255)
