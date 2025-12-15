@@ -3,11 +3,7 @@ package com.sep.sep_backend.admin.service;
 import com.sep.sep_backend.admin.dto.AdminUserAchievementDTO;
 import com.sep.sep_backend.admin.dto.AdminUserDetailResponse;
 import com.sep.sep_backend.admin.dto.AdminUserSummaryResponse;
-import com.sep.sep_backend.user.entity.Achievement;
-import com.sep.sep_backend.user.entity.User;
-import com.sep.sep_backend.user.entity.UserAchievement;
-import com.sep.sep_backend.user.entity.UserLearning;
-import com.sep.sep_backend.user.entity.UserProfile;
+import com.sep.sep_backend.user.entity.*;
 import com.sep.sep_backend.user.repository.UserAchievementRepository;
 import com.sep.sep_backend.user.repository.UserLearningRepository;
 import com.sep.sep_backend.user.repository.UserProfileRepository;
@@ -16,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -151,6 +149,32 @@ public class AdminUserService {
                 achievementDTOs
         );
     }
+    public AdminUserSummaryResponse updateUserRole(UUID userId, UserRole newRole) {
+
+        // 1) Load current admin (for self-change protection)
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentEmail = auth.getName(); // usually email/username from JWT
+
+        User currentAdmin = userRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found in DB: " + currentEmail));
+
+        // 2) Prevent admin from changing their own role
+        if (currentAdmin.getId().equals(userId)) {
+            throw new IllegalArgumentException("You cannot change your own role.");
+        }
+
+        // 3) Load target user
+        User targetUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        // 4) Update + persist
+        targetUser.setRole(newRole);
+        User saved = userRepository.save(targetUser);
+
+        // 5) Return updated summary (reuse your existing summary mapping method)
+        return mapToSummary(saved);
+    }
+
 
     /**
      * Helper method:
