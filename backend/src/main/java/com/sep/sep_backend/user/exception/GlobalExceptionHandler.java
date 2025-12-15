@@ -52,4 +52,10 @@ public class GlobalExceptionHandler {
     public Map<String, Object> handleAuth(AuthFailedException ex) {
         return Map.of("status", 401, "error", "Unauthorized", "message", "Invalid credentials");
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void handleIllegalArgumentException(IllegalArgumentException ex) {
+        // returning 400 is enough; no body needed
+    }
 }
