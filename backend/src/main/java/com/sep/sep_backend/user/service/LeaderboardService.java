@@ -42,13 +42,40 @@ public class LeaderboardService {
      * @return List of leaderboard entries sorted by XP descending with ranks
      */
     public List<LeaderboardEntryDTO> getFriendsLeaderboard(UUID userId) {
-        // Get friend user IDs (excludes current user)
-        List<UUID> friendIds = friendshipService.getFriendUserIds(userId);
+        // Get accepted friendships and extract friend user IDs
+        List<UUID> friendIds = friendshipService.getAcceptedFriends(userId).stream()
+            .map(friendship -> {
+                // Get the other user's ID (not the current user)
+                if (friendship.getRequester().getId().equals(userId)) {
+                    return friendship.getReceiver().getId();
+                } else {
+                    return friendship.getRequester().getId();
+                }
+            })
+            .collect(Collectors.toList());
 
         // Add current user to the list for leaderboard
         List<UUID> allUserIds = new ArrayList<>(friendIds);
         allUserIds.add(userId);
 
+        return buildLeaderboard(allUserIds);
+    }
+
+    /**
+     * Get global leaderboard (all users in the system ranked by XP)
+     *
+     * @return List of leaderboard entries sorted by XP descending with ranks
+     */
+    public List<LeaderboardEntryDTO> getGlobalLeaderboard() {
+        // Get all users who have UserLearning records (i.e., have started learning)
+        List<UserLearning> allLearnings = userLearningRepository.findAll();
+
+        // Extract user IDs
+        List<UUID> allUserIds = allLearnings.stream()
+            .map(ul -> ul.getUser().getId())
+            .collect(Collectors.toList());
+
+        // Reuse existing buildLeaderboard method
         return buildLeaderboard(allUserIds);
     }
 

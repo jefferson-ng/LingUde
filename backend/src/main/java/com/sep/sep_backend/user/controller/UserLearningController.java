@@ -173,4 +173,21 @@ public class UserLearningController {
         }
     }
 
+    /**
+     * Get global leaderboard (all users ranked by XP)
+     * Returns list of all users sorted by XP descending with rank, username, displayName,
+     * avatarUrl, xp, level, and streakCount
+     *
+     * @return ResponseEntity containing list of LeaderboardEntryDTO
+     */
+    @GetMapping("/leaderboard/global")
+    public ResponseEntity<List<LeaderboardEntryDTO>> getGlobalLeaderboard() {
+        try {
+            List<LeaderboardEntryDTO> leaderboard = leaderboardService.getGlobalLeaderboard();
+            return ResponseEntity.ok(leaderboard);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

@@ -26,4 +26,16 @@ export class LeaderboardService {
       `${this.apiUrl}/api/user/learning/leaderboard/friends`
     );
   }
+
+  /**
+   * Get global leaderboard (all users ranked by XP)
+   * Returns list of all users sorted by XP descending
+   *
+   * @returns Observable of leaderboard entries with rank, user info, XP, level, and streak
+   */
+  getGlobalLeaderboard(): Observable<LeaderboardEntry[]> {
+    return this.http.get<LeaderboardEntry[]>(
+      `${this.apiUrl}/api/user/learning/leaderboard/global`
+    );
+  }
 }

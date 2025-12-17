@@ -1,10 +1,11 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { LucideAngularModule, Crown, Flame, Zap, Target } from 'lucide-angular';
+import { LucideAngularModule, Crown, Flame, Zap, Target, Globe, Users } from 'lucide-angular';
 import { LeaderboardService } from '../../services/leaderboard.service';
 import { UserLearningService } from '../../services/user-learning.service';
 import { LeaderboardEntry } from '../../models/leaderboard.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-leaderboard',
@@ -18,24 +19,35 @@ export class Leaderboard implements OnInit {
   readonly FlameIcon = Flame;
   readonly ZapIcon = Zap;
   readonly TargetIcon = Target;
+  readonly GlobeIcon = Globe;
+  readonly UsersIcon = Users;
 
   // Signals for reactive state
-  leaderboardData = signal<LeaderboardEntry[]>([]);
+  selectedLeaderboardType = signal<'friends' | 'global'>('global');
+  friendsLeaderboardData = signal<LeaderboardEntry[]>([]);
+  globalLeaderboardData = signal<LeaderboardEntry[]>([]);
   currentUserId = signal<string | null>(null);
   isLoading = signal<boolean>(true);
   errorMessage = signal<string | null>(null);
 
+  // Computed: Active leaderboard based on selection
+  activeLeaderboard = computed(() => {
+    return this.selectedLeaderboardType() === 'friends'
+      ? this.friendsLeaderboardData()
+      : this.globalLeaderboardData();
+  });
+
   // Computed properties
-  topThree = computed(() => this.leaderboardData().slice(0, 3));
+  topThree = computed(() => this.activeLeaderboard().slice(0, 3));
 
   currentUserEntry = computed(() => {
     const userId = this.currentUserId();
-    return this.leaderboardData().find(entry => entry.userId === userId);
+    return this.activeLeaderboard().find(entry => entry.userId === userId);
   });
 
   // Top achievers (for sidebar)
   topStreakUser = computed(() => {
-    const sorted = [...this.leaderboardData()].sort((a, b) =>
+    const sorted = [...this.activeLeaderboard()].sort((a, b) =>
       b.streakCount - a.streakCount
     );
     return sorted[0];
@@ -52,20 +64,24 @@ export class Leaderboard implements OnInit {
   }
 
   /**
-   * Load leaderboard data from backend
+   * Load both leaderboards (friends and global) in parallel
    */
   loadLeaderboard(): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.leaderboardService.getFriendsLeaderboard().subscribe({
+    forkJoin({
+      friends: this.leaderboardService.getFriendsLeaderboard(),
+      global: this.leaderboardService.getGlobalLeaderboard()
+    }).subscribe({
       next: (data) => {
-        this.leaderboardData.set(data);
+        this.friendsLeaderboardData.set(data.friends);
+        this.globalLeaderboardData.set(data.global);
         this.isLoading.set(false);
       },
       error: (err) => {
-        console.error('Error loading leaderboard:', err);
-        this.errorMessage.set('Failed to load leaderboard');
+        console.error('Error loading leaderboards:', err);
+        this.errorMessage.set('Failed to load leaderboards');
         this.isLoading.set(false);
       }
     });
@@ -114,7 +130,7 @@ export class Leaderboard implements OnInit {
     const current = this.currentUserEntry();
     if (!current || current.rank === 1) return 0;
 
-    const userAbove = this.leaderboardData()[current.rank - 2];
+    const userAbove = this.activeLeaderboard()[current.rank - 2];
     return userAbove ? userAbove.xp - current.xp : 0;
   }
 }

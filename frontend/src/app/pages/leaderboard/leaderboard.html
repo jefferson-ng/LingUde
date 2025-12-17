@@ -3,8 +3,27 @@
     <!-- Page Header -->
     <div class="leaderboard-header">
       <h1 class="leaderboard-title">{{ t('leaderboard.title') }}</h1>
-      <p class="leaderboard-subtitle">{{ t('leaderboard.subtitle') }}</p>
     </div>
+
+    <!-- Leaderboard Type Tabs -->
+    @if (!isLoading() && !errorMessage()) {
+      <div class="leaderboard-type-tabs">
+        <button
+          class="tab-button"
+          [class.active]="selectedLeaderboardType() === 'global'"
+          (click)="selectedLeaderboardType.set('global')">
+          <lucide-icon [img]="GlobeIcon" [size]="20"></lucide-icon>
+          <span>{{ t('leaderboard.globalLeaderboard') }}</span>
+        </button>
+        <button
+          class="tab-button"
+          [class.active]="selectedLeaderboardType() === 'friends'"
+          (click)="selectedLeaderboardType.set('friends')">
+          <lucide-icon [img]="UsersIcon" [size]="20"></lucide-icon>
+          <span>{{ t('leaderboard.friendsLeaderboard') }}</span>
+        </button>
+      </div>
+    }
 
     <!-- Loading State -->
     @if (isLoading()) {
@@ -86,13 +105,13 @@
           <div class="rankings-card">
             <h2 class="rankings-title">{{ t('leaderboard.fullRankings') }}</h2>
 
-            @if (leaderboardData().length === 0) {
+            @if (activeLeaderboard().length === 0) {
               <div class="empty-state">
                 <p>{{ t('leaderboard.noData') || 'No leaderboard data available yet. Add some friends to see them here!' }}</p>
               </div>
             } @else {
               <div class="rankings-list">
-                @for (entry of leaderboardData(); track entry.userId) {
+                @for (entry of activeLeaderboard(); track entry.userId) {
                   <div class="ranking-item"
                        [class.top-rank]="entry.rank <= 3"
                        [class.current-user-row]="isCurrentUser(entry)">
@@ -116,13 +135,18 @@
                       <span class="user-name">
                         {{ isCurrentUser(entry) ? t('leaderboard.you') : (entry.displayName || entry.username) }}
                       </span>
-                      <span class="user-stats">
-                        {{ t('leaderboard.level') }} {{ entry.level }} •
-                        {{ entry.streakCount }} {{ t('leaderboard.dayStreak', { count: entry.streakCount }) }}
-                      </span>
+                      <div class="user-stats">
+                        <span class="level-badge">{{ t('leaderboard.level') }} {{ entry.level }}</span>
+                        <div class="streak-badge">
+                          <lucide-icon [img]="FlameIcon" class="streak-icon"></lucide-icon>
+                          <span>{{ entry.streakCount }}</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div class="user-xp">{{ entry.xp }} XP</div>
+                    <div class="xp-badge">
+                      <span class="xp-value">{{ entry.xp }} XP</span>
+                    </div>
                   </div>
                 }
               </div>
@@ -155,27 +179,6 @@
             </div>
           }
 
-          <!-- Top Achievers Card -->
-          @if (topStreakUser()) {
-            <div class="achievers-card">
-              <h3 class="card-title-small">{{ t('leaderboard.topAchievers') }}</h3>
-              <div class="achievers-list">
-                <div class="achiever-item">
-                  <div class="achiever-badge">
-                    <lucide-icon [img]="FlameIcon" class="achiever-icon"></lucide-icon>
-                  </div>
-                  <div class="achiever-info">
-                    <span class="achiever-name">
-                      {{ isCurrentUser(topStreakUser()!) ? t('leaderboard.you') : (topStreakUser()!.displayName || topStreakUser()!.username) }}
-                    </span>
-                    <span class="achiever-desc">
-                      {{ topStreakUser()!.streakCount }} {{ t('leaderboard.dayStreak', { count: topStreakUser()!.streakCount }) }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
         </div>
       </div>
     }

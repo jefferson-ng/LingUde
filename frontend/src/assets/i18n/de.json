@@ -320,8 +320,8 @@
     "dayStreak": "{{count}}-Tage-Streak",
     "lessonsThisWeek": "{{count}} Lektionen diese Woche",
     "perfectScoreStreak": "Perfekte Serie",
-    "xpBased": "XP-Bestenliste",
-    "streakBased": "Streak-Bestenliste"
+    "globalLeaderboard": "Globale Bestenliste",
+    "friendsLeaderboard": "Freunde-Bestenliste"
   },
   "statistics": {
     "title": "Statistiken",
