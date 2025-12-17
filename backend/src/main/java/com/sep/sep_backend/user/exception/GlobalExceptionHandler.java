@@ -58,6 +58,7 @@ public class GlobalExceptionHandler {
         return Map.of("status", 401, "error", "Unauthorized", "message", "Invalid credentials");
     }
 
+
     // User not found (friendship-related)
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
