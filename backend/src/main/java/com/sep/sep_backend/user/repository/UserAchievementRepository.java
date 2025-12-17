@@ -6,6 +6,7 @@ import com.sep.sep_backend.user.entity.UserAchievement;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -28,6 +29,8 @@ public interface UserAchievementRepository extends JpaRepository<UserAchievement
      * @return list of UserAchievement entries for that user
      */
     List<UserAchievement> findByUser(User user);
+
+    List<UserAchievement> findByUserId(UUID userId);
 
     /**
      * Checks whether the given user already has the specified achievement.

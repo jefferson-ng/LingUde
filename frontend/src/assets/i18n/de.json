@@ -22,6 +22,7 @@
     "goals": "Ziele",
     "leaderboard": "Bestenliste",
     "statistics": "Statistiken",
+    "friends": "Freunde",
     "settings": "Einstellungen"
   },
   "user": {
@@ -389,5 +390,48 @@
     "back": "Zurück",
     "continue": "Weiter",
     "saving": "Speichern..."
+  },
+  "friends": {
+    "title": "Freunde",
+    "subtitle": "Vernetze dich mit anderen Sprachlernenden",
+    "nav": {
+      "myFriends": "Meine Freunde",
+      "searchUsers": "Benutzer suchen",
+      "friendRequests": "Freundschaftsanfragen"
+    },
+    "list": {
+      "loading": "Freunde werden geladen ...",
+      "retry": "Erneut versuchen",
+      "noFriends": "Noch keine Freunde",
+      "noFriendsSubtitle": "Beginne dich mit anderen Sprachlernenden zu vernetzen",
+      "removeFriend": "Freund entfernen",
+      "errorLoad": "Freunde konnten nicht geladen werden. Bitte versuche es erneut.",
+      "errorRemove": "Freund konnte nicht entfernt werden. Bitte versuche es erneut."
+    },
+    "requests": {
+      "loading": "Anfragen werden geladen...",
+      "incomingTitle": "Eingehende Anfragen",
+      "outgoingTitle": "Ausgehende Anfragen",
+      "noIncoming": "Keine eingehenden Freundschaftsanfragen",
+      "noOutgoing": "Keine ausstehenden ausgehenden Anfragen",
+      "wantsToBeFriends": "möchte befreundet sein",
+      "requestPending": "Anfrage ausstehend",
+      "acceptRequest": "Anfrage annehmen",
+      "rejectRequest": "Anfrage ablehnen",
+      "cancel": "Abbrechen",
+      "errorLoad": "Freundschaftsanfragen konnten nicht geladen werden",
+      "errorAccept": "Freundschaftsanfrage konnte nicht angenommen werden",
+      "errorReject": "Freundschaftsanfrage konnte nicht abgelehnt werden",
+      "errorCancel": "Freundschaftsanfrage konnte nicht entfernt werden"
+    },
+    "search": {
+      "placeholder": "Nach Benutzername oder E-Mail suchen...",
+      "sending": "Wird gesendet...",
+      "sendRequest": "Anfrage senden",
+      "emptyTitle": "Neue Freunde hinzufügen",
+      "emptySubtitle": "Gib oben einen Benutzernamen oder eine E-Mail ein, um eine Freundschaftsanfrage zu senden",
+      "successMessage": "Anfrage erfolgreich gesendet",
+      "errorMessage": "Beim Senden der Freundschaftsanfrage ist ein Fehler aufgetreten: "
+    }
   }
 }

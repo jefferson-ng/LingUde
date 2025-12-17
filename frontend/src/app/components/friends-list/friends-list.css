@@ -1,0 +1,114 @@
+.friends-list-container {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid  #E5E7EB;
+  padding: 24px;
+}
+
+/* Loading & Error States */
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: #717182;
+}
+
+.error-state button {
+  margin-top: 16px;
+  padding: 12px 24px;
+  background-color: #2D72D9;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.error-state button:hover {
+  background-color: #1E4D8B;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+}
+
+.empty-state p:first-child {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1C1C1C;
+  margin-bottom: 8px;
+}
+
+.empty-state .subtitle {
+  font-size: 14px;
+  color: #717182;
+}
+
+/* Friend Items Container */
+.friend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Individual Friend Item */
+.friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid  #E5E7EB;
+  transition: background-color 0.2s;
+}
+
+.friend-item:hover {
+  background-color: #F2F4F7;
+}
+
+/* Left: Avatar + Name */
+.friend-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #B3DAFF;
+}
+
+.friend-name {
+  font-size: 16px;
+  font-weight: 400;
+  color: #1C1C1C;
+}
+
+/* Right: Unfriend Button */
+.btn-unfriend {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: #717182;
+  border-radius: 25px;
+  transition: all 0.2s;
+}
+
+.btn-unfriend:hover {
+  background-color: rgb(254, 242, 242);
+  color: rgb(220, 38, 38);
+  border: none;
+}
+
+.unfriend-btn svg {
+  display: block;
+  border: none;
+}

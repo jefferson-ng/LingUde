@@ -1,0 +1,76 @@
+.friends-page {
+  min-height: 100vh;
+  background-color: #F3F4F6;
+  padding: 24px 16px;
+}
+
+.friends-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1C1C1C;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  color: #717182;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+  .friends-container {
+    max-width: 900px;
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .friends-page {
+    padding: 16px 12px;
+  }
+
+  .friends-container {
+    padding: 0 16px;
+  }
+
+  .page-title {
+    font-size: 28px;
+  }
+
+  .page-subtitle {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .friends-page {
+    padding: 12px 8px;
+  }
+
+  .friends-container {
+    padding: 0 8px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+}
