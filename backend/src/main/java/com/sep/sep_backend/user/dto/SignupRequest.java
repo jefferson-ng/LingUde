@@ -2,6 +2,7 @@ package com.sep.sep_backend.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 
@@ -16,6 +17,7 @@ public class SignupRequest {
     private String password;
 
     @NotBlank
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "No \"@\" allowed in username")
     private String username;
 
     public String getEmail() { return email; }

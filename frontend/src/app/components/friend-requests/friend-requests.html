@@ -1,0 +1,109 @@
+<ng-container *transloco="let t">
+  <!-- friend-requests.component.html -->
+  <div class="friend-requests-container">
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="loading">{{ t('friends.requests.loading') }}</div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+      <div class="error-message">{{ t(error()!) }}</div>
+    }
+
+    <!-- Main Content -->
+    @if (!isLoading()) {
+
+      <!-- INCOMING REQUESTS SECTION -->
+      <section class="incoming-section">
+        <h3 class="section-title">{{ t('friends.requests.incomingTitle') }}</h3>
+
+        @if (incomingRequests().length === 0) {
+          <p class="empty-state">{{ t('friends.requests.noIncoming') }}</p>
+        } @else {
+          <div class="requests-list">
+            @for (request of incomingRequests(); track request.friendshipId) {
+              <div class="request-card">
+                <div class="user-info">
+                  <!-- Avatar -->
+
+                  <img [src]="request.requester.avatarUrl" alt="avatar" class="avatar-img">
+
+                  <div class="user-details">
+                    <p class="user-name">{{ request.requester.username }}</p>
+                    <p class="user-subtitle">{{ t('friends.requests.wantsToBeFriends') }}</p>
+                  </div>
+                </div>
+
+                <div class="action-buttons">
+                  <!-- Accept Button with Check Icon -->
+                  <button
+                    class="btn-icon btn-accept"
+                    (click)="acceptRequest(request.friendshipId)"
+                    [attr.aria-label]="t('friends.requests.acceptRequest')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check">
+                      <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                  </button>
+
+                  <!-- Reject Button with X Icon -->
+                  <button
+                    class="btn-icon btn-reject"
+                    (click)="rejectRequest(request.friendshipId)"
+                    [attr.aria-label]="t('friends.requests.rejectRequest')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                      <path d="M18 6 6 18"/>
+                      <path d="m6 6 12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- OUTGOING REQUESTS SECTION -->
+      <section class="outgoing-section">
+        <h3 class="section-title">{{ t('friends.requests.outgoingTitle') }}</h3>
+
+        @if (outgoingRequests().length === 0) {
+          <p class="empty-state">{{ t('friends.requests.noOutgoing') }}</p>
+        } @else {
+          <div class="requests-list">
+            @for (request of outgoingRequests(); track request.friendshipId) {
+              <div class="request-card">
+                <div class="user-info">
+                  <!-- Avatar -->
+                  @if (request.receiver.avatarUrl) {
+                    <img [src]="request.receiver.avatarUrl" alt="avatar" class="avatar-img">
+                  } @else {
+                    <div class="avatar-placeholder">
+                      {{ getInitial(request.receiver.username) }}
+                    </div>
+                  }
+
+                  <div class="user-details">
+                    <p class="user-name">{{ request.receiver.username }}</p>
+                    <p class="user-subtitle">{{ t('friends.requests.requestPending') }}</p>
+                  </div>
+                </div>
+
+                <div class="action-buttons">
+                  <!-- Cancel Button (text style like Figma) -->
+                  <button
+                    class="btn-text btn-cancel"
+                    (click)="cancelRequest(request.friendshipId)">
+                    {{ t('friends.requests.cancel') }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+    }
+  </div>
+</ng-container>
