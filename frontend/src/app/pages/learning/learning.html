@@ -11,14 +11,14 @@
           </svg>
           {{ 'learning.exerciseMode.back' | transloco }}
         </button>
-        
+
         <div class="exercise-progress-info">
           <span class="exercise-counter">
             {{ currentExerciseIndex() + 1 }} / {{ currentExerciseSummaries().length }}
           </span>
           <div class="exercise-progress-bar">
-            <div 
-              class="exercise-progress-fill" 
+            <div
+              class="exercise-progress-fill"
               [style.width.%]="((currentExerciseIndex() + 1) / currentExerciseSummaries().length) * 100"
             ></div>
           </div>
@@ -36,7 +36,7 @@
     </div>
   } @else {
     <!-- Normal Learning Path View -->
-    
+
     <!-- Difficulty Selector -->
     <div class="difficulty-selector">
       <div class="difficulty-header">
@@ -50,10 +50,10 @@
           <p class="difficulty-subtitle">{{ getDifficultyDescription(selectedDifficulty()) }}</p>
         </div>
       </div>
-      
+
       <div class="difficulty-badges">
         @for (difficulty of difficulties; track difficulty) {
-          <button 
+          <button
             class="difficulty-badge"
             [class.active]="selectedDifficulty() === difficulty"
             [attr.data-level]="difficulty"
@@ -97,16 +97,16 @@
         }
       </div>
     </div>
-    
+
     <div class="learning-path" [attr.data-difficulty]="selectedDifficulty()">
       <div class="lessons-path">
       @for (lesson of lessons(); track lesson.id) {
-        <div 
+        <div
           class="path-item"
           [class.left]="$index % 2 === 0"
           [class.right]="$index % 2 === 1"
         >
-          <div 
+          <div
             class="lesson-node-wrapper"
             [class.available]="lesson.status === 'available'"
             [class.selected]="selectedLesson()?.id === lesson.id"
@@ -142,9 +142,9 @@
         <div class="panel-header">
           <h2 class="panel-title">{{ lesson.titleKey | transloco }}</h2>
         </div>
-        
+
         <p class="panel-description">{{ lesson.descriptionKey | transloco }}</p>
-        
+
         @if (lesson.exercisePreviews && lesson.exercisePreviews.length > 0) {
           <div class="panel-exercises">
             <h3 class="exercises-title">{{ 'learning.exerciseMode.whatYouWillLearn' | transloco }}</h3>
@@ -153,9 +153,25 @@
                 <div class="exercise-check">
                   <span class="exercise-number">{{ $index + 1 }}</span>
                 </div>
-                <span class="exercise-text">{{ 'learning.topics.' + exercise.topic | transloco }}</span>
+
+                <div class="exercise-line">
+      <span class="exercise-text">
+        {{ 'learning.topics.' + exercise.topic | transloco }}
+      </span>
+
+                  <span
+                    *ngIf="exercise.contentType"
+                    class="content-badge"
+                    [class.badge-vocab]="exercise.contentType === 'VOCABULARY'"
+                    [class.badge-grammar]="exercise.contentType === 'GRAMMAR'"
+                    [class.badge-synonym]="exercise.contentType === 'SYNONYM'"
+                  >
+        {{ exercise.contentType }}
+      </span>
+                </div>
               </div>
             }
+
           </div>
         } @else if (!lesson.exercisePreviews) {
           <div class="panel-exercises">
@@ -197,7 +213,7 @@
             </svg>
             <div class="fire-glow"></div>
           </div>
-          
+
           <!-- Streak counter with animated transition -->
           <div class="streak-counter-display">
             <div class="streak-number-wrapper">
