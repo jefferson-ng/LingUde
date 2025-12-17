@@ -23,12 +23,22 @@ public class UserLearningService {
 
     private final UserLearningRepository userLearningRepository;
     private final UserRepository userRepository;
+    /**
+     * Service used to unlock achievements when learning milestones are reached
+     * (e.g. XP, streak).
+     */
+    private final AchievementService achievementService;
+
+
 
     public UserLearningService(UserLearningRepository userLearningRepository,
-                               UserRepository userRepository) {
+                               UserRepository userRepository,
+                               AchievementService achievementService) {
         this.userLearningRepository = userLearningRepository;
         this.userRepository = userRepository;
+        this.achievementService = achievementService;
     }
+
 
     /**
      * Create new user learning data
@@ -87,60 +97,131 @@ public class UserLearningService {
     }
 
     /**
-     * Add XP to user's learning progress
-     * @param userId the user ID
-     * @param xpToAdd the amount of XP to add
-     * @return Optional containing the updated learning data if found
+     * Add XP to user's learning progress and trigger XP-based achievements.
+     *
+     * <p>
+     * Behaviour:
+     * <ul>
+     *     <li>Loads or auto-creates {@link UserLearning} for the given user.</li>
+     *     <li>Increases the XP by the given amount.</li>
+     *     <li>Checks whether XP milestones have been crossed and, if so,
+     *         calls {@link AchievementService} to unlock the corresponding achievements.</li>
+     * </ul>
+     *
+     * @param userId  the user ID
+     * @param xpToAdd the amount of XP to add (may be zero or positive)
+     * @return Optional containing the updated learning data if the user exists
      */
     public Optional<UserLearning> addXp(UUID userId, Integer xpToAdd) {
         Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
         UserLearning learning;
+        User user;
+
         if (learningOptional.isPresent()) {
             learning = learningOptional.get();
+            user = learning.getUser();
         } else {
             // Auto-create UserLearning for new users
             Optional<User> userOptional = userRepository.findById(userId);
             if (userOptional.isEmpty()) {
                 return Optional.empty();
             }
-            learning = new UserLearning(userOptional.get());
+            user = userOptional.get();
+            learning = new UserLearning(user);
         }
-        learning.setXp(learning.getXp() + xpToAdd);
-        return Optional.of(userLearningRepository.save(learning));
+
+        // Remember old XP before update
+        int oldXp = learning.getXp() != null ? learning.getXp() : 0;
+        int newXp = oldXp + (xpToAdd != null ? xpToAdd : 0);
+        learning.setXp(newXp);
+
+        // Persist updated XP
+        UserLearning saved = userLearningRepository.save(learning);
+
+        // --- XP milestone achievements ---
+        // Example rule: unlock an achievement when the user reaches at least 100 XP.
+        // The achievement with code "XP_100" must be configured in the database.
+        if (oldXp < 100 && newXp >= 100) {
+            achievementService.grantAchievementIfNotOwned(user, "XP_100");
+        }
+
+        // additional milestones can be added here, e.g.:
+        if (oldXp < 500 && newXp >= 500) {
+            achievementService.grantAchievementIfNotOwned(user, "XP_500");
+        }
+
+
+        return Optional.of(saved);
     }
 
+
     /**
-     * Update streak count based on last activity date
+     * Update streak count based on last activity date and trigger streak achievements.
+     *
+     * <p>
+     * Behaviour:
+     * <ul>
+     *     <li>If this is the first activity, streak is set to 1.</li>
+     *     <li>If the last activity was exactly one day ago, streak is incremented.</li>
+     *     <li>If there is a gap of more than one day, the streak is reset to 1.</li>
+     *     <li>If activity happens on the same day, the streak is not changed.</li>
+     * </ul>
+     * <p>
+     * After updating the streak, the method checks for streak milestones
+     * (e.g. 7-day streak) and unlocks matching achievements.
+     * </p>
+     *
      * @param userId the user ID
      * @return Optional containing the updated learning data if found
      */
     public Optional<UserLearning> updateStreak(UUID userId) {
         Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
-        if (learningOptional.isPresent()) {
-            UserLearning learning = learningOptional.get();
-            LocalDate today = LocalDate.now();
-            LocalDate lastActivity = learning.getLastActivityDate();
-
-            if (lastActivity == null) {
-                // First activity ever
-                learning.setStreakCount(1);
-            } else {
-                long daysBetween = ChronoUnit.DAYS.between(lastActivity, today);
-                if (daysBetween == 1) {
-                    // Consecutive day - increment streak
-                    learning.setStreakCount(learning.getStreakCount() + 1);
-                } else if (daysBetween > 1) {
-                    // Streak broken - reset to 1
-                    learning.setStreakCount(1);
-                }
-                // If daysBetween == 0, same day - no change to streak
-            }
-
-            learning.setLastActivityDate(today);
-            return Optional.of(userLearningRepository.save(learning));
+        if (learningOptional.isEmpty()) {
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        UserLearning learning = learningOptional.get();
+        User user = learning.getUser();
+        LocalDate today = LocalDate.now();
+        LocalDate lastActivity = learning.getLastActivityDate();
+
+        int oldStreak = learning.getStreakCount() != null ? learning.getStreakCount() : 0;
+
+        if (lastActivity == null) {
+            // First activity ever
+            learning.setStreakCount(1);
+        } else {
+            long daysBetween = ChronoUnit.DAYS.between(lastActivity, today);
+            if (daysBetween == 1) {
+                // Consecutive day - increment streak
+                learning.setStreakCount(oldStreak + 1);
+            } else if (daysBetween > 1) {
+                // Streak broken - reset to 1
+                learning.setStreakCount(1);
+            }
+            // If daysBetween == 0, same day - no change to streak
+        }
+
+        learning.setLastActivityDate(today);
+        UserLearning saved = userLearningRepository.save(learning);
+
+        int newStreak = saved.getStreakCount() != null ? saved.getStreakCount() : 0;
+
+        // --- Streak milestone achievements ---
+        // Example rule: unlock an achievement when the user reaches a 7-day streak.
+        // The achievement with code "STREAK_7" must be configured in the database.
+        if (oldStreak < 7 && newStreak >= 7) {
+            achievementService.grantAchievementIfNotOwned(user, "STREAK_7");
+        }
+
+        // Future extension: 30-day streak, 100-day streak, etc.
+        // if (oldStreak < 30 && newStreak >= 30) {
+        //     achievementService.grantAchievementIfNotOwned(user, "STREAK_30");
+        // }
+
+        return Optional.of(saved);
     }
+
 
     /**
      * Update learning language

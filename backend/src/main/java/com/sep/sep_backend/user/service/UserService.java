@@ -66,8 +66,13 @@ public class UserService {
         userLearningRepo.save(userLearning);
 
         // Generate tokens
-        String accessToken = jwtUtil.generateAccessToken(user.getId());
+        // We now include the user's role in the access token (default: USER)
+        String accessToken = jwtUtil.generateAccessToken(
+                user.getId(),
+                user.getRole().name()    // "USER" or "ADMIN"
+        );
         String refreshToken = refreshTokenService.createRefreshToken(user, "Unknown Device");
+
 
         return new AuthResponse(user.getId(), user.getEmail(), user.getUsername(), accessToken, refreshToken);
     }
@@ -89,8 +94,13 @@ public class UserService {
         if (!ok) throw new AuthFailedException();
 
         // Generate tokens
-        String accessToken = jwtUtil.generateAccessToken(user.getId());
+        // Include the role from the database so the token knows if this user is ADMIN or USER
+        String accessToken = jwtUtil.generateAccessToken(
+                user.getId(),
+                user.getRole().name()
+        );
         String refreshToken = refreshTokenService.createRefreshToken(user, "Unknown Device");
+
 
         return new AuthResponse(user.getId(), user.getEmail(), user.getUsername(), accessToken, refreshToken);
     }

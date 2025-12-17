@@ -376,4 +376,60 @@ public class ExerciseService {
         // - total exercises
         return new SessionProgressResponse(completedCount, totalCount);
     }
+
+    // ---------- Progress saving (read access) ----------
+
+    /**
+     * Returns all completed exercises for a given user.
+     *
+     * This method reads from the user_progress table and finds every exercise
+     * where:
+     *   - user_id = userId
+     *   - is_completed = true
+     *
+     * It is used when the frontend needs to show:
+     *   - which exercises the user finished
+     *   - completed checkmarks (✔)
+     *   - progress overview
+     *
+     * If userId is null (should not happen), an empty list is returned.
+     *
+     * @param userId UUID of the authenticated user. If {@code null}, an empty list is returned.
+     * @return list of completed {@link UserProgress} entries for this user.
+     */
+    @Transactional(readOnly = true)
+    public List<UserProgress> getCompletedExercisesForUser(UUID userId) {
+        if (userId == null) {
+            // No authenticated user → no progress to return
+            return List.of();
+        }
+        return progressRepo.findAllByUserIdAndIsCompletedTrue(userId);
+    }
+
+    /**
+     * Checks whether the user has already completed a specific exercise.
+     *
+     * This is a quick YES/NO check used when the UI needs to know if an exercise
+     * should show a completed marker (✔) without loading the full progress object.
+     *
+     * @return true  → user completed this exercise
+     *         false → user has not completed it
+     *
+     * @param userId     UUID of the user (may be {@code null}).
+     * @param exerciseId UUID of the exercise.
+     * @param type       type of the exercise (MCQ, FILL_BLANK, ...).
+     *
+     */
+    @Transactional(readOnly = true)
+    public boolean hasUserCompletedExercise(UUID userId, UUID exerciseId, ExerciseType type) {
+        if (userId == null) {
+            return false;
+        }
+        return progressRepo.existsByUserIdAndExerciseIdAndExerciseTypeAndIsCompletedTrue(
+                userId,
+                exerciseId,
+                type
+        );
+    }
+
 }

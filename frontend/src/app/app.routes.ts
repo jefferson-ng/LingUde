@@ -1,6 +1,10 @@
 
 import { Routes } from '@angular/router';
 import { AuthGuard } from './services/auth.guard';
+import {FriendsList} from './components/friends-list/friends-list';
+import {FriendsLayout} from './layouts/friends-layout/friends-layout';
+import {FriendRequests} from './components/friend-requests/friend-requests';
+import {FriendSearch} from './components/friend-search/friend-search';
 
 export const routes: Routes = [
   {
@@ -73,18 +77,27 @@ export const routes: Routes = [
       },
       {
         path: 'friends',
-        loadComponent: () => import('./pages/friends/friends-list/friends-list').then(m => m.FriendsList),
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'friends/search',
-        loadComponent: () => import('./pages/friends/friends-search/friends-search').then(m => m.FriendsSearch),
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'friends/requests',
-        loadComponent: () => import('./pages/friends/friend-requests/friend-requests').then(m => m.FriendRequests),
-        canActivate: [AuthGuard]
+        component: FriendsLayout,
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: '',
+            redirectTo: 'list',
+            pathMatch: 'full'
+          },
+          {
+            path: 'list',
+            component: FriendsList
+          },
+          {
+            path: 'requests',
+            component: FriendRequests
+          },
+          {
+            path: 'search',
+            component: FriendSearch
+          }
+        ]
       },
       {
         path: '**',

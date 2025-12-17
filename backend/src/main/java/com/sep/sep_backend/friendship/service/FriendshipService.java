@@ -8,10 +8,15 @@ import com.sep.sep_backend.friendship.entity.FriendshipStatus;
 import com.sep.sep_backend.friendship.exception.UserNotFoundException;
 import com.sep.sep_backend.friendship.repository.FriendshipRepository;
 import com.sep.sep_backend.user.entity.User;
+import com.sep.sep_backend.user.entity.UserProfile;
+import com.sep.sep_backend.user.repository.UserProfileRepository;
 import com.sep.sep_backend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,6 +61,7 @@ public class FriendshipService {
      * @return UserSummaryDTO containing user's id, username, and email
      */
     private UserSummaryDTO toUserSummary(User user) {
+
         return new UserSummaryDTO(
             user.getId(),
             user.getUsername(),
@@ -110,6 +116,8 @@ public class FriendshipService {
         }
 
         Friendship friendship = new Friendship(requester, receiver, FriendshipStatus.PENDING);
+        friendship.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+
         friendship = friendshipRepo.save(friendship);
 
         return toFriendshipResponse(friendship);
@@ -220,35 +228,6 @@ public class FriendshipService {
         return friendshipRepo.findAcceptedFriendships(userId, FriendshipStatus.ACCEPTED)
             .stream()
             .map(this::toFriendshipResponse)
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * Get list of friend user IDs for a given user.
-     * Returns UUIDs of all users who have an ACCEPTED friendship with the given user.
-     * Handles bidirectional friendships by checking if user is requester or receiver.
-     *
-     * @param userId the UUID of the user to get friends for
-     * @return List of friend user IDs (not including the user themselves)
-     */
-    @Transactional(readOnly = true)
-    public List<UUID> getFriendUserIds(UUID userId) {
-        List<Friendship> friendships = friendshipRepo.findAcceptedFriendships(
-            userId,
-            FriendshipStatus.ACCEPTED
-        );
-
-        return friendships.stream()
-            .map(friendship -> {
-                // Determine which user is the friend (the OTHER person)
-                if (friendship.getUser().getId().equals(userId)) {
-                    // Current user is the requester, so friend is the receiver
-                    return friendship.getFriend().getId();
-                } else {
-                    // Current user is the receiver, so friend is the requester
-                    return friendship.getUser().getId();
-                }
-            })
             .collect(Collectors.toList());
     }
 

@@ -394,10 +394,46 @@
     "saving": "Saving..."
   },
   "friends": {
+    "title": "Friends",
+    "subtitle": "Connect with other language learners",
     "nav": {
       "myFriends": "My Friends",
       "searchUsers": "Search Users",
       "friendRequests": "Friend Requests"
+    },
+    "list": {
+      "loading": "Loading friends ...",
+      "retry": "Retry",
+      "noFriends": "No friends yet",
+      "noFriendsSubtitle": "Start connecting with other language learners",
+      "removeFriend": "Remove friend",
+      "errorLoad": "Failed to load friends. Please try again.",
+      "errorRemove": "Failed to remove friend. Please try again."
+    },
+    "requests": {
+      "loading": "Loading requests...",
+      "incomingTitle": "Incoming Requests",
+      "outgoingTitle": "Outgoing Requests",
+      "noIncoming": "No incoming friend requests",
+      "noOutgoing": "No pending outgoing requests",
+      "wantsToBeFriends": "wants to be friends",
+      "requestPending": "Request pending",
+      "acceptRequest": "Accept request",
+      "rejectRequest": "Reject request",
+      "cancel": "Cancel",
+      "errorLoad": "Failed to load friend requests",
+      "errorAccept": "Failed to accept friend requests",
+      "errorReject": "Failed to reject friend requests",
+      "errorCancel": "Failed to remove friend requests"
+    },
+    "search": {
+      "placeholder": "Search by username or email...",
+      "sending": "Sending...",
+      "sendRequest": "Send Request",
+      "emptyTitle": "Add new friends",
+      "emptySubtitle": "Enter a username or email above to send a friend request",
+      "successMessage": "Request sent successfully",
+      "errorMessage": "An error occurred while sending friend request: "
     }
   }
 }
