@@ -1,5 +1,7 @@
 -- Backfill content_type for legacy seeded exercises (EN + DE)
 -- Only touches rows where content_type is NULL
+-- Migration for legacy exercises created before content_type was introduced
+-- New exercises are already seeded with correct content_type
 
 -- 1) MCQ
 UPDATE exercise_mcq
@@ -20,7 +22,7 @@ SET content_type = CASE
                        WHEN target_language = 'DE' AND difficulty_level = 'C1' AND question_text = 'Die Forschungsergebnisse ___ darauf hin, dass sich der Klimawandel beschleunigt.' THEN 'GRAMMAR'
                        WHEN target_language = 'DE' AND difficulty_level = 'C2' AND question_text = 'Nach monatelanger Vorbereitung kam das Projekt endlich zur ___.' THEN 'VOCABULARY'
 
-                       ELSE content_type
+                       ELSE NULL
     END
 WHERE content_type IS NULL;
 
@@ -43,6 +45,6 @@ SET content_type = CASE
                        WHEN target_language = 'DE' AND difficulty_level = 'C1' AND sentence_with_blank = 'Ihr Argument war trotz der gegenteiligen Beweise ___.' THEN 'VOCABULARY'
                        WHEN target_language = 'DE' AND difficulty_level = 'C2' AND sentence_with_blank = 'Die Prosa des Autors zeichnete sich durch ihre ___ Eloquenz aus.' THEN 'VOCABULARY'
 
-                       ELSE content_type
+                       ELSE NULL
     END
 WHERE content_type IS NULL;
