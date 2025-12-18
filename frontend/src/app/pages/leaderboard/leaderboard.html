@@ -163,7 +163,15 @@
               <div class="rank-circle">
                 <span class="rank-number">{{ currentUserEntry()!.rank }}.</span>
               </div>
-              <p class="rank-description">{{ t('leaderboard.rankDescription') }}</p>
+              @if (currentUserEntry()!.rank === 1) {
+                <p class="rank-description">{{ t('leaderboard.rankDescription1') }}</p>
+              } @else if (currentUserEntry()!.rank === 2) {
+                <p class="rank-description">{{ t('leaderboard.rankDescription2') }}</p>
+              } @else if (currentUserEntry()!.rank === 3) {
+                <p class="rank-description">{{ t('leaderboard.rankDescription3') }}</p>
+              } @else {
+                <p class="rank-description">{{ t('leaderboard.rankDescriptionOther') }}</p>
+              }
 
               @if (currentUserEntry()!.rank > 1 && getXpToNextRank() > 0) {
                 <div class="rank-progress">
