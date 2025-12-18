@@ -49,10 +49,10 @@ export class Dashboard implements OnInit {
       if (data) {
         this.currentUserId.set(data.userId);
         this.updateUserProgress(data.xp, data.streakCount);
-        // Update streak active status
+        // Update streak active status - nur aktiv wenn heute UND streakCount > 0
         const today = new Date().toISOString().split('T')[0];
         const lastActivityDate = data.lastActivityDate?.split('T')[0];
-        this.isStreakActiveToday.set(lastActivityDate === today);
+        this.isStreakActiveToday.set(lastActivityDate === today && data.streakCount > 0);
         this.updateLearningInfo(data.learningLanguage, data.currentLevel, data.targetLevel);
       }
     });
@@ -77,10 +77,10 @@ export class Dashboard implements OnInit {
     this.userLearningService.getUserLearning().subscribe({
       next: (data) => {
         this.updateUserProgress(data.xp, data.streakCount);
-        // Update streak active status
+        // Update streak active status - nur aktiv wenn heute UND streakCount > 0
         const today = new Date().toISOString().split('T')[0];
         const lastActivityDate = data.lastActivityDate?.split('T')[0];
-        this.isStreakActiveToday.set(lastActivityDate === today);
+        this.isStreakActiveToday.set(lastActivityDate === today && data.streakCount > 0);
         this.updateLearningInfo(data.learningLanguage, data.currentLevel, data.targetLevel);
       },
       error: (error) => {

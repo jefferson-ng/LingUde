@@ -98,6 +98,7 @@
   "learning": {
     "title": "Learning",
     "subtitle": "Your Learning Path",
+    "myCourses": "My Courses",
     "selectDifficulty": "Choose Your Difficulty Level",
     "difficulty": {
       "a1": {
@@ -129,6 +130,15 @@
       "back": "Back",
       "progress": "Progress",
       "whatYouWillLearn": "What you will learn:"
+    },
+    "lockedNotification": "Please complete the previous tasks first!",
+    "levelPath": "Your Learning Path",
+    "completeToUnlock": "Complete levels to unlock new ones",
+    "popup": {
+      "title": "Start Your Lesson",
+      "lessonInfo": "Lesson {{current}} of {{total}}",
+      "start": "Start",
+      "repeat": "Repeat Exercise"
     },
     "streakCelebration": {
       "dayStreak": "Day Streak",
