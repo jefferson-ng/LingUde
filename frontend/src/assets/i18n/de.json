@@ -307,7 +307,10 @@
     "fullRankings": "Vollständige Rangliste",
     "you": "Du",
     "yourRanking": "Deine Platzierung",
-    "rankDescription": "Du bist auf einem guten Weg! Weiter so!",
+    "rankDescription1": "Fantastisch! Du bist Nummer 1!",
+    "rankDescription2": "Super! Nur noch ein kleiner Schritt bis zur Spitze!",
+    "rankDescription3": "Großartig! Du bist unter den Top 3!",
+    "rankDescriptionOther": "Du bist auf einem guten Weg! Weiter so!",
     "nextRank": "Bis Platz 1",
     "weeklyChallenge": "Wöchentliche Challenge",
     "challengeDescription": "Sammle die meisten XP diese Woche und gewinne einen Bonus!",
@@ -319,7 +322,9 @@
     "lessons": "Lektionen",
     "dayStreak": "{{count}}-Tage-Streak",
     "lessonsThisWeek": "{{count}} Lektionen diese Woche",
-    "perfectScoreStreak": "Perfekte Serie"
+    "perfectScoreStreak": "Perfekte Serie",
+    "globalLeaderboard": "Globale Bestenliste",
+    "friendsLeaderboard": "Freunde-Bestenliste"
   },
   "statistics": {
     "title": "Statistiken",
