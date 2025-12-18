@@ -1,8 +1,12 @@
 package com.sep.sep_backend.user.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -16,7 +20,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, unique = true, length = 50)
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$") // No @ allowed
     private String username;
 
     @Column(nullable = false, unique = true, length = 255)
@@ -27,6 +32,11 @@ public class User {
 
     @Column(name = "email_verified", nullable = false)
     private Boolean emailVerified = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 20)
+    private UserRole role = UserRole.USER;
+
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -44,6 +54,7 @@ public class User {
         this.email = email;
         this.passwordHash = passwordHash;
         this.emailVerified = false;
+        this.role = UserRole.USER;   // default role for new users
     }
 
     public User() {
@@ -92,6 +103,10 @@ public class User {
     public void setEmailVerified(Boolean emailVerified) {
         this.emailVerified = emailVerified;
     }
+
+    public UserRole getRole() {return role; }
+
+    public void setRole(UserRole role) { this.role = role;}
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

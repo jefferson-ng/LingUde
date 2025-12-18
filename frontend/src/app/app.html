@@ -20,7 +20,7 @@
             <button class="user-avatar-button" (click)="toggleUserDropdown()" type="button">
               <div class="user-avatar">{{ userName() ? userName().charAt(0).toUpperCase() : 'M' }}</div>
             </button>
-            
+
             @if (isUserDropdownOpen() && isLoggedIn()) {
               <div class="user-dropdown">
                 <div class="user-dropdown-header">
@@ -53,7 +53,7 @@
               </div>
             }
           </div>
-          
+
           <div class="logo-text-section">
             <h1 class="app-logo">{{ title() }}</h1>
             <p class="app-tagline">{{ t('app.tagline') }}</p>
@@ -65,8 +65,8 @@
         <ul class="nav-list">
           @for (item of navItems; track item.path) {
             <li class="nav-item">
-              <a 
-                [routerLink]="item.path" 
+              <a
+                [routerLink]="item.path"
                 routerLinkActive="active"
                 class="nav-link"
                 (click)="closeSidebar()"
@@ -81,6 +81,8 @@
               <lucide-icon [img]="TargetIcon" class="nav-icon"></lucide-icon>
               } @else if (item.icon === 'trophy') {
               <lucide-icon [img]="TrophyIcon" class="nav-icon"></lucide-icon>
+              } @else if (item.icon === 'users') {
+              <lucide-icon [img]="UsersIcon" class="nav-icon"></lucide-icon>
               }
               <span class="nav-label">{{ t(item.translationKey) }}</span>
             </a>
@@ -88,13 +90,13 @@
           }
         </ul>
       </nav>
-      
+
       <div class="sidebar-footer">
         <ul class="nav-list">
           @for (item of footerItems; track item.path) {
             <li class="nav-item">
-              <a 
-                [routerLink]="item.path" 
+              <a
+                [routerLink]="item.path"
                 routerLinkActive="active"
                 class="nav-link"
                 (click)="closeSidebar()"

@@ -6,6 +6,7 @@ import com.sep.sep_backend.exercise.dto.ExerciseSummaryResponse;
 import com.sep.sep_backend.exercise.dto.McqSubmissionRequest;
 import com.sep.sep_backend.exercise.dto.SubmissionResultResponse;
 import com.sep.sep_backend.exercise.entity.ExerciseType;
+import com.sep.sep_backend.exercise.entity.UserProgress;
 import com.sep.sep_backend.exercise.service.ExerciseService;
 import com.sep.sep_backend.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -202,5 +203,66 @@ class ExerciseControllerTest {
                 .andExpect(jsonPath("$.xpEarned").value(12))   // matches your DTO field
                 .andExpect(jsonPath("$.feedback").value("Nice!"));
     }
+
+    /** GET /api/exercises/completed -> list of completed exercises as DTOs */
+    @Test
+    void getCompletedExercisesForUser_returns200_andDtoList() throws Exception {
+        // Given: two completed progress entries
+        UUID ex1 = UUID.randomUUID();
+        UUID ex2 = UUID.randomUUID();
+
+        UserProgress up1 = new UserProgress();
+        up1.setExerciseId(ex1);
+        up1.setExerciseType(ExerciseType.MCQ);
+        up1.setXpEarned(10);
+
+        UserProgress up2 = new UserProgress();
+        up2.setExerciseId(ex2);
+        up2.setExerciseType(ExerciseType.FILL_BLANK);
+        up2.setXpEarned(15);
+
+        // Service returns these entries for the (here: null) userId
+        Mockito.when(service.getCompletedExercisesForUser(null))
+                .thenReturn(List.of(up1, up2));
+
+        // When & Then: call endpoint and verify JSON
+        mvc.perform(get("/api/exercises/completed"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].exerciseId").value(ex1.toString()))
+                .andExpect(jsonPath("$[0].type").value("MCQ"))
+                .andExpect(jsonPath("$[0].xpEarned").value(10))
+                .andExpect(jsonPath("$[1].exerciseId").value(ex2.toString()))
+                .andExpect(jsonPath("$[1].type").value("FILL_BLANK"))
+                .andExpect(jsonPath("$[1].xpEarned").value(15));
+
+        // Verify that the controller asked the service with userId = null
+        Mockito.verify(service).getCompletedExercisesForUser(null);
+    }
+
+    /** GET /api/exercises/{exerciseId}/completed -> completion status DTO */
+    @Test
+    void hasUserCompletedExercise_returns200_andStatusDto() throws Exception {
+        // Given
+        UUID exerciseId = UUID.randomUUID();
+
+        // Service says: this exercise is completed for this (null) user
+        Mockito.when(service.hasUserCompletedExercise(null, exerciseId, ExerciseType.MCQ))
+                .thenReturn(true);
+
+        // When & Then
+        mvc.perform(get("/api/exercises/{exerciseId}/completed", exerciseId)
+                        .param("type", "MCQ"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.exerciseId").value(exerciseId.toString()))
+                .andExpect(jsonPath("$.type").value("MCQ"))
+                .andExpect(jsonPath("$.completed").value(true));
+
+        // Verify service call
+        Mockito.verify(service).hasUserCompletedExercise(null, exerciseId, ExerciseType.MCQ);
+    }
+
+
 
 }

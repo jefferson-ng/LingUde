@@ -4,6 +4,8 @@ import com.sep.sep_backend.user.entity.Language;
 import com.sep.sep_backend.user.entity.User;
 import com.sep.sep_backend.user.entity.UserLearning;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -46,4 +48,13 @@ public interface UserLearningRepository extends JpaRepository<UserLearning, UUID
      * @param user the user whose learning data should be deleted
      */
     void deleteByUser(User user);
+
+    /**
+     * Find user learning data for multiple users by their IDs (batch query)
+     * Used for leaderboard queries to avoid N+1 problem
+     * @param userIds list of user IDs
+     * @return List of user learning records for the specified users
+     */
+    @Query("SELECT ul FROM UserLearning ul WHERE ul.user.id IN :userIds")
+    List<UserLearning> findByUser_IdIn(@Param("userIds") List<UUID> userIds);
 }

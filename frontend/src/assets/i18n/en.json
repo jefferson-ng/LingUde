@@ -22,6 +22,7 @@
     "goals": "My Goals",
     "leaderboard": "Leaderboard",
     "statistics": "Statistics",
+    "friends": "Friends",
     "settings": "Settings"
   },
   "user": {
@@ -97,6 +98,7 @@
   "learning": {
     "title": "Learning",
     "subtitle": "Your Learning Path",
+    "myCourses": "My Courses",
     "selectDifficulty": "Choose Your Difficulty Level",
     "difficulty": {
       "a1": {
@@ -128,6 +130,15 @@
       "back": "Back",
       "progress": "Progress",
       "whatYouWillLearn": "What you will learn:"
+    },
+    "lockedNotification": "Please complete the previous tasks first!",
+    "levelPath": "Your Learning Path",
+    "completeToUnlock": "Complete levels to unlock new ones",
+    "popup": {
+      "title": "Start Your Lesson",
+      "lessonInfo": "Lesson {{current}} of {{total}}",
+      "start": "Start",
+      "repeat": "Repeat Exercise"
     },
     "streakCelebration": {
       "dayStreak": "Day Streak",
@@ -306,7 +317,10 @@
     "fullRankings": "Full Rankings",
     "you": "You",
     "yourRanking": "Your Ranking",
-    "rankDescription": "You're doing great! Keep it up!",
+    "rankDescription1": "Amazing! You're #1!",
+    "rankDescription2": "Awesome! Just one step away from the top!",
+    "rankDescription3": "Great job! You're in the top 3!",
+    "rankDescriptionOther": "You're doing great! Keep it up!",
     "nextRank": "To Rank 1",
     "weeklyChallenge": "Weekly Challenge",
     "challengeDescription": "Earn the most XP this week and win a bonus!",
@@ -318,7 +332,9 @@
     "lessons": "lessons",
     "dayStreak": "{{count}}-day streak",
     "lessonsThisWeek": "{{count}} lessons this week",
-    "perfectScoreStreak": "Perfect score streak"
+    "perfectScoreStreak": "Perfect score streak",
+    "globalLeaderboard": "Global Leaderboard",
+    "friendsLeaderboard": "Friends Leaderboard"
   },
   "statistics": {
     "title": "Statistics",
@@ -389,5 +405,48 @@
     "back": "Back",
     "continue": "Continue",
     "saving": "Saving..."
+  },
+  "friends": {
+    "title": "Friends",
+    "subtitle": "Connect with other language learners",
+    "nav": {
+      "myFriends": "My Friends",
+      "searchUsers": "Search Users",
+      "friendRequests": "Friend Requests"
+    },
+    "list": {
+      "loading": "Loading friends ...",
+      "retry": "Retry",
+      "noFriends": "No friends yet",
+      "noFriendsSubtitle": "Start connecting with other language learners",
+      "removeFriend": "Remove friend",
+      "errorLoad": "Failed to load friends. Please try again.",
+      "errorRemove": "Failed to remove friend. Please try again."
+    },
+    "requests": {
+      "loading": "Loading requests...",
+      "incomingTitle": "Incoming Requests",
+      "outgoingTitle": "Outgoing Requests",
+      "noIncoming": "No incoming friend requests",
+      "noOutgoing": "No pending outgoing requests",
+      "wantsToBeFriends": "wants to be friends",
+      "requestPending": "Request pending",
+      "acceptRequest": "Accept request",
+      "rejectRequest": "Reject request",
+      "cancel": "Cancel",
+      "errorLoad": "Failed to load friend requests",
+      "errorAccept": "Failed to accept friend requests",
+      "errorReject": "Failed to reject friend requests",
+      "errorCancel": "Failed to remove friend requests"
+    },
+    "search": {
+      "placeholder": "Search by username or email...",
+      "sending": "Sending...",
+      "sendRequest": "Send Request",
+      "emptyTitle": "Add new friends",
+      "emptySubtitle": "Enter a username or email above to send a friend request",
+      "successMessage": "Request sent successfully",
+      "errorMessage": "An error occurred while sending friend request: "
+    }
   }
 }

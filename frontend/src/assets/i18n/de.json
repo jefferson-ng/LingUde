@@ -22,6 +22,7 @@
     "goals": "Ziele",
     "leaderboard": "Bestenliste",
     "statistics": "Statistiken",
+    "friends": "Freunde",
     "settings": "Einstellungen"
   },
   "user": {
@@ -97,6 +98,7 @@
   "learning": {
     "title": "Lernen",
     "subtitle": "Dein Lernpfad",
+    "myCourses": "Meine Kurse",
     "selectDifficulty": "Wähle dein Schwierigkeitsniveau",
     "difficulty": {
       "a1": {
@@ -128,6 +130,15 @@
       "back": "Zurück",
       "progress": "Fortschritt",
       "whatYouWillLearn": "Was du lernen wirst:"
+    },
+    "lockedNotification": "Bitte schließe zuerst die vorherigen Aufgaben ab!",
+    "levelPath": "Dein Lernpfad",
+    "completeToUnlock": "Schließe Level ab, um neue freizuschalten",
+    "popup": {
+      "title": "Starte deine Lektion",
+      "lessonInfo": "Lektion {{current}} von {{total}}",
+      "start": "Anfangen",
+      "repeat": "Aufgabe wiederholen"
     },
     "streakCelebration": {
       "dayStreak": "Tag Streak",
@@ -306,7 +317,10 @@
     "fullRankings": "Vollständige Rangliste",
     "you": "Du",
     "yourRanking": "Deine Platzierung",
-    "rankDescription": "Du bist auf einem guten Weg! Weiter so!",
+    "rankDescription1": "Fantastisch! Du bist Nummer 1!",
+    "rankDescription2": "Super! Nur noch ein kleiner Schritt bis zur Spitze!",
+    "rankDescription3": "Großartig! Du bist unter den Top 3!",
+    "rankDescriptionOther": "Du bist auf einem guten Weg! Weiter so!",
     "nextRank": "Bis Platz 1",
     "weeklyChallenge": "Wöchentliche Challenge",
     "challengeDescription": "Sammle die meisten XP diese Woche und gewinne einen Bonus!",
@@ -318,7 +332,9 @@
     "lessons": "Lektionen",
     "dayStreak": "{{count}}-Tage-Streak",
     "lessonsThisWeek": "{{count}} Lektionen diese Woche",
-    "perfectScoreStreak": "Perfekte Serie"
+    "perfectScoreStreak": "Perfekte Serie",
+    "globalLeaderboard": "Globale Bestenliste",
+    "friendsLeaderboard": "Freunde-Bestenliste"
   },
   "statistics": {
     "title": "Statistiken",
@@ -389,5 +405,48 @@
     "back": "Zurück",
     "continue": "Weiter",
     "saving": "Speichern..."
+  },
+  "friends": {
+    "title": "Freunde",
+    "subtitle": "Vernetze dich mit anderen Sprachlernenden",
+    "nav": {
+      "myFriends": "Meine Freunde",
+      "searchUsers": "Benutzer suchen",
+      "friendRequests": "Freundschaftsanfragen"
+    },
+    "list": {
+      "loading": "Freunde werden geladen ...",
+      "retry": "Erneut versuchen",
+      "noFriends": "Noch keine Freunde",
+      "noFriendsSubtitle": "Beginne dich mit anderen Sprachlernenden zu vernetzen",
+      "removeFriend": "Freund entfernen",
+      "errorLoad": "Freunde konnten nicht geladen werden. Bitte versuche es erneut.",
+      "errorRemove": "Freund konnte nicht entfernt werden. Bitte versuche es erneut."
+    },
+    "requests": {
+      "loading": "Anfragen werden geladen...",
+      "incomingTitle": "Eingehende Anfragen",
+      "outgoingTitle": "Ausgehende Anfragen",
+      "noIncoming": "Keine eingehenden Freundschaftsanfragen",
+      "noOutgoing": "Keine ausstehenden ausgehenden Anfragen",
+      "wantsToBeFriends": "möchte befreundet sein",
+      "requestPending": "Anfrage ausstehend",
+      "acceptRequest": "Anfrage annehmen",
+      "rejectRequest": "Anfrage ablehnen",
+      "cancel": "Abbrechen",
+      "errorLoad": "Freundschaftsanfragen konnten nicht geladen werden",
+      "errorAccept": "Freundschaftsanfrage konnte nicht angenommen werden",
+      "errorReject": "Freundschaftsanfrage konnte nicht abgelehnt werden",
+      "errorCancel": "Freundschaftsanfrage konnte nicht entfernt werden"
+    },
+    "search": {
+      "placeholder": "Nach Benutzername oder E-Mail suchen...",
+      "sending": "Wird gesendet...",
+      "sendRequest": "Anfrage senden",
+      "emptyTitle": "Neue Freunde hinzufügen",
+      "emptySubtitle": "Gib oben einen Benutzernamen oder eine E-Mail ein, um eine Freundschaftsanfrage zu senden",
+      "successMessage": "Anfrage erfolgreich gesendet",
+      "errorMessage": "Beim Senden der Freundschaftsanfrage ist ein Fehler aufgetreten: "
+    }
   }
 }
