@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
 export interface UserInfo {
-  userId: string;
+  id: string;
   email: string;
   username: string;
   level?: number;
@@ -68,7 +68,7 @@ export class AuthService {
     localStorage.setItem('accessToken', res.accessToken);
     localStorage.setItem('refreshToken', res.refreshToken);
     this.userSubject.next({
-      userId: res.userId,
+      id: res.id,
       email: res.email,
       username: res.username
     });

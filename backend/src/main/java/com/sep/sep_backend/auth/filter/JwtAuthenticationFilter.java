@@ -10,6 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.List;
+
 
 import java.io.IOException;
 import java.util.Collections;
@@ -73,28 +78,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Extract userId from the valid token
             UUID userId = jwtUtil.getUserIdFromToken(token);
 
-            // Check if authentication is already set (shouldn't happen, but good practice)
+            // Extract role from token (e.g. "USER" or "ADMIN")
+            String role = jwtUtil.getRoleFromToken(token);
+
+            // Only set authentication if not already set
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                // Create an Authentication object
-                // We use UsernamePasswordAuthenticationToken as a container for the authenticated user
-                // Parameters: principal (userId), credentials (null), authorities (empty list)
-                UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                        userId,                    // principal: the authenticated user's ID
-                        null,                      // credentials: not needed after authentication
-                        Collections.emptyList()    // authorities: user's permissions (empty for now)
-                    );
+                // Build the list of authorities based on the role from the token.
+                //
+                // Spring Security expects roles in the form "ROLE_XYZ",
+                // so we transform "ADMIN" -> "ROLE_ADMIN", "USER" -> "ROLE_USER".
+                List<GrantedAuthority> authorities = null;
 
-                //  Add request details to the authentication object
+                if (role != null && !role.isBlank()) {
+                    authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+                } else {
+                    // Fallback: no role information -> no authorities
+                    authorities = List.of();
+                }
+
+                // Create an Authentication object that contains:
+                // - principal: the authenticated user's ID (UUID)
+                // - credentials: null (we don't store passwords here)
+                // - authorities: derived from the JWT's role claim
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userId,
+                                null,
+                                authorities
+                        );
+
+                // Add request details (IP, session, etc.)
                 authentication.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
+                        new WebAuthenticationDetailsSource().buildDetails(request)
                 );
 
-                // Set the authentication in Spring Security's SecurityContext
-                // This tells Spring Security: "This request is authenticated!"
+                // Store the authentication in the SecurityContext,
+                // so that Spring Security knows the user is authenticated
+                // AND which authorities (roles) they have.
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+
 
         } catch (Exception e) {
             // If anything goes wrong (invalid token format, expired token, etc.)

@@ -1,13 +1,16 @@
 package com.sep.sep_backend.user.controller;
 
+import com.sep.sep_backend.user.dto.LeaderboardEntryDTO;
 import com.sep.sep_backend.user.dto.UserLearningDTO;
 import com.sep.sep_backend.user.entity.UserLearning;
+import com.sep.sep_backend.user.service.LeaderboardService;
 import com.sep.sep_backend.user.service.UserLearningService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,9 +25,12 @@ import java.util.UUID;
 public class UserLearningController {
 
     private final UserLearningService userLearningService;
+    private final LeaderboardService leaderboardService;
 
-    public UserLearningController(UserLearningService userLearningService) {
+    public UserLearningController(UserLearningService userLearningService,
+                                 LeaderboardService leaderboardService) {
         this.userLearningService = userLearningService;
+        this.leaderboardService = leaderboardService;
     }
 
     /**
@@ -146,6 +152,44 @@ public class UserLearningController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    /**
+     * Get friends leaderboard (current user + friends ranked by XP)
+     * Returns list of users sorted by XP descending with rank, username, displayName,
+     * avatarUrl, xp, level, and streakCount
+     *
+     * @return ResponseEntity containing list of LeaderboardEntryDTO
+     */
+    @GetMapping("/leaderboard/friends")
+    public ResponseEntity<List<LeaderboardEntryDTO>> getFriendsLeaderboard() {
+        try {
+            UUID userId = UUID.fromString(
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString()
+            );
+
+            List<LeaderboardEntryDTO> leaderboard = leaderboardService.getFriendsLeaderboard(userId);
+            return ResponseEntity.ok(leaderboard);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    /**
+     * Get global leaderboard (all users ranked by XP)
+     * Returns list of all users sorted by XP descending with rank, username, displayName,
+     * avatarUrl, xp, level, and streakCount
+     *
+     * @return ResponseEntity containing list of LeaderboardEntryDTO
+     */
+    @GetMapping("/leaderboard/global")
+    public ResponseEntity<List<LeaderboardEntryDTO>> getGlobalLeaderboard() {
+        try {
+            List<LeaderboardEntryDTO> leaderboard = leaderboardService.getGlobalLeaderboard();
+            return ResponseEntity.ok(leaderboard);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

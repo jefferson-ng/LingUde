@@ -4,7 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } fro
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
-import { LucideAngularModule, Home, BookOpen, Target, Trophy, Settings, GraduationCap, LogOut, Menu, X } from 'lucide-angular';
+import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X } from 'lucide-angular';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -16,7 +16,7 @@ import { filter } from 'rxjs/operators';
 export class App implements OnInit {
   private userLearningService = inject(UserLearningService);
   private router = inject(Router);
-  
+
   // Lucide Icons
   readonly HomeIcon = Home;
   readonly BookOpenIcon = BookOpen;
@@ -27,7 +27,8 @@ export class App implements OnInit {
   readonly LogOutIcon = LogOut;
   readonly MenuIcon = Menu;
   readonly XIcon = X;
-  
+  readonly  UsersIcon = Users;
+
   protected readonly title = signal('LingUDE');
   protected readonly userLevel = signal(1);
   protected readonly userXP = signal(0);
@@ -40,7 +41,7 @@ export class App implements OnInit {
   protected readonly isUserDropdownOpen = signal(false);
   protected readonly isSidebarOpen = signal(false);
   protected readonly isOnLevelSelection = signal(false);
-  
+
     // TODO: Replace with actual logged-in user ID from authentication service
   // This is a temporary test user ID
   // Removed TEST_USER_ID; use authenticated user only
@@ -51,17 +52,17 @@ export class App implements OnInit {
   ngOnInit(): void {
       // Ensure user info is loaded from storage on app startup
       this.auth.loadUserFromStorage();
-    
+
     // Track current route to hide sidebar on level-selection
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       this.isOnLevelSelection.set(event.url.includes('/level-selection'));
     });
-    
+
     // Check initial route
     this.isOnLevelSelection.set(this.router.url.includes('/level-selection'));
-    
+
     this.auth.user$.subscribe((user: UserInfo | null) => {
       if (user) {
         this.userName.set(user.username);
@@ -158,7 +159,7 @@ export class App implements OnInit {
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     const clickedInside = target.closest('.user-profile');
-    
+
     if (!clickedInside && this.isUserDropdownOpen()) {
       this.closeUserDropdown();
     }
@@ -169,9 +170,10 @@ export class App implements OnInit {
     { path: '/learning', translationKey: 'nav.learning', icon: 'graduation-cap' },
     { path: '/lessons', translationKey: 'nav.lessons', icon: 'book-open' },
     { path: '/goals', translationKey: 'nav.goals', icon: 'target' },
+    { path: '/friends', translationKey: 'nav.friends', icon: 'users' },
     { path: '/leaderboard', translationKey: 'nav.leaderboard', icon: 'trophy' }
   ];
-  
+
   footerItems = [
     { path: '/settings', translationKey: 'nav.settings', icon: 'settings' }
   ];

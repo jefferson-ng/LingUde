@@ -1,0 +1,50 @@
+<ng-container *transloco="let t">
+  <div class="search-container">
+    <div class="search-input-wrapper">
+      <input
+        type="text"
+        [(ngModel)]="searchInput"
+        [placeholder]="t('friends.search.placeholder')"
+        [disabled]="isLoading"
+        class="search-input"
+        (keydown.enter)="sendFriendRequest()"
+      />
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+        <circle cx="10" cy="7" r="4"/>
+        <path d="M10.3 15H7a4 4 0 0 0-4 4v2"/>
+        <circle cx="17" cy="17" r="3"/>
+        <path d="m21 21-1.9-1.9"/>
+      </svg>
+    </div>
+
+    <button
+      (click)="sendFriendRequest()"
+      [disabled]="isLoading || searchInput.trim().length === 0"
+      class="send-button"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-plus-icon lucide-user-plus">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <line x1="19" x2="19" y1="8" y2="14"/>
+        <line x1="22" x2="16" y1="11" y2="11"/>
+      </svg>
+      <span>{{ isLoading ? t('friends.search.sending') : t('friends.search.sendRequest') }}</span>
+    </button>
+  </div>
+
+  <!-- Feedback Message -->
+  @if (message) {
+    <div [class]="'message ' + (messageType === 'success' ? 'message-success' : 'message-error')">
+      {{ message }}
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!message) {
+    <div class="empty-state">
+      <lucide-icon name="user-plus" class="empty-icon"></lucide-icon>
+      <h3>{{ t('friends.search.emptyTitle') }}</h3>
+      <p>{{ t('friends.search.emptySubtitle') }}</p>
+    </div>
+  }
+</ng-container>

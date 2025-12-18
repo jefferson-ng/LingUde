@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()//  public endpoints
                         .requestMatchers("/api/exercises/**").permitAll() // TEMPORARY: Allow exercises without auth for testing
                         .requestMatchers("/api/user/learning/**").permitAll() // TEMPORARY: Allow user learning without auth for testing
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") //  only admins
                         .requestMatchers("/error").permitAll()       // allow error page
                         .anyRequest().authenticated()                // everything else protected
                 )

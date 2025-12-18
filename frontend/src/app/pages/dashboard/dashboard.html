@@ -51,21 +51,24 @@
           <h3 class="card-title">{{ t('dashboard.leaderboard') }}</h3>
         </div>
         <div class="leaderboard-list">
-          <div class="leaderboard-item">
-            <div class="rank-badge rank-1">1</div>
-            <span class="leaderboard-name">Anna Schmidt</span>
-            <span class="leaderboard-xp">2840 XP</span>
-          </div>
-          <div class="leaderboard-item current-user">
-            <div class="rank-badge rank-2">2</div>
-            <span class="leaderboard-name">{{ t('dashboard.you') }}</span>
-            <span class="leaderboard-xp">2650 XP</span>
-          </div>
-          <div class="leaderboard-item">
-            <div class="rank-badge rank-3">3</div>
-            <span class="leaderboard-name">Maria Silva</span>
-            <span class="leaderboard-xp">2120 XP</span>
-          </div>
+          @if (topThree().length === 0) {
+            <p class="empty-message">{{ t('dashboard.noLeaderboardData') || 'No data available yet' }}</p>
+          } @else {
+            @for (entry of topThree(); track entry.userId) {
+              <div class="leaderboard-item" [class.current-user]="isCurrentUser(entry)">
+                <div class="rank-badge"
+                     [class.rank-1]="entry.rank === 1"
+                     [class.rank-2]="entry.rank === 2"
+                     [class.rank-3]="entry.rank === 3">
+                  {{ entry.rank }}
+                </div>
+                <span class="leaderboard-name">
+                  {{ isCurrentUser(entry) ? t('dashboard.you') : (entry.displayName || entry.username) }}
+                </span>
+                <span class="leaderboard-xp">{{ entry.xp }} XP</span>
+              </div>
+            }
+          }
         </div>
       </div>
     </div>
