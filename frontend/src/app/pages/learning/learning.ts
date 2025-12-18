@@ -1,27 +1,22 @@
-import { Component, signal, inject, OnInit, computed } from '@angular/core';
+﻿import { Component, signal, inject, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService, TranslocoDirective } from '@jsverse/transloco';
 import { ExerciseViewerComponent, ExerciseResult } from '../../components/exercise-viewer/exercise-viewer';
 import { ExerciseSummaryResponse, ExerciseDetailResponse } from '../../models/exercise.model';
 import { ExerciseService } from '../../services/exercise.service';
 import { UserLearningService } from '../../services/user-learning.service';
 
-interface Lesson {
+interface Level {
   id: number;
-  titleKey: string;
-  sectionKey: string;
-  status: 'available';  // All available for now, until progress tracking is implemented
-  progress?: number;
-  stars?: number;
-  descriptionKey?: string;
-  difficultyLevel: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
-  topic: string;
-  exerciseType: 'MCQ' | 'FILL_BLANK';  // New: separates by exercise type
-  exercisePreviews?: ExerciseSummaryResponse[];  // Dynamically loaded exercise summaries
+  levelNumber: number;
+  status: 'locked' | 'unlocked' | 'completed';
+  stars: number;
+  totalExercises: number;
+  completedExercises: number;
 }
 
 type DifficultyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+type LanguageCode = 'DE' | 'EN';
 
 @Component({
   selector: 'app-learning',
@@ -33,192 +28,330 @@ export class Learning implements OnInit {
   private translocoService = inject(TranslocoService);
   private userLearningService = inject(UserLearningService);
   
-  protected readonly unitTitle = signal('Bestelle im Cafe');
+  protected userLanguage = signal<LanguageCode>('DE');
+  protected userTargetLevel = signal<DifficultyLevel>('A1');
+  protected userCurrentLevel = signal<DifficultyLevel>('A1');
   
-  // Current selected difficulty
-  protected selectedDifficulty = signal<DifficultyLevel>('A1');
+  protected levels = signal<Level[]>([]);
+  protected currentUnlockedLevel = signal<number>(1);
+  protected highestUnlockedLevel = signal<number>(1);
   
-  // All difficulty levels
-  protected readonly difficulties: DifficultyLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-
-  // Computed lessons based on selected difficulty
-  protected lessons = computed<Lesson[]>(() => {
-    const difficulty = this.selectedDifficulty();
-
-    return [
-      {
-        id: 1,
-        titleKey: `learning.lessons.${difficulty.toLowerCase()}.lesson1.title`,
-        sectionKey: `learning.lessons.${difficulty.toLowerCase()}.lesson1.section`,
-        status: 'available',
-        progress: 0,
-        stars: 0,
-        descriptionKey: `learning.lessons.${difficulty.toLowerCase()}.lesson1.description`,
-        difficultyLevel: difficulty,
-        topic: '', // Topic filtering removed - exercises filtered by difficulty only
-        exerciseType: 'MCQ'
-      },
-      {
-        id: 2,
-        titleKey: `learning.lessons.${difficulty.toLowerCase()}.lesson2.title`,
-        sectionKey: `learning.lessons.${difficulty.toLowerCase()}.lesson2.section`,
-        status: 'available',
-        progress: 0,
-        stars: 0,
-        descriptionKey: `learning.lessons.${difficulty.toLowerCase()}.lesson2.description`,
-        difficultyLevel: difficulty,
-        topic: '', // Topic filtering removed - exercises filtered by difficulty only
-        exerciseType: 'FILL_BLANK'
-      }
-    ];
-  });
-
   protected readonly dailyGoal = signal(10);
   protected readonly dailyProgress = signal(0);
   protected readonly streak = signal(0);
-  protected readonly hearts = signal(4);
-  protected readonly gems = signal(500);
   
-  // Streak celebration modal
   protected showStreakCelebration = signal(false);
   protected newStreakValue = signal(0);
   protected previousStreakForDisplay = signal(0);
   protected isStreakShrinking = signal(false);
   protected isStreakFlying = signal(false);
   private previousStreakValue = 0;
+  private streakAnimationShownToday = false;
+  private lastActivityDate: string | null = null;
   
-  // Track correct answers in current lesson
   private correctAnswersCount = 0;
+  private totalExercisesInLevel = 0;
   
-  protected selectedLesson = signal<Lesson | null>(null);
+  protected selectedLevel = signal<Level | null>(null);
+  protected showLevelPopup = signal<boolean>(false);
+  protected popupPosition = signal<{ top: number; left: number } | null>(null);
+  protected levelXP = signal<number>(10);
+  
+  protected showLockedNotification = signal<boolean>(false);
+  private notificationTimeout: any = null;
+
+  protected isLanguageDropdownOpen = signal<boolean>(false);
+  private languageDropdownTimeout: any = null;
+  protected availableLanguages = [
+    { code: 'DE' as const, name: 'German', flagCode: 'de' },
+    { code: 'EN' as const, name: 'English', flagCode: 'gb' }
+  ];
 
   protected exerciseMode = signal<boolean>(false);
   protected currentExerciseSummaries = signal<ExerciseSummaryResponse[]>([]);
   protected currentExerciseIndex = signal<number>(0);
   protected currentExercise = signal<ExerciseDetailResponse | null>(null);
 
-  // Store user's selected learning language (default to 'DE' if not set)
-  protected userLanguage = signal<'DE' | 'EN'>('DE');
-
-  // Use authenticated user; no hardcoded test user ID
   constructor(private exerciseService: ExerciseService) {}
 
-  /**
-   * Initialize component and fetch user learning data from backend.
-   * Loads XP and streak information to display in the UI.
-   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.showLevelPopup()) {
+      const target = event.target as HTMLElement;
+      const popup = target.closest('.level-popup');
+      const levelNode = target.closest('.level-node');
+      
+      // Close popup if clicking outside of both the popup and level nodes
+      if (!popup && !levelNode) {
+        this.closePanel();
+      }
+    }
+  }
+
   ngOnInit(): void {
     this.loadUserLearningData();
     
-    // Subscribe to user learning updates
     this.userLearningService.userLearning$.subscribe(data => {
       if (data) {
+        console.log('📡 Learning page received userLearning$ update - Streak:', data.streakCount, 'XP:', data.xp);
         this.dailyProgress.set(data.xp);
         this.streak.set(data.streakCount);
+        console.log('✅ Updated local streak signal to:', data.streakCount);
+        
+        if (data.learningLanguage === 'DE' || data.learningLanguage === 'EN') {
+          this.userLanguage.set(data.learningLanguage);
+        }
+        if (data.targetLevel) {
+          this.userTargetLevel.set(data.targetLevel);
+        }
+        if (data.currentLevel) {
+          this.userCurrentLevel.set(data.currentLevel);
+        }
+        
+        this.loadLevels();
       }
     });
   }
 
-  /**
-   * Loads user learning data from the backend.
-   */
   private loadUserLearningData(): void {
     this.userLearningService.getUserLearning().subscribe({
       next: (data) => {
         console.log('Loaded user learning data:', data);
         this.dailyProgress.set(data.xp);
         this.streak.set(data.streakCount);
-        // Update user's selected language (only DE and EN supported for exercises)
+        
         if (data.learningLanguage === 'DE' || data.learningLanguage === 'EN') {
           this.userLanguage.set(data.learningLanguage);
-        } else {
-          // Default to DE if user selected unsupported language
-          this.userLanguage.set('DE');
         }
-        this.previousStreakValue = data.streakCount; // Remember for comparison
+        
+        if (data.targetLevel) {
+          this.userTargetLevel.set(data.targetLevel);
+        }
+        if (data.currentLevel) {
+          this.userCurrentLevel.set(data.currentLevel);
+        }
+        
+        // Don't set highestUnlockedLevel from currentLevel anymore
+        // It will be calculated from completedLevels for the specific targetLevel in loadLevels()
+        this.highestUnlockedLevel.set(1); // Default: Level 1 is always unlocked
+        
+        this.previousStreakValue = data.streakCount;
+        this.lastActivityDate = data.lastActivityDate || null;
+        
+        // Reset animation flag if it's a new day
+        const today = new Date().toISOString().split('T')[0];
+        if (this.lastActivityDate !== today) {
+          this.streakAnimationShownToday = false;
+        }
+        
+        this.loadLevels();
       },
       error: (error) => {
         console.error('Error loading user learning data:', error);
-        console.log('Make sure to:');
-        console.log('   1. Start the backend');
-        console.log('   2. Check that backend is running on http://localhost:8080');
-        // Keep using mock data on error
       }
     });
   }
 
-  selectDifficulty(difficulty: DifficultyLevel) {
-    this.selectedDifficulty.set(difficulty);
-    this.closePanel();
+  private loadLevels(): void {
+    const targetLevel = this.userTargetLevel();
+    const targetLanguage = this.userLanguage();
+    const highestUnlocked = this.highestUnlockedLevel();
+    
+    const levelCount = 3;
+    const existingLevels = this.levels();
+    const newLevels: Level[] = [];
+    
+    // Parse completed levels from backend for THIS language AND difficulty level
+    // Format: "DE-A1:1,2;EN-A1:1,3;DE-B1:1" - parse the relevant language-difficulty combination
+    const completedLevelIds = new Set<number>();
+    const currentData = this.userLearningService.getCurrentData();
+    if (currentData?.completedLevels) {
+      console.log('📥 Loading completed levels from backend:', currentData.completedLevels);
+      
+      // Parse format: "DE-A1:1,2;EN-A1:1,3"
+      const languageDifficultyKey = `${targetLanguage}-${targetLevel}`;
+      const difficultyGroups = currentData.completedLevels.split(';');
+      for (const group of difficultyGroups) {
+        if (group.trim()) {
+          const [langDifficulty, levelsStr] = group.split(':');
+          if (langDifficulty?.trim() === languageDifficultyKey && levelsStr) {
+            const ids = levelsStr.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+            ids.forEach(id => completedLevelIds.add(id));
+            console.log(`🎯 Found completed levels for ${languageDifficultyKey}: [${ids.join(', ')}]`);
+          }
+        }
+      }
+    }
+    
+    // Calculate the highest unlocked level based on completed levels
+    // The next level after the highest completed level should be unlocked
+    let calculatedHighestUnlocked = 1; // Default: Level 1 is always unlocked
+    if (completedLevelIds.size > 0) {
+      const maxCompleted = Math.max(...Array.from(completedLevelIds));
+      calculatedHighestUnlocked = Math.min(maxCompleted + 1, levelCount);
+      console.log(`📊 Highest completed: ${maxCompleted}, unlocking up to level ${calculatedHighestUnlocked}`);
+    }
+    
+    // Use the calculated value if it's higher than the stored value
+    const effectiveHighestUnlocked = Math.max(highestUnlocked, calculatedHighestUnlocked);
+    
+    for (let i = 1; i <= levelCount; i++) {
+      // Find existing level to preserve stars
+      const existingLevel = existingLevels.find(l => l.id === i);
+      
+      // Determine status based on completed levels and unlocked level
+      let status: 'locked' | 'unlocked' | 'completed';
+      if (completedLevelIds.has(i)) {
+        status = 'completed';
+        console.log(`✅ Level ${i} marked as COMPLETED from backend data`);
+      } else if (i <= effectiveHighestUnlocked) {
+        status = 'unlocked';
+        console.log(`🔓 Level ${i} is UNLOCKED`);
+      } else {
+        status = 'locked';
+        console.log(`🔒 Level ${i} is LOCKED`);
+      }
+      
+      newLevels.push({
+        id: i,
+        levelNumber: i,
+        status: status,
+        stars: existingLevel?.stars || 0,
+        totalExercises: 2,
+        completedExercises: existingLevel?.completedExercises || 0
+      });
+    }
+    
+    this.levels.set(newLevels);
+    console.log(`Created ${levelCount} levels for ${targetLanguage}-${targetLevel}, unlocked up to level ${effectiveHighestUnlocked}, completed: [${Array.from(completedLevelIds).join(', ')}]`);
   }
 
-  getDifficultyLabel(difficulty: DifficultyLevel): string {
-    return this.translocoService.translate(`learning.difficulty.${difficulty.toLowerCase()}.label`);
+  selectLevel(level: Level, event?: MouseEvent): void {
+    if (level.status === 'locked') {
+      this.showLockedLevelNotification();
+      return;
+    }
+    
+    // Toggle: If clicking on the same level that's already selected, close the popup
+    const currentSelectedLevel = this.selectedLevel();
+    if (currentSelectedLevel && currentSelectedLevel.id === level.id && this.showLevelPopup()) {
+      this.closePanel();
+      return;
+    }
+    
+    // Show popup next to the clicked level
+    this.selectedLevel.set(level);
+    
+    // Calculate position if event is available
+    if (event) {
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      this.popupPosition.set({
+        top: rect.top + window.scrollY + (rect.height / 2),
+        left: rect.right + 25 // 25px spacing from the level button
+      });
+    }
+    
+    // Load exercises to calculate XP
+    this.loadLevelXP(level);
+  }
+  
+  private showLockedLevelNotification(): void {
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+    
+    this.showLockedNotification.set(true);
+    
+    this.notificationTimeout = setTimeout(() => {
+      this.showLockedNotification.set(false);
+    }, 3000);
   }
 
-  getDifficultyDescription(difficulty: DifficultyLevel): string {
-    return this.translocoService.translate(`learning.difficulty.${difficulty.toLowerCase()}.description`);
+  closePanel(): void {
+    this.selectedLevel.set(null);
+    this.showLevelPopup.set(false);
+    this.popupPosition.set(null);
+    this.levelXP.set(10); // Reset to default
   }
-
-  selectLesson(lesson: Lesson) {
-    this.selectedLesson.set(lesson);
-    // Load exercise previews dynamically when lesson is selected
-    this.loadExercisePreviews(lesson);
-  }
-
-  /**
-   * Load exercise summaries for the selected lesson to display in the side panel.
-   * This replaces hardcoded exercise names with actual exercises from the backend.
-   */
-  private loadExercisePreviews(lesson: Lesson): void {
-    this.exerciseService.getExercises(this.userLanguage(), lesson.difficultyLevel, undefined).subscribe({
-      next: (exerciseSummaries) => {
-        // Filter by exercise type (MCQ or FILL_BLANK)
-        const filteredExercises = exerciseSummaries.filter(ex => ex.type === lesson.exerciseType);
-
-        console.log(`Loaded ${filteredExercises.length} exercise previews for ${lesson.exerciseType}`, filteredExercises);
-
-        // Update the selected lesson with the exercise previews
-        const updatedLesson = { ...lesson, exercisePreviews: filteredExercises };
-        this.selectedLesson.set(updatedLesson);
+  
+  private loadLevelXP(level: Level): void {
+    const targetLanguage = this.userLanguage();
+    const targetLevel = this.userTargetLevel();
+    
+    this.exerciseService.getExercises(targetLanguage, targetLevel, undefined).subscribe({
+      next: (allExercises) => {
+        const mcqExercises = allExercises.filter(ex => ex.type === 'MCQ');
+        const fillBlankExercises = allExercises.filter(ex => ex.type === 'FILL_BLANK');
+        
+        const mixedExercises: ExerciseSummaryResponse[] = [];
+        const levelIndex = level.levelNumber - 1;
+        
+        if (levelIndex < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[levelIndex]);
+        }
+        if (levelIndex < fillBlankExercises.length) {
+          mixedExercises.push(fillBlankExercises[levelIndex]);
+        }
+        
+        // Calculate total XP from exercises
+        const totalXP = mixedExercises.reduce((sum, ex) => sum + ex.xpReward, 0);
+        this.levelXP.set(totalXP);
+        this.showLevelPopup.set(true);
       },
       error: (error) => {
-        console.error('Error loading exercise previews:', error);
+        console.error('Error loading exercises for XP calculation:', error);
+        this.levelXP.set(10); // Fallback value
+        this.showLevelPopup.set(true);
       }
     });
   }
-
-  closePanel() {
-    this.selectedLesson.set(null);
+  
+  startLevelFromPopup(): void {
+    const level = this.selectedLevel();
+    if (level) {
+      this.showLevelPopup.set(false);
+      this.startLevel(level);
+    }
   }
 
-  startLesson(lesson: Lesson) {
-    this.closePanel();
-    this.correctAnswersCount = 0; // Reset correct answers counter
+  startLevel(level: Level): void {
+    // Keep the selected level so we can mark it as completed later
+    this.selectedLevel.set(level);
+    this.correctAnswersCount = 0;
+    
+    const targetLanguage = this.userLanguage();
+    const targetLevel = this.userTargetLevel();
+    
+    console.log(`🎮 Starting level ${level.levelNumber} (ID: ${level.id}) - Language: ${targetLanguage}, Difficulty: ${targetLevel}`);
 
-    const difficulty = lesson.difficultyLevel;
-    const exerciseType = lesson.exerciseType;
-
-    console.log(`Starting lesson - Difficulty: ${difficulty}, Type: ${exerciseType}`);
-
-    // Fetch exercises filtered by difficulty only (not topic)
-    this.exerciseService.getExercises(this.userLanguage(), difficulty, undefined).subscribe({
-      next: (exerciseSummaries) => {
-        // Filter by exercise type (MCQ or FILL_BLANK)
-        const filteredExercises = exerciseSummaries.filter(ex => ex.type === exerciseType);
+    this.exerciseService.getExercises(targetLanguage, targetLevel, undefined).subscribe({
+      next: (allExercises) => {
+        const mcqExercises = allExercises.filter(ex => ex.type === 'MCQ');
+        const fillBlankExercises = allExercises.filter(ex => ex.type === 'FILL_BLANK');
         
-        console.log(`Found ${filteredExercises.length} ${exerciseType} exercises`, filteredExercises);
-        if (filteredExercises.length > 0) {
-          this.currentExerciseSummaries.set(filteredExercises);
+        console.log(`Found ${mcqExercises.length} MCQ and ${fillBlankExercises.length} Fill-Blank exercises`);
+        
+        const mixedExercises: ExerciseSummaryResponse[] = [];
+        
+        // Take only 1 MCQ and 1 Fill-Blank per level
+        const levelIndex = level.levelNumber - 1;
+        if (levelIndex < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[levelIndex]);
+        }
+        if (levelIndex < fillBlankExercises.length) {
+          mixedExercises.push(fillBlankExercises[levelIndex]);
+        }
+        
+        console.log(`Mixed ${mixedExercises.length} exercises for level`, mixedExercises);
+        
+        if (mixedExercises.length > 0) {
+          this.currentExerciseSummaries.set(mixedExercises);
           this.currentExerciseIndex.set(0);
-          // Fetch full details for the first exercise
-          this.loadExerciseDetail(filteredExercises[0]);
+          this.totalExercisesInLevel = mixedExercises.length;
+          this.loadExerciseDetail(mixedExercises[0]);
         } else {
-          console.warn('⚠️ Keine Übungen verfügbar für diese Lektion. Check if exercises exist in backend with:', {
-            targetLanguage: this.userLanguage(),
-            difficultyLevel: difficulty,
-            exerciseType: exerciseType
-          });
+          console.warn('No exercises available for this level');
         }
       },
       error: (error) => {
@@ -227,9 +360,6 @@ export class Learning implements OnInit {
     });
   }
 
-  /**
-   * Load full exercise details by ID and type
-   */
   private loadExerciseDetail(summary: ExerciseSummaryResponse): void {
     console.log(`Loading exercise detail:`, summary);
     this.exerciseService.getExerciseById(summary.id, summary.type).subscribe({
@@ -244,24 +374,82 @@ export class Learning implements OnInit {
     });
   }
 
-  /**
-   * Handles exercise submission results.
-   * The backend now automatically awards XP when exercises are completed.
-   * We track correct answers to determine if streak should be updated.
-   * 
-   * @param result - The result of the exercise submission
-   */
-  onExerciseSubmit(result: ExerciseResult) {
+  onExerciseSubmit(result: ExerciseResult): void {
     console.log('Exercise submitted:', result);
     
-    // Track correct answers
     if (result.isCorrect) {
       this.correctAnswersCount++;
-      this.loadUserLearningData();
+      console.log(`✅ Correct answer! Total: ${this.correctAnswersCount}/${this.totalExercisesInLevel}`);
+    } else {
+      console.log(`❌ Incorrect answer. Total: ${this.correctAnswersCount}/${this.totalExercisesInLevel}`);
     }
+    
+    // Don't reload here - the exercise submission already updates XP via backend response
+    // Don't save progress here - only save when level is completed with 100% correct answers
+  }
+  
+  private saveProgressToBackend(unlockedLevelNumber: number): void {
+    // Build completedLevels string with language-difficulty prefix
+    // Format: "DE-A1:1,2;EN-A1:1,3;DE-B1:1"
+    const currentTargetLevel = this.userTargetLevel();
+    const currentTargetLanguage = this.userLanguage();
+    const languageDifficultyKey = `${currentTargetLanguage}-${currentTargetLevel}`;
+    
+    const currentCompletedIds = this.levels()
+      .filter(level => level.status === 'completed')
+      .map(level => level.id)
+      .join(',');
+    
+    // Get existing completedLevels from backend and update only the current language-difficulty
+    const currentData = this.userLearningService.getCurrentData();
+    let completedLevelsMap = new Map<string, string>();
+    
+    // Parse existing completed levels
+    if (currentData?.completedLevels) {
+      const difficultyGroups = currentData.completedLevels.split(';');
+      for (const group of difficultyGroups) {
+        if (group.trim()) {
+          const [langDifficulty, levelsStr] = group.split(':');
+          if (langDifficulty && levelsStr) {
+            completedLevelsMap.set(langDifficulty.trim(), levelsStr.trim());
+          }
+        }
+      }
+    }
+    
+    // Update the current language-difficulty combination
+    if (currentCompletedIds) {
+      completedLevelsMap.set(languageDifficultyKey, currentCompletedIds);
+    } else {
+      completedLevelsMap.delete(languageDifficultyKey);
+    }
+    
+    // Build final string: "DE-A1:1,2;EN-A1:1,3"
+    const completedLevelsStr = Array.from(completedLevelsMap.entries())
+      .map(([langDifficulty, levels]) => `${langDifficulty}:${levels}`)
+      .join(';');
+    
+    console.log('💾 Saving to backend - completedLevels:', completedLevelsStr);
+    console.log('📝 NOT updating currentLevel - that is managed in Settings only');
+    
+    // Only save completedLevels, do NOT update currentLevel
+    // currentLevel is set by the user in Settings and should not change automatically
+    this.userLearningService.updateLearningConfig({
+      completedLevels: completedLevelsStr
+    }).subscribe({
+      next: (data: any) => {
+        console.log('✅ Progress saved to backend:', data);
+        console.log('✅ Confirmed completedLevels in response:', data.completedLevels);
+        // Reload levels to ensure UI is in sync with backend
+        this.loadLevels();
+      },
+      error: (error: any) => {
+        console.error('❌ Error saving progress:', error);
+      }
+    });
   }
 
-  onNextExercise() {
+  onNextExercise(): void {
     const nextIndex = this.currentExerciseIndex() + 1;
     const summaries = this.currentExerciseSummaries();
 
@@ -269,90 +457,200 @@ export class Learning implements OnInit {
       this.currentExerciseIndex.set(nextIndex);
       this.loadExerciseDetail(summaries[nextIndex]);
     } else {
-      this.completeLesson();
+      this.completeLevel();
     }
   }
 
-  completeLesson() {
+  completeLevel(): void {
+    console.log('Level completed!');
+    console.log(`Correct answers: ${this.correctAnswersCount} / ${this.totalExercisesInLevel}`);
+    
+    const percentage = (this.correctAnswersCount / this.totalExercisesInLevel) * 100;
+    let stars = 0;
+    if (percentage >= 90) stars = 3;
+    else if (percentage >= 70) stars = 2;
+    else if (percentage >= 50) stars = 1;
+    
+    const selectedLevelValue = this.selectedLevel();
+    
+    if (selectedLevelValue) {
+      // Create new array with updated level objects (immutable update)
+      const updatedLevels = this.levels().map((level, index) => {
+        if (level.id === selectedLevelValue.id) {
+          // Only mark as completed (green) if ALL questions were correct (100%)
+          if (percentage === 100) {
+            console.log(`✅ Level ${index + 1} marked as COMPLETED (green) with ${stars} stars (100%)`);
+            return {
+              ...level,
+              status: 'completed' as const,
+              stars: stars,
+              completedExercises: this.correctAnswersCount
+            };
+          } else {
+            // Not 100% - level stays unlocked but NOT completed (not green)
+            console.log(`❌ Level ${index + 1} NOT completed - only ${percentage.toFixed(0)}% correct (need 100%)`);
+            return {
+              ...level,
+              stars: stars,
+              completedExercises: this.correctAnswersCount
+            };
+          }
+        } else if (percentage === 100 && level.id === selectedLevelValue.id + 1) {
+          // Unlock next level
+          console.log(`✅ Level ${index + 1} unlocked!`);
+          this.currentUnlockedLevel.set(index + 1);
+          this.highestUnlockedLevel.set(index + 1);
+          
+          return {
+            ...level,
+            status: 'unlocked' as const
+          };
+        }
+        return level;
+      });
+      
+      // Update the levels signal to trigger UI update
+      this.levels.set(updatedLevels);
+      console.log('🔄 Levels signal updated with new array');
+      
+      // Save progress to backend AFTER updating levels
+      if (percentage === 100) {
+        // Use setTimeout to ensure the signal update is processed first
+        setTimeout(() => {
+          const nextLevelNumber = selectedLevelValue.levelNumber + 1;
+          this.saveProgressToBackend(nextLevelNumber);
+        }, 0);
+      }
+    }
+    
+    // Close exercise mode and return to level path
     this.exerciseMode.set(false);
     this.currentExercise.set(null);
     this.currentExerciseSummaries.set([]);
     this.currentExerciseIndex.set(0);
+    this.selectedLevel.set(null);
     
-    console.log('Lektion abgeschlossen!');
-    console.log(`Correct answers: ${this.correctAnswersCount}`);
-    
-    // Only update streak if at least one question was answered correctly
+    // Update streak if at least one answer was correct (regardless of 100% completion)
     if (this.correctAnswersCount > 0) {
+      console.log('🔥 Calling updateStreak() with previousStreakValue:', this.previousStreakValue);
       this.userLearningService.updateStreak().subscribe({
-        next: (data) => {
-          console.log('Streak updated after lesson completion:', data.streakCount);
+        next: (streakData) => {
+          console.log('✅ Streak updated after level completion:', streakData.streakCount);
+          console.log('📊 Previous streak value was:', this.previousStreakValue);
+          console.log('📈 New streak value is:', streakData.streakCount);
+          console.log('📅 Last activity date:', streakData.lastActivityDate);
           
-          // Check if streak increased (first lesson of the day)
-          if (data.streakCount > this.previousStreakValue) {
+          // Always update the streak value immediately (even if no animation)
+          this.streak.set(streakData.streakCount);
+          
+          // Force another getUserLearning() call to ensure header receives fresh data
+          console.log('📡 Force reloading user data to broadcast to header');
+          this.userLearningService.getUserLearning().subscribe({
+            next: (freshData) => {
+              console.log('✅ Fresh user data reloaded and broadcasted, streak:', freshData.streakCount);
+            },
+            error: (err) => console.error('❌ Failed to reload user data:', err)
+          });
+          
+          // Check if streak increased AND animation hasn't been shown today
+          const streakIncreased = streakData.streakCount > this.previousStreakValue;
+          const today = new Date().toISOString().split('T')[0];
+          const isNewActivity = this.lastActivityDate !== today;
+          
+          console.log('📊 Animation check - Streak increased:', streakIncreased, ', Is new activity today:', isNewActivity, ', Animation shown today:', this.streakAnimationShownToday);
+          
+          if (streakIncreased && !this.streakAnimationShownToday) {
             this.previousStreakForDisplay.set(this.previousStreakValue);
-            this.newStreakValue.set(data.streakCount);
+            this.newStreakValue.set(streakData.streakCount);
+            this.streakAnimationShownToday = true;
             
-            // Small delay to ensure translations are loaded
+            console.log('🎉 Showing streak celebration animation (from', this.previousStreakValue, 'to', streakData.streakCount, ')');
             setTimeout(() => {
               this.showStreakCelebration.set(true);
               this.startStreakAnimation();
             }, 100);
+          } else {
+            console.log('⏸️ No animation - either streak did not increase or animation already shown today');
           }
           
-          this.streak.set(data.streakCount);
-          this.previousStreakValue = data.streakCount;
+          this.previousStreakValue = streakData.streakCount;
+          this.lastActivityDate = streakData.lastActivityDate || null;
+          console.log('💾 Updated previousStreakValue to:', this.previousStreakValue);
         },
         error: (error) => {
-          console.error('Error updating streak:', error);
+          console.error('❌ Error updating streak:', error);
         }
       });
     } else {
-      console.log('No correct answers - streak not updated');
+      console.log('⚠️ Skipping streak update - no correct answers');
     }
     
-    // Reset counter for next lesson
     this.correctAnswersCount = 0;
+    this.totalExercisesInLevel = 0;
   }
 
-  /**
-   * Starts the streak celebration animation sequence:
-   * 1. Show modal with pop-up animation (2.5s display)
-   * 2. Slide out elegantly to the right (0.7s)
-   * 3. Hide modal
-   */
-  private startStreakAnimation() {
-    // Reset states
+  private startStreakAnimation(): void {
     this.isStreakShrinking.set(false);
     this.isStreakFlying.set(false);
     
-    // Step 1: Show modal for 2.5 seconds
     setTimeout(() => {
       this.isStreakFlying.set(true);
     }, 2500);
     
-    // Step 2: Hide modal after slide-out completes (2500ms + 700ms slide + 100ms buffer)
     setTimeout(() => {
       this.closeStreakCelebration();
     }, 3300);
   }
   
-  closeStreakCelebration() {
+  closeStreakCelebration(): void {
     this.showStreakCelebration.set(false);
     this.isStreakShrinking.set(false);
     this.isStreakFlying.set(false);
   }
 
-  exitExerciseMode() {
+  exitExerciseMode(): void {
     this.exerciseMode.set(false);
     this.currentExercise.set(null);
   }
 
-  getLessonIcon(lesson: Lesson): string {
-    return '';
+  onLanguageHover(): void {
+    // Clear any pending close timeout
+    if (this.languageDropdownTimeout) {
+      clearTimeout(this.languageDropdownTimeout);
+      this.languageDropdownTimeout = null;
+    }
+    this.isLanguageDropdownOpen.set(true);
   }
 
-  getLessonStatusText(lesson: Lesson): string {
-    return 'Verfügbar';
+  onLanguageLeave(): void {
+    // Add a small delay before closing to allow moving to the dropdown options
+    this.languageDropdownTimeout = setTimeout(() => {
+      this.isLanguageDropdownOpen.set(false);
+    }, 200);
+  }
+
+  selectLanguage(languageCode: 'DE' | 'EN'): void {
+    console.log('🌍 Switching language to:', languageCode);
+    this.userLanguage.set(languageCode);
+    this.isLanguageDropdownOpen.set(false);
+    
+    // Save to backend
+    this.userLearningService.updateLearningConfig({
+      learningLanguage: languageCode
+    }).subscribe({
+      next: (data) => {
+        console.log('✅ Language updated in backend:', data);
+        // Reload levels for new language
+        this.loadLevels();
+      },
+      error: (err) => {
+        console.error('❌ Failed to update language:', err);
+      }
+    });
+  }
+
+  getSelectedLanguage() {
+    const langCode = this.userLanguage();
+    return this.availableLanguages.find(l => l.code === langCode) || this.availableLanguages[0];
   }
 }

@@ -7,7 +7,6 @@ import com.sep.sep_backend.user.entity.User;
 import com.sep.sep_backend.user.entity.UserLearning;
 import com.sep.sep_backend.user.repository.UserLearningRepository;
 import com.sep.sep_backend.user.repository.UserRepository;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -208,8 +207,8 @@ public class UserLearningService {
                 // Consecutive day - increment streak
                 learning.setStreakCount(oldStreak + 1);
             } else if (daysBetween > 1) {
-                // Streak broken - reset to 0
-                learning.setStreakCount(0);
+                // Streak broken - start new streak at 1
+                learning.setStreakCount(1);
             }
             // If daysBetween == 0, same day - no change to streak
         }
@@ -338,7 +337,8 @@ public class UserLearningService {
                             saved.getTargetLevel(),
                             saved.getXp(),
                             saved.getStreakCount(),
-                            saved.getLastActivityDate()
+                            saved.getLastActivityDate(),
+                            saved.getCompletedLevels()
                     ));
         }
 
@@ -352,6 +352,9 @@ public class UserLearningService {
         if (dto.getTargetLevel() != null) {
             learning.setTargetLevel(dto.getTargetLevel());
         }
+        if (dto.getCompletedLevels() != null) {
+            learning.setCompletedLevels(dto.getCompletedLevels());
+        }
         // Don't set lastActivityDate here - only set it on actual learning activity
 
         UserLearning saved = userLearningRepository.save(learning);
@@ -363,7 +366,8 @@ public class UserLearningService {
                 saved.getTargetLevel(),
                 saved.getXp(),
                 saved.getStreakCount(),
-                saved.getLastActivityDate()
+                saved.getLastActivityDate(),
+                saved.getCompletedLevels()
         ));
     }
 

@@ -47,7 +47,8 @@ public class UserLearningController {
                     learning.getTargetLevel(),
                     learning.getXp(),
                     learning.getStreakCount(),
-                    learning.getLastActivityDate()
+                    learning.getLastActivityDate(),
+                    learning.getCompletedLevels()
                 );
                 return ResponseEntity.ok(dto);
             } else {
@@ -79,7 +80,8 @@ public class UserLearningController {
                     learning.getTargetLevel(),
                     learning.getXp(),
                     learning.getStreakCount(),
-                    learning.getLastActivityDate()
+                    learning.getLastActivityDate(),
+                    learning.getCompletedLevels()
                 );
                 return ResponseEntity.ok(dto);
             } else {
@@ -110,7 +112,8 @@ public class UserLearningController {
                     learning.getTargetLevel(),
                     learning.getXp(),
                     learning.getStreakCount(),
-                    learning.getLastActivityDate()
+                    learning.getLastActivityDate(),
+                    learning.getCompletedLevels()
                 );
                 return ResponseEntity.ok(dto);
             } else {

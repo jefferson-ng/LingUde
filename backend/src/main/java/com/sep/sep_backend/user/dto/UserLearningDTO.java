@@ -19,6 +19,7 @@ public class UserLearningDTO {
     private Integer xp;
     private Integer streakCount;
     private LocalDate lastActivityDate;
+    private String completedLevels;
 
     // Constructors
 
@@ -26,7 +27,7 @@ public class UserLearningDTO {
     }
 
     public UserLearningDTO(String userId, Language learningLanguage, LanguageLevel currentLevel,
-                           LanguageLevel targetLevel, Integer xp, Integer streakCount, LocalDate lastActivityDate) {
+                           LanguageLevel targetLevel, Integer xp, Integer streakCount, LocalDate lastActivityDate, String completedLevels) {
         this.userId = userId;
         this.learningLanguage = learningLanguage;
         this.currentLevel = currentLevel;
@@ -34,6 +35,7 @@ public class UserLearningDTO {
         this.xp = xp;
         this.streakCount = streakCount;
         this.lastActivityDate = lastActivityDate;
+        this.completedLevels = completedLevels;
     }
 
 
@@ -94,5 +96,13 @@ public class UserLearningDTO {
 
     public void setLastActivityDate(LocalDate lastActivityDate) {
         this.lastActivityDate = lastActivityDate;
+    }
+
+    public String getCompletedLevels() {
+        return completedLevels;
+    }
+
+    public void setCompletedLevels(String completedLevels) {
+        this.completedLevels = completedLevels;
     }
 }

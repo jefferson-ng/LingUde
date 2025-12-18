@@ -97,6 +97,7 @@
   "learning": {
     "title": "Lernen",
     "subtitle": "Dein Lernpfad",
+    "myCourses": "Meine Kurse",
     "selectDifficulty": "Wähle dein Schwierigkeitsniveau",
     "difficulty": {
       "a1": {
@@ -128,6 +129,15 @@
       "back": "Zurück",
       "progress": "Fortschritt",
       "whatYouWillLearn": "Was du lernen wirst:"
+    },
+    "lockedNotification": "Bitte schließe zuerst die vorherigen Aufgaben ab!",
+    "levelPath": "Dein Lernpfad",
+    "completeToUnlock": "Schließe Level ab, um neue freizuschalten",
+    "popup": {
+      "title": "Starte deine Lektion",
+      "lessonInfo": "Lektion {{current}} von {{total}}",
+      "start": "Anfangen",
+      "repeat": "Aufgabe wiederholen"
     },
     "streakCelebration": {
       "dayStreak": "Tag Streak",
