@@ -440,8 +440,8 @@ export class Learning implements OnInit {
       next: (data: any) => {
         console.log('✅ Progress saved to backend:', data);
         console.log('✅ Confirmed completedLevels in response:', data.completedLevels);
-        // Reload levels to ensure UI is in sync with backend
-        this.loadLevels();
+        // No need to call loadLevels() here - the userLearning$ subscription in ngOnInit()
+        // already listens to updates and will call loadLevels() automatically via the tap() in updateLearningConfig()
       },
       error: (error: any) => {
         console.error('❌ Error saving progress:', error);
@@ -512,15 +512,6 @@ export class Learning implements OnInit {
       // Update the levels signal to trigger UI update
       this.levels.set(updatedLevels);
       console.log('🔄 Levels signal updated with new array');
-      
-      // Save progress to backend AFTER updating levels
-      if (percentage === 100) {
-        // Use setTimeout to ensure the signal update is processed first
-        setTimeout(() => {
-          const nextLevelNumber = selectedLevelValue.levelNumber + 1;
-          this.saveProgressToBackend(nextLevelNumber);
-        }, 0);
-      }
     }
     
     // Close exercise mode and return to level path
@@ -532,39 +523,33 @@ export class Learning implements OnInit {
     
     // Update streak if at least one answer was correct (regardless of 100% completion)
     if (this.correctAnswersCount > 0) {
-      console.log('🔥 Calling updateStreak() with previousStreakValue:', this.previousStreakValue);
+      // Capture the current streak value BEFORE the async call to prevent race conditions
+      const streakBeforeUpdate = this.previousStreakValue;
+      console.log('🔥 Calling updateStreak() with captured previousStreakValue:', streakBeforeUpdate);
+      
       this.userLearningService.updateStreak().subscribe({
         next: (streakData) => {
           console.log('✅ Streak updated after level completion:', streakData.streakCount);
-          console.log('📊 Previous streak value was:', this.previousStreakValue);
+          console.log('📊 Previous streak value was:', streakBeforeUpdate);
           console.log('📈 New streak value is:', streakData.streakCount);
           console.log('📅 Last activity date:', streakData.lastActivityDate);
           
           // Always update the streak value immediately (even if no animation)
           this.streak.set(streakData.streakCount);
           
-          // Force another getUserLearning() call to ensure header receives fresh data
-          console.log('📡 Force reloading user data to broadcast to header');
-          this.userLearningService.getUserLearning().subscribe({
-            next: (freshData) => {
-              console.log('✅ Fresh user data reloaded and broadcasted, streak:', freshData.streakCount);
-            },
-            error: (err) => console.error('❌ Failed to reload user data:', err)
-          });
-          
           // Check if streak increased AND animation hasn't been shown today
-          const streakIncreased = streakData.streakCount > this.previousStreakValue;
+          const streakIncreased = streakData.streakCount > streakBeforeUpdate;
           const today = new Date().toISOString().split('T')[0];
           const isNewActivity = this.lastActivityDate !== today;
           
           console.log('📊 Animation check - Streak increased:', streakIncreased, ', Is new activity today:', isNewActivity, ', Animation shown today:', this.streakAnimationShownToday);
           
           if (streakIncreased && !this.streakAnimationShownToday) {
-            this.previousStreakForDisplay.set(this.previousStreakValue);
+            this.previousStreakForDisplay.set(streakBeforeUpdate);
             this.newStreakValue.set(streakData.streakCount);
             this.streakAnimationShownToday = true;
             
-            console.log('🎉 Showing streak celebration animation (from', this.previousStreakValue, 'to', streakData.streakCount, ')');
+            console.log('🎉 Showing streak celebration animation (from', streakBeforeUpdate, 'to', streakData.streakCount, ')');
             setTimeout(() => {
               this.showStreakCelebration.set(true);
               this.startStreakAnimation();
@@ -576,6 +561,14 @@ export class Learning implements OnInit {
           this.previousStreakValue = streakData.streakCount;
           this.lastActivityDate = streakData.lastActivityDate || null;
           console.log('💾 Updated previousStreakValue to:', this.previousStreakValue);
+          
+          // IMPORTANT: Save progress to backend AFTER streak is updated to prevent race conditions
+          // This ensures updateStreak() completes before updateLearningConfig() broadcasts data
+          if (percentage === 100 && selectedLevelValue) {
+            console.log('💾 Now saving completed level progress to backend');
+            const nextLevelNumber = selectedLevelValue.levelNumber + 1;
+            this.saveProgressToBackend(nextLevelNumber);
+          }
         },
         error: (error) => {
           console.error('❌ Error updating streak:', error);
@@ -583,6 +576,12 @@ export class Learning implements OnInit {
       });
     } else {
       console.log('⚠️ Skipping streak update - no correct answers');
+      
+      // If no correct answers but level was completed somehow, still save progress
+      if (percentage === 100 && selectedLevelValue) {
+        const nextLevelNumber = selectedLevelValue.levelNumber + 1;
+        this.saveProgressToBackend(nextLevelNumber);
+      }
     }
     
     this.correctAnswersCount = 0;
