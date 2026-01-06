@@ -27,16 +27,13 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
      */
     Optional<PasswordResetToken> findTopByTokenHashOrderByCreatedAtDesc(String tokenHash);
 
-    /**
-     * Find all tokens for a user.
-     * We will use this to invalidate/mark-used old tokens when creating a new one.
-     */
-    List<PasswordResetToken> findByUser_Id(UUID userId);
 
     /**
      * (Optional helper) Delete expired tokens (can be used later with a scheduled job).
      * Not required now, but useful and clean.
      */
     long deleteByExpiresAtBefore(LocalDateTime time);
+
+    List<PasswordResetToken> findByEmail(String email);
 }
 

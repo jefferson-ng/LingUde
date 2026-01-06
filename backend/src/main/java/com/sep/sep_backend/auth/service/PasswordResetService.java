@@ -15,24 +15,27 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * PasswordResetService
  *
- * Contains the business logic for:
- * 1) generating password reset tokens (forgot password)
- * 2) validating tokens + updating the user's password (reset password)
+ * Email-based reset token design (NO FK to users table).
  *
- * Design goals:
- * - Secure: token is random, expires, cannot be reused
- * - No user enumeration: forgot-password always responds success even if email not found
- * - Store only token HASH in DB, never raw token
- * - Works with MailHog SMTP in dev, real SMTP in production (only config changes)
+ * Why?
+ * - Flyway runs before Hibernate creates tables.
+ * - On a fresh DB, "users" table might not exist yet.
+ * - So we avoid foreign key dependency in early migrations.
+ *
+ * Security:
+ * - Store ONLY token hash (SHA-256) in DB (never raw token).
+ * - Expiring tokens
+ * - One-time use tokens
+ * - No user enumeration: request always behaves the same externally
  */
 @Service
 @Transactional
@@ -43,20 +46,9 @@ public class PasswordResetService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
-    /**
-     * Base URL used to build the reset link that goes into the email.
-     * Example (frontend later):
-     *   http://localhost:4200/reset-password
-     * Email link becomes:
-     *   http://localhost:4200/reset-password?token=RAW_TOKEN
-     */
     @Value("${app.reset.base-url:http://localhost:4200/reset-password}")
     private String resetBaseUrl;
 
-    /**
-     * Token validity duration in minutes.
-     * Can be configured later; default is 30 minutes.
-     */
     @Value("${app.reset.token-expiration-minutes:30}")
     private long tokenExpirationMinutes;
 
@@ -73,59 +65,59 @@ public class PasswordResetService {
     }
 
     /**
-     * Start password reset flow.
+     * Start password reset flow ("Forgot password").
      *
-     * IMPORTANT SECURITY:
+     * IMPORTANT:
      * We do NOT reveal whether the email exists.
-     * The controller should always return the same response.
-     *
-     * @param email the email entered by the user
+     * Controller should always respond with the same message.
      */
     public void requestPasswordReset(String email) {
         String normalizedEmail = email.trim().toLowerCase();
 
         Optional<User> userOptional = userRepository.findByEmail(normalizedEmail);
 
-        // If user does not exist -> do nothing.
-        // Caller will still respond "If email exists, we sent a link."
+        // If user does not exist -> do nothing (avoid user enumeration).
         if (userOptional.isEmpty()) {
             return;
         }
 
-        User user = userOptional.get();
+        // 1) Invalidate old tokens for this email (mark as used).
+        invalidateAllTokensForEmail(normalizedEmail);
 
-        // 1) Invalidate old tokens for this user (mark them used).
-        invalidateAllTokensForUser(user.getId());
-
-        // 2) Generate a strong random raw token
+        // 2) Generate strong random raw token
         String rawToken = generateSecureToken();
 
-        // 3) Store only the hash of the token
+        // 3) Store only hash
         String tokenHash = sha256Hex(rawToken);
 
         // 4) Calculate expiry
-        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(tokenExpirationMinutes);
+        Instant now = Instant.now();
+        Instant expiresAt = now.plus(tokenExpirationMinutes, ChronoUnit.MINUTES);
 
-        // 5) Save token entity
-        PasswordResetToken tokenEntity = new PasswordResetToken(user, tokenHash, expiresAt);
+        // 5) Create & save token entity (email-based)
+        PasswordResetToken tokenEntity = new PasswordResetToken();
+        tokenEntity.setId(java.util.UUID.randomUUID());
+        tokenEntity.setEmail(normalizedEmail);
+        tokenEntity.setTokenHash(tokenHash);
+        tokenEntity.setCreatedAt(now);
+        tokenEntity.setExpiresAt(expiresAt);
+        tokenEntity.setUsedAt(null);
+
         tokenRepository.save(tokenEntity);
 
-        // 6) Build reset link for email
+        // 6) Build reset link
         String resetLink = buildResetLink(rawToken);
 
-        // 7) Send email via SMTP
-        emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
+        // 7) Send email via SMTP (MailHog in dev)
+        emailService.sendPasswordResetEmail(normalizedEmail, resetLink);
     }
 
     /**
-     * Finish password reset flow.
-     *
-     * @param rawToken    raw token received from client (from email link)
-     * @param newPassword new password (plain text) -> will be hashed before saving
+     * Finish password reset flow ("Reset password").
      */
     public void resetPassword(String rawToken, String newPassword) {
 
-        // 1) Hash the raw token and find it in DB
+        // 1) Hash raw token and find token in DB
         String tokenHash = sha256Hex(rawToken);
 
         PasswordResetToken token = tokenRepository
@@ -140,38 +132,41 @@ public class PasswordResetService {
             throw new ExpiredResetTokenException();
         }
 
-        // 3) Hash the new password using the same encoder as signup/signin (BCrypt)
+        // 3) Find user by email stored in the token
+        String email = token.getEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(InvalidResetTokenException::new); // user deleted? treat like invalid token
+
+        // 4) Encode new password
         String newPasswordHash = passwordEncoder.encode(newPassword);
 
-        // 4) Update user password hash
-        User user = token.getUser();
+        // 5) Update user
         user.setPasswordHash(newPasswordHash);
         userRepository.save(user);
 
-        // 5) Mark token as used (prevents reuse)
-        token.setUsedAt(LocalDateTime.now());
+        // 6) Mark token as used
+        token.setUsedAt(Instant.now());
         tokenRepository.save(token);
 
-        // 6) Optionally invalidate other tokens for this user too (extra safety)
-        invalidateAllTokensForUser(user.getId());
+        // 7) Invalidate other tokens for same email (extra safety)
+        invalidateAllTokensForEmail(email);
     }
 
     /**
      * Build link: {resetBaseUrl}?token={rawToken}
      */
     private String buildResetLink(String rawToken) {
-        // if resetBaseUrl already contains "?" then append with "&"
         String separator = resetBaseUrl.contains("?") ? "&" : "?";
         return resetBaseUrl + separator + "token=" + rawToken;
     }
 
     /**
-     * Marks all existing tokens for this user as used.
-     * This ensures only the newest token works.
+     * Marks all existing tokens for this email as used.
+     * Ensures only newest token works.
      */
-    private void invalidateAllTokensForUser(UUID userId) {
-        List<PasswordResetToken> tokens = tokenRepository.findByUser_Id(userId);
-        LocalDateTime now = LocalDateTime.now();
+    private void invalidateAllTokensForEmail(String email) {
+        List<PasswordResetToken> tokens = tokenRepository.findByEmail(email);
+        Instant now = Instant.now();
 
         for (PasswordResetToken t : tokens) {
             if (t.getUsedAt() == null) {
@@ -179,31 +174,22 @@ public class PasswordResetService {
             }
         }
 
-        // Save all updates in one call.
-        // If list is empty, it does nothing.
         tokenRepository.saveAll(tokens);
     }
 
     /**
-     * Generates a secure random token:
-     * - 32 random bytes
-     * - then encoded as URL-safe string (hex here for simplicity)
-     *
-     * We use hex because:
-     * - easy to copy/paste
-     * - safe in URLs
-     * - 32 bytes => 64 hex characters (strong enough)
+     * Secure random token:
+     * - 32 bytes random
+     * - hex encoded (URL-safe, easy)
      */
     private String generateSecureToken() {
-        byte[] bytes = new byte[32]; // 256-bit token
+        byte[] bytes = new byte[32];
         new SecureRandom().nextBytes(bytes);
-
-        // Convert to hex string
         return HexFormat.of().formatHex(bytes);
     }
 
     /**
-     * Hashes input with SHA-256 and returns hex string (64 chars).
+     * SHA-256 -> hex string
      */
     private String sha256Hex(String input) {
         try {
@@ -211,9 +197,7 @@ public class PasswordResetService {
             byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(hash);
         } catch (Exception e) {
-            // SHA-256 always exists in Java; this should never happen.
             throw new RuntimeException("SHA-256 not available", e);
         }
     }
 }
-
