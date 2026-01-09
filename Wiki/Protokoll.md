@@ -203,7 +203,21 @@
 	- Frontend und Backend auf den gleichen Nenner bringen (Backend features in Frontend und andersherum)
 - Zeitaufwand der neuen Issues einschätzen (XS,S,M,L,XL,XXL)
 
+---
 
+## 3. Sprint Ende
+
+**Datum:** 18.12.2025
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan / Herr Korn und Marvin als Lehrende
+
+**Themen:** 
+- Demo vorgestellt (neue Features: Socials (Freunde hinzufügen, Leaderboards), Achievements (bislang im Backend))
+- Retrospective (was lief gut/ was lief nicht so gut)
+	- gut: neue features eingefügt, Exercise Journey überarbeitet
+	
+	-nicht so gut: Zeiteinschätzung der Issues (entweder man kam bei ein paar Issues auf die Zeit oder die geplante Zeit reichte nicht aus)
+- Verbesserungsideen: bessere Zeiteinschätzung
 
 
 

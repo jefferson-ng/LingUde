@@ -46,6 +46,9 @@ public class UserLearning {
     @Column(name = "last_activity_date")
     private LocalDate lastActivityDate;
 
+    @Column(name = "completed_levels", length = 500)
+    private String completedLevels;
+
     // Constructors
     public UserLearning() {
     }
@@ -127,5 +130,13 @@ public class UserLearning {
 
     public void setLastActivityDate(LocalDate lastActivityDate) {
         this.lastActivityDate = lastActivityDate;
+    }
+
+    public String getCompletedLevels() {
+        return completedLevels;
+    }
+
+    public void setCompletedLevels(String completedLevels) {
+        this.completedLevels = completedLevels;
     }
 }

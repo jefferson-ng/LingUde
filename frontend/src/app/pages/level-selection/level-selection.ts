@@ -51,16 +51,8 @@ export class LevelSelectionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userLearningService.getUserLearning().subscribe({
-      next: (data) => {
-        if (data.learningLanguage) {
-          this.router.navigate(['/dashboard']);
-        }
-      },
-      error: () => {
-        // Error fetching data, stay on this page
-      }
-    });
+    // Don't redirect automatically - let the user configure their learning preferences
+    // even if a UserLearning record already exists
   }
 
   selectLanguage(language: 'DE' | 'EN' | 'FR' | 'ES' | 'IT'): void {

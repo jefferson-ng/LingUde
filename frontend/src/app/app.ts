@@ -77,12 +77,18 @@ export class App implements OnInit {
     this.loadUserXP();
     this.userLearningService.userLearning$.subscribe(data => {
       if (data) {
+        console.log('📢 Header received update from UserLearningService:', {xp: data.xp, streak: data.streakCount, lastActivity: data.lastActivityDate});
         this.userXP.set(data.xp);
         this.userStreak.set(data.streakCount);
-        // Streak ist aktiv, wenn lastActivityDate heute ist
+        // Streak ist aktiv, wenn lastActivityDate heute ist UND streakCount > 0
         const today = new Date().toISOString().split('T')[0];
-        const lastActivityDate = data.lastActivityDate?.split('T')[0];
-        this.isStreakActiveToday.set(lastActivityDate === today);
+        // Handle both ISO datetime and date-only formats
+        const lastActivityDate = data.lastActivityDate?.includes('T') 
+          ? data.lastActivityDate.split('T')[0] 
+          : data.lastActivityDate;
+        const isActive = lastActivityDate === today && data.streakCount > 0;
+        this.isStreakActiveToday.set(isActive);
+        console.log('📢 Header updated: XP=' + data.xp + ', Streak=' + data.streakCount + ', LastActivity=' + lastActivityDate + ', Today=' + today + ', Active=' + isActive);
       }
     });
   }
@@ -101,11 +107,15 @@ export class App implements OnInit {
       next: (data) => {
         this.userXP.set(data.xp);
         this.userStreak.set(data.streakCount);
-        // Streak ist aktiv, wenn lastActivityDate heute ist
+        // Streak ist aktiv, wenn lastActivityDate heute ist UND streakCount > 0
         const today = new Date().toISOString().split('T')[0];
-        const lastActivityDate = data.lastActivityDate?.split('T')[0];
-        this.isStreakActiveToday.set(lastActivityDate === today);
-        console.log('Loaded user XP and Streak in app header:', data.xp, data.streakCount, 'Active today:', lastActivityDate === today);
+        // Handle both ISO datetime and date-only formats
+        const lastActivityDate = data.lastActivityDate?.includes('T') 
+          ? data.lastActivityDate.split('T')[0] 
+          : data.lastActivityDate;
+        const isActive = lastActivityDate === today && data.streakCount > 0;
+        this.isStreakActiveToday.set(isActive);
+        console.log('Loaded user XP and Streak in app header:', data.xp, data.streakCount, 'LastActivity:', lastActivityDate, 'Active today:', isActive);
       },
       error: (error) => {
         console.error('Error loading user XP:', error);
