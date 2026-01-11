@@ -8,6 +8,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.sep.sep_backend.auth.exception.ExpiredResetTokenException;
+import com.sep.sep_backend.auth.exception.InvalidResetTokenException;
+import com.sep.sep_backend.auth.exception.UsedResetTokenException;
+
 
 import java.util.Map;
 
@@ -91,4 +95,38 @@ public class GlobalExceptionHandler {
                 "message", ex.getMessage()
         );
     }
+
+    // Password reset: invalid token (not found in DB after hashing)
+    @ExceptionHandler(InvalidResetTokenException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    public Map<String, Object> handleInvalidResetToken(InvalidResetTokenException ex) {
+        return Map.of(
+                "status", 400,
+                "error", "Bad Request",
+                "message", ex.getMessage()
+        );
+    }
+
+    // Password reset: expired token
+    @ExceptionHandler(ExpiredResetTokenException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    public Map<String, Object> handleExpiredResetToken(ExpiredResetTokenException ex) {
+        return Map.of(
+                "status", 400,
+                "error", "Bad Request",
+                "message", ex.getMessage()
+        );
+    }
+
+    // Password reset: token already used
+    @ExceptionHandler(UsedResetTokenException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    public Map<String, Object> handleUsedResetToken(UsedResetTokenException ex) {
+        return Map.of(
+                "status", 400,
+                "error", "Bad Request",
+                "message", ex.getMessage()
+        );
+    }
+
 }

@@ -5,6 +5,7 @@ import com.sep.sep_backend.auth.service.RefreshTokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
 
 @SpringBootTest
 class SepBackendApplicationTests {
@@ -17,6 +18,9 @@ class SepBackendApplicationTests {
     /** Mock of RefreshTokenService which depends on JWT config and DB. */
     @MockBean
     private RefreshTokenService refreshTokenService;
+
+    @MockBean
+    private JavaMailSender javaMailSender;
 
 
     @Test
