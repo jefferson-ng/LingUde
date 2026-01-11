@@ -28,9 +28,18 @@ services:
       SPRING_DATASOURCE_USERNAME: sep
       SPRING_DATASOURCE_PASSWORD: sep
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_MAIL_HOST: mailhog
+      SPRING_MAIL_PORT: 1025
+      SPRING_MAIL_USERNAME: ""
+      SPRING_MAIL_PASSWORD: ""
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
+
     depends_on:
       db:
         condition: service_healthy
+      mailhog:
+        condition: service_started
 
   frontend:
     build:
@@ -41,6 +50,14 @@ services:
       - "4200:80"
     depends_on:
       - backend
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+
 
 volumes:
   postgres_data:
