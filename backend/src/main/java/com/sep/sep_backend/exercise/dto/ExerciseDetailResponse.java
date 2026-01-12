@@ -1,5 +1,6 @@
 package com.sep.sep_backend.exercise.dto;
 
+import com.sep.sep_backend.exercise.entity.ExerciseContentType;
 import com.sep.sep_backend.exercise.entity.ExerciseType;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ExerciseDetailResponse {
     private String difficultyLevel;
     private String topic;
     private Integer xpReward;
+    private ExerciseContentType contentType;
 
     // MCQ fields
     private String questionText;
@@ -30,6 +32,7 @@ public class ExerciseDetailResponse {
 
     // Fill-Blank fields
     private String sentenceWithBlank;
+
 
     public ExerciseDetailResponse() {}
 
@@ -50,6 +53,9 @@ public class ExerciseDetailResponse {
 
     public Integer getXpReward() { return xpReward; }
     public void setXpReward(Integer xpReward) { this.xpReward = xpReward; }
+
+    public ExerciseContentType getContentType() { return contentType; }
+    public void setContentType(ExerciseContentType contentType) { this.contentType = contentType; }
 
     public String getQuestionText() { return questionText; }
     public void setQuestionText(String questionText) { this.questionText = questionText; }

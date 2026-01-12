@@ -3,10 +3,17 @@ package com.sep.sep_backend.exercise.entity;
 import com.sep.sep_backend.user.entity.Language;
 import com.sep.sep_backend.user.entity.LanguageLevel;
 import jakarta.persistence.*;
+import jdk.jfr.ContentType;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import com.sep.sep_backend.exercise.entity.ExerciseContentType;
+
 
 @Entity
 @Table(name = "exercise_fill_blank")
@@ -23,6 +30,10 @@ public class ExerciseFillBlank {
     @Enumerated(EnumType.STRING)
     @Column(name = "difficulty_level", nullable = false, length = 10)
     private LanguageLevel difficultyLevel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "content_type")
+    private ExerciseContentType contentType;
 
     @Column(length = 50)
     private String topic;
@@ -116,5 +127,13 @@ public class ExerciseFillBlank {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public ExerciseContentType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(ExerciseContentType contentType) {
+        this.contentType = contentType;
     }
 }

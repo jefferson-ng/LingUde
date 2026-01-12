@@ -1,5 +1,6 @@
 package com.sep.sep_backend.exercise.dto;
 
+import com.sep.sep_backend.exercise.entity.ExerciseContentType;
 import com.sep.sep_backend.exercise.entity.ExerciseType;
 
 import java.util.UUID;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class ExerciseSummaryResponse {
     private UUID id;
     private ExerciseType type;
+    private ExerciseContentType contentType;
     private String targetLanguage;
     private String difficultyLevel;
     private String topic;
@@ -31,10 +33,11 @@ public class ExerciseSummaryResponse {
 
     public ExerciseSummaryResponse() {}
 
-    public ExerciseSummaryResponse(UUID id, ExerciseType type, String targetLanguage, String difficultyLevel,
+    public ExerciseSummaryResponse(UUID id, ExerciseType type,ExerciseContentType contentType, String targetLanguage, String difficultyLevel,
                                    String topic, Integer xpReward, String previewText) {
         this.id = id;
         this.type = type;
+        this.contentType = contentType;
         this.targetLanguage = targetLanguage;
         this.difficultyLevel = difficultyLevel;
         this.topic = topic;
@@ -47,6 +50,9 @@ public class ExerciseSummaryResponse {
 
     public ExerciseType getType() { return type; }
     public void setType(ExerciseType type) { this.type = type; }
+
+    public ExerciseContentType getContentType() { return contentType; }
+    public void setContentType(ExerciseContentType contentType) { this.contentType = contentType; }
 
     public String getTargetLanguage() { return targetLanguage; }
     public void setTargetLanguage(String targetLanguage) { this.targetLanguage = targetLanguage; }

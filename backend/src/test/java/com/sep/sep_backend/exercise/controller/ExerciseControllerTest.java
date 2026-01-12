@@ -32,6 +32,8 @@ import org.springframework.boot.CommandLineRunner;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
+import com.sep.sep_backend.exercise.entity.ExerciseContentType;
+
 
 /**
  * Controller-slice tests for ExerciseController.
@@ -71,10 +73,11 @@ class ExerciseControllerTest {
     @Test
     void listMcq_returns200_andJsonArray() throws Exception {
         var s1 = new ExerciseSummaryResponse(
-                UUID.randomUUID(), ExerciseType.MCQ, "EN", "A1",
+                UUID.randomUUID(), ExerciseType.MCQ,
+                ExerciseContentType.VOCABULARY, "EN", "A1",
                 "Vocabulary", 10, "Choose the synonym of 'quick'");
         var s2 = new ExerciseSummaryResponse(
-                UUID.randomUUID(), ExerciseType.MCQ, "EN", "A2",
+                UUID.randomUUID(), ExerciseType.MCQ,ExerciseContentType.VOCABULARY,"EN", "A2",
                 "Opposites", 12, "Pick the antonym of 'cold'");
 
         Mockito.when(service.listMcq()).thenReturn(List.of(s1, s2));
@@ -139,10 +142,12 @@ class ExerciseControllerTest {
     @org.junit.jupiter.api.Test
     void listFillBlank_returns200_andJsonArray() throws Exception {
         var s1 = new ExerciseSummaryResponse(
-                java.util.UUID.randomUUID(), ExerciseType.FILL_BLANK, "EN", "A1",
+                java.util.UUID.randomUUID(), ExerciseType.FILL_BLANK,
+                ExerciseContentType.VOCABULARY,"EN", "A1",
                 "Grammar", 10, "I ___ football on Sundays.");
         var s2 = new ExerciseSummaryResponse(
-                java.util.UUID.randomUUID(), ExerciseType.FILL_BLANK, "EN", "A2",
+                java.util.UUID.randomUUID(), ExerciseType.FILL_BLANK,
+                ExerciseContentType.VOCABULARY,"EN", "A2",
                 "Daily life", 12, "They ___ breakfast at 8.");
 
         Mockito.when(service.listFillBlank()).thenReturn(java.util.List.of(s1, s2));
