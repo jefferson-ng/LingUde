@@ -51,6 +51,7 @@ export class Learning implements OnInit {
   
   private correctAnswersCount = 0;
   private totalExercisesInLevel = 0;
+  private skipLoadLevelsCount = 0; // Counter to skip N loadLevels() calls (for multiple concurrent updates)
   
   protected selectedLevel = signal<Level | null>(null);
   protected showLevelPopup = signal<boolean>(false);
@@ -97,7 +98,7 @@ export class Learning implements OnInit {
         this.dailyProgress.set(data.xp);
         this.streak.set(data.streakCount);
         console.log('✅ Updated local streak signal to:', data.streakCount);
-        
+
         if (data.learningLanguage === 'DE' || data.learningLanguage === 'EN') {
           this.userLanguage.set(data.learningLanguage);
         }
@@ -107,8 +108,17 @@ export class Learning implements OnInit {
         if (data.currentLevel) {
           this.userCurrentLevel.set(data.currentLevel);
         }
-        
-        this.loadLevels();
+
+        // Skip loadLevels if we just completed a level and are updating streak/progress
+        // This prevents overwriting our local level status changes
+        // BUT we still update streak/XP values above, just don't reload levels
+        if (this.skipLoadLevelsCount > 0) {
+          console.log(`⏭️ Skipping loadLevels() - ${this.skipLoadLevelsCount} skip(s) remaining`);
+          console.log('✅ Streak and XP values were still updated above');
+          this.skipLoadLevelsCount--;
+        } else {
+          this.loadLevels();
+        }
       }
     });
   }
@@ -388,22 +398,22 @@ export class Learning implements OnInit {
     // Don't save progress here - only save when level is completed with 100% correct answers
   }
   
-  private saveProgressToBackend(unlockedLevelNumber: number): void {
+  private saveProgressToBackendSync(_unlockedLevelNumber?: number): void {
     // Build completedLevels string with language-difficulty prefix
     // Format: "DE-A1:1,2;EN-A1:1,3;DE-B1:1"
     const currentTargetLevel = this.userTargetLevel();
     const currentTargetLanguage = this.userLanguage();
     const languageDifficultyKey = `${currentTargetLanguage}-${currentTargetLevel}`;
-    
+
     const currentCompletedIds = this.levels()
       .filter(level => level.status === 'completed')
       .map(level => level.id)
       .join(',');
-    
+
     // Get existing completedLevels from backend and update only the current language-difficulty
     const currentData = this.userLearningService.getCurrentData();
     let completedLevelsMap = new Map<string, string>();
-    
+
     // Parse existing completed levels
     if (currentData?.completedLevels) {
       const difficultyGroups = currentData.completedLevels.split(';');
@@ -416,32 +426,32 @@ export class Learning implements OnInit {
         }
       }
     }
-    
+
     // Update the current language-difficulty combination
     if (currentCompletedIds) {
       completedLevelsMap.set(languageDifficultyKey, currentCompletedIds);
     } else {
       completedLevelsMap.delete(languageDifficultyKey);
     }
-    
+
     // Build final string: "DE-A1:1,2;EN-A1:1,3"
     const completedLevelsStr = Array.from(completedLevelsMap.entries())
       .map(([langDifficulty, levels]) => `${langDifficulty}:${levels}`)
       .join(';');
-    
+
     console.log('💾 Saving to backend - completedLevels:', completedLevelsStr);
     console.log('📝 NOT updating currentLevel - that is managed in Settings only');
-    
+
     // Only save completedLevels, do NOT update currentLevel
     // currentLevel is set by the user in Settings and should not change automatically
+    // NOTE: This fires and forgets - the streak update will trigger loadLevels() which will
+    // read the updated completedLevels from the backend response
     this.userLearningService.updateLearningConfig({
       completedLevels: completedLevelsStr
     }).subscribe({
       next: (data: any) => {
         console.log('✅ Progress saved to backend:', data);
         console.log('✅ Confirmed completedLevels in response:', data.completedLevels);
-        // No need to call loadLevels() here - the userLearning$ subscription in ngOnInit()
-        // already listens to updates and will call loadLevels() automatically via the tap() in updateLearningConfig()
       },
       error: (error: any) => {
         console.error('❌ Error saving progress:', error);
@@ -464,22 +474,27 @@ export class Learning implements OnInit {
   completeLevel(): void {
     console.log('Level completed!');
     console.log(`Correct answers: ${this.correctAnswersCount} / ${this.totalExercisesInLevel}`);
-    
+
     const percentage = (this.correctAnswersCount / this.totalExercisesInLevel) * 100;
     let stars = 0;
     if (percentage >= 90) stars = 3;
     else if (percentage >= 70) stars = 2;
     else if (percentage >= 50) stars = 1;
-    
+
     const selectedLevelValue = this.selectedLevel();
-    
+    const levelWasCompleted = percentage === 100;
+
     if (selectedLevelValue) {
+      // Track if we need to unlock the next level
+      let shouldUnlockNext = false;
+
       // Create new array with updated level objects (immutable update)
       const updatedLevels = this.levels().map((level, index) => {
         if (level.id === selectedLevelValue.id) {
           // Only mark as completed (green) if ALL questions were correct (100%)
-          if (percentage === 100) {
+          if (levelWasCompleted) {
             console.log(`✅ Level ${index + 1} marked as COMPLETED (green) with ${stars} stars (100%)`);
+            shouldUnlockNext = true; // Flag to unlock next level
             return {
               ...level,
               status: 'completed' as const,
@@ -495,12 +510,13 @@ export class Learning implements OnInit {
               completedExercises: this.correctAnswersCount
             };
           }
-        } else if (percentage === 100 && level.id === selectedLevelValue.id + 1) {
-          // Unlock next level
-          console.log(`✅ Level ${index + 1} unlocked!`);
-          this.currentUnlockedLevel.set(index + 1);
-          this.highestUnlockedLevel.set(index + 1);
-          
+        } else if (shouldUnlockNext && level.id === selectedLevelValue.id + 1 && level.status === 'locked') {
+          // Unlock next level if current level was completed at 100%
+          console.log(`✅ Level ${level.levelNumber} (ID: ${level.id}) unlocked!`);
+          const newUnlockedLevel = level.levelNumber;
+          this.currentUnlockedLevel.set(newUnlockedLevel);
+          this.highestUnlockedLevel.set(newUnlockedLevel);
+
           return {
             ...level,
             status: 'unlocked' as const
@@ -508,82 +524,76 @@ export class Learning implements OnInit {
         }
         return level;
       });
-      
+
       // Update the levels signal to trigger UI update
       this.levels.set(updatedLevels);
       console.log('🔄 Levels signal updated with new array');
     }
-    
+
     // Close exercise mode and return to level path
     this.exerciseMode.set(false);
     this.currentExercise.set(null);
     this.currentExerciseSummaries.set([]);
     this.currentExerciseIndex.set(0);
     this.selectedLevel.set(null);
-    
-    // Update streak if at least one answer was correct (regardless of 100% completion)
-    if (this.correctAnswersCount > 0) {
-      // Capture the current streak value BEFORE the async call to prevent race conditions
+
+    // CRITICAL: Set skip counter BEFORE any HTTP calls to prevent race conditions
+    const willSaveProgress = levelWasCompleted && selectedLevelValue;
+    const willUpdateStreak = this.correctAnswersCount > 0;
+
+    if (willSaveProgress && willUpdateStreak) {
+      this.skipLoadLevelsCount = 2;
+    } else if (willSaveProgress || willUpdateStreak) {
+      this.skipLoadLevelsCount = 1;
+    }
+    console.log(`🚩 Set skipLoadLevelsCount = ${this.skipLoadLevelsCount}`);
+
+    // Update streak FIRST if at least one answer was correct
+    // This ensures the header gets the new streak value immediately
+    if (willUpdateStreak) {
       const streakBeforeUpdate = this.previousStreakValue;
-      console.log('🔥 Calling updateStreak() with captured previousStreakValue:', streakBeforeUpdate);
-      
+      console.log('🔥 Calling updateStreak() FIRST with previousStreakValue:', streakBeforeUpdate);
+
       this.userLearningService.updateStreak().subscribe({
         next: (streakData) => {
-          console.log('✅ Streak updated after level completion:', streakData.streakCount);
-          console.log('📊 Previous streak value was:', streakBeforeUpdate);
-          console.log('📈 New streak value is:', streakData.streakCount);
-          console.log('📅 Last activity date:', streakData.lastActivityDate);
-          
-          // Always update the streak value immediately (even if no animation)
+          console.log('✅ Streak updated:', streakData.streakCount);
           this.streak.set(streakData.streakCount);
-          
-          // Check if streak increased AND animation hasn't been shown today
+
           const streakIncreased = streakData.streakCount > streakBeforeUpdate;
-          const today = new Date().toISOString().split('T')[0];
-          const isNewActivity = this.lastActivityDate !== today;
-          
-          console.log('📊 Animation check - Streak increased:', streakIncreased, ', Is new activity today:', isNewActivity, ', Animation shown today:', this.streakAnimationShownToday);
-          
           if (streakIncreased && !this.streakAnimationShownToday) {
             this.previousStreakForDisplay.set(streakBeforeUpdate);
             this.newStreakValue.set(streakData.streakCount);
             this.streakAnimationShownToday = true;
-            
-            console.log('🎉 Showing streak celebration animation (from', streakBeforeUpdate, 'to', streakData.streakCount, ')');
+            console.log('🎉 Showing streak animation:', streakBeforeUpdate, '->', streakData.streakCount);
             setTimeout(() => {
               this.showStreakCelebration.set(true);
               this.startStreakAnimation();
             }, 100);
-          } else {
-            console.log('⏸️ No animation - either streak did not increase or animation already shown today');
           }
-          
+
           this.previousStreakValue = streakData.streakCount;
           this.lastActivityDate = streakData.lastActivityDate || null;
-          console.log('💾 Updated previousStreakValue to:', this.previousStreakValue);
-          
-          // IMPORTANT: Save progress to backend AFTER streak is updated to prevent race conditions
-          // This ensures updateStreak() completes before updateLearningConfig() broadcasts data
-          if (percentage === 100 && selectedLevelValue) {
-            console.log('💾 Now saving completed level progress to backend');
-            const nextLevelNumber = selectedLevelValue.levelNumber + 1;
-            this.saveProgressToBackend(nextLevelNumber);
+
+          // Save progress AFTER streak update completes (if needed)
+          if (willSaveProgress && selectedLevelValue) {
+            console.log('💾 Now saving completed level progress');
+            this.saveProgressToBackendSync(selectedLevelValue.levelNumber + 1);
           }
         },
         error: (error) => {
           console.error('❌ Error updating streak:', error);
+          // Still save progress even if streak fails
+          if (willSaveProgress && selectedLevelValue) {
+            this.saveProgressToBackendSync(selectedLevelValue.levelNumber + 1);
+          }
         }
       });
-    } else {
-      console.log('⚠️ Skipping streak update - no correct answers');
-      
-      // If no correct answers but level was completed somehow, still save progress
-      if (percentage === 100 && selectedLevelValue) {
-        const nextLevelNumber = selectedLevelValue.levelNumber + 1;
-        this.saveProgressToBackend(nextLevelNumber);
-      }
+    } else if (willSaveProgress && selectedLevelValue) {
+      // Only save progress (no streak update needed)
+      console.log('💾 Saving completed level progress (no streak update)');
+      this.saveProgressToBackendSync(selectedLevelValue.levelNumber + 1);
     }
-    
+
     this.correctAnswersCount = 0;
     this.totalExercisesInLevel = 0;
   }
