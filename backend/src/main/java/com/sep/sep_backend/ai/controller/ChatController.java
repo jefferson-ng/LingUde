@@ -3,6 +3,7 @@ package com.sep.sep_backend.ai.controller;
 import com.sep.sep_backend.ai.dto.ChatHistoryResponse;
 import com.sep.sep_backend.ai.dto.ChatMessageRequest;
 import com.sep.sep_backend.ai.dto.ChatMessageResponse;
+import com.sep.sep_backend.ai.dto.ConversationResult;
 import com.sep.sep_backend.ai.entity.ChatMessage;
 import com.sep.sep_backend.ai.entity.ChatSession;
 import com.sep.sep_backend.ai.repository.ChatMessageRepository;
@@ -71,8 +72,8 @@ public class ChatController {
             session = conversationService.getOrCreateSession(userId, learningLanguage);
         }
 
-        // Send message and get AI response
-        String aiResponse = conversationService.sendMessage(
+        // Send message and get AI response with tool call info
+        ConversationResult conversationResult = conversationService.sendMessage(
             userId,
             session.getId(),
             request.getMessage()
@@ -85,11 +86,12 @@ public class ChatController {
 
         ChatMessageResponse response = new ChatMessageResponse(
             session.getId().toString(),
-            aiResponse,
+            conversationResult.getResponse(),
             LocalDateTime.now(),
             currentXp,
             currentStreak
         );
+        response.setToolCalls(conversationResult.getToolCalls());
 
         return ResponseEntity.ok(response);
     }

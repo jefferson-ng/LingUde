@@ -29,7 +29,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: sep
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       GOOGLE_GEMINI_API_KEY: AIzaSyDBYLUZ_o3Q-kilT4LuI0MQfw6wRhSKrGE
-      GOOGLE_GEMINI_MODEL: gemini-2.0-flash-exp
+      GOOGLE_GEMINI_MODEL: gemini-2.5-flash
       GOOGLE_GEMINI_TEMPERATURE: 0.7
       AI_CHAT_ENABLED: true
     depends_on:

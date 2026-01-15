@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import com.sep.sep_backend.ai.dto.ConversationResult;
+
 /**
  * Core conversation orchestration service.
  * Handles multi-turn conversations with tool calling support.
@@ -106,10 +108,12 @@ public class ConversationService {
      * @param userId User ID
      * @param sessionId Chat session ID
      * @param userMessage User's message text
-     * @return Final AI response text
+     * @return ConversationResult containing the response and tool call info
      */
-    public String sendMessage(UUID userId, UUID sessionId, String userMessage) {
+    public ConversationResult sendMessage(UUID userId, UUID sessionId, String userMessage) {
         log.info("Processing message for user: {}, session: {}", userId, sessionId);
+
+        ConversationResult result = new ConversationResult();
 
         ChatSession session = sessionRepository.findById(sessionId)
             .orElseThrow(() -> new IllegalArgumentException("Session not found: " + sessionId));
@@ -153,7 +157,8 @@ public class ConversationService {
                 List<FunctionResponse> toolResults = executeToolCalls(
                     userId,
                     sessionId,
-                    response.getToolCalls()
+                    response.getToolCalls(),
+                    result  // Pass result to capture tool call info
                 );
 
                 // Persist AI's tool call request
@@ -201,7 +206,8 @@ public class ConversationService {
         session.setUpdatedAt(LocalDateTime.now());
         sessionRepository.save(session);
 
-        return finalResponse != null ? finalResponse : "I apologize, but I couldn't generate a response.";
+        result.setResponse(finalResponse != null ? finalResponse : "I apologize, but I couldn't generate a response.");
+        return result;
     }
 
     /**
@@ -210,7 +216,8 @@ public class ConversationService {
     private List<FunctionResponse> executeToolCalls(
             UUID userId,
             UUID sessionId,
-            List<AiProviderResponse.ToolCall> toolCalls) {
+            List<AiProviderResponse.ToolCall> toolCalls,
+            ConversationResult conversationResult) {
 
         List<FunctionResponse> results = new ArrayList<>();
 
@@ -240,6 +247,14 @@ public class ConversationService {
 
             // Log tool execution for debugging/analytics
             logToolExecution(sessionId, toolName, args, result, executionTime, success, errorMessage);
+
+            // Add to conversation result for frontend debug panel
+            conversationResult.addToolCall(new ConversationResult.ToolCallInfo(
+                toolName,
+                args,
+                result,
+                executionTime
+            ));
 
             // Build FunctionResponse for AI
             @SuppressWarnings("unchecked")

@@ -4,7 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } fro
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
-import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X } from 'lucide-angular';
+import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X, MessageCircle } from 'lucide-angular';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -27,7 +27,8 @@ export class App implements OnInit {
   readonly LogOutIcon = LogOut;
   readonly MenuIcon = Menu;
   readonly XIcon = X;
-  readonly  UsersIcon = Users;
+  readonly UsersIcon = Users;
+  readonly MessageCircleIcon = MessageCircle;
 
   protected readonly title = signal('LingUDE');
   protected readonly userLevel = signal(1);
@@ -167,6 +168,7 @@ export class App implements OnInit {
 
   navItems = [
     { path: '/dashboard', translationKey: 'nav.dashboard', icon: 'home' },
+    { path: '/chat', translationKey: 'nav.chat', icon: 'message-circle' },
     { path: '/learning', translationKey: 'nav.learning', icon: 'graduation-cap' },
     { path: '/lessons', translationKey: 'nav.lessons', icon: 'book-open' },
     { path: '/goals', translationKey: 'nav.goals', icon: 'target' },

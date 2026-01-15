@@ -1,0 +1,153 @@
+<div class="chat-container" *transloco="let t">
+  <div class="chat-main">
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="header-left">
+        <lucide-icon [img]="BotIcon" class="header-icon"></lucide-icon>
+        <div class="header-info">
+          <h1>{{ t('chat.title') }}</h1>
+          <span class="session-info" *ngIf="currentSessionId()">
+            Session: {{ currentSessionId()?.slice(0, 8) }}...
+          </span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" (click)="startNewChat()" [disabled]="isLoading()">
+          <lucide-icon [img]="MessageIcon" [size]="18"></lucide-icon>
+          {{ t('chat.newChat') }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="messages-container" #messagesContainer>
+      <!-- Welcome message when no messages -->
+      <div class="welcome-message" *ngIf="messages().length === 0">
+        <lucide-icon [img]="BotIcon" class="welcome-icon"></lucide-icon>
+        <h2>{{ t('chat.welcomeTitle') }}</h2>
+        <p>{{ t('chat.welcomeMessage') }}</p>
+        <div class="suggested-prompts">
+          <button class="prompt-btn" (click)="messageText.set('Hallo! Ich möchte Deutsch lernen.')">
+            🇩🇪 {{ t('chat.suggestedGerman') }}
+          </button>
+          <button class="prompt-btn" (click)="messageText.set('Can you help me practice vocabulary?')">
+            📚 {{ t('chat.suggestedVocab') }}
+          </button>
+          <button class="prompt-btn" (click)="messageText.set('I want to learn greetings.')">
+            👋 {{ t('chat.suggestedGreetings') }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Messages -->
+      <div class="messages-list" *ngIf="messages().length > 0">
+        <div 
+          *ngFor="let msg of messages()" 
+          class="message" 
+          [class.user-message]="msg.role === 'USER'"
+          [class.ai-message]="msg.role === 'MODEL'"
+          [class.tool-message]="msg.role === 'TOOL'">
+          
+          <div class="message-avatar">
+            <lucide-icon 
+              [img]="msg.role === 'USER' ? UserIcon : BotIcon" 
+              [size]="20">
+            </lucide-icon>
+          </div>
+          
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-role">
+                {{ msg.role === 'USER' ? t('chat.you') : t('chat.tutor') }}
+              </span>
+              <span class="message-time">{{ formatTimestamp(msg.timestamp) }}</span>
+            </div>
+            <div class="message-text" [innerHTML]="msg.content"></div>
+          </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div class="message ai-message" *ngIf="isLoading()">
+          <div class="message-avatar">
+            <lucide-icon [img]="BotIcon" [size]="20"></lucide-icon>
+          </div>
+          <div class="message-content">
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-container">
+      <div class="input-wrapper">
+        <textarea
+          #messageInput
+          [value]="messageText()"
+          (input)="messageText.set($any($event.target).value)"
+          (keydown)="onKeyDown($event)"
+          [placeholder]="t('chat.placeholder')"
+          [disabled]="isLoading()"
+          rows="1"
+          class="message-input">
+        </textarea>
+        <button 
+          class="send-btn" 
+          (click)="sendMessage()" 
+          [disabled]="!messageText().trim() || isLoading()">
+          <lucide-icon [img]="SendIcon" [size]="20"></lucide-icon>
+        </button>
+      </div>
+      <p class="input-hint">{{ t('chat.inputHint') }}</p>
+    </div>
+  </div>
+
+  <!-- Debug Panel -->
+  <div class="debug-panel" [class.collapsed]="!showDebugPanel()">
+    <div class="debug-header" (click)="toggleDebugPanel()">
+      <div class="debug-title">
+        <lucide-icon [img]="BugIcon" [size]="18"></lucide-icon>
+        <span>{{ t('chat.debugPanel') }}</span>
+        <span class="debug-count" *ngIf="debugInfo().length > 0">
+          ({{ debugInfo().length }})
+        </span>
+      </div>
+      <lucide-icon 
+        [img]="showDebugPanel() ? ChevronDownIcon : ChevronUpIcon" 
+        [size]="18">
+      </lucide-icon>
+    </div>
+    
+    <div class="debug-content" *ngIf="showDebugPanel()">
+      <div class="debug-actions">
+        <button class="btn-small" (click)="clearDebug()">
+          <lucide-icon [img]="TrashIcon" [size]="14"></lucide-icon>
+          {{ t('chat.clearDebug') }}
+        </button>
+      </div>
+      
+      <div class="debug-entries" *ngIf="debugInfo().length > 0; else noDebug">
+        <div class="debug-entry" *ngFor="let entry of debugInfo(); let i = index">
+          <div class="entry-header">
+            <span class="entry-index">#{{ i + 1 }}</span>
+            <span class="entry-type" [class]="entry.type || 'info'">
+              {{ entry.type || 'info' }}
+            </span>
+          </div>
+          <pre class="entry-content">{{ formatDebugEntry(entry) }}</pre>
+        </div>
+      </div>
+      
+      <ng-template #noDebug>
+        <div class="no-debug">
+          <p>{{ t('chat.noDebugInfo') }}</p>
+          <small>{{ t('chat.debugHint') }}</small>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 package com.sep.sep_backend.ai.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Response DTO for AI tutor chat messages.
@@ -13,6 +14,7 @@ public class ChatMessageResponse {
     private LocalDateTime timestamp;
     private Integer currentXp;
     private Integer currentStreak;
+    private List<ConversationResult.ToolCallInfo> toolCalls;
 
     public ChatMessageResponse() {
     }
@@ -68,5 +70,13 @@ public class ChatMessageResponse {
 
     public void setCurrentStreak(Integer currentStreak) {
         this.currentStreak = currentStreak;
+    }
+
+    public List<ConversationResult.ToolCallInfo> getToolCalls() {
+        return toolCalls;
+    }
+
+    public void setToolCalls(List<ConversationResult.ToolCallInfo> toolCalls) {
+        this.toolCalls = toolCalls;
     }
 }

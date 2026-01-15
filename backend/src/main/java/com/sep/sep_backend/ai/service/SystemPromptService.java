@@ -1,7 +1,6 @@
 package com.sep.sep_backend.ai.service;
 
 import com.sep.sep_backend.user.entity.Language;
-import com.sep.sep_backend.user.entity.LanguageLevel;
 import com.sep.sep_backend.user.entity.UserLearning;
 import com.sep.sep_backend.user.service.UserLearningService;
 import org.slf4j.Logger;

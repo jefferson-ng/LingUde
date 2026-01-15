@@ -17,6 +17,7 @@
   },
   "nav": {
     "dashboard": "Startseite",
+    "chat": "KI-Tutor",
     "learning": "Lernen",
     "lessons": "Lektionen",
     "goals": "Ziele",
@@ -448,5 +449,22 @@
       "successMessage": "Anfrage erfolgreich gesendet",
       "errorMessage": "Beim Senden der Freundschaftsanfrage ist ein Fehler aufgetreten: "
     }
+  },
+  "chat": {
+    "title": "KI-Sprachtutor",
+    "newChat": "Neuer Chat",
+    "welcomeTitle": "Willkommen bei deinem KI-Tutor!",
+    "welcomeMessage": "Ich bin hier, um dir beim Sprachenlernen zu helfen. Frag mich etwas oder wähle ein Thema unten aus.",
+    "suggestedGerman": "Deutsch lernen starten",
+    "suggestedVocab": "Vokabeln üben",
+    "suggestedGreetings": "Begrüßungen lernen",
+    "you": "Du",
+    "tutor": "Tutor",
+    "placeholder": "Schreibe deine Nachricht...",
+    "inputHint": "Enter zum Senden, Shift+Enter für neue Zeile",
+    "debugPanel": "Debug-Panel",
+    "clearDebug": "Leeren",
+    "noDebugInfo": "Noch keine Debug-Infos",
+    "debugHint": "Tool-Aufrufe und KI-Aktionen werden hier angezeigt"
   }
 }

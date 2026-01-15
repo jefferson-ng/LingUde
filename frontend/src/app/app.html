@@ -73,6 +73,8 @@
               >
               @if (item.icon === 'home') {
               <lucide-icon [img]="HomeIcon" class="nav-icon"></lucide-icon>
+              } @else if (item.icon === 'message-circle') {
+              <lucide-icon [img]="MessageCircleIcon" class="nav-icon"></lucide-icon>
               } @else if (item.icon === 'book-open') {
               <lucide-icon [img]="BookOpenIcon" class="nav-icon"></lucide-icon>
               } @else if (item.icon === 'graduation-cap') {

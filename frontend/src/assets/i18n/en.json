@@ -17,6 +17,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "chat": "AI Tutor",
     "learning": "Learning",
     "lessons": "Lessons",
     "goals": "My Goals",
@@ -448,5 +449,22 @@
       "successMessage": "Request sent successfully",
       "errorMessage": "An error occurred while sending friend request: "
     }
+  },
+  "chat": {
+    "title": "AI Language Tutor",
+    "newChat": "New Chat",
+    "welcomeTitle": "Welcome to your AI Tutor!",
+    "welcomeMessage": "I'm here to help you learn your target language. Ask me anything or choose a topic below to get started.",
+    "suggestedGerman": "Start learning German",
+    "suggestedVocab": "Practice vocabulary",
+    "suggestedGreetings": "Learn greetings",
+    "you": "You",
+    "tutor": "Tutor",
+    "placeholder": "Type your message...",
+    "inputHint": "Press Enter to send, Shift+Enter for new line",
+    "debugPanel": "Debug Panel",
+    "clearDebug": "Clear",
+    "noDebugInfo": "No debug info yet",
+    "debugHint": "Tool calls and AI actions will appear here"
   }
 }
