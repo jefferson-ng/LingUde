@@ -693,17 +693,81 @@
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
+/* Difficulty Group Header (in level path) */
+.levels-path .difficulty-header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 1.5rem 0 1rem;
+  padding: 0 0 0 1rem;
+  border: none;
+}
+
+.levels-path .difficulty-header:first-child {
+  margin-top: 0;
+}
+
+.levels-path .difficulty-header .difficulty-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.5rem;
+  min-width: auto;
+  max-width: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  cursor: default;
+  gap: 0;
+}
+
+/* Color variants for difficulty badges in level path */
+.levels-path .difficulty-header[data-level="A1"] .difficulty-badge {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.levels-path .difficulty-header[data-level="A2"] .difficulty-badge {
+  background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+  box-shadow: 0 4px 12px rgba(132, 204, 22, 0.3);
+}
+
+.levels-path .difficulty-header[data-level="B1"] .difficulty-badge {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
+}
+
+.levels-path .difficulty-header[data-level="B2"] .difficulty-badge {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.levels-path .difficulty-header[data-level="C1"] .difficulty-badge {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.levels-path .difficulty-header[data-level="C2"] .difficulty-badge {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+}
+
 /* Learning Path */
 .learning-path {
   display: flex;
   flex-direction: column;
   background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   width: 100%;
   max-width: 900px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid var(--gray-200);
 }
 
 .path-header {
@@ -765,7 +829,15 @@
   gap: 0;
   width: 100%;
   max-width: 800px;
-  padding: 2.5rem 0;
+  padding: 1rem 0;
+  position: relative;
+}
+
+.levels-path {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
   position: relative;
 }
 
@@ -810,7 +882,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 0;
+  padding: 0;
   transition: transform 0.3s ease;
 }
 
@@ -1124,16 +1196,84 @@
 }
 
 .path-connector {
-  width: 4px;
-  height: 50px;
-  border-radius: 2px;
+  width: 6px;
+  height: 100px;
+  border-radius: 3px;
   margin: 0 auto;
   transition: all 0.5s ease;
   position: relative;
+  background: #e2e8f0;
 }
 
 .path-connector.completed {
   animation: path-glow 2s ease-in-out infinite;
+}
+
+/* Path connector colors - only active when previous level is completed */
+.path-connector.active[data-difficulty="A1"] {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.path-item[data-difficulty="A1"] .level-node-wrapper.unlocked .node-circle {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #10b981;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.path-connector.active[data-difficulty="A2"] {
+  background: linear-gradient(180deg, #84cc16 0%, #65a30d 100%);
+  box-shadow: 0 2px 8px rgba(132, 204, 22, 0.3);
+}
+
+.path-item[data-difficulty="A2"] .level-node-wrapper.unlocked .node-circle {
+  background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+  border-color: #84cc16;
+  box-shadow: 0 8px 20px rgba(132, 204, 22, 0.4);
+}
+
+.path-connector.active[data-difficulty="B1"] {
+  background: linear-gradient(180deg, #eab308 0%, #ca8a04 100%);
+  box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3);
+}
+
+.path-item[data-difficulty="B1"] .level-node-wrapper.unlocked .node-circle {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  border-color: #eab308;
+  box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4);
+}
+
+.path-connector.active[data-difficulty="B2"] {
+  background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+}
+
+.path-item[data-difficulty="B2"] .level-node-wrapper.unlocked .node-circle {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border-color: #f97316;
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.4);
+}
+
+.path-connector.active[data-difficulty="C1"] {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.path-item[data-difficulty="C1"] .level-node-wrapper.unlocked .node-circle {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: #ef4444;
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+}
+
+.path-connector.active[data-difficulty="C2"] {
+  background: linear-gradient(180deg, #a855f7 0%, #9333ea 100%);
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+}
+
+.path-item[data-difficulty="C2"] .level-node-wrapper.unlocked .node-circle {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  border-color: #a855f7;
+  box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
 }
 
 @keyframes path-glow {
