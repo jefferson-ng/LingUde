@@ -7,9 +7,26 @@ export interface UserInfo {
   id: string;
   email: string;
   username: string;
+  role?: string;
   level?: number;
   xp?: number;
   streak?: number;
+}
+
+function decodeJwtPayload(token: string): any {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch {
+    return null;
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -56,7 +73,11 @@ export class AuthService {
     try {
       const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
       const user: any = await firstValueFrom(this.http.get(`${this.apiUrl}/me`, { headers }));
-      this.userSubject.next(user);
+      const payload = decodeJwtPayload(token);
+      this.userSubject.next({
+        ...user,
+        role: payload?.role || 'USER'
+      });
     } catch (error) {
       this.userSubject.next(null);
     } finally {
@@ -67,10 +88,12 @@ export class AuthService {
   private setSession(res: any) {
     localStorage.setItem('accessToken', res.accessToken);
     localStorage.setItem('refreshToken', res.refreshToken);
+    const payload = decodeJwtPayload(res.accessToken);
     this.userSubject.next({
       id: res.id,
       email: res.email,
-      username: res.username
+      username: res.username,
+      role: payload?.role || 'USER'
     });
   }
 

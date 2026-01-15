@@ -4,7 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } fro
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
-import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X } from 'lucide-angular';
+import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X, Shield } from 'lucide-angular';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -28,8 +28,10 @@ export class App implements OnInit {
   readonly MenuIcon = Menu;
   readonly XIcon = X;
   readonly  UsersIcon = Users;
+  readonly ShieldIcon = Shield;
 
   protected readonly title = signal('LingUDE');
+  protected readonly isAdmin = signal(false);
   protected readonly userLevel = signal(1);
   protected readonly userXP = signal(0);
   protected readonly userStreak = signal(0);
@@ -68,10 +70,12 @@ export class App implements OnInit {
         this.userName.set(user.username);
         this.userEmail.set(user.email);
         this.isLoggedIn.set(true);
+        this.isAdmin.set(user.role === 'ADMIN');
       } else {
         this.userName.set('');
         this.userEmail.set('');
         this.isLoggedIn.set(false);
+        this.isAdmin.set(false);
       }
     });
     this.loadUserXP();
