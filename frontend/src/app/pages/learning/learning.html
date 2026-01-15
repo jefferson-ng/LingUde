@@ -111,10 +111,17 @@
     <div class="learning-path">
       <div class="levels-path">
       @for (level of levels(); track level.id) {
-        <div 
+        <!-- Difficulty Header (shown at start of each difficulty group) -->
+        @if (isFirstInDifficultyGroup($index)) {
+          <div class="difficulty-header" [attr.data-level]="level.difficultyLevel">
+            <span class="difficulty-badge">{{ level.difficultyLevel }}</span>
+          </div>
+        }
+        <div
           class="path-item"
           [class.left]="$index % 2 === 0"
           [class.right]="$index % 2 === 1"
+          [attr.data-difficulty]="level.difficultyLevel"
         >
           <div 
             class="level-node-wrapper"
@@ -124,6 +131,7 @@
             [class.selected]="selectedLevel()?.id === level.id"
             [attr.data-debug-status]="level.status"
             [attr.data-debug-id]="level.id"
+            [attr.data-difficulty]="level.difficultyLevel"
           >
             <div class="level-node" (click)="selectLevel(level, $event)">
               <div class="node-circle">
@@ -147,7 +155,9 @@
           </div>
 
           @if ($index < levels().length - 1) {
-            <div class="path-connector"></div>
+            <div class="path-connector" 
+                 [class.active]="level.status === 'completed'"
+                 [attr.data-difficulty]="level.difficultyLevel"></div>
           }
         </div>
       }
