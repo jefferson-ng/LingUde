@@ -50,6 +50,8 @@ public class ExerciseDataSeeder implements CommandLineRunner {
 
         seedEnglishExercises();
         seedGermanExercises();
+        seedEnglishGrammarExercises();
+        seedGermanGrammarExercises();
 
         long newMcqCount = mcqRepository.count();
         long newFillBlankCount = fillBlankRepository.count();
@@ -57,8 +59,8 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         logger.info("Exercise data seeding completed!");
         logger.info("Created {} MCQ exercises", newMcqCount);
         logger.info("Created {} Fill-in-the-Blank exercises", newFillBlankCount);
-        logger.info("Total: {} exercises (48 English + 48 German)", newMcqCount + newFillBlankCount);
-        logger.info("Total XP Available: 2160 (1080 EN + 1080 DE)");
+        logger.info("Total: {} exercises (92 English + 92 German)", newMcqCount + newFillBlankCount);
+        logger.info("Total XP Available: 4080 (2040 EN + 2040 DE)");
     }
 
     private void seedEnglishExercises() {
@@ -1198,5 +1200,1053 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         fillBlankRepository.save(deC2_4Fill);
 
         logger.info("German exercises seeded: 24 MCQ + 24 Fill-Blank = 48 total");
+    }
+
+    private void seedEnglishGrammarExercises() {
+        logger.info("Seeding English GRAMMAR exercises...");
+
+        // EN A1 MCQ GRAMMAR (4)
+        ExerciseMcq enA1G1 = new ExerciseMcq();
+        enA1G1.setTargetLanguage(Language.EN);
+        enA1G1.setDifficultyLevel(LanguageLevel.A1);
+        enA1G1.setTopic("articles");
+        enA1G1.setQuestionText("I have ___ apple.");
+        enA1G1.setCorrectAnswer("an");
+        enA1G1.setWrongOption1("a");
+        enA1G1.setWrongOption2("the");
+        enA1G1.setWrongOption3("some");
+        enA1G1.setXpReward(10);
+        enA1G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enA1G1);
+
+        ExerciseMcq enA1G2 = new ExerciseMcq();
+        enA1G2.setTargetLanguage(Language.EN);
+        enA1G2.setDifficultyLevel(LanguageLevel.A1);
+        enA1G2.setTopic("to_be");
+        enA1G2.setQuestionText("She ___ a teacher.");
+        enA1G2.setCorrectAnswer("is");
+        enA1G2.setWrongOption1("are");
+        enA1G2.setWrongOption2("am");
+        enA1G2.setWrongOption3("be");
+        enA1G2.setXpReward(10);
+        enA1G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enA1G2);
+
+        ExerciseMcq enA1G3 = new ExerciseMcq();
+        enA1G3.setTargetLanguage(Language.EN);
+        enA1G3.setDifficultyLevel(LanguageLevel.A1);
+        enA1G3.setTopic("pronouns");
+        enA1G3.setQuestionText("___ am from Germany.");
+        enA1G3.setCorrectAnswer("I");
+        enA1G3.setWrongOption1("He");
+        enA1G3.setWrongOption2("She");
+        enA1G3.setWrongOption3("You");
+        enA1G3.setXpReward(10);
+        enA1G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enA1G3);
+
+        ExerciseMcq enA1G4 = new ExerciseMcq();
+        enA1G4.setTargetLanguage(Language.EN);
+        enA1G4.setDifficultyLevel(LanguageLevel.A1);
+        enA1G4.setTopic("plurals");
+        enA1G4.setQuestionText("There are three ___ on the table.");
+        enA1G4.setCorrectAnswer("books");
+        enA1G4.setWrongOption1("book");
+        enA1G4.setWrongOption2("bookes");
+        enA1G4.setWrongOption3("bookies");
+        enA1G4.setXpReward(10);
+        enA1G4.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enA1G4);
+
+        // EN A2 MCQ GRAMMAR (4)
+        ExerciseMcq enA2G1 = new ExerciseMcq();
+        enA2G1.setTargetLanguage(Language.EN);
+        enA2G1.setDifficultyLevel(LanguageLevel.A2);
+        enA2G1.setTopic("present_continuous");
+        enA2G1.setQuestionText("Look! The children ___ in the park.");
+        enA2G1.setCorrectAnswer("are playing");
+        enA2G1.setWrongOption1("is playing");
+        enA2G1.setWrongOption2("plays");
+        enA2G1.setWrongOption3("play");
+        enA2G1.setXpReward(15);
+        enA2G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enA2G1);
+
+        ExerciseMcq enA2G2 = new ExerciseMcq();
+        enA2G2.setTargetLanguage(Language.EN);
+        enA2G2.setDifficultyLevel(LanguageLevel.A2);
+        enA2G2.setTopic("past_simple");
+        enA2G2.setQuestionText("Yesterday, I ___ to the cinema.");
+        enA2G2.setCorrectAnswer("went");
+        enA2G2.setWrongOption1("go");
+        enA2G2.setWrongOption2("goes");
+        enA2G2.setWrongOption3("going");
+        enA2G2.setXpReward(15);
+        enA2G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enA2G2);
+
+        ExerciseMcq enA2G3 = new ExerciseMcq();
+        enA2G3.setTargetLanguage(Language.EN);
+        enA2G3.setDifficultyLevel(LanguageLevel.A2);
+        enA2G3.setTopic("possessives");
+        enA2G3.setQuestionText("This is ___ car. It belongs to John.");
+        enA2G3.setCorrectAnswer("his");
+        enA2G3.setWrongOption1("her");
+        enA2G3.setWrongOption2("its");
+        enA2G3.setWrongOption3("their");
+        enA2G3.setXpReward(15);
+        enA2G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enA2G3);
+
+        ExerciseMcq enA2G4 = new ExerciseMcq();
+        enA2G4.setTargetLanguage(Language.EN);
+        enA2G4.setDifficultyLevel(LanguageLevel.A2);
+        enA2G4.setTopic("comparatives");
+        enA2G4.setQuestionText("My house is ___ than yours.");
+        enA2G4.setCorrectAnswer("bigger");
+        enA2G4.setWrongOption1("more big");
+        enA2G4.setWrongOption2("big");
+        enA2G4.setWrongOption3("biggest");
+        enA2G4.setXpReward(15);
+        enA2G4.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enA2G4);
+
+        // EN B1 MCQ GRAMMAR (4)
+        ExerciseMcq enB1G1 = new ExerciseMcq();
+        enB1G1.setTargetLanguage(Language.EN);
+        enB1G1.setDifficultyLevel(LanguageLevel.B1);
+        enB1G1.setTopic("present_perfect");
+        enB1G1.setQuestionText("I have never ___ to Japan.");
+        enB1G1.setCorrectAnswer("been");
+        enB1G1.setWrongOption1("went");
+        enB1G1.setWrongOption2("go");
+        enB1G1.setWrongOption3("gone");
+        enB1G1.setXpReward(20);
+        enB1G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enB1G1);
+
+        ExerciseMcq enB1G2 = new ExerciseMcq();
+        enB1G2.setTargetLanguage(Language.EN);
+        enB1G2.setDifficultyLevel(LanguageLevel.B1);
+        enB1G2.setTopic("past_perfect");
+        enB1G2.setQuestionText("By the time I arrived, they had already ___.");
+        enB1G2.setCorrectAnswer("left");
+        enB1G2.setWrongOption1("leave");
+        enB1G2.setWrongOption2("leaving");
+        enB1G2.setWrongOption3("leaves");
+        enB1G2.setXpReward(20);
+        enB1G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enB1G2);
+
+        ExerciseMcq enB1G3 = new ExerciseMcq();
+        enB1G3.setTargetLanguage(Language.EN);
+        enB1G3.setDifficultyLevel(LanguageLevel.B1);
+        enB1G3.setTopic("relative_clauses");
+        enB1G3.setQuestionText("The man ___ called you is my uncle.");
+        enB1G3.setCorrectAnswer("who");
+        enB1G3.setWrongOption1("which");
+        enB1G3.setWrongOption2("what");
+        enB1G3.setWrongOption3("whom");
+        enB1G3.setXpReward(20);
+        enB1G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enB1G3);
+
+        ExerciseMcq enB1G4 = new ExerciseMcq();
+        enB1G4.setTargetLanguage(Language.EN);
+        enB1G4.setDifficultyLevel(LanguageLevel.B1);
+        enB1G4.setTopic("modals");
+        enB1G4.setQuestionText("You ___ see a doctor. You look ill.");
+        enB1G4.setCorrectAnswer("should");
+        enB1G4.setWrongOption1("would");
+        enB1G4.setWrongOption2("could");
+        enB1G4.setWrongOption3("might");
+        enB1G4.setXpReward(20);
+        enB1G4.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enB1G4);
+
+        // EN B2 MCQ GRAMMAR (4)
+        ExerciseMcq enB2G1 = new ExerciseMcq();
+        enB2G1.setTargetLanguage(Language.EN);
+        enB2G1.setDifficultyLevel(LanguageLevel.B2);
+        enB2G1.setTopic("conditionals");
+        enB2G1.setQuestionText("If I ___ more money, I would travel the world.");
+        enB2G1.setCorrectAnswer("had");
+        enB2G1.setWrongOption1("have");
+        enB2G1.setWrongOption2("will have");
+        enB2G1.setWrongOption3("had had");
+        enB2G1.setXpReward(25);
+        enB2G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enB2G1);
+
+        ExerciseMcq enB2G2 = new ExerciseMcq();
+        enB2G2.setTargetLanguage(Language.EN);
+        enB2G2.setDifficultyLevel(LanguageLevel.B2);
+        enB2G2.setTopic("passive_voice");
+        enB2G2.setQuestionText("The letter ___ by the secretary yesterday.");
+        enB2G2.setCorrectAnswer("was written");
+        enB2G2.setWrongOption1("is written");
+        enB2G2.setWrongOption2("wrote");
+        enB2G2.setWrongOption3("has written");
+        enB2G2.setXpReward(25);
+        enB2G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enB2G2);
+
+        ExerciseMcq enB2G3 = new ExerciseMcq();
+        enB2G3.setTargetLanguage(Language.EN);
+        enB2G3.setDifficultyLevel(LanguageLevel.B2);
+        enB2G3.setTopic("reported_speech");
+        enB2G3.setQuestionText("She said that she ___ tired.");
+        enB2G3.setCorrectAnswer("was");
+        enB2G3.setWrongOption1("is");
+        enB2G3.setWrongOption2("be");
+        enB2G3.setWrongOption3("were");
+        enB2G3.setXpReward(25);
+        enB2G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enB2G3);
+
+        ExerciseMcq enB2G4 = new ExerciseMcq();
+        enB2G4.setTargetLanguage(Language.EN);
+        enB2G4.setDifficultyLevel(LanguageLevel.B2);
+        enB2G4.setTopic("wish_clauses");
+        enB2G4.setQuestionText("I wish I ___ speak French fluently.");
+        enB2G4.setCorrectAnswer("could");
+        enB2G4.setWrongOption1("can");
+        enB2G4.setWrongOption2("would");
+        enB2G4.setWrongOption3("will");
+        enB2G4.setXpReward(25);
+        enB2G4.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enB2G4);
+
+        // EN C1 MCQ GRAMMAR (3)
+        ExerciseMcq enC1G1 = new ExerciseMcq();
+        enC1G1.setTargetLanguage(Language.EN);
+        enC1G1.setDifficultyLevel(LanguageLevel.C1);
+        enC1G1.setTopic("subjunctive");
+        enC1G1.setQuestionText("The manager insisted that he ___ present at the meeting.");
+        enC1G1.setCorrectAnswer("be");
+        enC1G1.setWrongOption1("is");
+        enC1G1.setWrongOption2("was");
+        enC1G1.setWrongOption3("were");
+        enC1G1.setXpReward(30);
+        enC1G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enC1G1);
+
+        ExerciseMcq enC1G2 = new ExerciseMcq();
+        enC1G2.setTargetLanguage(Language.EN);
+        enC1G2.setDifficultyLevel(LanguageLevel.C1);
+        enC1G2.setTopic("inversion");
+        enC1G2.setQuestionText("Not only ___ he late, but he also forgot the documents.");
+        enC1G2.setCorrectAnswer("was");
+        enC1G2.setWrongOption1("is");
+        enC1G2.setWrongOption2("did");
+        enC1G2.setWrongOption3("had");
+        enC1G2.setXpReward(30);
+        enC1G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enC1G2);
+
+        ExerciseMcq enC1G3 = new ExerciseMcq();
+        enC1G3.setTargetLanguage(Language.EN);
+        enC1G3.setDifficultyLevel(LanguageLevel.C1);
+        enC1G3.setTopic("cleft_sentences");
+        enC1G3.setQuestionText("It ___ John who broke the window.");
+        enC1G3.setCorrectAnswer("was");
+        enC1G3.setWrongOption1("is");
+        enC1G3.setWrongOption2("were");
+        enC1G3.setWrongOption3("has");
+        enC1G3.setXpReward(30);
+        enC1G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enC1G3);
+
+        // EN C2 MCQ GRAMMAR (3)
+        ExerciseMcq enC2G1 = new ExerciseMcq();
+        enC2G1.setTargetLanguage(Language.EN);
+        enC2G1.setDifficultyLevel(LanguageLevel.C2);
+        enC2G1.setTopic("mixed_conditionals");
+        enC2G1.setQuestionText("If she had studied harder, she ___ a better job now.");
+        enC2G1.setCorrectAnswer("would have");
+        enC2G1.setWrongOption1("will have");
+        enC2G1.setWrongOption2("would has");
+        enC2G1.setWrongOption3("had");
+        enC2G1.setXpReward(35);
+        enC2G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enC2G1);
+
+        ExerciseMcq enC2G2 = new ExerciseMcq();
+        enC2G2.setTargetLanguage(Language.EN);
+        enC2G2.setDifficultyLevel(LanguageLevel.C2);
+        enC2G2.setTopic("ellipsis");
+        enC2G2.setQuestionText("She can speak French and so ___ I.");
+        enC2G2.setCorrectAnswer("can");
+        enC2G2.setWrongOption1("do");
+        enC2G2.setWrongOption2("am");
+        enC2G2.setWrongOption3("have");
+        enC2G2.setXpReward(35);
+        enC2G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enC2G2);
+
+        ExerciseMcq enC2G3 = new ExerciseMcq();
+        enC2G3.setTargetLanguage(Language.EN);
+        enC2G3.setDifficultyLevel(LanguageLevel.C2);
+        enC2G3.setTopic("nominalization");
+        enC2G3.setQuestionText("The ___ of the project took three months.");
+        enC2G3.setCorrectAnswer("completion");
+        enC2G3.setWrongOption1("complete");
+        enC2G3.setWrongOption2("completing");
+        enC2G3.setWrongOption3("completed");
+        enC2G3.setXpReward(35);
+        enC2G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(enC2G3);
+
+        // EN A1 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank enA1GF1 = new ExerciseFillBlank();
+        enA1GF1.setTargetLanguage(Language.EN);
+        enA1GF1.setDifficultyLevel(LanguageLevel.A1);
+        enA1GF1.setTopic("to_be");
+        enA1GF1.setSentenceWithBlank("I ___ a student.");
+        enA1GF1.setCorrectAnswer("am");
+        enA1GF1.setXpReward(10);
+        enA1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enA1GF1);
+
+        ExerciseFillBlank enA1GF2 = new ExerciseFillBlank();
+        enA1GF2.setTargetLanguage(Language.EN);
+        enA1GF2.setDifficultyLevel(LanguageLevel.A1);
+        enA1GF2.setTopic("to_be");
+        enA1GF2.setSentenceWithBlank("They ___ my friends.");
+        enA1GF2.setCorrectAnswer("are");
+        enA1GF2.setXpReward(10);
+        enA1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enA1GF2);
+
+        ExerciseFillBlank enA1GF3 = new ExerciseFillBlank();
+        enA1GF3.setTargetLanguage(Language.EN);
+        enA1GF3.setDifficultyLevel(LanguageLevel.A1);
+        enA1GF3.setTopic("articles");
+        enA1GF3.setSentenceWithBlank("She has ___ cat.");
+        enA1GF3.setCorrectAnswer("a");
+        enA1GF3.setXpReward(10);
+        enA1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enA1GF3);
+
+        ExerciseFillBlank enA1GF4 = new ExerciseFillBlank();
+        enA1GF4.setTargetLanguage(Language.EN);
+        enA1GF4.setDifficultyLevel(LanguageLevel.A1);
+        enA1GF4.setTopic("pronouns");
+        enA1GF4.setSentenceWithBlank("___ is my brother Tom.");
+        enA1GF4.setCorrectAnswer("This");
+        enA1GF4.setXpReward(10);
+        enA1GF4.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enA1GF4);
+
+        // EN A2 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank enA2GF1 = new ExerciseFillBlank();
+        enA2GF1.setTargetLanguage(Language.EN);
+        enA2GF1.setDifficultyLevel(LanguageLevel.A2);
+        enA2GF1.setTopic("past_simple");
+        enA2GF1.setSentenceWithBlank("She ___ to school yesterday.");
+        enA2GF1.setCorrectAnswer("went");
+        enA2GF1.setXpReward(15);
+        enA2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enA2GF1);
+
+        ExerciseFillBlank enA2GF2 = new ExerciseFillBlank();
+        enA2GF2.setTargetLanguage(Language.EN);
+        enA2GF2.setDifficultyLevel(LanguageLevel.A2);
+        enA2GF2.setTopic("possessives");
+        enA2GF2.setSentenceWithBlank("This book is mine. That book is ___.");
+        enA2GF2.setCorrectAnswer("yours");
+        enA2GF2.setXpReward(15);
+        enA2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enA2GF2);
+
+        ExerciseFillBlank enA2GF3 = new ExerciseFillBlank();
+        enA2GF3.setTargetLanguage(Language.EN);
+        enA2GF3.setDifficultyLevel(LanguageLevel.A2);
+        enA2GF3.setTopic("present_continuous");
+        enA2GF3.setSentenceWithBlank("She ___ cooking dinner right now.");
+        enA2GF3.setCorrectAnswer("is");
+        enA2GF3.setXpReward(15);
+        enA2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enA2GF3);
+
+        ExerciseFillBlank enA2GF4 = new ExerciseFillBlank();
+        enA2GF4.setTargetLanguage(Language.EN);
+        enA2GF4.setDifficultyLevel(LanguageLevel.A2);
+        enA2GF4.setTopic("prepositions");
+        enA2GF4.setSentenceWithBlank("The book is ___ the table.");
+        enA2GF4.setCorrectAnswer("on");
+        enA2GF4.setXpReward(15);
+        enA2GF4.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enA2GF4);
+
+        // EN B1 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank enB1GF1 = new ExerciseFillBlank();
+        enB1GF1.setTargetLanguage(Language.EN);
+        enB1GF1.setDifficultyLevel(LanguageLevel.B1);
+        enB1GF1.setTopic("present_perfect");
+        enB1GF1.setSentenceWithBlank("I have ___ finished my homework.");
+        enB1GF1.setCorrectAnswer("just");
+        enB1GF1.setXpReward(20);
+        enB1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enB1GF1);
+
+        ExerciseFillBlank enB1GF2 = new ExerciseFillBlank();
+        enB1GF2.setTargetLanguage(Language.EN);
+        enB1GF2.setDifficultyLevel(LanguageLevel.B1);
+        enB1GF2.setTopic("relative_clauses");
+        enB1GF2.setSentenceWithBlank("The woman ___ lives next door is a doctor.");
+        enB1GF2.setCorrectAnswer("who");
+        enB1GF2.setXpReward(20);
+        enB1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enB1GF2);
+
+        ExerciseFillBlank enB1GF3 = new ExerciseFillBlank();
+        enB1GF3.setTargetLanguage(Language.EN);
+        enB1GF3.setDifficultyLevel(LanguageLevel.B1);
+        enB1GF3.setTopic("modals");
+        enB1GF3.setSentenceWithBlank("You ___ wear a seatbelt. It is the law.");
+        enB1GF3.setCorrectAnswer("must");
+        enB1GF3.setXpReward(20);
+        enB1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enB1GF3);
+
+        ExerciseFillBlank enB1GF4 = new ExerciseFillBlank();
+        enB1GF4.setTargetLanguage(Language.EN);
+        enB1GF4.setDifficultyLevel(LanguageLevel.B1);
+        enB1GF4.setTopic("connectors");
+        enB1GF4.setSentenceWithBlank("I stayed home ___ I was feeling sick.");
+        enB1GF4.setCorrectAnswer("because");
+        enB1GF4.setXpReward(20);
+        enB1GF4.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enB1GF4);
+
+        // EN B2 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank enB2GF1 = new ExerciseFillBlank();
+        enB2GF1.setTargetLanguage(Language.EN);
+        enB2GF1.setDifficultyLevel(LanguageLevel.B2);
+        enB2GF1.setTopic("passive_voice");
+        enB2GF1.setSentenceWithBlank("The report ___ written by the team last week.");
+        enB2GF1.setCorrectAnswer("was");
+        enB2GF1.setXpReward(25);
+        enB2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enB2GF1);
+
+        ExerciseFillBlank enB2GF2 = new ExerciseFillBlank();
+        enB2GF2.setTargetLanguage(Language.EN);
+        enB2GF2.setDifficultyLevel(LanguageLevel.B2);
+        enB2GF2.setTopic("conditionals");
+        enB2GF2.setSentenceWithBlank("If I were you, I ___ accept the offer.");
+        enB2GF2.setCorrectAnswer("would");
+        enB2GF2.setXpReward(25);
+        enB2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enB2GF2);
+
+        ExerciseFillBlank enB2GF3 = new ExerciseFillBlank();
+        enB2GF3.setTargetLanguage(Language.EN);
+        enB2GF3.setDifficultyLevel(LanguageLevel.B2);
+        enB2GF3.setTopic("reported_speech");
+        enB2GF3.setSentenceWithBlank("He told me that he ___ busy the day before.");
+        enB2GF3.setCorrectAnswer("had been");
+        enB2GF3.setXpReward(25);
+        enB2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enB2GF3);
+
+        ExerciseFillBlank enB2GF4 = new ExerciseFillBlank();
+        enB2GF4.setTargetLanguage(Language.EN);
+        enB2GF4.setDifficultyLevel(LanguageLevel.B2);
+        enB2GF4.setTopic("gerunds_infinitives");
+        enB2GF4.setSentenceWithBlank("She suggested ___ to the beach.");
+        enB2GF4.setCorrectAnswer("going");
+        enB2GF4.setXpReward(25);
+        enB2GF4.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enB2GF4);
+
+        // EN C1 Fill-blank GRAMMAR (3)
+        ExerciseFillBlank enC1GF1 = new ExerciseFillBlank();
+        enC1GF1.setTargetLanguage(Language.EN);
+        enC1GF1.setDifficultyLevel(LanguageLevel.C1);
+        enC1GF1.setTopic("inversion");
+        enC1GF1.setSentenceWithBlank("Never ___ I seen such a beautiful sunset.");
+        enC1GF1.setCorrectAnswer("have");
+        enC1GF1.setXpReward(30);
+        enC1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enC1GF1);
+
+        ExerciseFillBlank enC1GF2 = new ExerciseFillBlank();
+        enC1GF2.setTargetLanguage(Language.EN);
+        enC1GF2.setDifficultyLevel(LanguageLevel.C1);
+        enC1GF2.setTopic("participle_clauses");
+        enC1GF2.setSentenceWithBlank("___ finished the exam, she left the room.");
+        enC1GF2.setCorrectAnswer("Having");
+        enC1GF2.setXpReward(30);
+        enC1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enC1GF2);
+
+        ExerciseFillBlank enC1GF3 = new ExerciseFillBlank();
+        enC1GF3.setTargetLanguage(Language.EN);
+        enC1GF3.setDifficultyLevel(LanguageLevel.C1);
+        enC1GF3.setTopic("subjunctive");
+        enC1GF3.setSentenceWithBlank("It is essential that she ___ on time.");
+        enC1GF3.setCorrectAnswer("be");
+        enC1GF3.setXpReward(30);
+        enC1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enC1GF3);
+
+        // EN C2 Fill-blank GRAMMAR (3)
+        ExerciseFillBlank enC2GF1 = new ExerciseFillBlank();
+        enC2GF1.setTargetLanguage(Language.EN);
+        enC2GF1.setDifficultyLevel(LanguageLevel.C2);
+        enC2GF1.setTopic("ellipsis");
+        enC2GF1.setSentenceWithBlank("She wanted to help, but she could ___.");
+        enC2GF1.setCorrectAnswer("not");
+        enC2GF1.setXpReward(35);
+        enC2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enC2GF1);
+
+        ExerciseFillBlank enC2GF2 = new ExerciseFillBlank();
+        enC2GF2.setTargetLanguage(Language.EN);
+        enC2GF2.setDifficultyLevel(LanguageLevel.C2);
+        enC2GF2.setTopic("fronting");
+        enC2GF2.setSentenceWithBlank("Strange ___ it may seem, he was right.");
+        enC2GF2.setCorrectAnswer("as");
+        enC2GF2.setXpReward(35);
+        enC2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enC2GF2);
+
+        ExerciseFillBlank enC2GF3 = new ExerciseFillBlank();
+        enC2GF3.setTargetLanguage(Language.EN);
+        enC2GF3.setDifficultyLevel(LanguageLevel.C2);
+        enC2GF3.setTopic("emphasis");
+        enC2GF3.setSentenceWithBlank("What I need ___ a good rest.");
+        enC2GF3.setCorrectAnswer("is");
+        enC2GF3.setXpReward(35);
+        enC2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(enC2GF3);
+
+        logger.info("English GRAMMAR exercises seeded: 22 MCQ + 22 Fill-Blank = 44 total");
+    }
+
+    private void seedGermanGrammarExercises() {
+        logger.info("Seeding German GRAMMAR exercises...");
+
+        // DE A1 MCQ GRAMMAR (4)
+        ExerciseMcq deA1G1 = new ExerciseMcq();
+        deA1G1.setTargetLanguage(Language.DE);
+        deA1G1.setDifficultyLevel(LanguageLevel.A1);
+        deA1G1.setTopic("artikel");
+        deA1G1.setQuestionText("Das ist ___ Buch.");
+        deA1G1.setCorrectAnswer("ein");
+        deA1G1.setWrongOption1("eine");
+        deA1G1.setWrongOption2("einen");
+        deA1G1.setWrongOption3("einer");
+        deA1G1.setXpReward(10);
+        deA1G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deA1G1);
+
+        ExerciseMcq deA1G2 = new ExerciseMcq();
+        deA1G2.setTargetLanguage(Language.DE);
+        deA1G2.setDifficultyLevel(LanguageLevel.A1);
+        deA1G2.setTopic("verben");
+        deA1G2.setQuestionText("Ich ___ Deutsch.");
+        deA1G2.setCorrectAnswer("lerne");
+        deA1G2.setWrongOption1("lernst");
+        deA1G2.setWrongOption2("lernt");
+        deA1G2.setWrongOption3("lernen");
+        deA1G2.setXpReward(10);
+        deA1G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deA1G2);
+
+        ExerciseMcq deA1G3 = new ExerciseMcq();
+        deA1G3.setTargetLanguage(Language.DE);
+        deA1G3.setDifficultyLevel(LanguageLevel.A1);
+        deA1G3.setTopic("sein");
+        deA1G3.setQuestionText("Wir ___ aus Deutschland.");
+        deA1G3.setCorrectAnswer("sind");
+        deA1G3.setWrongOption1("ist");
+        deA1G3.setWrongOption2("bin");
+        deA1G3.setWrongOption3("seid");
+        deA1G3.setXpReward(10);
+        deA1G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deA1G3);
+
+        ExerciseMcq deA1G4 = new ExerciseMcq();
+        deA1G4.setTargetLanguage(Language.DE);
+        deA1G4.setDifficultyLevel(LanguageLevel.A1);
+        deA1G4.setTopic("haben");
+        deA1G4.setQuestionText("Er ___ einen Hund.");
+        deA1G4.setCorrectAnswer("hat");
+        deA1G4.setWrongOption1("habe");
+        deA1G4.setWrongOption2("hast");
+        deA1G4.setWrongOption3("haben");
+        deA1G4.setXpReward(10);
+        deA1G4.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deA1G4);
+
+        // DE A2 MCQ GRAMMAR (4)
+        ExerciseMcq deA2G1 = new ExerciseMcq();
+        deA2G1.setTargetLanguage(Language.DE);
+        deA2G1.setDifficultyLevel(LanguageLevel.A2);
+        deA2G1.setTopic("akkusativ");
+        deA2G1.setQuestionText("Ich sehe ___ Mann.");
+        deA2G1.setCorrectAnswer("den");
+        deA2G1.setWrongOption1("der");
+        deA2G1.setWrongOption2("dem");
+        deA2G1.setWrongOption3("des");
+        deA2G1.setXpReward(15);
+        deA2G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deA2G1);
+
+        ExerciseMcq deA2G2 = new ExerciseMcq();
+        deA2G2.setTargetLanguage(Language.DE);
+        deA2G2.setDifficultyLevel(LanguageLevel.A2);
+        deA2G2.setTopic("modalverben");
+        deA2G2.setQuestionText("Ich ___ Deutsch sprechen.");
+        deA2G2.setCorrectAnswer("kann");
+        deA2G2.setWrongOption1("können");
+        deA2G2.setWrongOption2("kannst");
+        deA2G2.setWrongOption3("konnte");
+        deA2G2.setXpReward(15);
+        deA2G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deA2G2);
+
+        ExerciseMcq deA2G3 = new ExerciseMcq();
+        deA2G3.setTargetLanguage(Language.DE);
+        deA2G3.setDifficultyLevel(LanguageLevel.A2);
+        deA2G3.setTopic("perfekt");
+        deA2G3.setQuestionText("Ich habe gestern einen Film ___.");
+        deA2G3.setCorrectAnswer("gesehen");
+        deA2G3.setWrongOption1("sehen");
+        deA2G3.setWrongOption2("sah");
+        deA2G3.setWrongOption3("geseht");
+        deA2G3.setXpReward(15);
+        deA2G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deA2G3);
+
+        ExerciseMcq deA2G4 = new ExerciseMcq();
+        deA2G4.setTargetLanguage(Language.DE);
+        deA2G4.setDifficultyLevel(LanguageLevel.A2);
+        deA2G4.setTopic("trennbare_verben");
+        deA2G4.setQuestionText("Ich stehe jeden Tag um 7 Uhr ___.");
+        deA2G4.setCorrectAnswer("auf");
+        deA2G4.setWrongOption1("an");
+        deA2G4.setWrongOption2("ab");
+        deA2G4.setWrongOption3("ein");
+        deA2G4.setXpReward(15);
+        deA2G4.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deA2G4);
+
+        // DE B1 MCQ GRAMMAR (4)
+        ExerciseMcq deB1G1 = new ExerciseMcq();
+        deB1G1.setTargetLanguage(Language.DE);
+        deB1G1.setDifficultyLevel(LanguageLevel.B1);
+        deB1G1.setTopic("dativ");
+        deB1G1.setQuestionText("Ich gebe ___ Frau das Geschenk.");
+        deB1G1.setCorrectAnswer("der");
+        deB1G1.setWrongOption1("die");
+        deB1G1.setWrongOption2("den");
+        deB1G1.setWrongOption3("das");
+        deB1G1.setXpReward(20);
+        deB1G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deB1G1);
+
+        ExerciseMcq deB1G2 = new ExerciseMcq();
+        deB1G2.setTargetLanguage(Language.DE);
+        deB1G2.setDifficultyLevel(LanguageLevel.B1);
+        deB1G2.setTopic("nebensaetze");
+        deB1G2.setQuestionText("Ich bleibe zu Hause, ___ es regnet.");
+        deB1G2.setCorrectAnswer("weil");
+        deB1G2.setWrongOption1("denn");
+        deB1G2.setWrongOption2("aber");
+        deB1G2.setWrongOption3("und");
+        deB1G2.setXpReward(20);
+        deB1G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deB1G2);
+
+        ExerciseMcq deB1G3 = new ExerciseMcq();
+        deB1G3.setTargetLanguage(Language.DE);
+        deB1G3.setDifficultyLevel(LanguageLevel.B1);
+        deB1G3.setTopic("relativsaetze");
+        deB1G3.setQuestionText("Der Mann, ___ dort steht, ist mein Vater.");
+        deB1G3.setCorrectAnswer("der");
+        deB1G3.setWrongOption1("den");
+        deB1G3.setWrongOption2("dem");
+        deB1G3.setWrongOption3("dessen");
+        deB1G3.setXpReward(20);
+        deB1G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deB1G3);
+
+        ExerciseMcq deB1G4 = new ExerciseMcq();
+        deB1G4.setTargetLanguage(Language.DE);
+        deB1G4.setDifficultyLevel(LanguageLevel.B1);
+        deB1G4.setTopic("praeteritum");
+        deB1G4.setQuestionText("Als ich jung ___, spielte ich oft Fußball.");
+        deB1G4.setCorrectAnswer("war");
+        deB1G4.setWrongOption1("bin");
+        deB1G4.setWrongOption2("sei");
+        deB1G4.setWrongOption3("wäre");
+        deB1G4.setXpReward(20);
+        deB1G4.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deB1G4);
+
+        // DE B2 MCQ GRAMMAR (4)
+        ExerciseMcq deB2G1 = new ExerciseMcq();
+        deB2G1.setTargetLanguage(Language.DE);
+        deB2G1.setDifficultyLevel(LanguageLevel.B2);
+        deB2G1.setTopic("konjunktiv_ii");
+        deB2G1.setQuestionText("Wenn ich reich ___, würde ich reisen.");
+        deB2G1.setCorrectAnswer("wäre");
+        deB2G1.setWrongOption1("bin");
+        deB2G1.setWrongOption2("war");
+        deB2G1.setWrongOption3("sei");
+        deB2G1.setXpReward(25);
+        deB2G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deB2G1);
+
+        ExerciseMcq deB2G2 = new ExerciseMcq();
+        deB2G2.setTargetLanguage(Language.DE);
+        deB2G2.setDifficultyLevel(LanguageLevel.B2);
+        deB2G2.setTopic("passiv");
+        deB2G2.setQuestionText("Das Haus ___ letztes Jahr gebaut.");
+        deB2G2.setCorrectAnswer("wurde");
+        deB2G2.setWrongOption1("wird");
+        deB2G2.setWrongOption2("war");
+        deB2G2.setWrongOption3("worden");
+        deB2G2.setXpReward(25);
+        deB2G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deB2G2);
+
+        ExerciseMcq deB2G3 = new ExerciseMcq();
+        deB2G3.setTargetLanguage(Language.DE);
+        deB2G3.setDifficultyLevel(LanguageLevel.B2);
+        deB2G3.setTopic("indirekte_rede");
+        deB2G3.setQuestionText("Er sagte, er ___ keine Zeit.");
+        deB2G3.setCorrectAnswer("habe");
+        deB2G3.setWrongOption1("hat");
+        deB2G3.setWrongOption2("hätte");
+        deB2G3.setWrongOption3("haben");
+        deB2G3.setXpReward(25);
+        deB2G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deB2G3);
+
+        ExerciseMcq deB2G4 = new ExerciseMcq();
+        deB2G4.setTargetLanguage(Language.DE);
+        deB2G4.setDifficultyLevel(LanguageLevel.B2);
+        deB2G4.setTopic("infinitiv_mit_zu");
+        deB2G4.setQuestionText("Es ist wichtig, pünktlich ___ sein.");
+        deB2G4.setCorrectAnswer("zu");
+        deB2G4.setWrongOption1("um");
+        deB2G4.setWrongOption2("für");
+        deB2G4.setWrongOption3("-");
+        deB2G4.setXpReward(25);
+        deB2G4.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deB2G4);
+
+        // DE C1 MCQ GRAMMAR (3)
+        ExerciseMcq deC1G1 = new ExerciseMcq();
+        deC1G1.setTargetLanguage(Language.DE);
+        deC1G1.setDifficultyLevel(LanguageLevel.C1);
+        deC1G1.setTopic("genitiv");
+        deC1G1.setQuestionText("Das ist das Auto ___ Mannes.");
+        deC1G1.setCorrectAnswer("des");
+        deC1G1.setWrongOption1("dem");
+        deC1G1.setWrongOption2("den");
+        deC1G1.setWrongOption3("der");
+        deC1G1.setXpReward(30);
+        deC1G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deC1G1);
+
+        ExerciseMcq deC1G2 = new ExerciseMcq();
+        deC1G2.setTargetLanguage(Language.DE);
+        deC1G2.setDifficultyLevel(LanguageLevel.C1);
+        deC1G2.setTopic("partizipial");
+        deC1G2.setQuestionText("Die ___ Arbeit wurde anerkannt.");
+        deC1G2.setCorrectAnswer("geleistete");
+        deC1G2.setWrongOption1("leistende");
+        deC1G2.setWrongOption2("geleistet");
+        deC1G2.setWrongOption3("leisten");
+        deC1G2.setXpReward(30);
+        deC1G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deC1G2);
+
+        ExerciseMcq deC1G3 = new ExerciseMcq();
+        deC1G3.setTargetLanguage(Language.DE);
+        deC1G3.setDifficultyLevel(LanguageLevel.C1);
+        deC1G3.setTopic("nominalisierung");
+        deC1G3.setQuestionText("Das ___ der Aufgabe dauerte lange.");
+        deC1G3.setCorrectAnswer("Lösen");
+        deC1G3.setWrongOption1("Lösung");
+        deC1G3.setWrongOption2("Gelöst");
+        deC1G3.setWrongOption3("Lösend");
+        deC1G3.setXpReward(30);
+        deC1G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deC1G3);
+
+        // DE C2 MCQ GRAMMAR (3)
+        ExerciseMcq deC2G1 = new ExerciseMcq();
+        deC2G1.setTargetLanguage(Language.DE);
+        deC2G1.setDifficultyLevel(LanguageLevel.C2);
+        deC2G1.setTopic("konjunktiv_i");
+        deC2G1.setQuestionText("Er behauptete, er ___ unschuldig.");
+        deC2G1.setCorrectAnswer("sei");
+        deC2G1.setWrongOption1("ist");
+        deC2G1.setWrongOption2("wäre");
+        deC2G1.setWrongOption3("war");
+        deC2G1.setXpReward(35);
+        deC2G1.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deC2G1);
+
+        ExerciseMcq deC2G2 = new ExerciseMcq();
+        deC2G2.setTargetLanguage(Language.DE);
+        deC2G2.setDifficultyLevel(LanguageLevel.C2);
+        deC2G2.setTopic("erweitertes_partizip");
+        deC2G2.setQuestionText("Der ___ Mann ist mein Kollege.");
+        deC2G2.setCorrectAnswer("dort stehende");
+        deC2G2.setWrongOption1("dort steht");
+        deC2G2.setWrongOption2("dort gestanden");
+        deC2G2.setWrongOption3("dort stehen");
+        deC2G2.setXpReward(35);
+        deC2G2.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deC2G2);
+
+        ExerciseMcq deC2G3 = new ExerciseMcq();
+        deC2G3.setTargetLanguage(Language.DE);
+        deC2G3.setDifficultyLevel(LanguageLevel.C2);
+        deC2G3.setTopic("nomen_verb_verbindungen");
+        deC2G3.setQuestionText("Er hat eine Entscheidung ___.");
+        deC2G3.setCorrectAnswer("getroffen");
+        deC2G3.setWrongOption1("gemacht");
+        deC2G3.setWrongOption2("genommen");
+        deC2G3.setWrongOption3("gegeben");
+        deC2G3.setXpReward(35);
+        deC2G3.setContentType(ExerciseContentType.GRAMMAR);
+        mcqRepository.save(deC2G3);
+
+        // DE A1 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank deA1GF1 = new ExerciseFillBlank();
+        deA1GF1.setTargetLanguage(Language.DE);
+        deA1GF1.setDifficultyLevel(LanguageLevel.A1);
+        deA1GF1.setTopic("sein");
+        deA1GF1.setSentenceWithBlank("Ich ___ Student.");
+        deA1GF1.setCorrectAnswer("bin");
+        deA1GF1.setXpReward(10);
+        deA1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deA1GF1);
+
+        ExerciseFillBlank deA1GF2 = new ExerciseFillBlank();
+        deA1GF2.setTargetLanguage(Language.DE);
+        deA1GF2.setDifficultyLevel(LanguageLevel.A1);
+        deA1GF2.setTopic("haben");
+        deA1GF2.setSentenceWithBlank("Er ___ zwei Kinder.");
+        deA1GF2.setCorrectAnswer("hat");
+        deA1GF2.setXpReward(10);
+        deA1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deA1GF2);
+
+        ExerciseFillBlank deA1GF3 = new ExerciseFillBlank();
+        deA1GF3.setTargetLanguage(Language.DE);
+        deA1GF3.setDifficultyLevel(LanguageLevel.A1);
+        deA1GF3.setTopic("artikel");
+        deA1GF3.setSentenceWithBlank("___ Apfel ist rot.");
+        deA1GF3.setCorrectAnswer("Der");
+        deA1GF3.setXpReward(10);
+        deA1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deA1GF3);
+
+        ExerciseFillBlank deA1GF4 = new ExerciseFillBlank();
+        deA1GF4.setTargetLanguage(Language.DE);
+        deA1GF4.setDifficultyLevel(LanguageLevel.A1);
+        deA1GF4.setTopic("verben");
+        deA1GF4.setSentenceWithBlank("Du ___ sehr gut Deutsch.");
+        deA1GF4.setCorrectAnswer("sprichst");
+        deA1GF4.setXpReward(10);
+        deA1GF4.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deA1GF4);
+
+        // DE A2 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank deA2GF1 = new ExerciseFillBlank();
+        deA2GF1.setTargetLanguage(Language.DE);
+        deA2GF1.setDifficultyLevel(LanguageLevel.A2);
+        deA2GF1.setTopic("akkusativ");
+        deA2GF1.setSentenceWithBlank("Ich kaufe ___ Buch.");
+        deA2GF1.setCorrectAnswer("ein");
+        deA2GF1.setXpReward(15);
+        deA2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deA2GF1);
+
+        ExerciseFillBlank deA2GF2 = new ExerciseFillBlank();
+        deA2GF2.setTargetLanguage(Language.DE);
+        deA2GF2.setDifficultyLevel(LanguageLevel.A2);
+        deA2GF2.setTopic("trennbare_verben");
+        deA2GF2.setSentenceWithBlank("Ich stehe jeden Morgen um 7 Uhr ___.");
+        deA2GF2.setCorrectAnswer("auf");
+        deA2GF2.setXpReward(15);
+        deA2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deA2GF2);
+
+        ExerciseFillBlank deA2GF3 = new ExerciseFillBlank();
+        deA2GF3.setTargetLanguage(Language.DE);
+        deA2GF3.setDifficultyLevel(LanguageLevel.A2);
+        deA2GF3.setTopic("perfekt");
+        deA2GF3.setSentenceWithBlank("Ich habe einen Kuchen ___.");
+        deA2GF3.setCorrectAnswer("gebacken");
+        deA2GF3.setXpReward(15);
+        deA2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deA2GF3);
+
+        ExerciseFillBlank deA2GF4 = new ExerciseFillBlank();
+        deA2GF4.setTargetLanguage(Language.DE);
+        deA2GF4.setDifficultyLevel(LanguageLevel.A2);
+        deA2GF4.setTopic("praepositionen");
+        deA2GF4.setSentenceWithBlank("Das Buch liegt ___ dem Tisch.");
+        deA2GF4.setCorrectAnswer("auf");
+        deA2GF4.setXpReward(15);
+        deA2GF4.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deA2GF4);
+
+        // DE B1 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank deB1GF1 = new ExerciseFillBlank();
+        deB1GF1.setTargetLanguage(Language.DE);
+        deB1GF1.setDifficultyLevel(LanguageLevel.B1);
+        deB1GF1.setTopic("dativ");
+        deB1GF1.setSentenceWithBlank("Ich helfe ___ Frau.");
+        deB1GF1.setCorrectAnswer("der");
+        deB1GF1.setXpReward(20);
+        deB1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deB1GF1);
+
+        ExerciseFillBlank deB1GF2 = new ExerciseFillBlank();
+        deB1GF2.setTargetLanguage(Language.DE);
+        deB1GF2.setDifficultyLevel(LanguageLevel.B1);
+        deB1GF2.setTopic("nebensaetze");
+        deB1GF2.setSentenceWithBlank("Ich weiß nicht, ___ er kommt.");
+        deB1GF2.setCorrectAnswer("ob");
+        deB1GF2.setXpReward(20);
+        deB1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deB1GF2);
+
+        ExerciseFillBlank deB1GF3 = new ExerciseFillBlank();
+        deB1GF3.setTargetLanguage(Language.DE);
+        deB1GF3.setDifficultyLevel(LanguageLevel.B1);
+        deB1GF3.setTopic("reflexive_verben");
+        deB1GF3.setSentenceWithBlank("Ich freue ___ auf den Urlaub.");
+        deB1GF3.setCorrectAnswer("mich");
+        deB1GF3.setXpReward(20);
+        deB1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deB1GF3);
+
+        ExerciseFillBlank deB1GF4 = new ExerciseFillBlank();
+        deB1GF4.setTargetLanguage(Language.DE);
+        deB1GF4.setDifficultyLevel(LanguageLevel.B1);
+        deB1GF4.setTopic("komparativ");
+        deB1GF4.setSentenceWithBlank("Berlin ist ___ als München.");
+        deB1GF4.setCorrectAnswer("größer");
+        deB1GF4.setXpReward(20);
+        deB1GF4.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deB1GF4);
+
+        // DE B2 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank deB2GF1 = new ExerciseFillBlank();
+        deB2GF1.setTargetLanguage(Language.DE);
+        deB2GF1.setDifficultyLevel(LanguageLevel.B2);
+        deB2GF1.setTopic("konjunktiv_ii");
+        deB2GF1.setSentenceWithBlank("Wenn ich Zeit ___, würde ich kommen.");
+        deB2GF1.setCorrectAnswer("hätte");
+        deB2GF1.setXpReward(25);
+        deB2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deB2GF1);
+
+        ExerciseFillBlank deB2GF2 = new ExerciseFillBlank();
+        deB2GF2.setTargetLanguage(Language.DE);
+        deB2GF2.setDifficultyLevel(LanguageLevel.B2);
+        deB2GF2.setTopic("passiv");
+        deB2GF2.setSentenceWithBlank("Das Fenster wurde von mir ___.");
+        deB2GF2.setCorrectAnswer("geöffnet");
+        deB2GF2.setXpReward(25);
+        deB2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deB2GF2);
+
+        ExerciseFillBlank deB2GF3 = new ExerciseFillBlank();
+        deB2GF3.setTargetLanguage(Language.DE);
+        deB2GF3.setDifficultyLevel(LanguageLevel.B2);
+        deB2GF3.setTopic("plusquamperfekt");
+        deB2GF3.setSentenceWithBlank("Nachdem ich gegessen ___, ging ich spazieren.");
+        deB2GF3.setCorrectAnswer("hatte");
+        deB2GF3.setXpReward(25);
+        deB2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deB2GF3);
+
+        ExerciseFillBlank deB2GF4 = new ExerciseFillBlank();
+        deB2GF4.setTargetLanguage(Language.DE);
+        deB2GF4.setDifficultyLevel(LanguageLevel.B2);
+        deB2GF4.setTopic("konnektoren");
+        deB2GF4.setSentenceWithBlank("Er kam nicht, ___ er krank war.");
+        deB2GF4.setCorrectAnswer("obwohl");
+        deB2GF4.setXpReward(25);
+        deB2GF4.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deB2GF4);
+
+        // DE C1 Fill-blank GRAMMAR (3)
+        ExerciseFillBlank deC1GF1 = new ExerciseFillBlank();
+        deC1GF1.setTargetLanguage(Language.DE);
+        deC1GF1.setDifficultyLevel(LanguageLevel.C1);
+        deC1GF1.setTopic("genitiv");
+        deC1GF1.setSentenceWithBlank("Trotz ___ Regens gingen wir spazieren.");
+        deC1GF1.setCorrectAnswer("des");
+        deC1GF1.setXpReward(30);
+        deC1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deC1GF1);
+
+        ExerciseFillBlank deC1GF2 = new ExerciseFillBlank();
+        deC1GF2.setTargetLanguage(Language.DE);
+        deC1GF2.setDifficultyLevel(LanguageLevel.C1);
+        deC1GF2.setTopic("partizipial");
+        deC1GF2.setSentenceWithBlank("Die ___ Aufgabe war sehr schwierig.");
+        deC1GF2.setCorrectAnswer("gestellte");
+        deC1GF2.setXpReward(30);
+        deC1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deC1GF2);
+
+        ExerciseFillBlank deC1GF3 = new ExerciseFillBlank();
+        deC1GF3.setTargetLanguage(Language.DE);
+        deC1GF3.setDifficultyLevel(LanguageLevel.C1);
+        deC1GF3.setTopic("futur_ii");
+        deC1GF3.setSentenceWithBlank("Bis morgen werde ich die Arbeit ___ haben.");
+        deC1GF3.setCorrectAnswer("beendet");
+        deC1GF3.setXpReward(30);
+        deC1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deC1GF3);
+
+        // DE C2 Fill-blank GRAMMAR (3)
+        ExerciseFillBlank deC2GF1 = new ExerciseFillBlank();
+        deC2GF1.setTargetLanguage(Language.DE);
+        deC2GF1.setDifficultyLevel(LanguageLevel.C2);
+        deC2GF1.setTopic("konjunktiv_i");
+        deC2GF1.setSentenceWithBlank("Er sagt, er ___ krank.");
+        deC2GF1.setCorrectAnswer("sei");
+        deC2GF1.setXpReward(35);
+        deC2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deC2GF1);
+
+        ExerciseFillBlank deC2GF2 = new ExerciseFillBlank();
+        deC2GF2.setTargetLanguage(Language.DE);
+        deC2GF2.setDifficultyLevel(LanguageLevel.C2);
+        deC2GF2.setTopic("nomen_verb");
+        deC2GF2.setSentenceWithBlank("Sie hat großen Einfluss auf ihn ___.");
+        deC2GF2.setCorrectAnswer("ausgeübt");
+        deC2GF2.setXpReward(35);
+        deC2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deC2GF2);
+
+        ExerciseFillBlank deC2GF3 = new ExerciseFillBlank();
+        deC2GF3.setTargetLanguage(Language.DE);
+        deC2GF3.setDifficultyLevel(LanguageLevel.C2);
+        deC2GF3.setTopic("modalpartikeln");
+        deC2GF3.setSentenceWithBlank("Das ist ___ interessant!");
+        deC2GF3.setCorrectAnswer("ja");
+        deC2GF3.setXpReward(35);
+        deC2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        fillBlankRepository.save(deC2GF3);
+
+        logger.info("German GRAMMAR exercises seeded: 22 MCQ + 22 Fill-Blank = 44 total");
     }
 }
