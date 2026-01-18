@@ -7,6 +7,7 @@ import com.sep.sep_backend.ai.dto.ConversationResult;
 import com.sep.sep_backend.ai.entity.ChatMessage;
 import com.sep.sep_backend.ai.entity.ChatSession;
 import com.sep.sep_backend.ai.repository.ChatMessageRepository;
+import com.sep.sep_backend.ai.repository.ChatSessionRepository;
 import com.sep.sep_backend.ai.service.ConversationService;
 import com.sep.sep_backend.user.entity.Language;
 import com.sep.sep_backend.user.entity.UserLearning;
@@ -38,14 +39,17 @@ public class ChatController {
     private final ConversationService conversationService;
     private final UserLearningService userLearningService;
     private final ChatMessageRepository messageRepository;
+    private final ChatSessionRepository sessionRepository;
 
     public ChatController(
             ConversationService conversationService,
             UserLearningService userLearningService,
-            ChatMessageRepository messageRepository) {
+            ChatMessageRepository messageRepository,
+            ChatSessionRepository sessionRepository) {
         this.conversationService = conversationService;
         this.userLearningService = userLearningService;
         this.messageRepository = messageRepository;
+        this.sessionRepository = sessionRepository;
     }
 
     /**
@@ -66,8 +70,14 @@ public class ChatController {
         ChatSession session;
         if (request.getSessionId() != null && !request.getSessionId().isBlank()) {
             UUID sessionId = UUID.fromString(request.getSessionId());
-            session = conversationService.getOrCreateSession(userId, learningLanguage);
-            // TODO: Validate session belongs to user
+            ChatSession existingSession = sessionRepository.findById(sessionId).orElse(null);
+            if (existingSession == null) {
+                return ResponseEntity.notFound().build();
+            }
+            if (!existingSession.getUser().getId().equals(userId)) {
+                return ResponseEntity.status(403).build();
+            }
+            session = existingSession;
         } else {
             session = conversationService.getOrCreateSession(userId, learningLanguage);
         }

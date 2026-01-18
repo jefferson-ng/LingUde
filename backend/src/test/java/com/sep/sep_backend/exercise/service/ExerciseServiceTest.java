@@ -2,8 +2,8 @@ package com.sep.sep_backend.exercise.service;
 
 // ===== Imports for our app classes =====
 import com.sep.sep_backend.exercise.dto.ExerciseDetailResponse;
-import com.sep.sep_backend.exercise.entity.ExerciseMcq;
-import com.sep.sep_backend.exercise.entity.ExerciseFillBlank;
+import com.sep.sep_backend.exercise.entity.*;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import com.sep.sep_backend.exercise.repository.ExerciseFillBlankRepository;
@@ -25,8 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 // --- extra imports needed---
-import com.sep.sep_backend.exercise.entity.UserProgress;
-import com.sep.sep_backend.exercise.entity.ExerciseType;
 import com.sep.sep_backend.user.entity.User;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.*;
@@ -107,6 +105,7 @@ class ExerciseServiceTest {
         e1.setWrongOption3("small");
         e1.setXpReward(10);
         e1.setTopic("Vocabulary");
+        e1.setContentType(ExerciseContentType.VOCABULARY);
         e1.setTargetLanguage(com.sep.sep_backend.user.entity.Language.EN);
         e1.setDifficultyLevel(com.sep.sep_backend.user.entity.LanguageLevel.A1);
 
@@ -118,6 +117,7 @@ class ExerciseServiceTest {
         e2.setWrongOption3("icy");
         e2.setXpReward(12);
         e2.setTopic("Opposites");
+        e2.setContentType(ExerciseContentType.VOCABULARY);
         e2.setTargetLanguage(com.sep.sep_backend.user.entity.Language.EN);
         e2.setDifficultyLevel(com.sep.sep_backend.user.entity.LanguageLevel.A2);
 
@@ -133,6 +133,7 @@ class ExerciseServiceTest {
         com.sep.sep_backend.exercise.dto.ExerciseSummaryResponse first = result.get(0);
         org.assertj.core.api.Assertions.assertThat(first.getType())
                 .isEqualTo(com.sep.sep_backend.exercise.entity.ExerciseType.MCQ);
+        assertThat(first.getContentType()).isEqualTo(ExerciseContentType.VOCABULARY);
         org.assertj.core.api.Assertions.assertThat(first.getPreviewText()).isEqualTo("Choose the synonym of 'quick'");
         org.assertj.core.api.Assertions.assertThat(first.getXpReward()).isEqualTo(10);
         org.assertj.core.api.Assertions.assertThat(first.getTargetLanguage()).isEqualTo("EN");
@@ -142,6 +143,7 @@ class ExerciseServiceTest {
         com.sep.sep_backend.exercise.dto.ExerciseSummaryResponse second = result.get(1);
         org.assertj.core.api.Assertions.assertThat(second.getType())
                 .isEqualTo(com.sep.sep_backend.exercise.entity.ExerciseType.MCQ);
+        assertThat(second.getContentType()).isEqualTo(ExerciseContentType.VOCABULARY);
         org.assertj.core.api.Assertions.assertThat(second.getPreviewText()).isEqualTo("Pick the antonym of 'cold'");
         org.assertj.core.api.Assertions.assertThat(second.getXpReward()).isEqualTo(12);
         org.assertj.core.api.Assertions.assertThat(second.getTargetLanguage()).isEqualTo("EN");
@@ -383,6 +385,7 @@ class ExerciseServiceTest {
         fb1.setCorrectAnswer("drink");
         fb1.setXpReward(8);
         fb1.setTopic("Present Simple");
+        fb1.setContentType(ExerciseContentType.VOCABULARY);
         fb1.setTargetLanguage(com.sep.sep_backend.user.entity.Language.EN);
         fb1.setDifficultyLevel(com.sep.sep_backend.user.entity.LanguageLevel.A1);
 
@@ -391,6 +394,7 @@ class ExerciseServiceTest {
         fb2.setCorrectAnswer("goes");
         fb2.setXpReward(10);
         fb2.setTopic("Transportation");
+        fb2.setContentType(ExerciseContentType.VOCABULARY);
         fb2.setTargetLanguage(com.sep.sep_backend.user.entity.Language.EN);
         fb2.setDifficultyLevel(com.sep.sep_backend.user.entity.LanguageLevel.A2);
 
@@ -402,9 +406,11 @@ class ExerciseServiceTest {
         // Assert
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getType()).isEqualTo(ExerciseType.FILL_BLANK);
+        assertThat(result.get(0).getContentType()).isEqualTo(ExerciseContentType.VOCABULARY);
         assertThat(result.get(0).getPreviewText()).isEqualTo("I ___ coffee every morning.");
         assertThat(result.get(0).getXpReward()).isEqualTo(8);
         assertThat(result.get(1).getPreviewText()).isEqualTo("She ___ to work by bus.");
+        assertThat(result.get(1).getContentType()).isEqualTo(ExerciseContentType.VOCABULARY);
     }
 
     // ------------------------------------------------------

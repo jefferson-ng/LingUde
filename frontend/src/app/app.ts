@@ -35,6 +35,9 @@ export class App implements OnInit {
   protected readonly userXP = signal(0);
   protected readonly userStreak = signal(0);
   protected readonly isStreakActiveToday = signal(false);
+  protected readonly xpInCurrentLevel = signal(0);
+  protected readonly xpForNextLevel = signal(100);
+  protected readonly xpProgressPercent = signal(0);
   protected readonly userName = signal('');
   protected readonly userEmail = signal('');
   protected readonly isLoggedIn = signal(false);
@@ -79,7 +82,7 @@ export class App implements OnInit {
     this.userLearningService.userLearning$.subscribe(data => {
       if (data) {
         console.log('📢 Header received update from UserLearningService:', {xp: data.xp, streak: data.streakCount, lastActivity: data.lastActivityDate});
-        this.userXP.set(data.xp);
+        this.updateXPAndLevel(data.xp);
         this.userStreak.set(data.streakCount);
         // Streak ist aktiv, wenn lastActivityDate heute ist UND streakCount > 0
         const today = new Date().toISOString().split('T')[0];
@@ -106,7 +109,7 @@ export class App implements OnInit {
   private loadUserXP(): void {
     this.userLearningService.getUserLearning().subscribe({
       next: (data) => {
-        this.userXP.set(data.xp);
+        this.updateXPAndLevel(data.xp);
         this.userStreak.set(data.streakCount);
         // Streak ist aktiv, wenn lastActivityDate heute ist UND streakCount > 0
         const today = new Date().toISOString().split('T')[0];
@@ -123,6 +126,26 @@ export class App implements OnInit {
         // Keep default value on error
       }
     });
+  }
+
+  /**
+   * Update XP and calculate level progress
+   */
+  private updateXPAndLevel(xp: number): void {
+    this.userXP.set(xp);
+    
+    // Calculate level (100 XP per level)
+    const level = Math.floor(xp / 100) + 1;
+    this.userLevel.set(level);
+    
+    // Calculate XP progress within current level
+    const xpInLevel = xp % 100;
+    this.xpInCurrentLevel.set(xpInLevel);
+    this.xpForNextLevel.set(100 - xpInLevel);
+    
+    // Calculate progress percentage for the bar
+    const percent = (xpInLevel / 100) * 100;
+    this.xpProgressPercent.set(percent);
   }
 
   /**

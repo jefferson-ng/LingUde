@@ -1,7 +1,6 @@
 package com.sep.sep_backend.ai.tool;
 
 import com.google.genai.types.Schema;
-import com.google.genai.types.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
