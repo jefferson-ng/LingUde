@@ -110,59 +110,67 @@
     
     <div class="learning-path">
       <div class="levels-path">
-      @for (level of levels(); track level.id) {
-        <!-- Difficulty Header (shown at start of each difficulty group) -->
-        @if (isFirstInDifficultyGroup($index)) {
-          <div class="difficulty-header" [attr.data-level]="level.difficultyLevel">
-            <span class="difficulty-badge">{{ level.difficultyLevel }}</span>
-          </div>
-        }
-        <div
-          class="path-item"
-          [class.left]="$index % 2 === 0"
-          [class.right]="$index % 2 === 1"
-          [attr.data-difficulty]="level.difficultyLevel"
-        >
-          <div 
-            class="level-node-wrapper"
-            [class.locked]="level.status === 'locked'"
-            [class.unlocked]="level.status === 'unlocked'"
-            [class.completed]="level.status === 'completed'"
-            [class.selected]="selectedLevel()?.id === level.id"
-            [attr.data-debug-status]="level.status"
-            [attr.data-debug-id]="level.id"
-            [attr.data-difficulty]="level.difficultyLevel"
-          >
-            <div class="level-node" (click)="selectLevel(level, $event)">
-              <div class="node-circle">
-                @if (level.status === 'locked') {
-                  <svg class="node-icon lock-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z"/>
-                  </svg>
-                }
-                @if (level.status === 'unlocked') {
-                  <svg class="node-icon star-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                }
-                @if (level.status === 'completed') {
-                  <svg class="node-icon check-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-                  </svg>
-                }
-              </div>
+        @for (level of levels(); track level.id; let i = $index) {
+          <!-- Connector from previous node -->
+          @if (i > 0) {
+            <svg class="path-connector-svg" viewBox="0 0 200 60" preserveAspectRatio="none">
+              @if (i % 2 === 0) {
+                <!-- Curve from right to left -->
+                <path
+                  class="connector-path"
+                  [class.active]="levels()[i - 1].status === 'completed'"
+                  [attr.data-difficulty]="levels()[i - 1].difficultyLevel"
+                  d="M 155 0 C 155 30, 45 30, 45 60"
+                />
+              } @else {
+                <!-- Curve from left to right -->
+                <path
+                  class="connector-path"
+                  [class.active]="levels()[i - 1].status === 'completed'"
+                  [attr.data-difficulty]="levels()[i - 1].difficultyLevel"
+                  d="M 45 0 C 45 30, 155 30, 155 60"
+                />
+              }
+            </svg>
+          }
+
+          <!-- Level Node -->
+          <div class="path-row" [class.row-left]="i % 2 === 0" [class.row-right]="i % 2 !== 0">
+            <div
+              class="level-node-wrapper"
+              [class.locked]="level.status === 'locked'"
+              [class.unlocked]="level.status === 'unlocked'"
+              [class.completed]="level.status === 'completed'"
+              [class.selected]="selectedLevel()?.id === level.id"
+              [attr.data-difficulty]="level.difficultyLevel"
+            >
+              <button class="level-node" (click)="selectLevel(level, $event)" [disabled]="level.status === 'locked'">
+                <div class="node-circle">
+                  <div class="node-inner">
+                    @if (level.status === 'locked') {
+                      <svg class="node-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z"/>
+                      </svg>
+                    }
+                    @if (level.status === 'unlocked') {
+                      <svg class="node-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    }
+                    @if (level.status === 'completed') {
+                      <svg class="node-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                      </svg>
+                    }
+                  </div>
+                </div>
+                <span class="level-number">{{ level.levelNumber }}</span>
+              </button>
             </div>
           </div>
-
-          @if ($index < levels().length - 1) {
-            <div class="path-connector" 
-                 [class.active]="level.status === 'completed'"
-                 [attr.data-difficulty]="level.difficultyLevel"></div>
-          }
-        </div>
-      }
+        }
+      </div>
     </div>
-  </div>
   }
 
   <!-- Streak Celebration Modal -->
