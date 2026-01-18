@@ -97,33 +97,29 @@ export class ExerciseService {
   /**
    * Submit answer for MCQ exercise
    */
-  submitMcqAnswer(exerciseId: string, selectedAnswer: string): Observable<SubmissionResultResponse> {
+  submitMcqAnswer(exerciseId: string, selectedAnswer: string, isPracticeMode: boolean = false): Observable<SubmissionResultResponse> {
     const request: McqSubmissionRequest = { selectedAnswer };
-    return this.http.post<SubmissionResultResponse>(
-      `${this.apiUrl}/mcq/${exerciseId}/submit`,
-      request
-    );
+    const url = `${this.apiUrl}/mcq/${exerciseId}/submit?isPracticeMode=${isPracticeMode}`;
+    return this.http.post<SubmissionResultResponse>(url, request);
   }
 
   /**
    * Submit answer for Fill-Blank exercise
    */
-  submitFillBlankAnswer(exerciseId: string, answerText: string): Observable<SubmissionResultResponse> {
+  submitFillBlankAnswer(exerciseId: string, answerText: string, isPracticeMode: boolean = false): Observable<SubmissionResultResponse> {
     const request: FillBlankSubmissionRequest = { answerText };
-    return this.http.post<SubmissionResultResponse>(
-      `${this.apiUrl}/fillblank/${exerciseId}/submit`,
-      request
-    );
+    const url = `${this.apiUrl}/fillblank/${exerciseId}/submit?isPracticeMode=${isPracticeMode}`;
+    return this.http.post<SubmissionResultResponse>(url, request);
   }
 
   /**
    * Generic submit answer method (determines type automatically)
    */
-  submitAnswer(exerciseId: string, exerciseType: ExerciseType, userAnswer: string): Observable<SubmissionResultResponse> {
+  submitAnswer(exerciseId: string, exerciseType: ExerciseType, userAnswer: string, isPracticeMode: boolean = false): Observable<SubmissionResultResponse> {
     if (exerciseType === 'MCQ') {
-      return this.submitMcqAnswer(exerciseId, userAnswer);
+      return this.submitMcqAnswer(exerciseId, userAnswer, isPracticeMode);
     } else {
-      return this.submitFillBlankAnswer(exerciseId, userAnswer);
+      return this.submitFillBlankAnswer(exerciseId, userAnswer, isPracticeMode);
     }
   }
 

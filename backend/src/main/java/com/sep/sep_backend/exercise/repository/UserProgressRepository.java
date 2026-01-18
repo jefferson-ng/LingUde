@@ -144,4 +144,17 @@ public interface UserProgressRepository extends JpaRepository<UserProgress, UUID
             Integer minIncorrectAttempts
     );
 
+    /**
+     * Retrieves ALL exercises that have at least one incorrect attempt, regardless of completion status.
+     * This allows users to retry exercises they got wrong, even if they completed them before.
+     *
+     * @param userId The unique identifier of the user.
+     * @param minIncorrectAttempts Minimum number of incorrect attempts (exclusive).
+     * @return A list of UserProgress entries with incorrect attempts.
+     */
+    List<UserProgress> findAllByUserIdAndIncorrectAttemptsGreaterThan(
+            UUID userId,
+            Integer minIncorrectAttempts
+    );
+
 }

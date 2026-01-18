@@ -1,35 +1,5 @@
 <ng-container *transloco="let t">
 <div class="learning-container">
-  <!-- Retry Prompt Dialog -->
-  @if (showRetryPrompt()) {
-    <div class="retry-prompt-overlay">
-      <div class="retry-prompt-dialog">
-        <div class="retry-prompt-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 4v6h6M23 20v-6h-6"/>
-            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
-          </svg>
-        </div>
-        <h2 class="retry-prompt-title">{{ 'learning.retryPrompt.title' | transloco }}</h2>
-        <p class="retry-prompt-message">
-          {{ 'learning.retryPrompt.message' | transloco: { count: retryPromptCount() } }}
-        </p>
-        <div class="retry-prompt-buttons">
-          <button class="retry-prompt-btn primary" (click)="startRetryPhase()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 4v6h6"/>
-              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
-            </svg>
-            {{ 'learning.retryPrompt.retry' | transloco }}
-          </button>
-          <button class="retry-prompt-btn secondary" (click)="skipRetryPhase()">
-            {{ 'learning.retryPrompt.skip' | transloco }}
-          </button>
-        </div>
-      </div>
-    </div>
-  }
-  
   <!-- Exercise Mode View -->
   @if (exerciseMode() && currentExercise()) {
     <div class="exercise-mode">
@@ -59,6 +29,7 @@
       <div class="exercise-content">
         <app-exercise-viewer
           [exercise]="currentExercise()!"
+          [isPracticeMode]="isPracticeMode"
           (onSubmit)="onExerciseSubmit($event)"
           (onNext)="onNextExercise()"
         />
@@ -67,7 +38,7 @@
   } @else {
     <!-- Normal Learning Path View -->
     
-    <!-- Language Selector -->
+    <!-- Language Selector (appears in top-right on desktop, top on mobile) -->
     <div class="language-selector-container" (mouseenter)="onLanguageHover()" (mouseleave)="onLanguageLeave()">
       <div class="custom-select" [class.open]="isLanguageDropdownOpen()">
         <div class="select-trigger">
@@ -93,6 +64,86 @@
         </div>
       </div>
     </div>
+    
+    <!-- Practice Widget - Right Side on desktop, top on mobile -->
+    <div class="practice-widget-container">
+      <div class="practice-widget" [class.empty-state]="practiceWidgetCount() === 0">
+        <!-- Widget Header -->
+        <div class="widget-header">
+          <div class="widget-icon" [class.mistakes]="practiceWidgetCount() > 0" [class.success]="practiceWidgetCount() === 0">
+            @if (practiceWidgetCount() > 0) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            }
+          </div>
+          <div class="widget-title-group">
+            <h3 class="widget-title">{{ 'learning.practiceWidget.title' | transloco }}</h3>
+            <p class="widget-subtitle">
+              @if (practiceWidgetCount() > 0) {
+                {{ 'learning.practiceWidget.subtitle' | transloco }}
+              } @else {
+                {{ 'learning.practiceWidget.subtitleEmpty' | transloco }}
+              }
+            </p>
+          </div>
+        </div>
+
+        @if (practiceWidgetCount() > 0) {
+          <!-- Stats Display -->
+          <div class="widget-stats">
+            <div class="stat-circle">
+              <span class="stat-number">{{ practiceWidgetCount() }}</span>
+            </div>
+            <div class="stat-label">
+              {{ 'learning.practiceWidget.exercisesToReview' | transloco }}
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button class="widget-action-button" (click)="startPracticeMode()">
+            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            {{ 'learning.practiceWidget.startPractice' | transloco }}
+          </button>
+        } @else {
+          <!-- Empty State -->
+          <div class="widget-empty-message">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <p class="empty-text">{{ 'learning.practiceWidget.emptyMessage' | transloco }}</p>
+          </div>
+          
+          <!-- Disabled Button -->
+          <button class="widget-action-button disabled" (click)="startPracticeMode()">
+            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            {{ 'learning.practiceWidget.allDone' | transloco }}
+          </button>
+        }
+      </div>
+    </div>
+    
+    <!-- Practice Widget Notification -->
+    @if (showPracticeWidgetNotification()) {
+      <div class="practice-widget-notification">
+        <svg class="notification-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        <span>{{ 'learning.practiceWidget.nothingToPractice' | transloco }}</span>
+      </div>
+    }
     
     <!-- Locked Level Notification -->
     @if (showLockedNotification()) {

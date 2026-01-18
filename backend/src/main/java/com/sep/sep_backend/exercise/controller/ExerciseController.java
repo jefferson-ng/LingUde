@@ -126,13 +126,14 @@ public class ExerciseController {
 
     @PostMapping(value = "/mcq/{id}/submit", consumes = "application/json", produces = "application/json")
     public SubmissionResultResponse submitMcq(@PathVariable UUID id,
-                                              @Valid @RequestBody McqSubmissionRequest req) {
+                                              @Valid @RequestBody McqSubmissionRequest req,
+                                              @RequestParam(defaultValue = "false") boolean isPracticeMode) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // Extract the authenticated userId (or null if not available).
         UUID userId = extractUserId(authentication);
 
         // Delegate the evaluation and progress update to the service layer.
-        return service.submitMcq(id, req, userId);
+        return service.submitMcq(id, req, userId, isPracticeMode);
     }
 
     /**
@@ -156,13 +157,14 @@ public class ExerciseController {
 
     @PostMapping(value = "/fillblank/{id}/submit", consumes = "application/json", produces = "application/json")
     public SubmissionResultResponse submitFillBlank(@PathVariable UUID id,
-                                                    @Valid @RequestBody FillBlankSubmissionRequest req) {
+                                                    @Valid @RequestBody FillBlankSubmissionRequest req,
+                                                    @RequestParam(defaultValue = "false") boolean isPracticeMode) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // Extract the authenticated userId (or null if not available).
         UUID userId = extractUserId(authentication);
 
         // Delegate the evaluation and progress update to the service layer.
-        return service.submitFillBlank(id, req, userId);
+        return service.submitFillBlank(id, req, userId, isPracticeMode);
     }
 
     // ---------- Session / progress ----------

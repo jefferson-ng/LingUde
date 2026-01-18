@@ -169,11 +169,11 @@ public class ExerciseService {
      * @return {@link SubmissionResultResponse} with correctness, XP and feedback
      */
     @Transactional
-    public SubmissionResultResponse submitMcq(UUID id, McqSubmissionRequest req, UUID userId) {
+    public SubmissionResultResponse submitMcq(UUID id, McqSubmissionRequest req, UUID userId, boolean isPracticeMode) {
         ExerciseMcq e = mcqRepo.findById(id).orElseThrow(() -> new NoSuchElementException("MCQ not found"));
         boolean correct = e.getCorrectAnswer().equals(req.getSelectedAnswer());
         int xp = correct ? e.getXpReward() : 0;
-        updateUserProgress(userId, id, ExerciseType.MCQ, correct, xp);
+        updateUserProgress(userId, id, ExerciseType.MCQ, correct, xp, isPracticeMode);
         String feedback = correct ? "Great job!" : "Try again.";
         return new SubmissionResultResponse(correct, xp, e.getCorrectAnswer(), feedback);
         // NOTE: In production, you may omit correctAnswer from response to prevent leaks.
@@ -198,13 +198,13 @@ public class ExerciseService {
      * @return {@link SubmissionResultResponse} with correctness, XP and feedback
      */
     @Transactional
-    public SubmissionResultResponse submitFillBlank(UUID id, FillBlankSubmissionRequest req, UUID userId) {
+    public SubmissionResultResponse submitFillBlank(UUID id, FillBlankSubmissionRequest req, UUID userId, boolean isPracticeMode) {
         ExerciseFillBlank e = fillRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Fill-Blank not found"));
         String userAns = normalize(req.getAnswerText());
         String sol = normalize(e.getCorrectAnswer());
         boolean correct = userAns.equals(sol);
         int xp = correct ? e.getXpReward() : 0;
-        updateUserProgress(userId, id, ExerciseType.FILL_BLANK, correct, xp);
+        updateUserProgress(userId, id, ExerciseType.FILL_BLANK, correct, xp, isPracticeMode);
         String feedback = correct ? "Nice!" : "Remember the correct form.";
         return new SubmissionResultResponse(correct, xp, e.getCorrectAnswer(), feedback);
     }
@@ -248,7 +248,7 @@ public class ExerciseService {
      * @param correct Indicates whether the user's submission was correct.
      * @param xp The amount of experience points (XP) earned from the correct submission.
      */
-    private void updateUserProgress(UUID userId, UUID exerciseId, ExerciseType type, boolean correct, int xp) {
+    private void updateUserProgress(UUID userId, UUID exerciseId, ExerciseType type, boolean correct, int xp, boolean isPracticeMode) {
         if (userId == null) return;
 
         // Look up an existing progress entry for this user and exercise.
@@ -270,6 +270,10 @@ public class ExerciseService {
                 up.setIsCompleted(true);
                 up.setCompletedAt(LocalDateTime.now());
                 up.setXpEarned(xp);
+                // Clear incorrect attempts only in practice mode
+                if (isPracticeMode) {
+                    up.setIncorrectAttempts(0);
+                }
                 shouldUpdateStreak = true; // First successful completion today
             } else {
                 // Track incorrect attempt
@@ -277,15 +281,23 @@ public class ExerciseService {
             }
             progressRepo.save(up);
         } else {
-            // Only update if it was not completed before and the new submission is correct
-            if (!Boolean.TRUE.equals(existing.getIsCompleted()) && correct) {
-                existing.setIsCompleted(true);
-                existing.setCompletedAt(LocalDateTime.now());
-                existing.setXpEarned(xp);
-                shouldUpdateStreak = true; // First successful completion today
+            // Existing UserProgress record
+            if (correct) {
+                // Only update completion status if not yet completed
+                if (!Boolean.TRUE.equals(existing.getIsCompleted())) {
+                    existing.setIsCompleted(true);
+                    existing.setCompletedAt(LocalDateTime.now());
+                    existing.setXpEarned(xp);
+                    shouldUpdateStreak = true; // First successful completion today
+                }
+                // Clear incorrect attempts only in practice mode (regardless of completion status)
+                if (isPracticeMode) {
+                    existing.setIncorrectAttempts(0);
+                }
                 progressRepo.save(existing);
-            } else if (!Boolean.TRUE.equals(existing.getIsCompleted()) && !correct) {
-                // Increment incorrect attempts if answer is wrong and not yet completed
+            } else {
+                // Incorrect answer: ALWAYS increment, even if exercise was previously completed
+                // This allows users to re-practice exercises they got wrong again
                 existing.incrementIncorrectAttempts();
                 progressRepo.save(existing);
             }
@@ -422,14 +434,16 @@ public class ExerciseService {
      * These are exercises the user can retry.
      *
      * @param userId UUID of the authenticated user. If {@code null}, an empty list is returned.
-     * @return list of {@link UserProgress} entries with incorrect attempts and not completed.
+     * @return list of {@link UserProgress} entries with incorrect attempts (regardless of completion status).
      */
     @Transactional(readOnly = true)
     public List<UserProgress> getIncorrectExercisesForUser(UUID userId) {
         if (userId == null) {
             return List.of();
         }
-        return progressRepo.findAllByUserIdAndIncorrectAttemptsGreaterThanAndIsCompletedFalse(userId, 0);
+        // Return ALL exercises with incorrectAttempts > 0, regardless of completion status
+        // This allows users to retry exercises they got wrong, even if completed before
+        return progressRepo.findAllByUserIdAndIncorrectAttemptsGreaterThan(userId, 0);
     }
 
     /**

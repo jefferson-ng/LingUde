@@ -149,7 +149,8 @@
       "progressText": "Je weniger Fehler, desto besser!",
       "startPractice": "Jetzt üben",
       "emptyMessage": "Super! Du hast keine falschen Antworten zum Üben. Mach weiter so!",
-      "allDone": "Alles erledigt!"
+      "allDone": "Alles erledigt!",
+      "nothingToPractice": "Perfekt! Momentan gibt es keine Aufgaben zum Üben. Weiter so! 🎉"
     },
     "popup": {
       "title": "Starte deine Lektion",

@@ -61,6 +61,9 @@ export class Learning implements OnInit {
   
   protected showLockedNotification = signal<boolean>(false);
   private notificationTimeout: any = null;
+  
+  protected showPracticeWidgetNotification = signal<boolean>(false);
+  private practiceNotificationTimeout: any = null;
 
   // Helper to check if a level is the first in its difficulty group (for showing headers)
   protected isFirstInDifficultyGroup(index: number): boolean {
@@ -81,13 +84,10 @@ export class Learning implements OnInit {
   protected currentExerciseIndex = signal<number>(0);
   protected currentExercise = signal<ExerciseDetailResponse | null>(null);
   
-  // Duolingo-style retry: Queue of incorrect exercises to repeat at end of lesson
-  private incorrectExerciseQueue: ExerciseSummaryResponse[] = [];
-  private isRetryPhase = false;
-  
-  // Retry prompt: Show dialog asking user if they want to retry incorrect answers
-  protected showRetryPrompt = signal<boolean>(false);
-  protected retryPromptCount = signal<number>(0);
+  // Practice Widget: Shows persistently saved incorrect exercises from backend
+  protected practiceWidgetCount = signal<number>(0);
+  private persistedIncorrectExercises: ExerciseSummaryResponse[] = [];
+  protected isPracticeMode = false; // Track if we're in practice mode from widget
 
   constructor(private exerciseService: ExerciseService) {}
 
@@ -171,11 +171,101 @@ export class Learning implements OnInit {
         }
         
         this.loadLevels();
+        this.loadPracticeWidgetCount();
       },
       error: (error) => {
         console.error('Error loading user learning data:', error);
       }
     });
+  }
+
+  /**
+   * Load count of persisted incorrect exercises from backend for Practice Widget
+   */
+  private loadPracticeWidgetCount(): void {
+    this.exerciseService.getIncorrectExercises().subscribe({
+      next: (incorrectExercises) => {
+        this.practiceWidgetCount.set(incorrectExercises.length);
+        console.log('📊 Practice Widget: Loaded', incorrectExercises.length, 'persisted incorrect exercises');
+      },
+      error: (error) => {
+        console.error('❌ Failed to load practice widget count:', error);
+        this.practiceWidgetCount.set(0);
+      }
+    });
+  }
+
+  /**
+   * Start practice mode with all persisted incorrect exercises from backend
+   */
+  protected startPracticeMode(): void {
+    console.log('🔄 Starting practice mode from widget');
+    
+    // If no exercises available, show notification instead
+    if (this.practiceWidgetCount() === 0) {
+      this.showPracticeNotification();
+      return;
+    }
+    
+    this.exerciseService.getIncorrectExercises().subscribe({
+      next: (incorrectExercises) => {
+        if (incorrectExercises.length === 0) {
+          console.log('No incorrect exercises to practice');
+          return;
+        }
+
+        // Fetch all exercise summaries and filter to only include incorrect ones
+        this.exerciseService.getExercises(this.userLanguage()).subscribe({
+          next: (allExercises) => {
+            const incorrectExerciseIds = new Set(incorrectExercises.map(e => e.exerciseId));
+            const exercisesToPractice = allExercises.filter(ex => incorrectExerciseIds.has(ex.id));
+            
+            console.log('📝 Starting practice with', exercisesToPractice.length, 'exercises');
+            this.currentExerciseSummaries.set(exercisesToPractice);
+            this.currentExerciseIndex.set(0);
+            this.exerciseMode.set(true);
+            this.isPracticeMode = true; // Enable practice mode
+            
+            // Load first exercise
+            if (exercisesToPractice.length > 0) {
+              const first = exercisesToPractice[0];
+              this.exerciseService.getExerciseById(first.id, first.type).subscribe({
+                next: (exercise) => {
+                  this.currentExercise.set(exercise);
+                },
+                error: (error) => {
+                  console.error('❌ Failed to load exercise:', error);
+                }
+              });
+            }
+          },
+          error: (error) => {
+            console.error('❌ Failed to load exercises:', error);
+          }
+        });
+      },
+      error: (error) => {
+        console.error('❌ Failed to load incorrect exercises:', error);
+      }
+    });
+  }
+
+  /**
+   * Show notification when trying to practice with no exercises
+   */
+  private showPracticeNotification(): void {
+    // Clear existing timeout
+    if (this.practiceNotificationTimeout) {
+      clearTimeout(this.practiceNotificationTimeout);
+    }
+
+    // Show notification
+    this.showPracticeWidgetNotification.set(true);
+
+    // Auto-hide after 3 seconds
+    this.practiceNotificationTimeout = setTimeout(() => {
+      this.showPracticeWidgetNotification.set(false);
+    }, 3000);
   }
 
   // Helper to get all difficulty levels in range (e.g., A2 to B2 = ['A2', 'B1', 'B2'])
@@ -364,10 +454,7 @@ export class Learning implements OnInit {
     // Keep the selected level so we can mark it as completed later
     this.selectedLevel.set(level);
     this.correctAnswersCount = 0;
-    
-    // Reset Duolingo-style retry queue
-    this.incorrectExerciseQueue = [];
-    this.isRetryPhase = false;
+    this.isPracticeMode = false; // Disable practice mode for normal levels
 
     const targetLanguage = this.userLanguage();
     const difficultyLevel = level.difficultyLevel;
@@ -432,16 +519,9 @@ export class Learning implements OnInit {
     } else {
       console.log(`❌ Incorrect answer. Total: ${this.correctAnswersCount}/${this.totalExercisesInLevel}`);
       
-      // Duolingo-style: Add this exercise to retry queue (if not already in retry phase or already queued)
-      const currentSummary = this.currentExerciseSummaries()[this.currentExerciseIndex()];
-      if (currentSummary && !this.isRetryPhase) {
-        // Only add if not already in queue
-        const alreadyInQueue = this.incorrectExerciseQueue.some(ex => ex.id === currentSummary.id);
-        if (!alreadyInQueue) {
-          this.incorrectExerciseQueue.push(currentSummary);
-          console.log(`📝 Added to retry queue. Queue size: ${this.incorrectExerciseQueue.length}`);
-        }
-      }
+      // Update practice widget count immediately when answer is incorrect
+      // This ensures repeated exercises also update the widget
+      this.loadPracticeWidgetCount();
     }
     
     // Don't reload here - the exercise submission already updates XP via backend response
@@ -519,38 +599,10 @@ export class Learning implements OnInit {
       // More exercises in current list
       this.currentExerciseIndex.set(nextIndex);
       this.loadExerciseDetail(summaries[nextIndex]);
-    } else if (this.incorrectExerciseQueue.length > 0 && !this.isRetryPhase) {
-      // Show retry prompt dialog to ask user if they want to retry incorrect answers
-      console.log(`📋 Showing retry prompt for ${this.incorrectExerciseQueue.length} incorrect exercises`);
-      this.retryPromptCount.set(this.incorrectExerciseQueue.length);
-      this.showRetryPrompt.set(true);
     } else {
-      // All done (including retries)
+      // All done - complete level (incorrect answers are tracked in Practice Widget)
       this.completeLevel();
     }
-  }
-
-  /**
-   * User chose to retry incorrect answers
-   */
-  protected startRetryPhase(): void {
-    console.log(`🔄 Starting retry phase with ${this.incorrectExerciseQueue.length} incorrect exercises`);
-    this.showRetryPrompt.set(false);
-    this.isRetryPhase = true;
-    this.currentExerciseSummaries.set([...this.incorrectExerciseQueue]);
-    this.incorrectExerciseQueue = []; // Clear the queue
-    this.currentExerciseIndex.set(0);
-    this.loadExerciseDetail(this.currentExerciseSummaries()[0]);
-  }
-
-  /**
-   * User chose to skip retry and complete the level
-   */
-  protected skipRetryPhase(): void {
-    console.log('⏭️ User skipped retry phase');
-    this.showRetryPrompt.set(false);
-    this.incorrectExerciseQueue = []; // Clear the queue
-    this.completeLevel();
   }
 
   completeLevel(): void {
@@ -618,6 +670,10 @@ export class Learning implements OnInit {
     this.currentExerciseSummaries.set([]);
     this.currentExerciseIndex.set(0);
     this.selectedLevel.set(null);
+    this.isPracticeMode = false; // Reset practice mode flag
+    
+    // Reload practice widget count after completing exercises
+    this.loadPracticeWidgetCount();
 
     // CRITICAL: Set skip counter BEFORE any HTTP calls to prevent race conditions
     const willSaveProgress = levelWasCompleted && selectedLevelValue;
@@ -733,6 +789,8 @@ export class Learning implements OnInit {
         console.log('✅ Language updated in backend:', data);
         // Reload levels for new language
         this.loadLevels();
+        // Reload practice widget for new language
+        this.loadPracticeWidgetCount();
       },
       error: (err) => {
         console.error('❌ Failed to update language:', err);

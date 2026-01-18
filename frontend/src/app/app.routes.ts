@@ -61,16 +61,6 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
-        path: 'lessons',
-        loadComponent: () => import('./pages/lessons/lessons').then(m => m.Lessons),
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'goals',
-        loadComponent: () => import('./pages/goals/goals').then(m => m.Goals),
-        canActivate: [AuthGuard]
-      },
-      {
         path: 'leaderboard',
         loadComponent: () => import('./pages/leaderboard/leaderboard').then(m => m.Leaderboard),
         canActivate: [AuthGuard]
