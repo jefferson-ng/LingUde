@@ -36,31 +36,31 @@ public class ExerciseDataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Check if data already exists
-        long mcqCount = mcqRepository.count();
-        long fillBlankCount = fillBlankRepository.count();
+        long initialMcqCount = mcqRepository.count();
+        long initialFillBlankCount = fillBlankRepository.count();
 
-        if (mcqCount > 0 || fillBlankCount > 0) {
-            logger.info("Exercise data already exists (MCQ: {}, Fill-Blank: {}), skipping seeding",
-                    mcqCount, fillBlankCount);
-            return;
-        }
+        logger.info("Starting exercise data seeding (existing: {} MCQ, {} Fill-Blank)...",
+                initialMcqCount, initialFillBlankCount);
 
-        logger.info("Starting exercise data seeding...");
-
+        // Seed all exercises - helper methods ensure no duplicates are created
         seedEnglishExercises();
         seedGermanExercises();
         seedEnglishGrammarExercises();
         seedGermanGrammarExercises();
 
-        long newMcqCount = mcqRepository.count();
-        long newFillBlankCount = fillBlankRepository.count();
+        long finalMcqCount = mcqRepository.count();
+        long finalFillBlankCount = fillBlankRepository.count();
+        long newMcqAdded = finalMcqCount - initialMcqCount;
+        long newFillBlankAdded = finalFillBlankCount - initialFillBlankCount;
 
-        logger.info("Exercise data seeding completed!");
-        logger.info("Created {} MCQ exercises", newMcqCount);
-        logger.info("Created {} Fill-in-the-Blank exercises", newFillBlankCount);
-        logger.info("Total: {} exercises (92 English + 92 German)", newMcqCount + newFillBlankCount);
-        logger.info("Total XP Available: 4080 (2040 EN + 2040 DE)");
+        if (newMcqAdded > 0 || newFillBlankAdded > 0) {
+            logger.info("Exercise data seeding completed!");
+            logger.info("Added {} new MCQ exercises (total: {})", newMcqAdded, finalMcqCount);
+            logger.info("Added {} new Fill-in-the-Blank exercises (total: {})", newFillBlankAdded, finalFillBlankCount);
+        } else {
+            logger.info("All exercises already exist, no new exercises added.");
+        }
+        logger.info("Total exercises in database: {} (expected: 184)", finalMcqCount + finalFillBlankCount);
     }
 
     private void seedEnglishExercises() {
@@ -78,7 +78,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1Mcq.setWrongOption3("be");
         enA1Mcq.setXpReward(10);
         enA1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA1Mcq);
+        saveMcqIfNotExists(enA1Mcq);
 
         ExerciseMcq enA1_2Mcq = new ExerciseMcq();
         enA1_2Mcq.setTargetLanguage(Language.EN);
@@ -91,7 +91,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_2Mcq.setWrongOption3("Please");
         enA1_2Mcq.setXpReward(10);
         enA1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA1_2Mcq);
+        saveMcqIfNotExists(enA1_2Mcq);
 
         ExerciseMcq enA1_3Mcq = new ExerciseMcq();
         enA1_3Mcq.setTargetLanguage(Language.EN);
@@ -104,7 +104,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_3Mcq.setWrongOption3("Do you like coffee?");
         enA1_3Mcq.setXpReward(10);
         enA1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA1_3Mcq);
+        saveMcqIfNotExists(enA1_3Mcq);
 
         ExerciseMcq enA1_4Mcq = new ExerciseMcq();
         enA1_4Mcq.setTargetLanguage(Language.EN);
@@ -117,7 +117,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_4Mcq.setWrongOption3("Welcome");
         enA1_4Mcq.setXpReward(10);
         enA1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA1_4Mcq);
+        saveMcqIfNotExists(enA1_4Mcq);
 
         ExerciseFillBlank enA1Fill = new ExerciseFillBlank();
         enA1Fill.setTargetLanguage(Language.EN);
@@ -127,7 +127,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1Fill.setCorrectAnswer("is");
         enA1Fill.setXpReward(10);
         enA1Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA1Fill);
+        saveFillBlankIfNotExists(enA1Fill);
 
         ExerciseFillBlank enA1_2Fill = new ExerciseFillBlank();
         enA1_2Fill.setTargetLanguage(Language.EN);
@@ -137,7 +137,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_2Fill.setCorrectAnswer("meet");
         enA1_2Fill.setXpReward(10);
         enA1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA1_2Fill);
+        saveFillBlankIfNotExists(enA1_2Fill);
 
         ExerciseFillBlank enA1_3Fill = new ExerciseFillBlank();
         enA1_3Fill.setTargetLanguage(Language.EN);
@@ -147,7 +147,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_3Fill.setCorrectAnswer("morning");
         enA1_3Fill.setXpReward(10);
         enA1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA1_3Fill);
+        saveFillBlankIfNotExists(enA1_3Fill);
 
         ExerciseFillBlank enA1_4Fill = new ExerciseFillBlank();
         enA1_4Fill.setTargetLanguage(Language.EN);
@@ -157,7 +157,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_4Fill.setCorrectAnswer("Germany");
         enA1_4Fill.setXpReward(10);
         enA1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA1_4Fill);
+        saveFillBlankIfNotExists(enA1_4Fill);
 
 
         // A2 Level - Daily Routines & Simple Descriptions
@@ -172,7 +172,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2Mcq.setWrongOption3("ate");
         enA2Mcq.setXpReward(15);
         enA2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA2Mcq);
+        saveMcqIfNotExists(enA2Mcq);
 
         ExerciseMcq enA2_2Mcq = new ExerciseMcq();
         enA2_2Mcq.setTargetLanguage(Language.EN);
@@ -185,7 +185,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_2Mcq.setWrongOption3("going");
         enA2_2Mcq.setXpReward(15);
         enA2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA2_2Mcq);
+        saveMcqIfNotExists(enA2_2Mcq);
 
         ExerciseMcq enA2_3Mcq = new ExerciseMcq();
         enA2_3Mcq.setTargetLanguage(Language.EN);
@@ -198,7 +198,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_3Mcq.setWrongOption3("watching");
         enA2_3Mcq.setXpReward(15);
         enA2_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA2_3Mcq);
+        saveMcqIfNotExists(enA2_3Mcq);
 
         ExerciseMcq enA2_4Mcq = new ExerciseMcq();
         enA2_4Mcq.setTargetLanguage(Language.EN);
@@ -211,7 +211,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_4Mcq.setWrongOption3("huge");
         enA2_4Mcq.setXpReward(15);
         enA2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA2_4Mcq);
+        saveMcqIfNotExists(enA2_4Mcq);
 
         ExerciseFillBlank enA2Fill = new ExerciseFillBlank();
         enA2Fill.setTargetLanguage(Language.EN);
@@ -221,7 +221,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2Fill.setCorrectAnswer("nice");
         enA2Fill.setXpReward(15);
         enA2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA2Fill);
+        saveFillBlankIfNotExists(enA2Fill);
 
         ExerciseFillBlank enA2_2Fill = new ExerciseFillBlank();
         enA2_2Fill.setTargetLanguage(Language.EN);
@@ -231,7 +231,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_2Fill.setCorrectAnswer("noon");
         enA2_2Fill.setXpReward(15);
         enA2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA2_2Fill);
+        saveFillBlankIfNotExists(enA2_2Fill);
 
         ExerciseFillBlank enA2_3Fill = new ExerciseFillBlank();
         enA2_3Fill.setTargetLanguage(Language.EN);
@@ -241,7 +241,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_3Fill.setCorrectAnswer("midnight");
         enA2_3Fill.setXpReward(15);
         enA2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA2_3Fill);
+        saveFillBlankIfNotExists(enA2_3Fill);
 
         ExerciseFillBlank enA2_4Fill = new ExerciseFillBlank();
         enA2_4Fill.setTargetLanguage(Language.EN);
@@ -251,7 +251,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_4Fill.setCorrectAnswer("interesting");
         enA2_4Fill.setXpReward(15);
         enA2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA2_4Fill);
+        saveFillBlankIfNotExists(enA2_4Fill);
 
 
         // B1 Level - Travel & Past Experiences
@@ -266,7 +266,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1Mcq.setWrongOption3("gone");
         enB1Mcq.setXpReward(20);
         enB1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB1Mcq);
+        saveMcqIfNotExists(enB1Mcq);
 
         ExerciseMcq enB1_2Mcq = new ExerciseMcq();
         enB1_2Mcq.setTargetLanguage(Language.EN);
@@ -279,7 +279,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_2Mcq.setWrongOption3("misses");
         enB1_2Mcq.setXpReward(20);
         enB1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB1_2Mcq);
+        saveMcqIfNotExists(enB1_2Mcq);
 
         ExerciseMcq enB1_3Mcq = new ExerciseMcq();
         enB1_3Mcq.setTargetLanguage(Language.EN);
@@ -292,7 +292,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_3Mcq.setWrongOption3("comforting");
         enB1_3Mcq.setXpReward(20);
         enB1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB1_3Mcq);
+        saveMcqIfNotExists(enB1_3Mcq);
 
         ExerciseMcq enB1_4Mcq = new ExerciseMcq();
         enB1_4Mcq.setTargetLanguage(Language.EN);
@@ -305,7 +305,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_4Mcq.setWrongOption3("saw");
         enB1_4Mcq.setXpReward(20);
         enB1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB1_4Mcq);
+        saveMcqIfNotExists(enB1_4Mcq);
 
         ExerciseFillBlank enB1Fill = new ExerciseFillBlank();
         enB1Fill.setTargetLanguage(Language.EN);
@@ -315,7 +315,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1Fill.setCorrectAnswer("never");
         enB1Fill.setXpReward(20);
         enB1Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB1Fill);
+        saveFillBlankIfNotExists(enB1Fill);
 
         ExerciseFillBlank enB1_2Fill = new ExerciseFillBlank();
         enB1_2Fill.setTargetLanguage(Language.EN);
@@ -325,7 +325,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_2Fill.setCorrectAnswer("beach");
         enB1_2Fill.setXpReward(20);
         enB1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB1_2Fill);
+        saveFillBlankIfNotExists(enB1_2Fill);
 
         ExerciseFillBlank enB1_3Fill = new ExerciseFillBlank();
         enB1_3Fill.setTargetLanguage(Language.EN);
@@ -335,7 +335,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_3Fill.setCorrectAnswer("traffic");
         enB1_3Fill.setXpReward(20);
         enB1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB1_3Fill);
+        saveFillBlankIfNotExists(enB1_3Fill);
 
         ExerciseFillBlank enB1_4Fill = new ExerciseFillBlank();
         enB1_4Fill.setTargetLanguage(Language.EN);
@@ -345,7 +345,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_4Fill.setCorrectAnswer("exciting");
         enB1_4Fill.setXpReward(20);
         enB1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB1_4Fill);
+        saveFillBlankIfNotExists(enB1_4Fill);
 
 
         // B2 Level - Opinions & Abstract Concepts
@@ -360,7 +360,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2Mcq.setWrongOption3("improve");
         enB2Mcq.setXpReward(25);
         enB2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB2Mcq);
+        saveMcqIfNotExists(enB2Mcq);
 
         ExerciseMcq enB2_2Mcq = new ExerciseMcq();
         enB2_2Mcq.setTargetLanguage(Language.EN);
@@ -373,7 +373,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_2Mcq.setWrongOption3("succeeds");
         enB2_2Mcq.setXpReward(25);
         enB2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB2_2Mcq);
+        saveMcqIfNotExists(enB2_2Mcq);
 
         ExerciseMcq enB2_3Mcq = new ExerciseMcq();
         enB2_3Mcq.setTargetLanguage(Language.EN);
@@ -386,7 +386,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_3Mcq.setWrongOption3("behaviors");
         enB2_3Mcq.setXpReward(25);
         enB2_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB2_3Mcq);
+        saveMcqIfNotExists(enB2_3Mcq);
 
         ExerciseMcq enB2_4Mcq = new ExerciseMcq();
         enB2_4Mcq.setTargetLanguage(Language.EN);
@@ -399,7 +399,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_4Mcq.setWrongOption3("conditioned");
         enB2_4Mcq.setXpReward(25);
         enB2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB2_4Mcq);
+        saveMcqIfNotExists(enB2_4Mcq);
 
 
         ExerciseFillBlank enB2Fill = new ExerciseFillBlank();
@@ -410,7 +410,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2Fill.setCorrectAnswer("perseverance");
         enB2Fill.setXpReward(25);
         enB2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB2Fill);
+        saveFillBlankIfNotExists(enB2Fill);
 
         ExerciseFillBlank enB2_2Fill = new ExerciseFillBlank();
         enB2_2Fill.setTargetLanguage(Language.EN);
@@ -420,7 +420,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_2Fill.setCorrectAnswer("issues");
         enB2_2Fill.setXpReward(25);
         enB2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB2_2Fill);
+        saveFillBlankIfNotExists(enB2_2Fill);
 
         ExerciseFillBlank enB2_3Fill = new ExerciseFillBlank();
         enB2_3Fill.setTargetLanguage(Language.EN);
@@ -430,7 +430,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_3Fill.setCorrectAnswer("informed");
         enB2_3Fill.setXpReward(25);
         enB2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB2_3Fill);
+        saveFillBlankIfNotExists(enB2_3Fill);
 
         ExerciseFillBlank enB2_4Fill = new ExerciseFillBlank();
         enB2_4Fill.setTargetLanguage(Language.EN);
@@ -440,7 +440,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_4Fill.setCorrectAnswer("innovation");
         enB2_4Fill.setXpReward(25);
         enB2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB2_4Fill);
+        saveFillBlankIfNotExists(enB2_4Fill);
 
 
         // C1 Level - Complex Ideas & Nuanced Language
@@ -455,7 +455,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1Mcq.setWrongOption3("indicated");
         enC1Mcq.setXpReward(30);
         enC1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enC1Mcq);
+        saveMcqIfNotExists(enC1Mcq);
 
         ExerciseMcq enC1_2Mcq = new ExerciseMcq();
         enC1_2Mcq.setTargetLanguage(Language.EN);
@@ -468,7 +468,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_2Mcq.setWrongOption3("examining");
         enC1_2Mcq.setXpReward(30);
         enC1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC1_2Mcq);
+        saveMcqIfNotExists(enC1_2Mcq);
 
         ExerciseMcq enC1_3Mcq = new ExerciseMcq();
         enC1_3Mcq.setTargetLanguage(Language.EN);
@@ -481,7 +481,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_3Mcq.setWrongOption3("collecting");
         enC1_3Mcq.setXpReward(30);
         enC1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC1_3Mcq);
+        saveMcqIfNotExists(enC1_3Mcq);
 
         ExerciseMcq enC1_4Mcq = new ExerciseMcq();
         enC1_4Mcq.setTargetLanguage(Language.EN);
@@ -494,7 +494,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_4Mcq.setWrongOption3("vaguer");
         enC1_4Mcq.setXpReward(30);
         enC1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC1_4Mcq);
+        saveMcqIfNotExists(enC1_4Mcq);
 
         ExerciseFillBlank enC1Fill = new ExerciseFillBlank();
         enC1Fill.setTargetLanguage(Language.EN);
@@ -504,7 +504,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1Fill.setCorrectAnswer("compelling");
         enC1Fill.setXpReward(30);
         enC1Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC1Fill);
+        saveFillBlankIfNotExists(enC1Fill);
 
         ExerciseFillBlank enC1_2Fill = new ExerciseFillBlank();
         enC1_2Fill.setTargetLanguage(Language.EN);
@@ -514,7 +514,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_2Fill.setCorrectAnswer("ambiguous");
         enC1_2Fill.setXpReward(30);
         enC1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC1_2Fill);
+        saveFillBlankIfNotExists(enC1_2Fill);
 
         ExerciseFillBlank enC1_3Fill = new ExerciseFillBlank();
         enC1_3Fill.setTargetLanguage(Language.EN);
@@ -524,7 +524,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_3Fill.setCorrectAnswer("analysis");
         enC1_3Fill.setXpReward(30);
         enC1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC1_3Fill);
+        saveFillBlankIfNotExists(enC1_3Fill);
 
         ExerciseFillBlank enC1_4Fill = new ExerciseFillBlank();
         enC1_4Fill.setTargetLanguage(Language.EN);
@@ -534,7 +534,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_4Fill.setCorrectAnswer("multidisciplinary");
         enC1_4Fill.setXpReward(30);
         enC1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC1_4Fill);
+        saveFillBlankIfNotExists(enC1_4Fill);
 
 
         // C2 Level - Idiomatic Expressions & Sophisticated Language
@@ -549,7 +549,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2Mcq.setWrongOption3("conclusion");
         enC2Mcq.setXpReward(35);
         enC2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC2Mcq);
+        saveMcqIfNotExists(enC2Mcq);
 
         ExerciseMcq enC2_2Mcq = new ExerciseMcq();
         enC2_2Mcq.setTargetLanguage(Language.EN);
@@ -562,7 +562,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_2Mcq.setWrongOption3("on the side");
         enC2_2Mcq.setXpReward(35);
         enC2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC2_2Mcq);
+        saveMcqIfNotExists(enC2_2Mcq);
 
         ExerciseMcq enC2_3Mcq = new ExerciseMcq();
         enC2_3Mcq.setTargetLanguage(Language.EN);
@@ -575,7 +575,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_3Mcq.setWrongOption3("in the moment");
         enC2_3Mcq.setXpReward(35);
         enC2_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC2_3Mcq);
+        saveMcqIfNotExists(enC2_3Mcq);
 
         ExerciseMcq enC2_4Mcq = new ExerciseMcq();
         enC2_4Mcq.setTargetLanguage(Language.EN);
@@ -588,7 +588,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_4Mcq.setWrongOption3("persuading");
         enC2_4Mcq.setXpReward(35);
         enC2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC2_4Mcq);
+        saveMcqIfNotExists(enC2_4Mcq);
 
 
         ExerciseFillBlank enC2Fill = new ExerciseFillBlank();
@@ -599,7 +599,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2Fill.setCorrectAnswer("unparalleled");
         enC2Fill.setXpReward(35);
         enC2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC2Fill);
+        saveFillBlankIfNotExists(enC2Fill);
 
         ExerciseFillBlank enC2_2Fill = new ExerciseFillBlank();
         enC2_2Fill.setTargetLanguage(Language.EN);
@@ -609,7 +609,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_2Fill.setCorrectAnswer("profound");
         enC2_2Fill.setXpReward(35);
         enC2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC2_2Fill);
+        saveFillBlankIfNotExists(enC2_2Fill);
 
         ExerciseFillBlank enC2_3Fill = new ExerciseFillBlank();
         enC2_3Fill.setTargetLanguage(Language.EN);
@@ -619,7 +619,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_3Fill.setCorrectAnswer("nuanced");
         enC2_3Fill.setXpReward(35);
         enC2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC2_3Fill);
+        saveFillBlankIfNotExists(enC2_3Fill);
 
         ExerciseFillBlank enC2_4Fill = new ExerciseFillBlank();
         enC2_4Fill.setTargetLanguage(Language.EN);
@@ -629,7 +629,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_4Fill.setCorrectAnswer("composure");
         enC2_4Fill.setXpReward(35);
         enC2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC2_4Fill);
+        saveFillBlankIfNotExists(enC2_4Fill);
 
         logger.info("English exercises seeded: 24 MCQ + 24 Fill-Blank = 48 total");
     }
@@ -649,7 +649,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1Mcq.setWrongOption3("ging");
         deA1Mcq.setXpReward(10);
         deA1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA1Mcq);
+        saveMcqIfNotExists(deA1Mcq);
 
         ExerciseMcq deA1_2Mcq = new ExerciseMcq();
         deA1_2Mcq.setTargetLanguage(Language.DE);
@@ -662,7 +662,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_2Mcq.setWrongOption3("Bitte");
         deA1_2Mcq.setXpReward(10);
         deA1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deA1_2Mcq);
+        saveMcqIfNotExists(deA1_2Mcq);
 
         ExerciseMcq deA1_3Mcq = new ExerciseMcq();
         deA1_3Mcq.setTargetLanguage(Language.DE);
@@ -675,7 +675,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_3Mcq.setWrongOption3("Bitte");
         deA1_3Mcq.setXpReward(10);
         deA1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deA1_3Mcq);
+        saveMcqIfNotExists(deA1_3Mcq);
 
         ExerciseMcq deA1_4Mcq = new ExerciseMcq();
         deA1_4Mcq.setTargetLanguage(Language.DE);
@@ -688,7 +688,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_4Mcq.setWrongOption3("Magst du Kaffee?");
         deA1_4Mcq.setXpReward(10);
         deA1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deA1_4Mcq);
+        saveMcqIfNotExists(deA1_4Mcq);
 
         ExerciseFillBlank deA1Fill = new ExerciseFillBlank();
         deA1Fill.setTargetLanguage(Language.DE);
@@ -698,7 +698,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1Fill.setCorrectAnswer("ist");
         deA1Fill.setXpReward(10);
         deA1Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA1Fill);
+        saveFillBlankIfNotExists(deA1Fill);
 
         ExerciseFillBlank deA1_2Fill = new ExerciseFillBlank();
         deA1_2Fill.setTargetLanguage(Language.DE);
@@ -708,7 +708,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_2Fill.setCorrectAnswer("Guten");
         deA1_2Fill.setXpReward(10);
         deA1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA1_2Fill);
+        saveFillBlankIfNotExists(deA1_2Fill);
 
         ExerciseFillBlank deA1_3Fill = new ExerciseFillBlank();
         deA1_3Fill.setTargetLanguage(Language.DE);
@@ -718,7 +718,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_3Fill.setCorrectAnswer("bin");
         deA1_3Fill.setXpReward(10);
         deA1_3Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA1_3Fill);
+        saveFillBlankIfNotExists(deA1_3Fill);
 
         ExerciseFillBlank deA1_4Fill = new ExerciseFillBlank();
         deA1_4Fill.setTargetLanguage(Language.DE);
@@ -728,7 +728,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_4Fill.setCorrectAnswer("Deutschland");
         deA1_4Fill.setXpReward(10);
         deA1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA1_4Fill);
+        saveFillBlankIfNotExists(deA1_4Fill);
 
 
         // A2 Level - Alltag (Daily Routines & Simple Descriptions)
@@ -743,7 +743,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2Mcq.setWrongOption3("aß");
         deA2Mcq.setXpReward(15);
         deA2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2Mcq);
+        saveMcqIfNotExists(deA2Mcq);
 
         ExerciseMcq deA2_2Mcq = new ExerciseMcq();
         deA2_2Mcq.setTargetLanguage(Language.DE);
@@ -756,7 +756,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_2Mcq.setWrongOption3("gegangen");
         deA2_2Mcq.setXpReward(15);
         deA2_2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2_2Mcq);
+        saveMcqIfNotExists(deA2_2Mcq);
 
         ExerciseMcq deA2_3Mcq = new ExerciseMcq();
         deA2_3Mcq.setTargetLanguage(Language.DE);
@@ -769,7 +769,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_3Mcq.setWrongOption3("sah");
         deA2_3Mcq.setXpReward(15);
         deA2_3Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2_3Mcq);
+        saveMcqIfNotExists(deA2_3Mcq);
 
         ExerciseMcq deA2_4Mcq = new ExerciseMcq();
         deA2_4Mcq.setTargetLanguage(Language.DE);
@@ -782,7 +782,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_4Mcq.setWrongOption3("gemütlichere");
         deA2_4Mcq.setXpReward(15);
         deA2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deA2_4Mcq);
+        saveMcqIfNotExists(deA2_4Mcq);
 
         ExerciseFillBlank deA2Fill = new ExerciseFillBlank();
         deA2Fill.setTargetLanguage(Language.DE);
@@ -792,7 +792,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2Fill.setCorrectAnswer("schön");
         deA2Fill.setXpReward(15);
         deA2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA2Fill);
+        saveFillBlankIfNotExists(deA2Fill);
 
         ExerciseFillBlank deA2_2Fill = new ExerciseFillBlank();
         deA2_2Fill.setTargetLanguage(Language.DE);
@@ -802,7 +802,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_2Fill.setCorrectAnswer("7");
         deA2_2Fill.setXpReward(15);
         deA2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA2_2Fill);
+        saveFillBlankIfNotExists(deA2_2Fill);
 
         ExerciseFillBlank deA2_3Fill = new ExerciseFillBlank();
         deA2_3Fill.setTargetLanguage(Language.DE);
@@ -812,7 +812,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_3Fill.setCorrectAnswer("gehe");
         deA2_3Fill.setXpReward(15);
         deA2_3Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA2_3Fill);
+        saveFillBlankIfNotExists(deA2_3Fill);
 
         ExerciseFillBlank deA2_4Fill = new ExerciseFillBlank();
         deA2_4Fill.setTargetLanguage(Language.DE);
@@ -822,7 +822,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_4Fill.setCorrectAnswer("Freunde");
         deA2_4Fill.setXpReward(15);
         deA2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA2_4Fill);
+        saveFillBlankIfNotExists(deA2_4Fill);
 
 
         // B1 Level - Reisen (Travel & Past Experiences)
@@ -837,7 +837,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1Mcq.setWrongOption3("gefahren");
         deB1Mcq.setXpReward(20);
         deB1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB1Mcq);
+        saveMcqIfNotExists(deB1Mcq);
 
         ExerciseMcq deB1_2Mcq = new ExerciseMcq();
         deB1_2Mcq.setTargetLanguage(Language.DE);
@@ -850,7 +850,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_2Mcq.setWrongOption3("verpasst");
         deB1_2Mcq.setXpReward(20);
         deB1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB1_2Mcq);
+        saveMcqIfNotExists(deB1_2Mcq);
 
         ExerciseMcq deB1_3Mcq = new ExerciseMcq();
         deB1_3Mcq.setTargetLanguage(Language.DE);
@@ -863,7 +863,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_3Mcq.setWrongOption3("komfortabler");
         deB1_3Mcq.setXpReward(20);
         deB1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB1_3Mcq);
+        saveMcqIfNotExists(deB1_3Mcq);
 
         ExerciseMcq deB1_4Mcq = new ExerciseMcq();
         deB1_4Mcq.setTargetLanguage(Language.DE);
@@ -876,7 +876,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_4Mcq.setWrongOption3("schönere");
         deB1_4Mcq.setXpReward(20);
         deB1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB1_4Mcq);
+        saveMcqIfNotExists(deB1_4Mcq);
 
         ExerciseFillBlank deB1Fill = new ExerciseFillBlank();
         deB1Fill.setTargetLanguage(Language.DE);
@@ -886,7 +886,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1Fill.setCorrectAnswer("nie");
         deB1Fill.setXpReward(20);
         deB1Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB1Fill);
+        saveFillBlankIfNotExists(deB1Fill);
 
         ExerciseFillBlank deB1_2Fill = new ExerciseFillBlank();
         deB1_2Fill.setTargetLanguage(Language.DE);
@@ -896,7 +896,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_2Fill.setCorrectAnswer("Strandes");
         deB1_2Fill.setXpReward(20);
         deB1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB1_2Fill);
+        saveFillBlankIfNotExists(deB1_2Fill);
 
         ExerciseFillBlank deB1_3Fill = new ExerciseFillBlank();
         deB1_3Fill.setTargetLanguage(Language.DE);
@@ -906,7 +906,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_3Fill.setCorrectAnswer("Schnees");
         deB1_3Fill.setXpReward(20);
         deB1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB1_3Fill);
+        saveFillBlankIfNotExists(deB1_3Fill);
 
         ExerciseFillBlank deB1_4Fill = new ExerciseFillBlank();
         deB1_4Fill.setTargetLanguage(Language.DE);
@@ -916,7 +916,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_4Fill.setCorrectAnswer("aufregendsten");
         deB1_4Fill.setXpReward(20);
         deB1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB1_4Fill);
+        saveFillBlankIfNotExists(deB1_4Fill);
 
 
         // B2 Level - Meinungen (Opinions & Abstract Concepts)
@@ -931,7 +931,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2Mcq.setWrongOption3("verbesserte");
         deB2Mcq.setXpReward(25);
         deB2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB2Mcq);
+        saveMcqIfNotExists(deB2Mcq);
 
         ExerciseMcq deB2_2Mcq = new ExerciseMcq();
         deB2_2Mcq.setTargetLanguage(Language.DE);
@@ -944,7 +944,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_2Mcq.setWrongOption3("erfolgreiche");
         deB2_2Mcq.setXpReward(25);
         deB2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB2_2Mcq);
+        saveMcqIfNotExists(deB2_2Mcq);
 
         ExerciseMcq deB2_3Mcq = new ExerciseMcq();
         deB2_3Mcq.setTargetLanguage(Language.DE);
@@ -957,7 +957,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_3Mcq.setWrongOption3("hatten");
         deB2_3Mcq.setXpReward(25);
         deB2_3Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB2_3Mcq);
+        saveMcqIfNotExists(deB2_3Mcq);
 
         ExerciseMcq deB2_4Mcq = new ExerciseMcq();
         deB2_4Mcq.setTargetLanguage(Language.DE);
@@ -970,7 +970,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_4Mcq.setWrongOption3("Verhandlungen");
         deB2_4Mcq.setXpReward(25);
         deB2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB2_4Mcq);
+        saveMcqIfNotExists(deB2_4Mcq);
 
         ExerciseFillBlank deB2Fill = new ExerciseFillBlank();
         deB2Fill.setTargetLanguage(Language.DE);
@@ -980,7 +980,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2Fill.setCorrectAnswer("Ausdauer");
         deB2Fill.setXpReward(25);
         deB2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB2Fill);
+        saveFillBlankIfNotExists(deB2Fill);
 
         ExerciseFillBlank deB2_2Fill = new ExerciseFillBlank();
         deB2_2Fill.setTargetLanguage(Language.DE);
@@ -990,7 +990,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_2Fill.setCorrectAnswer("Probleme");
         deB2_2Fill.setXpReward(25);
         deB2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB2_2Fill);
+        saveFillBlankIfNotExists(deB2_2Fill);
 
         ExerciseFillBlank deB2_3Fill = new ExerciseFillBlank();
         deB2_3Fill.setTargetLanguage(Language.DE);
@@ -1000,7 +1000,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_3Fill.setCorrectAnswer("informierte");
         deB2_3Fill.setXpReward(25);
         deB2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB2_3Fill);
+        saveFillBlankIfNotExists(deB2_3Fill);
 
         ExerciseFillBlank deB2_4Fill = new ExerciseFillBlank();
         deB2_4Fill.setTargetLanguage(Language.DE);
@@ -1010,7 +1010,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_4Fill.setCorrectAnswer("Innovation");
         deB2_4Fill.setXpReward(25);
         deB2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB2_4Fill);
+        saveFillBlankIfNotExists(deB2_4Fill);
 
         // C1 Level - Komplexe Ideen (Complex Ideas & Nuanced Language)
         ExerciseMcq deC1Mcq = new ExerciseMcq();
@@ -1024,7 +1024,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1Mcq.setWrongOption3("gedeutet");
         deC1Mcq.setXpReward(30);
         deC1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deC1Mcq);
+        saveMcqIfNotExists(deC1Mcq);
 
         ExerciseMcq deC1_2Mcq = new ExerciseMcq();
         deC1_2Mcq.setTargetLanguage(Language.DE);
@@ -1037,7 +1037,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_2Mcq.setWrongOption3("untersuchend");
         deC1_2Mcq.setXpReward(30);
         deC1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC1_2Mcq);
+        saveMcqIfNotExists(deC1_2Mcq);
 
         ExerciseMcq deC1_3Mcq = new ExerciseMcq();
         deC1_3Mcq.setTargetLanguage(Language.DE);
@@ -1050,7 +1050,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_3Mcq.setWrongOption3("erhoben");
         deC1_3Mcq.setXpReward(30);
         deC1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC1_3Mcq);
+        saveMcqIfNotExists(deC1_3Mcq);
 
         ExerciseMcq deC1_4Mcq = new ExerciseMcq();
         deC1_4Mcq.setTargetLanguage(Language.DE);
@@ -1063,7 +1063,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_4Mcq.setWrongOption3("vagee");
         deC1_4Mcq.setXpReward(30);
         deC1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC1_4Mcq);
+        saveMcqIfNotExists(deC1_4Mcq);
 
         ExerciseFillBlank deC1Fill = new ExerciseFillBlank();
         deC1Fill.setTargetLanguage(Language.DE);
@@ -1073,7 +1073,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1Fill.setCorrectAnswer("überzeugend");
         deC1Fill.setXpReward(30);
         deC1Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC1Fill);
+        saveFillBlankIfNotExists(deC1Fill);
 
         ExerciseFillBlank deC1_2Fill = new ExerciseFillBlank();
         deC1_2Fill.setTargetLanguage(Language.DE);
@@ -1083,7 +1083,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_2Fill.setCorrectAnswer("mehrdeutig");
         deC1_2Fill.setXpReward(30);
         deC1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC1_2Fill);
+        saveFillBlankIfNotExists(deC1_2Fill);
 
         ExerciseFillBlank deC1_3Fill = new ExerciseFillBlank();
         deC1_3Fill.setTargetLanguage(Language.DE);
@@ -1093,7 +1093,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_3Fill.setCorrectAnswer("Analyse");
         deC1_3Fill.setXpReward(30);
         deC1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC1_3Fill);
+        saveFillBlankIfNotExists(deC1_3Fill);
 
         ExerciseFillBlank deC1_4Fill = new ExerciseFillBlank();
         deC1_4Fill.setTargetLanguage(Language.DE);
@@ -1103,7 +1103,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_4Fill.setCorrectAnswer("interdisziplinären");
         deC1_4Fill.setXpReward(30);
         deC1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC1_4Fill);
+        saveFillBlankIfNotExists(deC1_4Fill);
 
 
         // C2 Level - Gehobene Sprache (Idiomatic Expressions & Sophisticated Language)
@@ -1118,7 +1118,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2Mcq.setWrongOption3("Fertigstellung");
         deC2Mcq.setXpReward(35);
         deC2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC2Mcq);
+        saveMcqIfNotExists(deC2Mcq);
 
         ExerciseMcq deC2_2Mcq = new ExerciseMcq();
         deC2_2Mcq.setTargetLanguage(Language.DE);
@@ -1131,7 +1131,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_2Mcq.setWrongOption3("aus der Form");
         deC2_2Mcq.setXpReward(35);
         deC2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC2_2Mcq);
+        saveMcqIfNotExists(deC2_2Mcq);
 
         ExerciseMcq deC2_3Mcq = new ExerciseMcq();
         deC2_3Mcq.setTargetLanguage(Language.DE);
@@ -1144,7 +1144,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_3Mcq.setWrongOption3("in aller Ruhe");
         deC2_3Mcq.setXpReward(35);
         deC2_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC2_3Mcq);
+        saveMcqIfNotExists(deC2_3Mcq);
 
         ExerciseMcq deC2_4Mcq = new ExerciseMcq();
         deC2_4Mcq.setTargetLanguage(Language.DE);
@@ -1157,7 +1157,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_4Mcq.setWrongOption3("überzeugender");
         deC2_4Mcq.setXpReward(35);
         deC2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC2_4Mcq);
+        saveMcqIfNotExists(deC2_4Mcq);
 
         ExerciseFillBlank deC2Fill = new ExerciseFillBlank();
         deC2Fill.setTargetLanguage(Language.DE);
@@ -1167,7 +1167,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2Fill.setCorrectAnswer("unvergleichliche");
         deC2Fill.setXpReward(35);
         deC2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC2Fill);
+        saveFillBlankIfNotExists(deC2Fill);
 
         ExerciseFillBlank deC2_2Fill = new ExerciseFillBlank();
         deC2_2Fill.setTargetLanguage(Language.DE);
@@ -1177,7 +1177,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_2Fill.setCorrectAnswer("tiefgründig");
         deC2_2Fill.setXpReward(35);
         deC2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC2_2Fill);
+        saveFillBlankIfNotExists(deC2_2Fill);
 
         ExerciseFillBlank deC2_3Fill = new ExerciseFillBlank();
         deC2_3Fill.setTargetLanguage(Language.DE);
@@ -1187,7 +1187,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_3Fill.setCorrectAnswer("nuancierte");
         deC2_3Fill.setXpReward(35);
         deC2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC2_3Fill);
+        saveFillBlankIfNotExists(deC2_3Fill);
 
         ExerciseFillBlank deC2_4Fill = new ExerciseFillBlank();
         deC2_4Fill.setTargetLanguage(Language.DE);
@@ -1197,7 +1197,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_4Fill.setCorrectAnswer("Gelassenheit");
         deC2_4Fill.setXpReward(35);
         deC2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC2_4Fill);
+        saveFillBlankIfNotExists(deC2_4Fill);
 
         logger.info("German exercises seeded: 24 MCQ + 24 Fill-Blank = 48 total");
     }
@@ -1217,7 +1217,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1G1.setWrongOption3("some");
         enA1G1.setXpReward(10);
         enA1G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA1G1);
+        saveMcqIfNotExists(enA1G1);
 
         ExerciseMcq enA1G2 = new ExerciseMcq();
         enA1G2.setTargetLanguage(Language.EN);
@@ -1230,7 +1230,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1G2.setWrongOption3("be");
         enA1G2.setXpReward(10);
         enA1G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA1G2);
+        saveMcqIfNotExists(enA1G2);
 
         ExerciseMcq enA1G3 = new ExerciseMcq();
         enA1G3.setTargetLanguage(Language.EN);
@@ -1243,7 +1243,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1G3.setWrongOption3("You");
         enA1G3.setXpReward(10);
         enA1G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA1G3);
+        saveMcqIfNotExists(enA1G3);
 
         ExerciseMcq enA1G4 = new ExerciseMcq();
         enA1G4.setTargetLanguage(Language.EN);
@@ -1256,7 +1256,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1G4.setWrongOption3("bookies");
         enA1G4.setXpReward(10);
         enA1G4.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA1G4);
+        saveMcqIfNotExists(enA1G4);
 
         // EN A2 MCQ GRAMMAR (4)
         ExerciseMcq enA2G1 = new ExerciseMcq();
@@ -1270,7 +1270,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2G1.setWrongOption3("play");
         enA2G1.setXpReward(15);
         enA2G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA2G1);
+        saveMcqIfNotExists(enA2G1);
 
         ExerciseMcq enA2G2 = new ExerciseMcq();
         enA2G2.setTargetLanguage(Language.EN);
@@ -1283,7 +1283,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2G2.setWrongOption3("going");
         enA2G2.setXpReward(15);
         enA2G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA2G2);
+        saveMcqIfNotExists(enA2G2);
 
         ExerciseMcq enA2G3 = new ExerciseMcq();
         enA2G3.setTargetLanguage(Language.EN);
@@ -1296,7 +1296,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2G3.setWrongOption3("their");
         enA2G3.setXpReward(15);
         enA2G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA2G3);
+        saveMcqIfNotExists(enA2G3);
 
         ExerciseMcq enA2G4 = new ExerciseMcq();
         enA2G4.setTargetLanguage(Language.EN);
@@ -1309,7 +1309,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2G4.setWrongOption3("biggest");
         enA2G4.setXpReward(15);
         enA2G4.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA2G4);
+        saveMcqIfNotExists(enA2G4);
 
         // EN B1 MCQ GRAMMAR (4)
         ExerciseMcq enB1G1 = new ExerciseMcq();
@@ -1323,7 +1323,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1G1.setWrongOption3("gone");
         enB1G1.setXpReward(20);
         enB1G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB1G1);
+        saveMcqIfNotExists(enB1G1);
 
         ExerciseMcq enB1G2 = new ExerciseMcq();
         enB1G2.setTargetLanguage(Language.EN);
@@ -1336,7 +1336,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1G2.setWrongOption3("leaves");
         enB1G2.setXpReward(20);
         enB1G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB1G2);
+        saveMcqIfNotExists(enB1G2);
 
         ExerciseMcq enB1G3 = new ExerciseMcq();
         enB1G3.setTargetLanguage(Language.EN);
@@ -1349,7 +1349,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1G3.setWrongOption3("whom");
         enB1G3.setXpReward(20);
         enB1G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB1G3);
+        saveMcqIfNotExists(enB1G3);
 
         ExerciseMcq enB1G4 = new ExerciseMcq();
         enB1G4.setTargetLanguage(Language.EN);
@@ -1362,7 +1362,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1G4.setWrongOption3("might");
         enB1G4.setXpReward(20);
         enB1G4.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB1G4);
+        saveMcqIfNotExists(enB1G4);
 
         // EN B2 MCQ GRAMMAR (4)
         ExerciseMcq enB2G1 = new ExerciseMcq();
@@ -1376,7 +1376,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2G1.setWrongOption3("had had");
         enB2G1.setXpReward(25);
         enB2G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB2G1);
+        saveMcqIfNotExists(enB2G1);
 
         ExerciseMcq enB2G2 = new ExerciseMcq();
         enB2G2.setTargetLanguage(Language.EN);
@@ -1389,7 +1389,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2G2.setWrongOption3("has written");
         enB2G2.setXpReward(25);
         enB2G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB2G2);
+        saveMcqIfNotExists(enB2G2);
 
         ExerciseMcq enB2G3 = new ExerciseMcq();
         enB2G3.setTargetLanguage(Language.EN);
@@ -1402,7 +1402,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2G3.setWrongOption3("were");
         enB2G3.setXpReward(25);
         enB2G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB2G3);
+        saveMcqIfNotExists(enB2G3);
 
         ExerciseMcq enB2G4 = new ExerciseMcq();
         enB2G4.setTargetLanguage(Language.EN);
@@ -1415,7 +1415,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2G4.setWrongOption3("will");
         enB2G4.setXpReward(25);
         enB2G4.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB2G4);
+        saveMcqIfNotExists(enB2G4);
 
         // EN C1 MCQ GRAMMAR (3)
         ExerciseMcq enC1G1 = new ExerciseMcq();
@@ -1429,7 +1429,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1G1.setWrongOption3("were");
         enC1G1.setXpReward(30);
         enC1G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enC1G1);
+        saveMcqIfNotExists(enC1G1);
 
         ExerciseMcq enC1G2 = new ExerciseMcq();
         enC1G2.setTargetLanguage(Language.EN);
@@ -1442,7 +1442,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1G2.setWrongOption3("had");
         enC1G2.setXpReward(30);
         enC1G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enC1G2);
+        saveMcqIfNotExists(enC1G2);
 
         ExerciseMcq enC1G3 = new ExerciseMcq();
         enC1G3.setTargetLanguage(Language.EN);
@@ -1455,7 +1455,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1G3.setWrongOption3("has");
         enC1G3.setXpReward(30);
         enC1G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enC1G3);
+        saveMcqIfNotExists(enC1G3);
 
         // EN C2 MCQ GRAMMAR (3)
         ExerciseMcq enC2G1 = new ExerciseMcq();
@@ -1469,7 +1469,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2G1.setWrongOption3("had");
         enC2G1.setXpReward(35);
         enC2G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enC2G1);
+        saveMcqIfNotExists(enC2G1);
 
         ExerciseMcq enC2G2 = new ExerciseMcq();
         enC2G2.setTargetLanguage(Language.EN);
@@ -1482,7 +1482,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2G2.setWrongOption3("have");
         enC2G2.setXpReward(35);
         enC2G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enC2G2);
+        saveMcqIfNotExists(enC2G2);
 
         ExerciseMcq enC2G3 = new ExerciseMcq();
         enC2G3.setTargetLanguage(Language.EN);
@@ -1495,7 +1495,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2G3.setWrongOption3("completed");
         enC2G3.setXpReward(35);
         enC2G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enC2G3);
+        saveMcqIfNotExists(enC2G3);
 
         // EN A1 Fill-blank GRAMMAR (4)
         ExerciseFillBlank enA1GF1 = new ExerciseFillBlank();
@@ -1506,7 +1506,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1GF1.setCorrectAnswer("am");
         enA1GF1.setXpReward(10);
         enA1GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA1GF1);
+        saveFillBlankIfNotExists(enA1GF1);
 
         ExerciseFillBlank enA1GF2 = new ExerciseFillBlank();
         enA1GF2.setTargetLanguage(Language.EN);
@@ -1516,7 +1516,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1GF2.setCorrectAnswer("are");
         enA1GF2.setXpReward(10);
         enA1GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA1GF2);
+        saveFillBlankIfNotExists(enA1GF2);
 
         ExerciseFillBlank enA1GF3 = new ExerciseFillBlank();
         enA1GF3.setTargetLanguage(Language.EN);
@@ -1526,7 +1526,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1GF3.setCorrectAnswer("a");
         enA1GF3.setXpReward(10);
         enA1GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA1GF3);
+        saveFillBlankIfNotExists(enA1GF3);
 
         ExerciseFillBlank enA1GF4 = new ExerciseFillBlank();
         enA1GF4.setTargetLanguage(Language.EN);
@@ -1536,7 +1536,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1GF4.setCorrectAnswer("This");
         enA1GF4.setXpReward(10);
         enA1GF4.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA1GF4);
+        saveFillBlankIfNotExists(enA1GF4);
 
         // EN A2 Fill-blank GRAMMAR (4)
         ExerciseFillBlank enA2GF1 = new ExerciseFillBlank();
@@ -1547,7 +1547,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2GF1.setCorrectAnswer("went");
         enA2GF1.setXpReward(15);
         enA2GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA2GF1);
+        saveFillBlankIfNotExists(enA2GF1);
 
         ExerciseFillBlank enA2GF2 = new ExerciseFillBlank();
         enA2GF2.setTargetLanguage(Language.EN);
@@ -1557,7 +1557,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2GF2.setCorrectAnswer("yours");
         enA2GF2.setXpReward(15);
         enA2GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA2GF2);
+        saveFillBlankIfNotExists(enA2GF2);
 
         ExerciseFillBlank enA2GF3 = new ExerciseFillBlank();
         enA2GF3.setTargetLanguage(Language.EN);
@@ -1567,7 +1567,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2GF3.setCorrectAnswer("is");
         enA2GF3.setXpReward(15);
         enA2GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA2GF3);
+        saveFillBlankIfNotExists(enA2GF3);
 
         ExerciseFillBlank enA2GF4 = new ExerciseFillBlank();
         enA2GF4.setTargetLanguage(Language.EN);
@@ -1577,7 +1577,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2GF4.setCorrectAnswer("on");
         enA2GF4.setXpReward(15);
         enA2GF4.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA2GF4);
+        saveFillBlankIfNotExists(enA2GF4);
 
         // EN B1 Fill-blank GRAMMAR (4)
         ExerciseFillBlank enB1GF1 = new ExerciseFillBlank();
@@ -1588,7 +1588,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1GF1.setCorrectAnswer("just");
         enB1GF1.setXpReward(20);
         enB1GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB1GF1);
+        saveFillBlankIfNotExists(enB1GF1);
 
         ExerciseFillBlank enB1GF2 = new ExerciseFillBlank();
         enB1GF2.setTargetLanguage(Language.EN);
@@ -1598,7 +1598,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1GF2.setCorrectAnswer("who");
         enB1GF2.setXpReward(20);
         enB1GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB1GF2);
+        saveFillBlankIfNotExists(enB1GF2);
 
         ExerciseFillBlank enB1GF3 = new ExerciseFillBlank();
         enB1GF3.setTargetLanguage(Language.EN);
@@ -1608,7 +1608,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1GF3.setCorrectAnswer("must");
         enB1GF3.setXpReward(20);
         enB1GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB1GF3);
+        saveFillBlankIfNotExists(enB1GF3);
 
         ExerciseFillBlank enB1GF4 = new ExerciseFillBlank();
         enB1GF4.setTargetLanguage(Language.EN);
@@ -1618,7 +1618,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1GF4.setCorrectAnswer("because");
         enB1GF4.setXpReward(20);
         enB1GF4.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB1GF4);
+        saveFillBlankIfNotExists(enB1GF4);
 
         // EN B2 Fill-blank GRAMMAR (4)
         ExerciseFillBlank enB2GF1 = new ExerciseFillBlank();
@@ -1629,7 +1629,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2GF1.setCorrectAnswer("was");
         enB2GF1.setXpReward(25);
         enB2GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB2GF1);
+        saveFillBlankIfNotExists(enB2GF1);
 
         ExerciseFillBlank enB2GF2 = new ExerciseFillBlank();
         enB2GF2.setTargetLanguage(Language.EN);
@@ -1639,7 +1639,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2GF2.setCorrectAnswer("would");
         enB2GF2.setXpReward(25);
         enB2GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB2GF2);
+        saveFillBlankIfNotExists(enB2GF2);
 
         ExerciseFillBlank enB2GF3 = new ExerciseFillBlank();
         enB2GF3.setTargetLanguage(Language.EN);
@@ -1649,7 +1649,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2GF3.setCorrectAnswer("had been");
         enB2GF3.setXpReward(25);
         enB2GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB2GF3);
+        saveFillBlankIfNotExists(enB2GF3);
 
         ExerciseFillBlank enB2GF4 = new ExerciseFillBlank();
         enB2GF4.setTargetLanguage(Language.EN);
@@ -1659,7 +1659,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2GF4.setCorrectAnswer("going");
         enB2GF4.setXpReward(25);
         enB2GF4.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB2GF4);
+        saveFillBlankIfNotExists(enB2GF4);
 
         // EN C1 Fill-blank GRAMMAR (3)
         ExerciseFillBlank enC1GF1 = new ExerciseFillBlank();
@@ -1670,7 +1670,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1GF1.setCorrectAnswer("have");
         enC1GF1.setXpReward(30);
         enC1GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enC1GF1);
+        saveFillBlankIfNotExists(enC1GF1);
 
         ExerciseFillBlank enC1GF2 = new ExerciseFillBlank();
         enC1GF2.setTargetLanguage(Language.EN);
@@ -1680,7 +1680,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1GF2.setCorrectAnswer("Having");
         enC1GF2.setXpReward(30);
         enC1GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enC1GF2);
+        saveFillBlankIfNotExists(enC1GF2);
 
         ExerciseFillBlank enC1GF3 = new ExerciseFillBlank();
         enC1GF3.setTargetLanguage(Language.EN);
@@ -1690,7 +1690,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1GF3.setCorrectAnswer("be");
         enC1GF3.setXpReward(30);
         enC1GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enC1GF3);
+        saveFillBlankIfNotExists(enC1GF3);
 
         // EN C2 Fill-blank GRAMMAR (3)
         ExerciseFillBlank enC2GF1 = new ExerciseFillBlank();
@@ -1701,7 +1701,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2GF1.setCorrectAnswer("not");
         enC2GF1.setXpReward(35);
         enC2GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enC2GF1);
+        saveFillBlankIfNotExists(enC2GF1);
 
         ExerciseFillBlank enC2GF2 = new ExerciseFillBlank();
         enC2GF2.setTargetLanguage(Language.EN);
@@ -1711,7 +1711,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2GF2.setCorrectAnswer("as");
         enC2GF2.setXpReward(35);
         enC2GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enC2GF2);
+        saveFillBlankIfNotExists(enC2GF2);
 
         ExerciseFillBlank enC2GF3 = new ExerciseFillBlank();
         enC2GF3.setTargetLanguage(Language.EN);
@@ -1721,7 +1721,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2GF3.setCorrectAnswer("is");
         enC2GF3.setXpReward(35);
         enC2GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enC2GF3);
+        saveFillBlankIfNotExists(enC2GF3);
 
         logger.info("English GRAMMAR exercises seeded: 22 MCQ + 22 Fill-Blank = 44 total");
     }
@@ -1741,7 +1741,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1G1.setWrongOption3("einer");
         deA1G1.setXpReward(10);
         deA1G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA1G1);
+        saveMcqIfNotExists(deA1G1);
 
         ExerciseMcq deA1G2 = new ExerciseMcq();
         deA1G2.setTargetLanguage(Language.DE);
@@ -1754,7 +1754,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1G2.setWrongOption3("lernen");
         deA1G2.setXpReward(10);
         deA1G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA1G2);
+        saveMcqIfNotExists(deA1G2);
 
         ExerciseMcq deA1G3 = new ExerciseMcq();
         deA1G3.setTargetLanguage(Language.DE);
@@ -1767,7 +1767,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1G3.setWrongOption3("seid");
         deA1G3.setXpReward(10);
         deA1G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA1G3);
+        saveMcqIfNotExists(deA1G3);
 
         ExerciseMcq deA1G4 = new ExerciseMcq();
         deA1G4.setTargetLanguage(Language.DE);
@@ -1780,7 +1780,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1G4.setWrongOption3("haben");
         deA1G4.setXpReward(10);
         deA1G4.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA1G4);
+        saveMcqIfNotExists(deA1G4);
 
         // DE A2 MCQ GRAMMAR (4)
         ExerciseMcq deA2G1 = new ExerciseMcq();
@@ -1794,7 +1794,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2G1.setWrongOption3("des");
         deA2G1.setXpReward(15);
         deA2G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2G1);
+        saveMcqIfNotExists(deA2G1);
 
         ExerciseMcq deA2G2 = new ExerciseMcq();
         deA2G2.setTargetLanguage(Language.DE);
@@ -1807,7 +1807,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2G2.setWrongOption3("konnte");
         deA2G2.setXpReward(15);
         deA2G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2G2);
+        saveMcqIfNotExists(deA2G2);
 
         ExerciseMcq deA2G3 = new ExerciseMcq();
         deA2G3.setTargetLanguage(Language.DE);
@@ -1820,7 +1820,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2G3.setWrongOption3("geseht");
         deA2G3.setXpReward(15);
         deA2G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2G3);
+        saveMcqIfNotExists(deA2G3);
 
         ExerciseMcq deA2G4 = new ExerciseMcq();
         deA2G4.setTargetLanguage(Language.DE);
@@ -1833,7 +1833,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2G4.setWrongOption3("ein");
         deA2G4.setXpReward(15);
         deA2G4.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2G4);
+        saveMcqIfNotExists(deA2G4);
 
         // DE B1 MCQ GRAMMAR (4)
         ExerciseMcq deB1G1 = new ExerciseMcq();
@@ -1847,7 +1847,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1G1.setWrongOption3("das");
         deB1G1.setXpReward(20);
         deB1G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB1G1);
+        saveMcqIfNotExists(deB1G1);
 
         ExerciseMcq deB1G2 = new ExerciseMcq();
         deB1G2.setTargetLanguage(Language.DE);
@@ -1860,7 +1860,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1G2.setWrongOption3("und");
         deB1G2.setXpReward(20);
         deB1G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB1G2);
+        saveMcqIfNotExists(deB1G2);
 
         ExerciseMcq deB1G3 = new ExerciseMcq();
         deB1G3.setTargetLanguage(Language.DE);
@@ -1873,7 +1873,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1G3.setWrongOption3("dessen");
         deB1G3.setXpReward(20);
         deB1G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB1G3);
+        saveMcqIfNotExists(deB1G3);
 
         ExerciseMcq deB1G4 = new ExerciseMcq();
         deB1G4.setTargetLanguage(Language.DE);
@@ -1886,7 +1886,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1G4.setWrongOption3("wäre");
         deB1G4.setXpReward(20);
         deB1G4.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB1G4);
+        saveMcqIfNotExists(deB1G4);
 
         // DE B2 MCQ GRAMMAR (4)
         ExerciseMcq deB2G1 = new ExerciseMcq();
@@ -1900,7 +1900,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2G1.setWrongOption3("sei");
         deB2G1.setXpReward(25);
         deB2G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB2G1);
+        saveMcqIfNotExists(deB2G1);
 
         ExerciseMcq deB2G2 = new ExerciseMcq();
         deB2G2.setTargetLanguage(Language.DE);
@@ -1913,7 +1913,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2G2.setWrongOption3("worden");
         deB2G2.setXpReward(25);
         deB2G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB2G2);
+        saveMcqIfNotExists(deB2G2);
 
         ExerciseMcq deB2G3 = new ExerciseMcq();
         deB2G3.setTargetLanguage(Language.DE);
@@ -1926,7 +1926,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2G3.setWrongOption3("haben");
         deB2G3.setXpReward(25);
         deB2G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB2G3);
+        saveMcqIfNotExists(deB2G3);
 
         ExerciseMcq deB2G4 = new ExerciseMcq();
         deB2G4.setTargetLanguage(Language.DE);
@@ -1939,7 +1939,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2G4.setWrongOption3("-");
         deB2G4.setXpReward(25);
         deB2G4.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB2G4);
+        saveMcqIfNotExists(deB2G4);
 
         // DE C1 MCQ GRAMMAR (3)
         ExerciseMcq deC1G1 = new ExerciseMcq();
@@ -1953,7 +1953,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1G1.setWrongOption3("der");
         deC1G1.setXpReward(30);
         deC1G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deC1G1);
+        saveMcqIfNotExists(deC1G1);
 
         ExerciseMcq deC1G2 = new ExerciseMcq();
         deC1G2.setTargetLanguage(Language.DE);
@@ -1966,7 +1966,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1G2.setWrongOption3("leisten");
         deC1G2.setXpReward(30);
         deC1G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deC1G2);
+        saveMcqIfNotExists(deC1G2);
 
         ExerciseMcq deC1G3 = new ExerciseMcq();
         deC1G3.setTargetLanguage(Language.DE);
@@ -1979,7 +1979,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1G3.setWrongOption3("Lösend");
         deC1G3.setXpReward(30);
         deC1G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deC1G3);
+        saveMcqIfNotExists(deC1G3);
 
         // DE C2 MCQ GRAMMAR (3)
         ExerciseMcq deC2G1 = new ExerciseMcq();
@@ -1993,7 +1993,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2G1.setWrongOption3("war");
         deC2G1.setXpReward(35);
         deC2G1.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deC2G1);
+        saveMcqIfNotExists(deC2G1);
 
         ExerciseMcq deC2G2 = new ExerciseMcq();
         deC2G2.setTargetLanguage(Language.DE);
@@ -2006,7 +2006,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2G2.setWrongOption3("dort stehen");
         deC2G2.setXpReward(35);
         deC2G2.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deC2G2);
+        saveMcqIfNotExists(deC2G2);
 
         ExerciseMcq deC2G3 = new ExerciseMcq();
         deC2G3.setTargetLanguage(Language.DE);
@@ -2019,7 +2019,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2G3.setWrongOption3("gegeben");
         deC2G3.setXpReward(35);
         deC2G3.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deC2G3);
+        saveMcqIfNotExists(deC2G3);
 
         // DE A1 Fill-blank GRAMMAR (4)
         ExerciseFillBlank deA1GF1 = new ExerciseFillBlank();
@@ -2030,7 +2030,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1GF1.setCorrectAnswer("bin");
         deA1GF1.setXpReward(10);
         deA1GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA1GF1);
+        saveFillBlankIfNotExists(deA1GF1);
 
         ExerciseFillBlank deA1GF2 = new ExerciseFillBlank();
         deA1GF2.setTargetLanguage(Language.DE);
@@ -2040,7 +2040,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1GF2.setCorrectAnswer("hat");
         deA1GF2.setXpReward(10);
         deA1GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA1GF2);
+        saveFillBlankIfNotExists(deA1GF2);
 
         ExerciseFillBlank deA1GF3 = new ExerciseFillBlank();
         deA1GF3.setTargetLanguage(Language.DE);
@@ -2050,7 +2050,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1GF3.setCorrectAnswer("Der");
         deA1GF3.setXpReward(10);
         deA1GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA1GF3);
+        saveFillBlankIfNotExists(deA1GF3);
 
         ExerciseFillBlank deA1GF4 = new ExerciseFillBlank();
         deA1GF4.setTargetLanguage(Language.DE);
@@ -2060,7 +2060,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1GF4.setCorrectAnswer("sprichst");
         deA1GF4.setXpReward(10);
         deA1GF4.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA1GF4);
+        saveFillBlankIfNotExists(deA1GF4);
 
         // DE A2 Fill-blank GRAMMAR (4)
         ExerciseFillBlank deA2GF1 = new ExerciseFillBlank();
@@ -2071,7 +2071,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2GF1.setCorrectAnswer("ein");
         deA2GF1.setXpReward(15);
         deA2GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA2GF1);
+        saveFillBlankIfNotExists(deA2GF1);
 
         ExerciseFillBlank deA2GF2 = new ExerciseFillBlank();
         deA2GF2.setTargetLanguage(Language.DE);
@@ -2081,7 +2081,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2GF2.setCorrectAnswer("auf");
         deA2GF2.setXpReward(15);
         deA2GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA2GF2);
+        saveFillBlankIfNotExists(deA2GF2);
 
         ExerciseFillBlank deA2GF3 = new ExerciseFillBlank();
         deA2GF3.setTargetLanguage(Language.DE);
@@ -2091,7 +2091,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2GF3.setCorrectAnswer("gebacken");
         deA2GF3.setXpReward(15);
         deA2GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA2GF3);
+        saveFillBlankIfNotExists(deA2GF3);
 
         ExerciseFillBlank deA2GF4 = new ExerciseFillBlank();
         deA2GF4.setTargetLanguage(Language.DE);
@@ -2101,7 +2101,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2GF4.setCorrectAnswer("auf");
         deA2GF4.setXpReward(15);
         deA2GF4.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA2GF4);
+        saveFillBlankIfNotExists(deA2GF4);
 
         // DE B1 Fill-blank GRAMMAR (4)
         ExerciseFillBlank deB1GF1 = new ExerciseFillBlank();
@@ -2112,7 +2112,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1GF1.setCorrectAnswer("der");
         deB1GF1.setXpReward(20);
         deB1GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB1GF1);
+        saveFillBlankIfNotExists(deB1GF1);
 
         ExerciseFillBlank deB1GF2 = new ExerciseFillBlank();
         deB1GF2.setTargetLanguage(Language.DE);
@@ -2122,7 +2122,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1GF2.setCorrectAnswer("ob");
         deB1GF2.setXpReward(20);
         deB1GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB1GF2);
+        saveFillBlankIfNotExists(deB1GF2);
 
         ExerciseFillBlank deB1GF3 = new ExerciseFillBlank();
         deB1GF3.setTargetLanguage(Language.DE);
@@ -2132,7 +2132,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1GF3.setCorrectAnswer("mich");
         deB1GF3.setXpReward(20);
         deB1GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB1GF3);
+        saveFillBlankIfNotExists(deB1GF3);
 
         ExerciseFillBlank deB1GF4 = new ExerciseFillBlank();
         deB1GF4.setTargetLanguage(Language.DE);
@@ -2142,7 +2142,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1GF4.setCorrectAnswer("größer");
         deB1GF4.setXpReward(20);
         deB1GF4.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB1GF4);
+        saveFillBlankIfNotExists(deB1GF4);
 
         // DE B2 Fill-blank GRAMMAR (4)
         ExerciseFillBlank deB2GF1 = new ExerciseFillBlank();
@@ -2153,7 +2153,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2GF1.setCorrectAnswer("hätte");
         deB2GF1.setXpReward(25);
         deB2GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB2GF1);
+        saveFillBlankIfNotExists(deB2GF1);
 
         ExerciseFillBlank deB2GF2 = new ExerciseFillBlank();
         deB2GF2.setTargetLanguage(Language.DE);
@@ -2163,7 +2163,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2GF2.setCorrectAnswer("geöffnet");
         deB2GF2.setXpReward(25);
         deB2GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB2GF2);
+        saveFillBlankIfNotExists(deB2GF2);
 
         ExerciseFillBlank deB2GF3 = new ExerciseFillBlank();
         deB2GF3.setTargetLanguage(Language.DE);
@@ -2173,7 +2173,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2GF3.setCorrectAnswer("hatte");
         deB2GF3.setXpReward(25);
         deB2GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB2GF3);
+        saveFillBlankIfNotExists(deB2GF3);
 
         ExerciseFillBlank deB2GF4 = new ExerciseFillBlank();
         deB2GF4.setTargetLanguage(Language.DE);
@@ -2183,7 +2183,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2GF4.setCorrectAnswer("obwohl");
         deB2GF4.setXpReward(25);
         deB2GF4.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB2GF4);
+        saveFillBlankIfNotExists(deB2GF4);
 
         // DE C1 Fill-blank GRAMMAR (3)
         ExerciseFillBlank deC1GF1 = new ExerciseFillBlank();
@@ -2194,7 +2194,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1GF1.setCorrectAnswer("des");
         deC1GF1.setXpReward(30);
         deC1GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deC1GF1);
+        saveFillBlankIfNotExists(deC1GF1);
 
         ExerciseFillBlank deC1GF2 = new ExerciseFillBlank();
         deC1GF2.setTargetLanguage(Language.DE);
@@ -2204,7 +2204,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1GF2.setCorrectAnswer("gestellte");
         deC1GF2.setXpReward(30);
         deC1GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deC1GF2);
+        saveFillBlankIfNotExists(deC1GF2);
 
         ExerciseFillBlank deC1GF3 = new ExerciseFillBlank();
         deC1GF3.setTargetLanguage(Language.DE);
@@ -2214,7 +2214,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1GF3.setCorrectAnswer("beendet");
         deC1GF3.setXpReward(30);
         deC1GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deC1GF3);
+        saveFillBlankIfNotExists(deC1GF3);
 
         // DE C2 Fill-blank GRAMMAR (3)
         ExerciseFillBlank deC2GF1 = new ExerciseFillBlank();
@@ -2225,7 +2225,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2GF1.setCorrectAnswer("sei");
         deC2GF1.setXpReward(35);
         deC2GF1.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deC2GF1);
+        saveFillBlankIfNotExists(deC2GF1);
 
         ExerciseFillBlank deC2GF2 = new ExerciseFillBlank();
         deC2GF2.setTargetLanguage(Language.DE);
@@ -2235,7 +2235,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2GF2.setCorrectAnswer("ausgeübt");
         deC2GF2.setXpReward(35);
         deC2GF2.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deC2GF2);
+        saveFillBlankIfNotExists(deC2GF2);
 
         ExerciseFillBlank deC2GF3 = new ExerciseFillBlank();
         deC2GF3.setTargetLanguage(Language.DE);
@@ -2245,8 +2245,28 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2GF3.setCorrectAnswer("ja");
         deC2GF3.setXpReward(35);
         deC2GF3.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deC2GF3);
+        saveFillBlankIfNotExists(deC2GF3);
 
         logger.info("German GRAMMAR exercises seeded: 22 MCQ + 22 Fill-Blank = 44 total");
+    }
+
+    /**
+     * Saves an MCQ exercise only if an exercise with the same question_text doesn't already exist.
+     * This ensures idempotent seeding - safe to run multiple times without creating duplicates.
+     */
+    private void saveMcqIfNotExists(ExerciseMcq mcq) {
+        if (!mcqRepository.existsByQuestionText(mcq.getQuestionText())) {
+            mcqRepository.save(mcq);
+        }
+    }
+
+    /**
+     * Saves a Fill-Blank exercise only if an exercise with the same sentence_with_blank doesn't already exist.
+     * This ensures idempotent seeding - safe to run multiple times without creating duplicates.
+     */
+    private void saveFillBlankIfNotExists(ExerciseFillBlank fillBlank) {
+        if (!fillBlankRepository.existsBySentenceWithBlank(fillBlank.getSentenceWithBlank())) {
+            fillBlankRepository.save(fillBlank);
+        }
     }
 }
