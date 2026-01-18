@@ -111,8 +111,59 @@
     <div class="learning-path">
       <div class="levels-path">
         @for (level of levels(); track level.id; let i = $index) {
-          <!-- Connector from previous node -->
-          @if (i > 0) {
+          <!-- Difficulty Divider (shown when difficulty changes) -->
+          @if (isFirstInDifficultyGroup(i)) {
+            <!-- Connector TO the divider (from previous level) - only if NOT first level overall -->
+            @if (i > 0) {
+              <svg class="path-connector-svg connector-to-divider" viewBox="0 0 200 40" preserveAspectRatio="none">
+                @if (i % 2 === 0) {
+                  <path
+                    class="connector-path"
+                    [class.active]="levels()[i - 1].status === 'completed'"
+                    [attr.data-difficulty]="levels()[i - 1].difficultyLevel"
+                    d="M 155 0 C 155 20, 100 20, 100 40"
+                  />
+                } @else {
+                  <path
+                    class="connector-path"
+                    [class.active]="levels()[i - 1].status === 'completed'"
+                    [attr.data-difficulty]="levels()[i - 1].difficultyLevel"
+                    d="M 45 0 C 45 20, 100 20, 100 40"
+                  />
+                }
+              </svg>
+            }
+
+            <div class="difficulty-divider" [attr.data-difficulty]="level.difficultyLevel">
+              <div class="divider-line"></div>
+              <span class="divider-badge">{{ level.difficultyLevel }}</span>
+              <div class="divider-line"></div>
+            </div>
+
+            <!-- Connector FROM the divider (to first level of new difficulty) - only if NOT first level overall -->
+            @if (i > 0) {
+              <svg class="path-connector-svg connector-from-divider" viewBox="0 0 200 40" preserveAspectRatio="none">
+                @if (i % 2 === 0) {
+                  <path
+                    class="connector-path"
+                    [class.active]="levels()[i - 1].status === 'completed'"
+                    [attr.data-difficulty]="level.difficultyLevel"
+                    d="M 100 0 C 100 20, 45 20, 45 40"
+                  />
+                } @else {
+                  <path
+                    class="connector-path"
+                    [class.active]="levels()[i - 1].status === 'completed'"
+                    [attr.data-difficulty]="level.difficultyLevel"
+                    d="M 100 0 C 100 20, 155 20, 155 40"
+                  />
+                }
+              </svg>
+            }
+          }
+
+          <!-- Connector from previous node (only if NOT first overall and NOT first in difficulty group) -->
+          @if (i > 0 && !isFirstInDifficultyGroup(i)) {
             <svg class="path-connector-svg" viewBox="0 0 200 60" preserveAspectRatio="none">
               @if (i % 2 === 0) {
                 <!-- Curve from right to left -->
@@ -164,7 +215,7 @@
                     }
                   </div>
                 </div>
-                <span class="level-number">{{ level.levelNumber }}</span>
+                <span class="level-number">{{ level.difficultyLevel }}-{{ level.levelNumber }}</span>
               </button>
             </div>
           </div>

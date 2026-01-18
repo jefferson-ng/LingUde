@@ -784,6 +784,70 @@
   gap: 0;
 }
 
+/* Difficulty Divider - Shows when difficulty level changes */
+.difficulty-divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1.25rem 0;
+  gap: 12px;
+}
+
+.difficulty-divider:first-child {
+  padding-top: 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
+}
+
+.divider-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 100px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+  letter-spacing: 0.5px;
+}
+
+/* Difficulty badge colors */
+.difficulty-divider[data-difficulty="A1"] .divider-badge {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.difficulty-divider[data-difficulty="A2"] .divider-badge {
+  background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+  box-shadow: 0 2px 8px rgba(132, 204, 22, 0.25);
+}
+
+.difficulty-divider[data-difficulty="B1"] .divider-badge {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  box-shadow: 0 2px 8px rgba(234, 179, 8, 0.25);
+}
+
+.difficulty-divider[data-difficulty="B2"] .divider-badge {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.25);
+}
+
+.difficulty-divider[data-difficulty="C1"] .divider-badge {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+}
+
+.difficulty-divider[data-difficulty="C2"] .divider-badge {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.25);
+}
+
 /* Path Row - Contains node */
 .path-row {
   position: relative;
@@ -808,6 +872,12 @@
   height: 60px;
   display: block;
   z-index: 1;
+}
+
+/* Connectors to/from difficulty divider */
+.path-connector-svg.connector-to-divider,
+.path-connector-svg.connector-from-divider {
+  height: 40px;
 }
 
 .connector-path {
