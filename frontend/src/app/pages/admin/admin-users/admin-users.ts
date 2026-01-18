@@ -24,6 +24,10 @@ export class AdminUsers implements OnInit {
   selectedUser = signal<AdminUserDetail | null>(null);
   isLoadingDetails = signal<boolean>(false);
 
+  showRoleConfirm = signal<boolean>(false);
+  isUpdatingRole = signal<boolean>(false);
+  roleUpdateError = signal<string | null>(null);
+
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
@@ -100,5 +104,44 @@ export class AdminUsers implements OnInit {
 
   getShowingEnd(): number {
     return Math.min((this.currentPage() + 1) * this.pageSize(), this.totalElements());
+  }
+
+  getNewRole(): string {
+    return this.selectedUser()?.role === 'ADMIN' ? 'USER' : 'ADMIN';
+  }
+
+  openRoleConfirm(): void {
+    this.showRoleConfirm.set(true);
+    this.roleUpdateError.set(null);
+  }
+
+  cancelRoleChange(): void {
+    this.showRoleConfirm.set(false);
+    this.roleUpdateError.set(null);
+  }
+
+  confirmRoleChange(): void {
+    const user = this.selectedUser();
+    if (!user) return;
+
+    const newRole = this.getNewRole();
+    this.isUpdatingRole.set(true);
+    this.roleUpdateError.set(null);
+
+    this.adminService.updateUserRole(user.userId, newRole).subscribe({
+      next: () => {
+        const updatedUser = { ...user, role: newRole };
+        this.selectedUser.set(updatedUser);
+        this.showRoleConfirm.set(false);
+        this.isUpdatingRole.set(false);
+        this.loadUsers();
+      },
+      error: (err) => {
+        console.error('Failed to update user role:', err);
+        const errorMsg = err?.error?.message || err?.message || 'admin.users.roleChange.error';
+        this.roleUpdateError.set(errorMsg);
+        this.isUpdatingRole.set(false);
+      }
+    });
   }
 }

@@ -448,6 +448,17 @@
         "lastActivity": "Letzte Aktivität",
         "achievements": "Erfolge",
         "noAchievements": "Noch keine Erfolge"
+      },
+      "roleChange": {
+        "title": "Rolle ändern",
+        "description": "Ändere die Rolle dieses Benutzers, um Admin-Rechte zu vergeben oder zu entziehen.",
+        "makeAdmin": "Zum Admin machen",
+        "makeUser": "Zum Benutzer machen",
+        "confirmMessage": "Bist du sicher, dass du die Rolle von {{username}} auf {{newRole}} ändern möchtest?",
+        "confirm": "Ja, Rolle ändern",
+        "cancel": "Abbrechen",
+        "updating": "Aktualisiere...",
+        "error": "Rolle konnte nicht geändert werden. Bitte erneut versuchen."
       }
     }
   },

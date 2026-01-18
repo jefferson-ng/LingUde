@@ -448,6 +448,17 @@
         "lastActivity": "Last Activity",
         "achievements": "Achievements",
         "noAchievements": "No achievements yet"
+      },
+      "roleChange": {
+        "title": "Change Role",
+        "description": "Change this user's role to grant or revoke admin privileges.",
+        "makeAdmin": "Make Admin",
+        "makeUser": "Make User",
+        "confirmMessage": "Are you sure you want to change {{username}}'s role to {{newRole}}?",
+        "confirm": "Yes, Change Role",
+        "cancel": "Cancel",
+        "updating": "Updating...",
+        "error": "Failed to update role. Please try again."
       }
     }
   },

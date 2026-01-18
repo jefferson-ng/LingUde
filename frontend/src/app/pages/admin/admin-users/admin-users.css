@@ -315,6 +315,111 @@
   color: #9CA3AF;
 }
 
+/* Role Change Section */
+.role-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid #E5E7EB;
+}
+
+.role-change-action {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.role-change-desc {
+  font-size: 14px;
+  color: #717182;
+  margin: 0;
+}
+
+.role-change-btn {
+  padding: 12px 24px;
+  background-color: #2D72D9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: fit-content;
+}
+
+.role-change-btn:hover {
+  background-color: #1E4D8B;
+}
+
+.role-confirm-box {
+  background-color: #FEF3C7;
+  border: 1px solid #F59E0B;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.confirm-message {
+  font-size: 14px;
+  color: #92400E;
+  margin: 0 0 16px 0;
+}
+
+.error-message {
+  font-size: 14px;
+  color: #DC2626;
+  margin: 0 0 16px 0;
+  padding: 8px 12px;
+  background-color: #FEE2E2;
+  border-radius: 6px;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.cancel-btn {
+  padding: 10px 20px;
+  background-color: #FFFFFF;
+  color: #1C1C1C;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background-color: #F2F4F7;
+}
+
+.cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.confirm-btn {
+  padding: 10px 20px;
+  background-color: #DC2626;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background-color: #B91C1C;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .admin-users-container {

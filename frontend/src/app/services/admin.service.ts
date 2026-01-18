@@ -20,4 +20,8 @@ export class AdminService {
   getUserDetails(userId: string): Observable<AdminUserDetail> {
     return this.http.get<AdminUserDetail>(`${this.apiUrl}/users/${userId}`);
   }
+
+  updateUserRole(userId: string, role: string): Observable<AdminUserSummary> {
+    return this.http.patch<AdminUserSummary>(`${this.apiUrl}/users/${userId}/role`, { role });
+  }
 }

@@ -203,6 +203,55 @@
                 </div>
               }
             </div>
+
+            <!-- Role Change Section -->
+            <div class="detail-section role-section">
+              <h3>{{ t('admin.users.roleChange.title') }}</h3>
+
+              @if (!showRoleConfirm()) {
+                <div class="role-change-action">
+                  <p class="role-change-desc">{{ t('admin.users.roleChange.description') }}</p>
+                  <button class="role-change-btn" (click)="openRoleConfirm()">
+                    @if (selectedUser()!.role === 'ADMIN') {
+                      {{ t('admin.users.roleChange.makeUser') }}
+                    } @else {
+                      {{ t('admin.users.roleChange.makeAdmin') }}
+                    }
+                  </button>
+                </div>
+              }
+
+              @if (showRoleConfirm()) {
+                <div class="role-confirm-box">
+                  <p class="confirm-message">
+                    {{ t('admin.users.roleChange.confirmMessage', { username: selectedUser()!.username, newRole: getNewRole() }) }}
+                  </p>
+
+                  @if (roleUpdateError()) {
+                    <p class="error-message">{{ roleUpdateError() }}</p>
+                  }
+
+                  <div class="confirm-buttons">
+                    <button
+                      class="cancel-btn"
+                      (click)="cancelRoleChange()"
+                      [disabled]="isUpdatingRole()">
+                      {{ t('admin.users.roleChange.cancel') }}
+                    </button>
+                    <button
+                      class="confirm-btn"
+                      (click)="confirmRoleChange()"
+                      [disabled]="isUpdatingRole()">
+                      @if (isUpdatingRole()) {
+                        {{ t('admin.users.roleChange.updating') }}
+                      } @else {
+                        {{ t('admin.users.roleChange.confirm') }}
+                      }
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
           </div>
         }
       </div>
