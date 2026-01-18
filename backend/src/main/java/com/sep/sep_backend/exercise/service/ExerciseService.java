@@ -271,6 +271,9 @@ public class ExerciseService {
                 up.setCompletedAt(LocalDateTime.now());
                 up.setXpEarned(xp);
                 shouldUpdateStreak = true; // First successful completion today
+            } else {
+                // Track incorrect attempt
+                up.incrementIncorrectAttempts();
             }
             progressRepo.save(up);
         } else {
@@ -280,6 +283,10 @@ public class ExerciseService {
                 existing.setCompletedAt(LocalDateTime.now());
                 existing.setXpEarned(xp);
                 shouldUpdateStreak = true; // First successful completion today
+                progressRepo.save(existing);
+            } else if (!Boolean.TRUE.equals(existing.getIsCompleted()) && !correct) {
+                // Increment incorrect attempts if answer is wrong and not yet completed
+                existing.incrementIncorrectAttempts();
                 progressRepo.save(existing);
             }
         }
@@ -408,6 +415,21 @@ public class ExerciseService {
             return List.of();
         }
         return progressRepo.findAllByUserIdAndIsCompletedTrue(userId);
+    }
+
+    /**
+     * Retrieves all exercises with incorrect attempts that are not yet completed.
+     * These are exercises the user can retry.
+     *
+     * @param userId UUID of the authenticated user. If {@code null}, an empty list is returned.
+     * @return list of {@link UserProgress} entries with incorrect attempts and not completed.
+     */
+    @Transactional(readOnly = true)
+    public List<UserProgress> getIncorrectExercisesForUser(UUID userId) {
+        if (userId == null) {
+            return List.of();
+        }
+        return progressRepo.findAllByUserIdAndIncorrectAttemptsGreaterThanAndIsCompletedFalse(userId, 0);
     }
 
     /**

@@ -9,7 +9,8 @@ import {
   FillBlankSubmissionRequest,
   ExerciseType,
   DifficultyLevel,
-  Language
+  Language,
+  IncorrectExerciseResponse
 } from '../models/exercise.model';
 import { environment } from '../../environments/environment';
 
@@ -145,5 +146,12 @@ export class ExerciseService {
    */
   isFillBlank(exercise: ExerciseDetailResponse): boolean {
     return exercise.type === 'FILL_BLANK';
+  }
+
+  /**
+   * Fetch all exercises with incorrect attempts (for retry functionality)
+   */
+  getIncorrectExercises(): Observable<IncorrectExerciseResponse[]> {
+    return this.http.get<IncorrectExerciseResponse[]>(`${this.apiUrl}/incorrect`);
   }
 }

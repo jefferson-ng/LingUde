@@ -1,5 +1,35 @@
 <ng-container *transloco="let t">
 <div class="learning-container">
+  <!-- Retry Prompt Dialog -->
+  @if (showRetryPrompt()) {
+    <div class="retry-prompt-overlay">
+      <div class="retry-prompt-dialog">
+        <div class="retry-prompt-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 4v6h6M23 20v-6h-6"/>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+          </svg>
+        </div>
+        <h2 class="retry-prompt-title">{{ 'learning.retryPrompt.title' | transloco }}</h2>
+        <p class="retry-prompt-message">
+          {{ 'learning.retryPrompt.message' | transloco: { count: retryPromptCount() } }}
+        </p>
+        <div class="retry-prompt-buttons">
+          <button class="retry-prompt-btn primary" (click)="startRetryPhase()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6"/>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+            {{ 'learning.retryPrompt.retry' | transloco }}
+          </button>
+          <button class="retry-prompt-btn secondary" (click)="skipRetryPhase()">
+            {{ 'learning.retryPrompt.skip' | transloco }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+  
   <!-- Exercise Mode View -->
   @if (exerciseMode() && currentExercise()) {
     <div class="exercise-mode">
@@ -94,7 +124,7 @@
         <!-- Start/Repeat Button -->
         <button class="popup-start-button" (click)="startLevelFromPopup()">
           @if (selectedLevel()!.status === 'completed') {
-            {{ 'learning.popup.repeat' | transloco }} +{{ levelXP() }} XP
+            {{ 'learning.popup.repeat' | transloco }}
           } @else {
             {{ 'learning.popup.start' | transloco }} +{{ levelXP() }} XP
           }

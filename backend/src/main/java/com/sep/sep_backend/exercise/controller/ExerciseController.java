@@ -286,6 +286,32 @@ public class ExerciseController {
         return response;
     }
 
+    /**
+     * Returns all exercises with incorrect attempts that are not yet completed.
+     * These are exercises the user can retry.
+     *
+     * @return list of {@link CompletedExerciseResponse} representing incorrect exercises
+     */
+    @GetMapping("/incorrect")
+    public List<CompletedExerciseResponse> getIncorrectExercisesForUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = extractUserId(authentication);
+
+        List<UserProgress> progressList = service.getIncorrectExercisesForUser(userId);
+
+        List<CompletedExerciseResponse> response = new ArrayList<>();
+        for (UserProgress up : progressList) {
+            response.add(new CompletedExerciseResponse(
+                    up.getExerciseId(),
+                    up.getExerciseType(),
+                    0, // No XP earned yet
+                    null // Not completed yet
+            ));
+        }
+
+        return response;
+    }
+
 
     /**
      * Checks whether a specific exercise is completed for the authenticated user.

@@ -8,6 +8,125 @@
   position: relative;
 }
 
+/* Retry Prompt Dialog */
+.retry-prompt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.retry-prompt-dialog {
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.retry-prompt-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.retry-prompt-icon svg {
+  width: 40px;
+  height: 40px;
+  color: #d97706;
+}
+
+.retry-prompt-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin: 0 0 0.75rem;
+}
+
+.retry-prompt-message {
+  font-size: 1rem;
+  color: var(--gray-600);
+  margin: 0 0 2rem;
+  line-height: 1.6;
+}
+
+.retry-prompt-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.retry-prompt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.retry-prompt-btn.primary {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+}
+
+.retry-prompt-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+}
+
+.retry-prompt-btn.primary svg {
+  width: 20px;
+  height: 20px;
+}
+
+.retry-prompt-btn.secondary {
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+.retry-prompt-btn.secondary:hover {
+  background: var(--gray-200);
+  color: var(--gray-700);
+}
+
 /* Language Selector - Hover Menu */
 .language-selector-container {
   position: absolute;
@@ -186,6 +305,7 @@
   padding: 1.5rem 2.5rem;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
+  position: relative;
 }
 
 .path-title {

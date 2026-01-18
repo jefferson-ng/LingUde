@@ -131,9 +131,26 @@
       "progress": "Fortschritt",
       "whatYouWillLearn": "Was du lernen wirst:"
     },
+    "retryPrompt": {
+      "title": "Fast geschafft!",
+      "message": "Du hast {{count}} Aufgabe(n) falsch beantwortet. Möchtest du diese jetzt wiederholen?",
+      "retry": "Ja, wiederholen",
+      "skip": "Nein, Lektion beenden"
+    },
     "lockedNotification": "Bitte schließe zuerst die vorherigen Aufgaben ab!",
     "levelPath": "Dein Lernpfad",
     "completeToUnlock": "Schließe Level ab, um neue freizuschalten",
+    "retryIncorrect": "Falsche Antworten wiederholen ({{count}})",
+    "practiceWidget": {
+      "title": "Wiederholung",
+      "subtitle": "Übungen mit Fehlern",
+      "subtitleEmpty": "Alles richtig gemacht!",
+      "exercisesToReview": "Übungen zum Wiederholen",
+      "progressText": "Je weniger Fehler, desto besser!",
+      "startPractice": "Jetzt üben",
+      "emptyMessage": "Super! Du hast keine falschen Antworten zum Üben. Mach weiter so!",
+      "allDone": "Alles erledigt!"
+    },
     "popup": {
       "title": "Starte deine Lektion",
       "lessonInfo": "Lektion {{current}} von {{total}}",

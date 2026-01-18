@@ -80,6 +80,14 @@ export class Learning implements OnInit {
   protected currentExerciseSummaries = signal<ExerciseSummaryResponse[]>([]);
   protected currentExerciseIndex = signal<number>(0);
   protected currentExercise = signal<ExerciseDetailResponse | null>(null);
+  
+  // Duolingo-style retry: Queue of incorrect exercises to repeat at end of lesson
+  private incorrectExerciseQueue: ExerciseSummaryResponse[] = [];
+  private isRetryPhase = false;
+  
+  // Retry prompt: Show dialog asking user if they want to retry incorrect answers
+  protected showRetryPrompt = signal<boolean>(false);
+  protected retryPromptCount = signal<number>(0);
 
   constructor(private exerciseService: ExerciseService) {}
 
@@ -356,6 +364,10 @@ export class Learning implements OnInit {
     // Keep the selected level so we can mark it as completed later
     this.selectedLevel.set(level);
     this.correctAnswersCount = 0;
+    
+    // Reset Duolingo-style retry queue
+    this.incorrectExerciseQueue = [];
+    this.isRetryPhase = false;
 
     const targetLanguage = this.userLanguage();
     const difficultyLevel = level.difficultyLevel;
@@ -419,6 +431,17 @@ export class Learning implements OnInit {
       console.log(`✅ Correct answer! Total: ${this.correctAnswersCount}/${this.totalExercisesInLevel}`);
     } else {
       console.log(`❌ Incorrect answer. Total: ${this.correctAnswersCount}/${this.totalExercisesInLevel}`);
+      
+      // Duolingo-style: Add this exercise to retry queue (if not already in retry phase or already queued)
+      const currentSummary = this.currentExerciseSummaries()[this.currentExerciseIndex()];
+      if (currentSummary && !this.isRetryPhase) {
+        // Only add if not already in queue
+        const alreadyInQueue = this.incorrectExerciseQueue.some(ex => ex.id === currentSummary.id);
+        if (!alreadyInQueue) {
+          this.incorrectExerciseQueue.push(currentSummary);
+          console.log(`📝 Added to retry queue. Queue size: ${this.incorrectExerciseQueue.length}`);
+        }
+      }
     }
     
     // Don't reload here - the exercise submission already updates XP via backend response
@@ -493,11 +516,41 @@ export class Learning implements OnInit {
     const summaries = this.currentExerciseSummaries();
 
     if (nextIndex < summaries.length) {
+      // More exercises in current list
       this.currentExerciseIndex.set(nextIndex);
       this.loadExerciseDetail(summaries[nextIndex]);
+    } else if (this.incorrectExerciseQueue.length > 0 && !this.isRetryPhase) {
+      // Show retry prompt dialog to ask user if they want to retry incorrect answers
+      console.log(`📋 Showing retry prompt for ${this.incorrectExerciseQueue.length} incorrect exercises`);
+      this.retryPromptCount.set(this.incorrectExerciseQueue.length);
+      this.showRetryPrompt.set(true);
     } else {
+      // All done (including retries)
       this.completeLevel();
     }
+  }
+
+  /**
+   * User chose to retry incorrect answers
+   */
+  protected startRetryPhase(): void {
+    console.log(`🔄 Starting retry phase with ${this.incorrectExerciseQueue.length} incorrect exercises`);
+    this.showRetryPrompt.set(false);
+    this.isRetryPhase = true;
+    this.currentExerciseSummaries.set([...this.incorrectExerciseQueue]);
+    this.incorrectExerciseQueue = []; // Clear the queue
+    this.currentExerciseIndex.set(0);
+    this.loadExerciseDetail(this.currentExerciseSummaries()[0]);
+  }
+
+  /**
+   * User chose to skip retry and complete the level
+   */
+  protected skipRetryPhase(): void {
+    console.log('⏭️ User skipped retry phase');
+    this.showRetryPrompt.set(false);
+    this.incorrectExerciseQueue = []; // Clear the queue
+    this.completeLevel();
   }
 
   completeLevel(): void {
