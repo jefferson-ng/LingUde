@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, forkJoin } from 'rxjs';
+import { tap, catchError, map } from 'rxjs/operators';
 import {
   ChatMessageRequest,
   ChatMessageResponse,
@@ -66,10 +66,18 @@ export class ChatService {
     const sessionId = this.currentSessionSubject.value;
     if (sessionId) {
       this.loadingSubject.next(true);
-      return this.getChatHistory(sessionId).pipe(
-        tap(() => {
+
+      // Load both chat history and tool activities in parallel
+      return forkJoin({
+        history: this.getChatHistory(sessionId),
+        tools: this.getToolActivities(sessionId)
+      }).pipe(
+        map(({ history, tools }) => {
+          // Update tool activities
+          this.debugInfoSubject.next(tools);
           this.initialized = true;
           this.loadingSubject.next(false);
+          return history;
         }),
         catchError((err) => {
           console.error('Failed to load chat history:', err);
@@ -80,7 +88,7 @@ export class ChatService {
         })
       );
     }
-    
+
     this.initialized = true;
     return of(null);
   }
@@ -209,17 +217,37 @@ export class ChatService {
   }
 
   /**
-   * Load a specific session by ID
+   * Load a specific session by ID (including tool activities)
    */
   loadSession(sessionId: string): Observable<ChatHistoryResponse> {
     this.loadingSubject.next(true);
-    return this.getChatHistory(sessionId).pipe(
-      tap(() => {
+
+    // Load both chat history and tool activities in parallel
+    return forkJoin({
+      history: this.getChatHistory(sessionId),
+      tools: this.getToolActivities(sessionId)
+    }).pipe(
+      map(({ history, tools }) => {
+        // Update tool activities (debugInfo)
+        this.debugInfoSubject.next(tools);
         this.loadingSubject.next(false);
+        return history;
       }),
       catchError((err) => {
         this.loadingSubject.next(false);
         throw err;
+      })
+    );
+  }
+
+  /**
+   * Get tool activities for a session
+   */
+  getToolActivities(sessionId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/sessions/${sessionId}/tools`).pipe(
+      catchError((err) => {
+        console.warn('Failed to load tool activities:', err);
+        return of([]);
       })
     );
   }

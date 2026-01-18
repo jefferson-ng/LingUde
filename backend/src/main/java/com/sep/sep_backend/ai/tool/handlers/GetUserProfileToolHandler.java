@@ -4,7 +4,9 @@ import com.google.genai.types.FunctionDeclaration;
 import com.google.genai.types.Schema;
 import com.sep.sep_backend.ai.tool.AbstractAiToolHandler;
 import com.sep.sep_backend.user.entity.UserLearning;
+import com.sep.sep_backend.user.entity.UserSettings;
 import com.sep.sep_backend.user.service.UserLearningService;
+import com.sep.sep_backend.user.service.UserSettingsService;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -13,15 +15,17 @@ import java.util.UUID;
 
 /**
  * Tool handler for retrieving user's learning profile information.
- * Returns the user's learning language, current level, and target level.
+ * Returns the user's learning language, current level, target level, and UI language preference.
  */
 @Component
 public class GetUserProfileToolHandler extends AbstractAiToolHandler {
 
     private final UserLearningService userLearningService;
+    private final UserSettingsService userSettingsService;
 
-    public GetUserProfileToolHandler(UserLearningService userLearningService) {
+    public GetUserProfileToolHandler(UserLearningService userLearningService, UserSettingsService userSettingsService) {
         this.userLearningService = userLearningService;
+        this.userSettingsService = userSettingsService;
     }
 
     @Override
@@ -39,9 +43,15 @@ public class GetUserProfileToolHandler extends AbstractAiToolHandler {
     @Override
     protected Object executeInternal(UUID userId, Map<String, Object> parameters) {
         Optional<UserLearning> learning = userLearningService.findLearningByUserId(userId);
+        Optional<UserSettings> settings = userSettingsService.findSettingsByUserId(userId);
 
         if (learning.isPresent()) {
             UserLearning ul = learning.get();
+
+            // Get UI language from settings (this is the language the user prefers for communication)
+            String uiLanguage = settings
+                .map(s -> s.getUiLanguage() != null ? s.getUiLanguage().name() : "EN")
+                .orElse("EN");
 
             return Map.of(
                 "success", true,
@@ -53,7 +63,8 @@ public class GetUserProfileToolHandler extends AbstractAiToolHandler {
                     : "A1",
                 "targetLevel", ul.getTargetLevel() != null
                     ? ul.getTargetLevel().name()
-                    : "B2"
+                    : "B2",
+                "uiLanguage", uiLanguage  // The language Otto should speak with the user
             );
         } else {
             return Map.of(

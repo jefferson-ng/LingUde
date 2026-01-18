@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit, ElementRef, ViewChild, AfterViewChec
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { LucideAngularModule, Send, Bot, User, Bug, Trash2, MessageSquare, ChevronDown, ChevronUp, History, Clock } from 'lucide-angular';
+import { LucideAngularModule, Send, Bot, User, Trash2, MessageSquare, ChevronDown, ChevronUp, History, Clock, Activity, Star, TrendingUp, Flame } from 'lucide-angular';
 import { ChatService } from '../../services/chat.service';
 import { ChatMessage, ChatSession } from '../../models/chat.model';
 
@@ -23,20 +23,23 @@ export class Chat implements OnInit, AfterViewChecked {
   readonly SendIcon = Send;
   readonly BotIcon = Bot;
   readonly UserIcon = User;
-  readonly BugIcon = Bug;
   readonly TrashIcon = Trash2;
   readonly MessageIcon = MessageSquare;
   readonly ChevronDownIcon = ChevronDown;
   readonly ChevronUpIcon = ChevronUp;
   readonly HistoryIcon = History;
   readonly ClockIcon = Clock;
+  readonly ActivityIcon = Activity;
+  readonly StarIcon = Star;
+  readonly TrendingUpIcon = TrendingUp;
+  readonly FlameIcon = Flame;
 
   // State
   protected messages = signal<ChatMessage[]>([]);
   protected isLoading = signal(false);
   protected messageText = signal('');
-  protected debugInfo = signal<any[]>([]);
-  protected showDebugPanel = signal(true);
+  protected toolActivities = signal<any[]>([]);
+  protected showActivityPanel = signal(true);
   protected currentSessionId = signal<string | null>(null);
 
   // Session history state
@@ -59,9 +62,11 @@ export class Chat implements OnInit, AfterViewChecked {
       this.isLoading.set(loading);
     });
 
-    // Subscribe to debug info
+    // Subscribe to tool activities
     this.chatService.debugInfo$.subscribe(info => {
-      this.debugInfo.set(info);
+      // Filter to only show tool activities (not errors)
+      const activities = info.filter(entry => entry.type === 'tool');
+      this.toolActivities.set(activities);
     });
 
     // Subscribe to current session
@@ -122,12 +127,8 @@ export class Chat implements OnInit, AfterViewChecked {
     this.chatService.startNewSession();
   }
 
-  protected clearDebug(): void {
-    this.chatService.clearDebugInfo();
-  }
-
-  protected toggleDebugPanel(): void {
-    this.showDebugPanel.set(!this.showDebugPanel());
+  protected toggleActivityPanel(): void {
+    this.showActivityPanel.set(!this.showActivityPanel());
   }
 
   protected toggleHistoryPanel(): void {
@@ -203,7 +204,12 @@ export class Chat implements OnInit, AfterViewChecked {
     }
   }
 
-  protected formatDebugEntry(entry: any): string {
-    return JSON.stringify(entry, null, 2);
+  protected formatActivityTime(timestamp: string): string {
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return '';
+    }
   }
 }

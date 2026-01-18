@@ -115,46 +115,151 @@
     </div>
   </div>
 
-  <!-- Debug Panel -->
-  <div class="debug-panel" [class.collapsed]="!showDebugPanel()">
-    <div class="debug-header" (click)="toggleDebugPanel()">
-      <div class="debug-title">
-        <lucide-icon [img]="BugIcon" [size]="18"></lucide-icon>
-        <span>{{ t('chat.debugPanel') }}</span>
-        <span class="debug-count" *ngIf="debugInfo().length > 0">
-          ({{ debugInfo().length }})
+  <!-- Tool Activity Panel -->
+  <div class="activity-panel" [class.collapsed]="!showActivityPanel()">
+    <div class="activity-header" (click)="toggleActivityPanel()">
+      <div class="activity-title">
+        <lucide-icon [img]="ActivityIcon" [size]="18"></lucide-icon>
+        <span>{{ t('chat.toolActivity') }}</span>
+        <span class="activity-count" *ngIf="toolActivities().length > 0">
+          ({{ toolActivities().length }})
         </span>
       </div>
-      <lucide-icon 
-        [img]="showDebugPanel() ? ChevronDownIcon : ChevronUpIcon" 
+      <lucide-icon
+        [img]="showActivityPanel() ? ChevronDownIcon : ChevronUpIcon"
         [size]="18">
       </lucide-icon>
     </div>
-    
-    <div class="debug-content" *ngIf="showDebugPanel()">
-      <div class="debug-actions">
-        <button class="btn-small" (click)="clearDebug()">
-          <lucide-icon [img]="TrashIcon" [size]="14"></lucide-icon>
-          {{ t('chat.clearDebug') }}
-        </button>
-      </div>
-      
-      <div class="debug-entries" *ngIf="debugInfo().length > 0; else noDebug">
-        <div class="debug-entry" *ngFor="let entry of debugInfo(); let i = index">
-          <div class="entry-header">
-            <span class="entry-index">#{{ i + 1 }}</span>
-            <span class="entry-type" [class]="entry.type || 'info'">
-              {{ entry.type || 'info' }}
-            </span>
-          </div>
-          <pre class="entry-content">{{ formatDebugEntry(entry) }}</pre>
+
+    <div class="activity-content" *ngIf="showActivityPanel()">
+      <div class="activity-list" *ngIf="toolActivities().length > 0; else noActivity">
+        <div class="activity-item" *ngFor="let activity of toolActivities()" [class]="'activity-' + activity.name">
+          <!-- XP Award Activity -->
+          @if (activity.name === 'addXp') {
+            <div class="activity-icon xp-icon">
+              <lucide-icon [img]="StarIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.addXp') }}</span>
+                <span class="xp-badge">+{{ activity.result?.xpAdded || activity.arguments?.xpAmount }} XP</span>
+              </div>
+              <div class="activity-meta">
+                <span class="activity-reason" *ngIf="activity.result?.reason || activity.arguments?.reason">{{ activity.result?.reason || activity.arguments?.reason }}</span>
+                <span class="activity-result" *ngIf="activity.result?.newXp !== undefined">
+                  {{ t('chat.toolResults.totalXp') }}: {{ activity.result.newXp }} XP
+                </span>
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Profile Check Activity -->
+          @else if (activity.name === 'getUserProfile') {
+            <div class="activity-icon profile-icon">
+              <lucide-icon [img]="UserIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.getUserProfile') }}</span>
+              </div>
+              <div class="activity-meta">
+                @if (activity.result?.success) {
+                  <span class="activity-result">
+                    {{ t('chat.toolResults.learning') }} {{ activity.result.learningLanguage }}
+                    @if (activity.result.currentLevel) {
+                      · {{ t('chat.toolResults.level') }}: {{ activity.result.currentLevel }}
+                    }
+                    @if (activity.result.targetLevel) {
+                      → {{ activity.result.targetLevel }}
+                    }
+                  </span>
+                  @if (activity.result.uiLanguage) {
+                    <span class="activity-result">
+                      {{ t('chat.toolResults.speaksLanguage') }}: {{ activity.result.uiLanguage }}
+                    </span>
+                  }
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Progress Check Activity -->
+          @else if (activity.name === 'getLevelProgress') {
+            <div class="activity-icon progress-icon">
+              <lucide-icon [img]="TrendingUpIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.getLevelProgress') }}</span>
+                @if (activity.result?.progressPercent !== undefined) {
+                  <span class="progress-badge">{{ activity.result.progressPercent }}%</span>
+                }
+              </div>
+              <div class="activity-meta">
+                @if (activity.result?.success) {
+                  <span class="activity-result">
+                    {{ t('chat.toolResults.level') }}: {{ activity.result.currentLevel }}
+                    · {{ activity.result.currentXp }} XP
+                    @if (activity.result.xpForNextLevel > 0) {
+                      · {{ activity.result.xpForNextLevel }} {{ t('chat.toolResults.xpToNext') }} {{ activity.result.nextLevel }}
+                    }
+                  </span>
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Streak Check Activity -->
+          @else if (activity.name === 'getStreak') {
+            <div class="activity-icon streak-icon">
+              <lucide-icon [img]="FlameIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.getStreak') }}</span>
+                @if (activity.result?.streakCount !== undefined) {
+                  <span class="streak-badge">🔥 {{ activity.result.streakCount }} {{ t('chat.toolResults.days') }}</span>
+                }
+              </div>
+              <div class="activity-meta">
+                @if (activity.result?.success) {
+                  <span class="activity-result">
+                    {{ t('chat.toolResults.lastActive') }}: {{ activity.result.lastActivityDate }}
+                  </span>
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Other/Unknown Activity -->
+          @else {
+            <div class="activity-icon other-icon">
+              <lucide-icon [img]="ActivityIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ activity.name }}</span>
+              </div>
+              <div class="activity-meta">
+                @if (activity.result) {
+                  <span class="activity-result activity-result-json">{{ activity.result | json }}</span>
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
         </div>
       </div>
-      
-      <ng-template #noDebug>
-        <div class="no-debug">
-          <p>{{ t('chat.noDebugInfo') }}</p>
-          <small>{{ t('chat.debugHint') }}</small>
+
+      <ng-template #noActivity>
+        <div class="no-activity">
+          <lucide-icon [img]="ActivityIcon" [size]="32"></lucide-icon>
+          <p>{{ t('chat.noActivity') }}</p>
+          <small>{{ t('chat.noActivityHint') }}</small>
         </div>
       </ng-template>
     </div>

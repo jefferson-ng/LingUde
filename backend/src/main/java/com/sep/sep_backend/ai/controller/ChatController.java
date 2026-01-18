@@ -1,13 +1,17 @@
 package com.sep.sep_backend.ai.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sep.sep_backend.ai.dto.ChatHistoryResponse;
 import com.sep.sep_backend.ai.dto.ChatMessageRequest;
 import com.sep.sep_backend.ai.dto.ChatMessageResponse;
 import com.sep.sep_backend.ai.dto.ConversationResult;
 import com.sep.sep_backend.ai.entity.ChatMessage;
 import com.sep.sep_backend.ai.entity.ChatSession;
+import com.sep.sep_backend.ai.entity.ToolExecutionLog;
 import com.sep.sep_backend.ai.repository.ChatMessageRepository;
 import com.sep.sep_backend.ai.repository.ChatSessionRepository;
+import com.sep.sep_backend.ai.repository.ToolExecutionLogRepository;
 import com.sep.sep_backend.ai.service.ConversationService;
 import com.sep.sep_backend.user.entity.Language;
 import com.sep.sep_backend.user.entity.UserLearning;
@@ -40,16 +44,22 @@ public class ChatController {
     private final UserLearningService userLearningService;
     private final ChatMessageRepository messageRepository;
     private final ChatSessionRepository sessionRepository;
+    private final ToolExecutionLogRepository toolLogRepository;
+    private final ObjectMapper objectMapper;
 
     public ChatController(
             ConversationService conversationService,
             UserLearningService userLearningService,
             ChatMessageRepository messageRepository,
-            ChatSessionRepository sessionRepository) {
+            ChatSessionRepository sessionRepository,
+            ToolExecutionLogRepository toolLogRepository,
+            ObjectMapper objectMapper) {
         this.conversationService = conversationService;
         this.userLearningService = userLearningService;
         this.messageRepository = messageRepository;
         this.sessionRepository = sessionRepository;
+        this.toolLogRepository = toolLogRepository;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -193,6 +203,61 @@ public class ChatController {
     }
 
     /**
+     * GET /api/chat/sessions/{sessionId}/tools - Get tool execution logs for a session
+     */
+    @GetMapping("/sessions/{sessionId}/tools")
+    public ResponseEntity<List<ToolActivityDto>> getToolActivities(
+            @PathVariable String sessionId,
+            Authentication authentication) {
+
+        UUID userId = getCurrentUserId(authentication);
+        UUID sessionUuid = UUID.fromString(sessionId);
+
+        // Verify session belongs to user
+        Optional<ChatSession> sessionOpt = sessionRepository.findById(sessionUuid);
+        if (sessionOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!sessionOpt.get().getUser().getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        // Get tool logs for session
+        List<ToolExecutionLog> logs = toolLogRepository.findBySession_IdOrderByExecutedAtDesc(sessionUuid);
+
+        List<ToolActivityDto> activities = logs.stream()
+            .filter(ToolExecutionLog::getSuccess)
+            .map(log -> {
+                Object arguments = parseJson(log.getParameters());
+                Object result = parseJson(log.getResult());
+                return new ToolActivityDto(
+                    log.getToolName(),
+                    arguments,
+                    result,
+                    log.getExecutionTimeMs(),
+                    log.getExecutedAt()
+                );
+            })
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(activities);
+    }
+
+    /**
+     * Parse JSON string to Object, or return raw string if parsing fails
+     */
+    private Object parseJson(String jsonStr) {
+        if (jsonStr == null || jsonStr.isBlank()) {
+            return null;
+        }
+        try {
+            return objectMapper.readValue(jsonStr, Object.class);
+        } catch (JsonProcessingException e) {
+            return jsonStr;
+        }
+    }
+
+    /**
      * Extract user ID from JWT authentication
      */
     private UUID getCurrentUserId(Authentication authentication) {
@@ -285,6 +350,74 @@ public class ChatController {
 
         public void setMessageCount(Integer messageCount) {
             this.messageCount = messageCount;
+        }
+    }
+
+    /**
+     * DTO for tool activity/execution log
+     */
+    public static class ToolActivityDto {
+        private String name;
+        private Object arguments;
+        private Object result;
+        private Integer durationMs;
+        private LocalDateTime timestamp;
+
+        public ToolActivityDto() {
+        }
+
+        public ToolActivityDto(
+                String name,
+                Object arguments,
+                Object result,
+                Integer durationMs,
+                LocalDateTime timestamp) {
+            this.name = name;
+            this.arguments = arguments;
+            this.result = result;
+            this.durationMs = durationMs;
+            this.timestamp = timestamp;
+        }
+
+        // Getters and Setters
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Object getArguments() {
+            return arguments;
+        }
+
+        public void setArguments(Object arguments) {
+            this.arguments = arguments;
+        }
+
+        public Object getResult() {
+            return result;
+        }
+
+        public void setResult(Object result) {
+            this.result = result;
+        }
+
+        public Integer getDurationMs() {
+            return durationMs;
+        }
+
+        public void setDurationMs(Integer durationMs) {
+            this.durationMs = durationMs;
+        }
+
+        public LocalDateTime getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(LocalDateTime timestamp) {
+            this.timestamp = timestamp;
         }
     }
 }
