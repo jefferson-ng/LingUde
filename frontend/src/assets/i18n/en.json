@@ -17,7 +17,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "chat": "AI Tutor",
+    "chat": "Otto the Otter",
     "learning": "Learning",
     "lessons": "Lessons",
     "goals": "My Goals",
@@ -451,20 +451,33 @@
     }
   },
   "chat": {
-    "title": "AI Language Tutor",
+    "title": "Otto the Otter",
     "newChat": "New Chat",
-    "welcomeTitle": "Welcome to your AI Tutor!",
-    "welcomeMessage": "I'm here to help you learn your target language. Ask me anything or choose a topic below to get started.",
-    "suggestedGerman": "Start learning German",
+    "welcomeTitle": "Hi, I'm Otto the Otter!",
+    "welcomeMessage": "I'm your friendly language learning companion! Ask me anything or choose a topic below to get started.",
+    "suggestedGrammar": "Practice grammar",
+    "suggestedGrammarMsg": "Can you help me practice grammar?",
     "suggestedVocab": "Practice vocabulary",
+    "suggestedVocabMsg": "Can you help me practice vocabulary?",
     "suggestedGreetings": "Learn greetings",
+    "suggestedGreetingsMsg": "I want to learn greetings.",
     "you": "You",
-    "tutor": "Tutor",
+    "tutor": "Otto",
+    "thinking": "is thinking...",
     "placeholder": "Type your message...",
     "inputHint": "Press Enter to send, Shift+Enter for new line",
     "debugPanel": "Debug Panel",
     "clearDebug": "Clear",
     "noDebugInfo": "No debug info yet",
-    "debugHint": "Tool calls and AI actions will appear here"
+    "debugHint": "Tool calls and AI actions will appear here",
+    "history": "Chat History",
+    "noSessions": "No previous chats",
+    "noSessionsHint": "Start a conversation to create your first chat session",
+    "messages": "messages",
+    "loadSession": "Load",
+    "activeSession": "Active",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "{{days}} days ago"
   }
 }

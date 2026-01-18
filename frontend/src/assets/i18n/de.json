@@ -17,7 +17,7 @@
   },
   "nav": {
     "dashboard": "Startseite",
-    "chat": "KI-Tutor",
+    "chat": "Otto der Otter",
     "learning": "Lernen",
     "lessons": "Lektionen",
     "goals": "Ziele",
@@ -451,20 +451,33 @@
     }
   },
   "chat": {
-    "title": "KI-Sprachtutor",
+    "title": "Otto der Otter",
     "newChat": "Neuer Chat",
-    "welcomeTitle": "Willkommen bei deinem KI-Tutor!",
-    "welcomeMessage": "Ich bin hier, um dir beim Sprachenlernen zu helfen. Frag mich etwas oder wähle ein Thema unten aus.",
-    "suggestedGerman": "Deutsch lernen starten",
+    "welcomeTitle": "Hallo, ich bin Otto der Otter!",
+    "welcomeMessage": "Ich bin dein freundlicher Sprachlern-Begleiter! Frag mich etwas oder wähle ein Thema unten aus.",
+    "suggestedGrammar": "Grammatik üben",
+    "suggestedGrammarMsg": "Kannst du mir helfen, Grammatik zu üben?",
     "suggestedVocab": "Vokabeln üben",
+    "suggestedVocabMsg": "Kannst du mir helfen, Vokabeln zu üben?",
     "suggestedGreetings": "Begrüßungen lernen",
+    "suggestedGreetingsMsg": "Ich möchte Begrüßungen lernen.",
     "you": "Du",
-    "tutor": "Tutor",
+    "tutor": "Otto",
+    "thinking": "denkt nach...",
     "placeholder": "Schreibe deine Nachricht...",
     "inputHint": "Enter zum Senden, Shift+Enter für neue Zeile",
     "debugPanel": "Debug-Panel",
     "clearDebug": "Leeren",
     "noDebugInfo": "Noch keine Debug-Infos",
-    "debugHint": "Tool-Aufrufe und KI-Aktionen werden hier angezeigt"
+    "debugHint": "Tool-Aufrufe und KI-Aktionen werden hier angezeigt",
+    "history": "Chat-Verlauf",
+    "noSessions": "Keine früheren Chats",
+    "noSessionsHint": "Starte ein Gespräch, um deine erste Chat-Sitzung zu erstellen",
+    "messages": "Nachrichten",
+    "loadSession": "Laden",
+    "activeSession": "Aktiv",
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "daysAgo": "vor {{days}} Tagen"
   }
 }

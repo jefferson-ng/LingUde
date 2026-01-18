@@ -2,9 +2,9 @@ import { Component, inject, signal, OnInit, ElementRef, ViewChild, AfterViewChec
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { LucideAngularModule, Send, Bot, User, Bug, Trash2, MessageSquare, ChevronDown, ChevronUp } from 'lucide-angular';
+import { LucideAngularModule, Send, Bot, User, Bug, Trash2, MessageSquare, ChevronDown, ChevronUp, History, Clock } from 'lucide-angular';
 import { ChatService } from '../../services/chat.service';
-import { ChatMessage } from '../../models/chat.model';
+import { ChatMessage, ChatSession } from '../../models/chat.model';
 
 @Component({
   selector: 'app-chat',
@@ -28,6 +28,8 @@ export class Chat implements OnInit, AfterViewChecked {
   readonly MessageIcon = MessageSquare;
   readonly ChevronDownIcon = ChevronDown;
   readonly ChevronUpIcon = ChevronUp;
+  readonly HistoryIcon = History;
+  readonly ClockIcon = Clock;
 
   // State
   protected messages = signal<ChatMessage[]>([]);
@@ -36,6 +38,11 @@ export class Chat implements OnInit, AfterViewChecked {
   protected debugInfo = signal<any[]>([]);
   protected showDebugPanel = signal(true);
   protected currentSessionId = signal<string | null>(null);
+
+  // Session history state
+  protected sessions = signal<ChatSession[]>([]);
+  protected showHistoryPanel = signal(false);
+  protected isLoadingSessions = signal(false);
 
   // For auto-scroll
   private shouldScrollToBottom = false;
@@ -121,6 +128,70 @@ export class Chat implements OnInit, AfterViewChecked {
 
   protected toggleDebugPanel(): void {
     this.showDebugPanel.set(!this.showDebugPanel());
+  }
+
+  protected toggleHistoryPanel(): void {
+    const isOpening = !this.showHistoryPanel();
+    this.showHistoryPanel.set(isOpening);
+
+    // Load sessions when opening the panel
+    if (isOpening) {
+      this.loadSessions();
+    }
+  }
+
+  protected loadSessions(): void {
+    this.isLoadingSessions.set(true);
+    this.chatService.getUserSessions().subscribe({
+      next: (sessions) => {
+        // Sort by updatedAt descending (most recent first)
+        const sorted = sessions.sort((a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+        this.sessions.set(sorted);
+        this.isLoadingSessions.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to load sessions:', err);
+        this.isLoadingSessions.set(false);
+      }
+    });
+  }
+
+  protected loadSession(sessionId: string): void {
+    if (sessionId === this.currentSessionId()) {
+      // Already on this session
+      this.showHistoryPanel.set(false);
+      return;
+    }
+
+    this.chatService.loadSession(sessionId).subscribe({
+      next: () => {
+        this.showHistoryPanel.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to load session:', err);
+      }
+    });
+  }
+
+  protected formatSessionDate(dateString: string): string {
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffTime = now.getTime() - date.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) {
+        return 'today';
+      } else if (diffDays === 1) {
+        return 'yesterday';
+      } else {
+        return `${diffDays}`;
+      }
+    } catch {
+      return '';
+    }
   }
 
   protected formatTimestamp(timestamp: string): string {

@@ -3,7 +3,7 @@
     <!-- Chat Header -->
     <div class="chat-header">
       <div class="header-left">
-        <lucide-icon [img]="BotIcon" class="header-icon"></lucide-icon>
+        <img src="assets/robert-otter.png" alt="Otto the Otter" class="header-icon otto-avatar">
         <div class="header-info">
           <h1>{{ t('chat.title') }}</h1>
           <span class="session-info" *ngIf="currentSessionId()">
@@ -12,6 +12,10 @@
         </div>
       </div>
       <div class="header-actions">
+        <button class="btn-secondary" (click)="toggleHistoryPanel()" [disabled]="isLoading()">
+          <lucide-icon [img]="HistoryIcon" [size]="18"></lucide-icon>
+          {{ t('chat.history') }}
+        </button>
         <button class="btn-secondary" (click)="startNewChat()" [disabled]="isLoading()">
           <lucide-icon [img]="MessageIcon" [size]="18"></lucide-icon>
           {{ t('chat.newChat') }}
@@ -23,17 +27,17 @@
     <div class="messages-container" #messagesContainer>
       <!-- Welcome message when no messages -->
       <div class="welcome-message" *ngIf="messages().length === 0">
-        <lucide-icon [img]="BotIcon" class="welcome-icon"></lucide-icon>
+        <img src="assets/robert-otter.png" alt="Otto the Otter" class="welcome-icon otto-avatar">
         <h2>{{ t('chat.welcomeTitle') }}</h2>
         <p>{{ t('chat.welcomeMessage') }}</p>
         <div class="suggested-prompts">
-          <button class="prompt-btn" (click)="messageText.set('Hallo! Ich möchte Deutsch lernen.')">
-            🇩🇪 {{ t('chat.suggestedGerman') }}
+          <button class="prompt-btn" (click)="messageText.set(t('chat.suggestedGrammarMsg'))">
+            📖 {{ t('chat.suggestedGrammar') }}
           </button>
-          <button class="prompt-btn" (click)="messageText.set('Can you help me practice vocabulary?')">
+          <button class="prompt-btn" (click)="messageText.set(t('chat.suggestedVocabMsg'))">
             📚 {{ t('chat.suggestedVocab') }}
           </button>
-          <button class="prompt-btn" (click)="messageText.set('I want to learn greetings.')">
+          <button class="prompt-btn" (click)="messageText.set(t('chat.suggestedGreetingsMsg'))">
             👋 {{ t('chat.suggestedGreetings') }}
           </button>
         </div>
@@ -49,10 +53,11 @@
           [class.tool-message]="msg.role === 'TOOL'">
           
           <div class="message-avatar">
-            <lucide-icon 
-              [img]="msg.role === 'USER' ? UserIcon : BotIcon" 
-              [size]="20">
-            </lucide-icon>
+            @if (msg.role === 'USER') {
+              <lucide-icon [img]="UserIcon" [size]="20"></lucide-icon>
+            } @else {
+              <img src="assets/robert-otter.png" alt="Otto" class="otto-message-avatar">
+            }
           </div>
           
           <div class="message-content">
@@ -66,12 +71,16 @@
           </div>
         </div>
 
-        <!-- Loading indicator -->
-        <div class="message ai-message" *ngIf="isLoading()">
-          <div class="message-avatar">
-            <lucide-icon [img]="BotIcon" [size]="20"></lucide-icon>
+        <!-- Loading indicator with Otto thinking animation -->
+        <div class="message ai-message otto-thinking" *ngIf="isLoading()">
+          <div class="message-avatar thinking-avatar">
+            <img src="assets/robert-otter.png" alt="Otto" class="otto-message-avatar">
           </div>
           <div class="message-content">
+            <div class="message-header">
+              <span class="message-role">{{ t('chat.tutor') }}</span>
+              <span class="thinking-text">{{ t('chat.thinking') }}</span>
+            </div>
             <div class="typing-indicator">
               <span></span>
               <span></span>
@@ -148,6 +157,69 @@
           <small>{{ t('chat.debugHint') }}</small>
         </div>
       </ng-template>
+    </div>
+  </div>
+
+  <!-- History Panel (Modal/Overlay) -->
+  <div class="history-overlay" *ngIf="showHistoryPanel()" (click)="toggleHistoryPanel()">
+    <div class="history-panel" (click)="$event.stopPropagation()">
+      <div class="history-header">
+        <div class="history-title">
+          <lucide-icon [img]="HistoryIcon" [size]="20"></lucide-icon>
+          <span>{{ t('chat.history') }}</span>
+        </div>
+        <button class="close-btn" (click)="toggleHistoryPanel()">
+          <lucide-icon [img]="ChevronUpIcon" [size]="20"></lucide-icon>
+        </button>
+      </div>
+
+      <div class="history-content">
+        <!-- Loading state -->
+        <div class="history-loading" *ngIf="isLoadingSessions()">
+          <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Sessions list -->
+        <div class="sessions-list" *ngIf="!isLoadingSessions() && sessions().length > 0">
+          <div
+            class="session-item"
+            *ngFor="let session of sessions()"
+            [class.active]="session.sessionId === currentSessionId()"
+            (click)="loadSession(session.sessionId)">
+            <div class="session-icon">
+              <lucide-icon [img]="MessageIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="session-info">
+              <div class="session-meta">
+                <span class="session-language">{{ session.learningLanguage }}</span>
+                <span class="session-date">
+                  <lucide-icon [img]="ClockIcon" [size]="12"></lucide-icon>
+                  @if (formatSessionDate(session.updatedAt) === 'today') {
+                    {{ t('chat.today') }}
+                  } @else if (formatSessionDate(session.updatedAt) === 'yesterday') {
+                    {{ t('chat.yesterday') }}
+                  } @else {
+                    {{ t('chat.daysAgo', { days: formatSessionDate(session.updatedAt) }) }}
+                  }
+                </span>
+              </div>
+              <div class="session-stats">
+                <span class="message-count">{{ session.messageCount }} {{ t('chat.messages') }}</span>
+                <span class="active-badge" *ngIf="session.sessionId === currentSessionId()">
+                  {{ t('chat.activeSession') }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="no-sessions" *ngIf="!isLoadingSessions() && sessions().length === 0">
+          <lucide-icon [img]="MessageIcon" [size]="40"></lucide-icon>
+          <p>{{ t('chat.noSessions') }}</p>
+          <small>{{ t('chat.noSessionsHint') }}</small>
+        </div>
+      </div>
     </div>
   </div>
 </div>

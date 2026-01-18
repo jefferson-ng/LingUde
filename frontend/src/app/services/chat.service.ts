@@ -9,12 +9,14 @@ import {
   ChatSession,
   ChatMessage
 } from '../models/chat.model';
+import { UserLearningService } from './user-learning.service';
 
 const STORAGE_KEY_SESSION = 'chat_session_id';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private http = inject(HttpClient);
+  private userLearningService = inject(UserLearningService);
   private apiUrl = '/api/chat';
 
   // Current session state
@@ -146,6 +148,13 @@ export class ChatService {
               timestamp: new Date().toISOString()
             }));
             this.debugInfoSubject.next([...currentDebug, ...toolCallEntries]);
+
+            // Check if addXp was called - refresh user learning data to update sidebar
+            const hasXpChange = response.toolCalls.some(tc => tc.name === 'addXp');
+            if (hasXpChange) {
+              console.log('📢 Chat: XP was added, refreshing user learning data...');
+              this.userLearningService.getUserLearning().subscribe();
+            }
           }
 
           this.loadingSubject.next(false);
@@ -178,9 +187,20 @@ export class ChatService {
   }
 
   /**
-   * Start a new chat session (clears current session and storage)
+   * Start a new chat session (closes current session and clears storage)
    */
   startNewSession(): void {
+    const currentSessionId = this.currentSessionSubject.value;
+
+    // Close the current session on the backend if one exists
+    if (currentSessionId) {
+      this.http.post(`${this.apiUrl}/sessions/${currentSessionId}/close`, {}).subscribe({
+        next: () => console.log('Previous session closed'),
+        error: (err) => console.warn('Failed to close previous session:', err)
+      });
+    }
+
+    // Clear local state
     localStorage.removeItem(STORAGE_KEY_SESSION);
     this.currentSessionSubject.next(null);
     this.messagesSubject.next([]);
