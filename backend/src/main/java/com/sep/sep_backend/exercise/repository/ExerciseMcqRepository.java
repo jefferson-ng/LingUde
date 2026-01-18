@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface ExerciseMcqRepository
         extends JpaRepository<ExerciseMcq, UUID>, JpaSpecificationExecutor<ExerciseMcq> {
+
+    boolean existsByQuestionText(String questionText);
 }
