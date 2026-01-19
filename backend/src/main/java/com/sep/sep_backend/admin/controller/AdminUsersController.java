@@ -5,6 +5,12 @@ import com.sep.sep_backend.admin.dto.AdminUserSummaryResponse;
 import com.sep.sep_backend.admin.service.AdminUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import com.sep.sep_backend.admin.dto.AdminUpdateUserRoleRequest;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 import java.util.UUID;
 
@@ -46,4 +52,13 @@ public class AdminUsersController {
     public AdminUserDetailResponse getUserDetails(@PathVariable UUID userId) {
         return adminUserService.getUserDetails(userId);
     }
+    @PatchMapping("/{userId}/role")
+    public AdminUserSummaryResponse updateUserRole(
+            @PathVariable UUID userId,
+            @Valid @RequestBody AdminUpdateUserRoleRequest request
+    ) {
+        return adminUserService.updateUserRole(userId, request.getRole());
+    }
+
+
 }

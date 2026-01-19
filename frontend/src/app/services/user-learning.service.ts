@@ -13,6 +13,7 @@ export interface UserLearningData {
   xp: number;
   streakCount: number;
   lastActivityDate?: string;
+  completedLevels?: string;
 }
 
 /**
@@ -85,7 +86,10 @@ export class UserLearningService {
       `${this.apiUrl}/updateStreak`,
       {}
     ).pipe(
-      tap(data => this.userLearningSubject.next(data))
+      tap(data => {
+        console.log('🔔 UserLearningService: Broadcasting streak update to all subscribers:', data.streakCount);
+        this.userLearningSubject.next(data);
+      })
     );
   }
 
@@ -97,6 +101,15 @@ export class UserLearningService {
    */
   getCurrentXp(): number {
     return this.userLearningSubject.value?.xp ?? 0;
+  }
+
+  /**
+   * Gets the current user learning data synchronously.
+   *
+   * @returns Current UserLearningData or null
+   */
+  getCurrentData(): UserLearningData | null {
+    return this.userLearningSubject.value;
   }
 
   /**

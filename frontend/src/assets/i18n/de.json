@@ -23,7 +23,8 @@
     "leaderboard": "Bestenliste",
     "statistics": "Statistiken",
     "friends": "Freunde",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "admin": "Admin"
   },
   "user": {
     "level": "Level",
@@ -98,6 +99,7 @@
   "learning": {
     "title": "Lernen",
     "subtitle": "Dein Lernpfad",
+    "myCourses": "Meine Kurse",
     "selectDifficulty": "Wähle dein Schwierigkeitsniveau",
     "difficulty": {
       "a1": {
@@ -129,6 +131,15 @@
       "back": "Zurück",
       "progress": "Fortschritt",
       "whatYouWillLearn": "Was du lernen wirst:"
+    },
+    "lockedNotification": "Bitte schließe zuerst die vorherigen Aufgaben ab!",
+    "levelPath": "Dein Lernpfad",
+    "completeToUnlock": "Schließe Level ab, um neue freizuschalten",
+    "popup": {
+      "title": "Starte deine Lektion",
+      "lessonInfo": "Lektion {{current}} von {{total}}",
+      "start": "Anfangen",
+      "repeat": "Aufgabe wiederholen"
     },
     "streakCelebration": {
       "dayStreak": "Tag Streak",
@@ -307,7 +318,10 @@
     "fullRankings": "Vollständige Rangliste",
     "you": "Du",
     "yourRanking": "Deine Platzierung",
-    "rankDescription": "Du bist auf einem guten Weg! Weiter so!",
+    "rankDescription1": "Fantastisch! Du bist Nummer 1!",
+    "rankDescription2": "Super! Nur noch ein kleiner Schritt bis zur Spitze!",
+    "rankDescription3": "Großartig! Du bist unter den Top 3!",
+    "rankDescriptionOther": "Du bist auf einem guten Weg! Weiter so!",
     "nextRank": "Bis Platz 1",
     "weeklyChallenge": "Wöchentliche Challenge",
     "challengeDescription": "Sammle die meisten XP diese Woche und gewinne einen Bonus!",
@@ -319,7 +333,9 @@
     "lessons": "Lektionen",
     "dayStreak": "{{count}}-Tage-Streak",
     "lessonsThisWeek": "{{count}} Lektionen diese Woche",
-    "perfectScoreStreak": "Perfekte Serie"
+    "perfectScoreStreak": "Perfekte Serie",
+    "globalLeaderboard": "Globale Bestenliste",
+    "friendsLeaderboard": "Freunde-Bestenliste"
   },
   "statistics": {
     "title": "Statistiken",
@@ -390,6 +406,61 @@
     "back": "Zurück",
     "continue": "Weiter",
     "saving": "Speichern..."
+  },
+  "admin": {
+    "users": {
+      "title": "Benutzerverwaltung",
+      "subtitle": "Alle registrierten Benutzer anzeigen und verwalten",
+      "loading": "Benutzer werden geladen...",
+      "errorLoad": "Benutzer konnten nicht geladen werden. Bitte erneut versuchen.",
+      "retry": "Erneut versuchen",
+      "noUsers": "Keine Benutzer gefunden",
+      "table": {
+        "username": "Benutzername",
+        "email": "E-Mail",
+        "role": "Rolle",
+        "xp": "XP",
+        "streak": "Streak"
+      },
+      "pagination": {
+        "showing": "Zeige",
+        "of": "von",
+        "previous": "Zurück",
+        "next": "Weiter"
+      },
+      "modal": {
+        "title": "Benutzerdetails",
+        "loading": "Benutzerdetails werden geladen...",
+        "userInfo": "Benutzerinformationen",
+        "username": "Benutzername",
+        "email": "E-Mail",
+        "role": "Rolle",
+        "displayName": "Anzeigename",
+        "profile": "Profil",
+        "bio": "Bio",
+        "location": "Standort",
+        "learning": "Lernfortschritt",
+        "language": "Sprache",
+        "currentLevel": "Aktuelles Niveau",
+        "targetLevel": "Zielniveau",
+        "xp": "XP",
+        "streak": "Streak",
+        "lastActivity": "Letzte Aktivität",
+        "achievements": "Erfolge",
+        "noAchievements": "Noch keine Erfolge"
+      },
+      "roleChange": {
+        "title": "Rolle ändern",
+        "description": "Ändere die Rolle dieses Benutzers, um Admin-Rechte zu vergeben oder zu entziehen.",
+        "makeAdmin": "Zum Admin machen",
+        "makeUser": "Zum Benutzer machen",
+        "confirmMessage": "Bist du sicher, dass du die Rolle von {{username}} auf {{newRole}} ändern möchtest?",
+        "confirm": "Ja, Rolle ändern",
+        "cancel": "Abbrechen",
+        "updating": "Aktualisiere...",
+        "error": "Rolle konnte nicht geändert werden. Bitte erneut versuchen."
+      }
+    }
   },
   "friends": {
     "title": "Freunde",

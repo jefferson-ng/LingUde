@@ -1,0 +1,260 @@
+<ng-container *transloco="let t">
+  <div class="admin-users-container">
+    <div class="admin-header">
+      <h1>{{ t('admin.users.title') }}</h1>
+      <p class="subtitle">{{ t('admin.users.subtitle') }}</p>
+    </div>
+
+    <!-- Loading state -->
+    @if (isLoading()) {
+      <div class="loading-state">
+        <p>{{ t('admin.users.loading') }}</p>
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (error()) {
+      <div class="error-state">
+        <p>{{ t(error()!) }}</p>
+        <button (click)="loadUsers()">{{ t('admin.users.retry') }}</button>
+      </div>
+    }
+
+    <!-- Users table -->
+    @if (!isLoading() && !error()) {
+      <div class="users-table-container">
+        @if (users().length === 0) {
+          <div class="empty-state">
+            <p>{{ t('admin.users.noUsers') }}</p>
+          </div>
+        }
+
+        @if (users().length > 0) {
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>{{ t('admin.users.table.username') }}</th>
+                <th>{{ t('admin.users.table.email') }}</th>
+                <th>{{ t('admin.users.table.role') }}</th>
+                <th>{{ t('admin.users.table.xp') }}</th>
+                <th>{{ t('admin.users.table.streak') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of users(); track user.userId) {
+                <tr (click)="onUserClick(user.userId)" class="user-row">
+                  <td>{{ user.username }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>
+                    <span class="role-badge" [class.admin]="user.role === 'ADMIN'">
+                      {{ user.role }}
+                    </span>
+                  </td>
+                  <td>{{ user.totalXp }}</td>
+                  <td>{{ user.streak }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div class="pagination">
+            <span class="pagination-info">
+              {{ t('admin.users.pagination.showing') }}
+              {{ currentPage() * pageSize() + 1 }}-{{ getShowingEnd() }}
+              {{ t('admin.users.pagination.of') }} {{ totalElements() }}
+            </span>
+            <div class="pagination-controls">
+              <button
+                (click)="previousPage()"
+                [disabled]="currentPage() === 0"
+                class="pagination-btn">
+                {{ t('admin.users.pagination.previous') }}
+              </button>
+              <span class="page-number">{{ currentPage() + 1 }} / {{ totalPages() }}</span>
+              <button
+                (click)="nextPage()"
+                [disabled]="currentPage() >= totalPages() - 1"
+                class="pagination-btn">
+                {{ t('admin.users.pagination.next') }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- User Detail Modal -->
+  @if (isModalOpen()) {
+    <div class="modal-overlay" (click)="onOverlayClick($event)">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>{{ t('admin.users.modal.title') }}</h2>
+          <button class="close-btn" (click)="closeModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        @if (isLoadingDetails()) {
+          <div class="modal-loading">
+            <p>{{ t('admin.users.modal.loading') }}</p>
+          </div>
+        }
+
+        @if (selectedUser()) {
+          <div class="modal-body">
+            <!-- User Info Section -->
+            <div class="detail-section">
+              <h3>{{ t('admin.users.modal.userInfo') }}</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.username') }}</span>
+                  <span class="value">{{ selectedUser()!.username }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.email') }}</span>
+                  <span class="value">{{ selectedUser()!.email }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.role') }}</span>
+                  <span class="value">
+                    <span class="role-badge" [class.admin]="selectedUser()!.role === 'ADMIN'">
+                      {{ selectedUser()!.role }}
+                    </span>
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.displayName') }}</span>
+                  <span class="value">{{ selectedUser()!.displayName || '-' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div class="detail-section">
+              <h3>{{ t('admin.users.modal.profile') }}</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.bio') }}</span>
+                  <span class="value">{{ selectedUser()!.bio || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.location') }}</span>
+                  <span class="value">
+                    @if (selectedUser()!.city || selectedUser()!.country) {
+                      {{ selectedUser()!.city || '' }}{{ selectedUser()!.city && selectedUser()!.country ? ', ' : '' }}{{ selectedUser()!.country || '' }}
+                    } @else {
+                      -
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Learning Section -->
+            <div class="detail-section">
+              <h3>{{ t('admin.users.modal.learning') }}</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.language') }}</span>
+                  <span class="value">{{ selectedUser()!.learningLanguage || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.currentLevel') }}</span>
+                  <span class="value">{{ selectedUser()!.currentLevel || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.targetLevel') }}</span>
+                  <span class="value">{{ selectedUser()!.targetLevel || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.xp') }}</span>
+                  <span class="value">{{ selectedUser()!.xp }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.streak') }}</span>
+                  <span class="value">{{ selectedUser()!.streakCount }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">{{ t('admin.users.modal.lastActivity') }}</span>
+                  <span class="value">{{ formatDate(selectedUser()!.lastActivityDate) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Achievements Section -->
+            <div class="detail-section">
+              <h3>{{ t('admin.users.modal.achievements') }}</h3>
+              @if (selectedUser()!.achievements.length === 0) {
+                <p class="no-data">{{ t('admin.users.modal.noAchievements') }}</p>
+              } @else {
+                <div class="achievements-list">
+                  @for (achievement of selectedUser()!.achievements; track achievement.code) {
+                    <div class="achievement-item">
+                      <span class="achievement-title">{{ achievement.title }}</span>
+                      <span class="achievement-desc">{{ achievement.description }}</span>
+                      <span class="achievement-date">{{ formatDate(achievement.earnedAt) }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Role Change Section -->
+            <div class="detail-section role-section">
+              <h3>{{ t('admin.users.roleChange.title') }}</h3>
+
+              @if (!showRoleConfirm()) {
+                <div class="role-change-action">
+                  <p class="role-change-desc">{{ t('admin.users.roleChange.description') }}</p>
+                  <button class="role-change-btn" (click)="openRoleConfirm()">
+                    @if (selectedUser()!.role === 'ADMIN') {
+                      {{ t('admin.users.roleChange.makeUser') }}
+                    } @else {
+                      {{ t('admin.users.roleChange.makeAdmin') }}
+                    }
+                  </button>
+                </div>
+              }
+
+              @if (showRoleConfirm()) {
+                <div class="role-confirm-box">
+                  <p class="confirm-message">
+                    {{ t('admin.users.roleChange.confirmMessage', { username: selectedUser()!.username, newRole: getNewRole() }) }}
+                  </p>
+
+                  @if (roleUpdateError()) {
+                    <p class="error-message">{{ roleUpdateError() }}</p>
+                  }
+
+                  <div class="confirm-buttons">
+                    <button
+                      class="cancel-btn"
+                      (click)="cancelRoleChange()"
+                      [disabled]="isUpdatingRole()">
+                      {{ t('admin.users.roleChange.cancel') }}
+                    </button>
+                    <button
+                      class="confirm-btn"
+                      (click)="confirmRoleChange()"
+                      [disabled]="isUpdatingRole()">
+                      @if (isUpdatingRole()) {
+                        {{ t('admin.users.roleChange.updating') }}
+                      } @else {
+                        {{ t('admin.users.roleChange.confirm') }}
+                      }
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</ng-container>

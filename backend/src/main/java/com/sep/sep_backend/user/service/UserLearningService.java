@@ -7,7 +7,6 @@ import com.sep.sep_backend.user.entity.User;
 import com.sep.sep_backend.user.entity.UserLearning;
 import com.sep.sep_backend.user.repository.UserLearningRepository;
 import com.sep.sep_backend.user.repository.UserRepository;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,7 +74,19 @@ public class UserLearningService {
     public Optional<UserLearning> findLearningByUserId(UUID userId) {
         Optional<UserLearning> learningOptional = userLearningRepository.findByUser_Id(userId);
         if (learningOptional.isPresent()) {
-            return learningOptional;
+            UserLearning learning = learningOptional.get();
+            // Check if streak should be reset due to inactivity
+            LocalDate lastActivity = learning.getLastActivityDate();
+            if (lastActivity != null) {
+                LocalDate today = LocalDate.now();
+                long daysBetween = ChronoUnit.DAYS.between(lastActivity, today);
+                // If more than 1 day has passed, reset streak to 0
+                if (daysBetween > 1 && learning.getStreakCount() != null && learning.getStreakCount() > 0) {
+                    learning.setStreakCount(0);
+                    userLearningRepository.save(learning);
+                }
+            }
+            return Optional.of(learning);
         } else {
             // Auto-create UserLearning for new users
             Optional<User> userOptional = userRepository.findById(userId);
@@ -163,7 +174,7 @@ public class UserLearningService {
      * <ul>
      *     <li>If this is the first activity, streak is set to 1.</li>
      *     <li>If the last activity was exactly one day ago, streak is incremented.</li>
-     *     <li>If there is a gap of more than one day, the streak is reset to 1.</li>
+     *     <li>If there is a gap of more than one day, the streak is reset to 0.</li>
      *     <li>If activity happens on the same day, the streak is not changed.</li>
      * </ul>
      * <p>
@@ -196,7 +207,7 @@ public class UserLearningService {
                 // Consecutive day - increment streak
                 learning.setStreakCount(oldStreak + 1);
             } else if (daysBetween > 1) {
-                // Streak broken - reset to 1
+                // Streak broken - start new streak at 1
                 learning.setStreakCount(1);
             }
             // If daysBetween == 0, same day - no change to streak
@@ -326,7 +337,8 @@ public class UserLearningService {
                             saved.getTargetLevel(),
                             saved.getXp(),
                             saved.getStreakCount(),
-                            saved.getLastActivityDate()
+                            saved.getLastActivityDate(),
+                            saved.getCompletedLevels()
                     ));
         }
 
@@ -340,6 +352,9 @@ public class UserLearningService {
         if (dto.getTargetLevel() != null) {
             learning.setTargetLevel(dto.getTargetLevel());
         }
+        if (dto.getCompletedLevels() != null) {
+            learning.setCompletedLevels(dto.getCompletedLevels());
+        }
         // Don't set lastActivityDate here - only set it on actual learning activity
 
         UserLearning saved = userLearningRepository.save(learning);
@@ -351,7 +366,8 @@ public class UserLearningService {
                 saved.getTargetLevel(),
                 saved.getXp(),
                 saved.getStreakCount(),
-                saved.getLastActivityDate()
+                saved.getLastActivityDate(),
+                saved.getCompletedLevels()
         ));
     }
 
