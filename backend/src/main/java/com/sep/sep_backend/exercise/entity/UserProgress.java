@@ -55,6 +55,10 @@ public class UserProgress {
     @Column(name = "xp_earned", nullable = false)
     private Integer xpEarned = 0;
 
+    // Number of incorrect attempts for this exercise
+    @Column(name = "incorrect_attempts", nullable = false)
+    private Integer incorrectAttempts = 0;
+
     // When this progress row was created (first attempt)
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -69,6 +73,7 @@ public class UserProgress {
      * At this moment:
      *  - isCompleted = false
      *  - xpEarned = 0
+     *  - incorrectAttempts = 0
      */
     public UserProgress(User user, UUID exerciseId, ExerciseType exerciseType) {
         this.user = user;
@@ -76,6 +81,7 @@ public class UserProgress {
         this.exerciseType = exerciseType;
         this.isCompleted = false;
         this.xpEarned = 0;
+        this.incorrectAttempts = 0;
     }
 
     // Getters and Setters
@@ -141,6 +147,24 @@ public class UserProgress {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Integer getIncorrectAttempts() {
+        return incorrectAttempts;
+    }
+
+    public void setIncorrectAttempts(Integer incorrectAttempts) {
+        this.incorrectAttempts = incorrectAttempts;
+    }
+
+    /**
+     * Increment the incorrect attempts counter
+     */
+    public void incrementIncorrectAttempts() {
+        if (this.incorrectAttempts == null) {
+            this.incorrectAttempts = 0;
+        }
+        this.incorrectAttempts++;
     }
 
     // =========================

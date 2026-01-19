@@ -126,13 +126,14 @@ public class ExerciseController {
 
     @PostMapping(value = "/mcq/{id}/submit", consumes = "application/json", produces = "application/json")
     public SubmissionResultResponse submitMcq(@PathVariable UUID id,
-                                              @Valid @RequestBody McqSubmissionRequest req) {
+                                              @Valid @RequestBody McqSubmissionRequest req,
+                                              @RequestParam(defaultValue = "false") boolean isPracticeMode) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // Extract the authenticated userId (or null if not available).
         UUID userId = extractUserId(authentication);
 
         // Delegate the evaluation and progress update to the service layer.
-        return service.submitMcq(id, req, userId);
+        return service.submitMcq(id, req, userId, isPracticeMode);
     }
 
     /**
@@ -156,13 +157,14 @@ public class ExerciseController {
 
     @PostMapping(value = "/fillblank/{id}/submit", consumes = "application/json", produces = "application/json")
     public SubmissionResultResponse submitFillBlank(@PathVariable UUID id,
-                                                    @Valid @RequestBody FillBlankSubmissionRequest req) {
+                                                    @Valid @RequestBody FillBlankSubmissionRequest req,
+                                                    @RequestParam(defaultValue = "false") boolean isPracticeMode) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // Extract the authenticated userId (or null if not available).
         UUID userId = extractUserId(authentication);
 
         // Delegate the evaluation and progress update to the service layer.
-        return service.submitFillBlank(id, req, userId);
+        return service.submitFillBlank(id, req, userId, isPracticeMode);
     }
 
     // ---------- Session / progress ----------
@@ -280,6 +282,32 @@ public class ExerciseController {
                     up.getExerciseType(),
                     up.getXpEarned(),
                     up.getCompletedAt()
+            ));
+        }
+
+        return response;
+    }
+
+    /**
+     * Returns all exercises with incorrect attempts that are not yet completed.
+     * These are exercises the user can retry.
+     *
+     * @return list of {@link CompletedExerciseResponse} representing incorrect exercises
+     */
+    @GetMapping("/incorrect")
+    public List<CompletedExerciseResponse> getIncorrectExercisesForUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = extractUserId(authentication);
+
+        List<UserProgress> progressList = service.getIncorrectExercisesForUser(userId);
+
+        List<CompletedExerciseResponse> response = new ArrayList<>();
+        for (UserProgress up : progressList) {
+            response.add(new CompletedExerciseResponse(
+                    up.getExerciseId(),
+                    up.getExerciseType(),
+                    0, // No XP earned yet
+                    null // Not completed yet
             ));
         }
 
