@@ -67,7 +67,7 @@
               </span>
               <span class="message-time">{{ formatTimestamp(msg.timestamp) }}</span>
             </div>
-            <div class="message-text" [innerHTML]="msg.content"></div>
+            <markdown class="message-text" [data]="msg.content"></markdown>
           </div>
         </div>
 

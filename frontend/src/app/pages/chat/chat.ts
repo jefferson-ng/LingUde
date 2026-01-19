@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { LucideAngularModule, Send, Bot, User, Trash2, MessageSquare, ChevronDown, ChevronUp, History, Clock, Activity, Star, TrendingUp, Flame } from 'lucide-angular';
+import { MarkdownComponent } from 'ngx-markdown';
 import { ChatService } from '../../services/chat.service';
 import { ChatMessage, ChatSession } from '../../models/chat.model';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslocoDirective, LucideAngularModule],
+  imports: [CommonModule, FormsModule, TranslocoDirective, LucideAngularModule, MarkdownComponent],
   templateUrl: './chat.html',
   styleUrl: './chat.css'
 })
