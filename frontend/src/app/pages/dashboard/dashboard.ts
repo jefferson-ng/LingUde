@@ -41,11 +41,12 @@ export class Dashboard implements OnInit {
   protected targetLevel = signal<string>('');
 
   // Leaderboard data
-  protected leaderboardData = signal<LeaderboardEntry[]>([]);
+  protected friendsLeaderboardData = signal<LeaderboardEntry[]>([]);
+  protected globalLeaderboardData = signal<LeaderboardEntry[]>([]);
   protected currentUserId = signal<string | null>(null);
 
-  // Top 3 for dashboard widget
-  protected topThree = computed(() => this.leaderboardData().slice(0, 3));
+  // Top 3 friends for dashboard widget
+  protected topThree = computed(() => this.friendsLeaderboardData().slice(0, 3));
 
   ngOnInit(): void {
     this.loadUserData();
@@ -64,21 +65,32 @@ export class Dashboard implements OnInit {
         this.updateLearningInfo(data.learningLanguage, data.currentLevel, data.targetLevel);
         // Update completed levels count from user data
         this.updateCompletedLevelsCount(data.completedLevels);
-        // Update user rank if leaderboard is loaded
-        this.updateUserRank(this.leaderboardData());
+        // Update user rank from global leaderboard
+        this.updateUserRank(this.globalLeaderboardData());
       }
     });
   }
 
   private loadLeaderboardData(): void {
+    // Load friends leaderboard for the big display
+    this.leaderboardService.getFriendsLeaderboard().subscribe({
+      next: (data) => {
+        this.friendsLeaderboardData.set(data);
+      },
+      error: (err) => {
+        console.error('Error loading friends leaderboard for dashboard:', err);
+      }
+    });
+
+    // Load global leaderboard for user rank
     this.leaderboardService.getGlobalLeaderboard().subscribe({
       next: (data) => {
-        this.leaderboardData.set(data);
-        // Find current user's rank
+        this.globalLeaderboardData.set(data);
+        // Find current user's global rank
         this.updateUserRank(data);
       },
       error: (err) => {
-        console.error('Error loading leaderboard for dashboard:', err);
+        console.error('Error loading global leaderboard for dashboard:', err);
       }
     });
   }
