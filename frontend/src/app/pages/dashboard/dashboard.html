@@ -95,16 +95,17 @@
       <!-- Stats Row -->
       <div class="stats-row">
         <div class="stat-box">
-          <div class="stat-value">24</div>
-          <div class="stat-label">{{ t('dashboard.lessons') }}</div>
+          <div class="stat-value">{{ completedLevelsCount() }}</div>
+          <div class="stat-label">{{ t('dashboard.completedLevels') }}</div>
         </div>
         <div class="stat-box">
-          <div class="stat-value">12</div>
-          <div class="stat-label">{{ t('dashboard.achievements') }}</div>
+          <div class="stat-value">{{ exercisesToReviewCount() }}</div>
+          <div class="stat-label">{{ t('dashboard.toReview') }}</div>
         </div>
         <div class="stat-box">
-          <div class="stat-value">3/5</div>
-          <div class="stat-label">{{ t('dashboard.dailyGoals') }}</div>
+          <div class="stat-value">{{ userRank() ? '#' + userRank() : '-' }}</div>
+          <div class="stat-label">{{ t('dashboard.yourRank') }}</div>
+          <div class="stat-sublabel">{{ t('dashboard.amongFriends') }}</div>
         </div>
       </div>
 
@@ -113,13 +114,6 @@
         <h4 class="action-title">{{ t('dashboard.dailyLesson') }}</h4>
         <p class="action-description">{{ t('dashboard.dailyLessonText') }}</p>
         <button class="btn-start-lesson">{{ t('dashboard.startLesson') }}</button>
-      </div>
-
-      <!-- Daily Goals Card -->
-      <div class="action-card daily-goals">
-        <h4 class="action-title">{{ t('dashboard.goals') }}</h4>
-        <p class="action-description">{{ t('dashboard.goalsRemaining') }}</p>
-        <button class="btn-view-goals">{{ t('dashboard.viewGoals') }}</button>
       </div>
     </div>
   </div>

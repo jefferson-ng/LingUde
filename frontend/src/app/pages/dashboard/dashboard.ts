@@ -3,6 +3,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { CommonModule } from '@angular/common';
 import { UserLearningService } from '../../services/user-learning.service';
 import { LeaderboardService } from '../../services/leaderboard.service';
+import { ExerciseService } from '../../services/exercise.service';
 import { LeaderboardEntry } from '../../models/leaderboard.model';
 import { LucideAngularModule, Flame } from 'lucide-angular';
 
@@ -15,6 +16,7 @@ import { LucideAngularModule, Flame } from 'lucide-angular';
 export class Dashboard implements OnInit {
   private userLearningService = inject(UserLearningService);
   private leaderboardService = inject(LeaderboardService);
+  private exerciseService = inject(ExerciseService);
 
   // Icons
   readonly FlameIcon = Flame;
@@ -27,6 +29,11 @@ export class Dashboard implements OnInit {
   protected xpForCurrentLevel = signal(0);
   protected xpForNextLevel = signal(100);
   protected progressPercent = signal(0);
+
+  // Dashboard stats (real data)
+  protected completedLevelsCount = signal(0);
+  protected exercisesToReviewCount = signal(0);
+  protected userRank = signal<number | null>(null);
 
   // User learning preferences
   protected learningLanguage = signal<string>('');
@@ -43,6 +50,7 @@ export class Dashboard implements OnInit {
   ngOnInit(): void {
     this.loadUserData();
     this.loadLeaderboardData();
+    this.loadExercisesToReview();
 
     // Subscribe to XP updates
     this.userLearningService.userLearning$.subscribe(data => {
@@ -54,6 +62,10 @@ export class Dashboard implements OnInit {
         const lastActivityDate = data.lastActivityDate?.split('T')[0];
         this.isStreakActiveToday.set(lastActivityDate === today && data.streakCount > 0);
         this.updateLearningInfo(data.learningLanguage, data.currentLevel, data.targetLevel);
+        // Update completed levels count from user data
+        this.updateCompletedLevelsCount(data.completedLevels);
+        // Update user rank if leaderboard is loaded
+        this.updateUserRank(this.leaderboardData());
       }
     });
   }
@@ -62,11 +74,21 @@ export class Dashboard implements OnInit {
     this.leaderboardService.getFriendsLeaderboard().subscribe({
       next: (data) => {
         this.leaderboardData.set(data);
+        // Find current user's rank
+        this.updateUserRank(data);
       },
       error: (err) => {
         console.error('Error loading leaderboard for dashboard:', err);
       }
     });
+  }
+
+  private updateUserRank(leaderboard: LeaderboardEntry[]): void {
+    const userId = this.currentUserId();
+    if (userId) {
+      const userEntry = leaderboard.find(entry => entry.userId === userId);
+      this.userRank.set(userEntry?.rank ?? null);
+    }
   }
 
   protected isCurrentUser(entry: LeaderboardEntry): boolean {
@@ -122,5 +144,44 @@ export class Dashboard implements OnInit {
       'IT': 'Italian'
     };
     return code ? languageMap[code] || code : 'Not selected';
+  }
+
+  /**
+   * Load exercises that need review from backend
+   */
+  private loadExercisesToReview(): void {
+    this.exerciseService.getIncorrectExercises().subscribe({
+      next: (exercises) => {
+        this.exercisesToReviewCount.set(exercises.length);
+      },
+      error: (err) => {
+        console.error('Error loading exercises to review:', err);
+        this.exercisesToReviewCount.set(0);
+      }
+    });
+  }
+
+  /**
+   * Parse completedLevels string and count total completed levels
+   * Format: "DE-A1:1,2;EN-A1:1,3;DE-B1:1"
+   */
+  private updateCompletedLevelsCount(completedLevels: string | undefined): void {
+    if (!completedLevels) {
+      this.completedLevelsCount.set(0);
+      return;
+    }
+
+    let totalCount = 0;
+    const difficultyGroups = completedLevels.split(';');
+    for (const group of difficultyGroups) {
+      if (group.trim()) {
+        const [, levelsStr] = group.split(':');
+        if (levelsStr) {
+          const levels = levelsStr.split(',').filter(l => l.trim());
+          totalCount += levels.length;
+        }
+      }
+    }
+    this.completedLevelsCount.set(totalCount);
   }
 }

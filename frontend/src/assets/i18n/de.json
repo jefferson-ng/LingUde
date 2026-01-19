@@ -44,15 +44,13 @@
     "streakInactiveZero": "Schließe heute eine Aufgabe ab, um deine Serie zu starten!",
     "leaderboard": "Bestenliste",
     "you": "Du",
-    "lessons": "Lektionen",
-    "achievements": "Erfolge",
-    "dailyGoals": "Tagesziele",
+    "completedLevels": "Level erledigt",
+    "toReview": "Zum Üben",
+    "yourRank": "Dein Rang",
+    "amongFriends": "unter Freunden",
     "dailyLesson": "Tägliche Lektion",
     "dailyLessonText": "Setze deine Lernreise fort mit der heutigen Lektion.",
-    "startLesson": "Lektion starten",
-    "goals": "Tagesziele",
-    "goalsRemaining": "Noch 2 Ziele für heute! Du schaffst das!",
-    "viewGoals": "Ziele ansehen"
+    "startLesson": "Lektion starten"
   },
   "lessons": {
     "title": "Lektionen",

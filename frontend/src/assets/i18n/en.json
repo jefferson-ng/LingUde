@@ -44,15 +44,13 @@
     "streakInactiveZero": "Complete a task today to start your streak!",
     "leaderboard": "Leaderboard",
     "you": "You",
-    "lessons": "Lessons",
-    "achievements": "Achievements",
-    "dailyGoals": "Daily Goals",
+    "completedLevels": "Levels Done",
+    "toReview": "To Review",
+    "yourRank": "Your Rank",
+    "amongFriends": "among friends",
     "dailyLesson": "Daily Lesson",
     "dailyLessonText": "Continue your learning journey with today's lesson.",
-    "startLesson": "Start Lesson",
-    "goals": "Daily Goals",
-    "goalsRemaining": "2 more goals for today! You can do it!",
-    "viewGoals": "View Goals"
+    "startLesson": "Start Lesson"
   },
   "lessons": {
     "title": "Lessons",
