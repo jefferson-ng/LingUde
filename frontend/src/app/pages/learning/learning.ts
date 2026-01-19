@@ -286,7 +286,7 @@ export class Learning implements OnInit {
     const targetLevel = this.userTargetLevel();
     const targetLanguage = this.userLanguage();
 
-    const levelsPerDifficulty = 4;
+    const levelsPerDifficulty = 5;
     const existingLevels = this.levels();
     const newLevels: Level[] = [];
 
@@ -349,7 +349,7 @@ export class Learning implements OnInit {
           difficultyLevel: difficulty,
           status: status,
           stars: existingLevel?.stars || 0,
-          totalExercises: 2,
+          totalExercises: 3,
           completedExercises: existingLevel?.completedExercises || 0
         });
 
@@ -421,14 +421,21 @@ export class Learning implements OnInit {
         
         const mixedExercises: ExerciseSummaryResponse[] = [];
         const levelIndex = level.levelNumber - 1;
-        
-        if (levelIndex < mcqExercises.length) {
-          mixedExercises.push(mcqExercises[levelIndex]);
+        const mcqStartIndex = levelIndex * 2;  // 2 MCQs pro Level
+
+        // Add 2 MCQ exercises
+        if (mcqStartIndex < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[mcqStartIndex]);
         }
+        if (mcqStartIndex + 1 < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[mcqStartIndex + 1]);
+        }
+
+        // Add 1 Fill-Blank exercise
         if (levelIndex < fillBlankExercises.length) {
           mixedExercises.push(fillBlankExercises[levelIndex]);
         }
-        
+
         // Calculate total XP from exercises
         const totalXP = mixedExercises.reduce((sum, ex) => sum + ex.xpReward, 0);
         this.levelXP.set(totalXP);
@@ -469,12 +476,20 @@ export class Learning implements OnInit {
         console.log(`Found ${mcqExercises.length} MCQ and ${fillBlankExercises.length} Fill-Blank exercises`);
         
         const mixedExercises: ExerciseSummaryResponse[] = [];
-        
-        // Take only 1 MCQ and 1 Fill-Blank per level
+
+        // Take 2 MCQ and 1 Fill-Blank per level
         const levelIndex = level.levelNumber - 1;
-        if (levelIndex < mcqExercises.length) {
-          mixedExercises.push(mcqExercises[levelIndex]);
+        const mcqStartIndex = levelIndex * 2;  // 2 MCQs pro Level
+
+        // Add 2 MCQ exercises
+        if (mcqStartIndex < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[mcqStartIndex]);
         }
+        if (mcqStartIndex + 1 < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[mcqStartIndex + 1]);
+        }
+
+        // Add 1 Fill-Blank exercise
         if (levelIndex < fillBlankExercises.length) {
           mixedExercises.push(fillBlankExercises[levelIndex]);
         }
