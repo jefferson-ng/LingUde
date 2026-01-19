@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 /**
  * CommandLineRunner that automatically seeds the database with exercise data.
  *
- * This seeder creates 184 exercises (92 English + 92 German) across all CEFR levels (A1-C2):
- * - 92 MCQ exercises (46 VOCABULARY + 46 GRAMMAR)
- * - 92 Fill-in-the-Blank exercises (46 VOCABULARY + 46 GRAMMAR)
+ * This seeder creates 232 exercises (116 English + 116 German) across all CEFR levels (A1-C2):
+ * - 140 MCQ exercises (35 VOCABULARY + 57 GRAMMAR + 48 SYNONYM)
+ * - 92 Fill-in-the-Blank exercises (42 VOCABULARY + 50 GRAMMAR)
  *
  * The seeder is idempotent - it checks for existing exercises before inserting,
  * so it can be run multiple times safely without creating duplicates.
@@ -50,6 +50,8 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         seedGermanExercises();
         seedEnglishGrammarExercises();
         seedGermanGrammarExercises();
+        seedEnglishSynonymExercises();
+        seedGermanSynonymExercises();
 
         long finalMcqCount = mcqRepository.count();
         long finalFillBlankCount = fillBlankRepository.count();
@@ -63,7 +65,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         } else {
             logger.info("All exercises already exist, no new exercises added.");
         }
-        logger.info("Total exercises in database: {} (expected: 184)", finalMcqCount + finalFillBlankCount);
+        logger.info("Total exercises in database: {} (expected: 232)", finalMcqCount + finalFillBlankCount);
     }
 
     private void seedEnglishExercises() {
@@ -2251,6 +2253,654 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         saveFillBlankIfNotExists(deC2GF3);
 
         logger.info("German GRAMMAR exercises seeded: 22 MCQ + 22 Fill-Blank = 44 total");
+    }
+
+    private void seedEnglishSynonymExercises() {
+        logger.info("Seeding English SYNONYM exercises...");
+
+        // A1 Level - Basic Synonyms
+        ExerciseMcq enA1S1 = new ExerciseMcq();
+        enA1S1.setTargetLanguage(Language.EN);
+        enA1S1.setDifficultyLevel(LanguageLevel.A1);
+        enA1S1.setTopic("synonyms");
+        enA1S1.setQuestionText("Which word is a synonym of 'happy'?");
+        enA1S1.setCorrectAnswer("joyful");
+        enA1S1.setWrongOption1("sad");
+        enA1S1.setWrongOption2("angry");
+        enA1S1.setWrongOption3("tired");
+        enA1S1.setXpReward(10);
+        enA1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA1S1);
+
+        ExerciseMcq enA1S2 = new ExerciseMcq();
+        enA1S2.setTargetLanguage(Language.EN);
+        enA1S2.setDifficultyLevel(LanguageLevel.A1);
+        enA1S2.setTopic("synonyms");
+        enA1S2.setQuestionText("Which word is a synonym of 'big'?");
+        enA1S2.setCorrectAnswer("large");
+        enA1S2.setWrongOption1("small");
+        enA1S2.setWrongOption2("tiny");
+        enA1S2.setWrongOption3("short");
+        enA1S2.setXpReward(10);
+        enA1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA1S2);
+
+        ExerciseMcq enA1S3 = new ExerciseMcq();
+        enA1S3.setTargetLanguage(Language.EN);
+        enA1S3.setDifficultyLevel(LanguageLevel.A1);
+        enA1S3.setTopic("synonyms");
+        enA1S3.setQuestionText("Which word is a synonym of 'fast'?");
+        enA1S3.setCorrectAnswer("quick");
+        enA1S3.setWrongOption1("slow");
+        enA1S3.setWrongOption2("heavy");
+        enA1S3.setWrongOption3("tall");
+        enA1S3.setXpReward(10);
+        enA1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA1S3);
+
+        ExerciseMcq enA1S4 = new ExerciseMcq();
+        enA1S4.setTargetLanguage(Language.EN);
+        enA1S4.setDifficultyLevel(LanguageLevel.A1);
+        enA1S4.setTopic("synonyms");
+        enA1S4.setQuestionText("Which word is a synonym of 'small'?");
+        enA1S4.setCorrectAnswer("little");
+        enA1S4.setWrongOption1("big");
+        enA1S4.setWrongOption2("large");
+        enA1S4.setWrongOption3("huge");
+        enA1S4.setXpReward(10);
+        enA1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA1S4);
+
+        // A2 Level - Common Synonyms
+        ExerciseMcq enA2S1 = new ExerciseMcq();
+        enA2S1.setTargetLanguage(Language.EN);
+        enA2S1.setDifficultyLevel(LanguageLevel.A2);
+        enA2S1.setTopic("synonyms");
+        enA2S1.setQuestionText("Which word is a synonym of 'beautiful'?");
+        enA2S1.setCorrectAnswer("pretty");
+        enA2S1.setWrongOption1("ugly");
+        enA2S1.setWrongOption2("plain");
+        enA2S1.setWrongOption3("dull");
+        enA2S1.setXpReward(15);
+        enA2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA2S1);
+
+        ExerciseMcq enA2S2 = new ExerciseMcq();
+        enA2S2.setTargetLanguage(Language.EN);
+        enA2S2.setDifficultyLevel(LanguageLevel.A2);
+        enA2S2.setTopic("synonyms");
+        enA2S2.setQuestionText("Which word is a synonym of 'smart'?");
+        enA2S2.setCorrectAnswer("clever");
+        enA2S2.setWrongOption1("stupid");
+        enA2S2.setWrongOption2("slow");
+        enA2S2.setWrongOption3("dumb");
+        enA2S2.setXpReward(15);
+        enA2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA2S2);
+
+        ExerciseMcq enA2S3 = new ExerciseMcq();
+        enA2S3.setTargetLanguage(Language.EN);
+        enA2S3.setDifficultyLevel(LanguageLevel.A2);
+        enA2S3.setTopic("synonyms");
+        enA2S3.setQuestionText("Which word is a synonym of 'begin'?");
+        enA2S3.setCorrectAnswer("start");
+        enA2S3.setWrongOption1("finish");
+        enA2S3.setWrongOption2("end");
+        enA2S3.setWrongOption3("stop");
+        enA2S3.setXpReward(15);
+        enA2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA2S3);
+
+        ExerciseMcq enA2S4 = new ExerciseMcq();
+        enA2S4.setTargetLanguage(Language.EN);
+        enA2S4.setDifficultyLevel(LanguageLevel.A2);
+        enA2S4.setTopic("synonyms");
+        enA2S4.setQuestionText("Which word is a synonym of 'angry'?");
+        enA2S4.setCorrectAnswer("mad");
+        enA2S4.setWrongOption1("happy");
+        enA2S4.setWrongOption2("calm");
+        enA2S4.setWrongOption3("pleased");
+        enA2S4.setXpReward(15);
+        enA2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA2S4);
+
+        // B1 Level - Varied Synonyms
+        ExerciseMcq enB1S1 = new ExerciseMcq();
+        enB1S1.setTargetLanguage(Language.EN);
+        enB1S1.setDifficultyLevel(LanguageLevel.B1);
+        enB1S1.setTopic("synonyms");
+        enB1S1.setQuestionText("Which word is a synonym of 'difficult'?");
+        enB1S1.setCorrectAnswer("challenging");
+        enB1S1.setWrongOption1("easy");
+        enB1S1.setWrongOption2("simple");
+        enB1S1.setWrongOption3("basic");
+        enB1S1.setXpReward(20);
+        enB1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB1S1);
+
+        ExerciseMcq enB1S2 = new ExerciseMcq();
+        enB1S2.setTargetLanguage(Language.EN);
+        enB1S2.setDifficultyLevel(LanguageLevel.B1);
+        enB1S2.setTopic("synonyms");
+        enB1S2.setQuestionText("Which word is a synonym of 'important'?");
+        enB1S2.setCorrectAnswer("significant");
+        enB1S2.setWrongOption1("trivial");
+        enB1S2.setWrongOption2("minor");
+        enB1S2.setWrongOption3("irrelevant");
+        enB1S2.setXpReward(20);
+        enB1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB1S2);
+
+        ExerciseMcq enB1S3 = new ExerciseMcq();
+        enB1S3.setTargetLanguage(Language.EN);
+        enB1S3.setDifficultyLevel(LanguageLevel.B1);
+        enB1S3.setTopic("synonyms");
+        enB1S3.setQuestionText("Which word is a synonym of 'strange'?");
+        enB1S3.setCorrectAnswer("weird");
+        enB1S3.setWrongOption1("normal");
+        enB1S3.setWrongOption2("usual");
+        enB1S3.setWrongOption3("common");
+        enB1S3.setXpReward(20);
+        enB1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB1S3);
+
+        ExerciseMcq enB1S4 = new ExerciseMcq();
+        enB1S4.setTargetLanguage(Language.EN);
+        enB1S4.setDifficultyLevel(LanguageLevel.B1);
+        enB1S4.setTopic("synonyms");
+        enB1S4.setQuestionText("Which word is a synonym of 'tired'?");
+        enB1S4.setCorrectAnswer("exhausted");
+        enB1S4.setWrongOption1("energetic");
+        enB1S4.setWrongOption2("active");
+        enB1S4.setWrongOption3("lively");
+        enB1S4.setXpReward(20);
+        enB1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB1S4);
+
+        // B2 Level - Abstract Synonyms
+        ExerciseMcq enB2S1 = new ExerciseMcq();
+        enB2S1.setTargetLanguage(Language.EN);
+        enB2S1.setDifficultyLevel(LanguageLevel.B2);
+        enB2S1.setTopic("synonyms");
+        enB2S1.setQuestionText("Which word is a synonym of 'brave'?");
+        enB2S1.setCorrectAnswer("courageous");
+        enB2S1.setWrongOption1("cowardly");
+        enB2S1.setWrongOption2("fearful");
+        enB2S1.setWrongOption3("timid");
+        enB2S1.setXpReward(25);
+        enB2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB2S1);
+
+        ExerciseMcq enB2S2 = new ExerciseMcq();
+        enB2S2.setTargetLanguage(Language.EN);
+        enB2S2.setDifficultyLevel(LanguageLevel.B2);
+        enB2S2.setTopic("synonyms");
+        enB2S2.setQuestionText("Which word is a synonym of 'generous'?");
+        enB2S2.setCorrectAnswer("charitable");
+        enB2S2.setWrongOption1("greedy");
+        enB2S2.setWrongOption2("selfish");
+        enB2S2.setWrongOption3("stingy");
+        enB2S2.setXpReward(25);
+        enB2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB2S2);
+
+        ExerciseMcq enB2S3 = new ExerciseMcq();
+        enB2S3.setTargetLanguage(Language.EN);
+        enB2S3.setDifficultyLevel(LanguageLevel.B2);
+        enB2S3.setTopic("synonyms");
+        enB2S3.setQuestionText("Which word is a synonym of 'ancient'?");
+        enB2S3.setCorrectAnswer("antique");
+        enB2S3.setWrongOption1("modern");
+        enB2S3.setWrongOption2("new");
+        enB2S3.setWrongOption3("recent");
+        enB2S3.setXpReward(25);
+        enB2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB2S3);
+
+        ExerciseMcq enB2S4 = new ExerciseMcq();
+        enB2S4.setTargetLanguage(Language.EN);
+        enB2S4.setDifficultyLevel(LanguageLevel.B2);
+        enB2S4.setTopic("synonyms");
+        enB2S4.setQuestionText("Which word is a synonym of 'wealthy'?");
+        enB2S4.setCorrectAnswer("affluent");
+        enB2S4.setWrongOption1("poor");
+        enB2S4.setWrongOption2("broke");
+        enB2S4.setWrongOption3("needy");
+        enB2S4.setXpReward(25);
+        enB2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB2S4);
+
+        // C1 Level - Nuanced Synonyms
+        ExerciseMcq enC1S1 = new ExerciseMcq();
+        enC1S1.setTargetLanguage(Language.EN);
+        enC1S1.setDifficultyLevel(LanguageLevel.C1);
+        enC1S1.setTopic("synonyms");
+        enC1S1.setQuestionText("Which word is a synonym of 'furious'?");
+        enC1S1.setCorrectAnswer("enraged");
+        enC1S1.setWrongOption1("calm");
+        enC1S1.setWrongOption2("peaceful");
+        enC1S1.setWrongOption3("serene");
+        enC1S1.setXpReward(30);
+        enC1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC1S1);
+
+        ExerciseMcq enC1S2 = new ExerciseMcq();
+        enC1S2.setTargetLanguage(Language.EN);
+        enC1S2.setDifficultyLevel(LanguageLevel.C1);
+        enC1S2.setTopic("synonyms");
+        enC1S2.setQuestionText("Which word is a synonym of 'melancholy'?");
+        enC1S2.setCorrectAnswer("sorrowful");
+        enC1S2.setWrongOption1("cheerful");
+        enC1S2.setWrongOption2("joyous");
+        enC1S2.setWrongOption3("elated");
+        enC1S2.setXpReward(30);
+        enC1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC1S2);
+
+        ExerciseMcq enC1S3 = new ExerciseMcq();
+        enC1S3.setTargetLanguage(Language.EN);
+        enC1S3.setDifficultyLevel(LanguageLevel.C1);
+        enC1S3.setTopic("synonyms");
+        enC1S3.setQuestionText("Which word is a synonym of 'stubborn'?");
+        enC1S3.setCorrectAnswer("obstinate");
+        enC1S3.setWrongOption1("flexible");
+        enC1S3.setWrongOption2("yielding");
+        enC1S3.setWrongOption3("compliant");
+        enC1S3.setXpReward(30);
+        enC1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC1S3);
+
+        ExerciseMcq enC1S4 = new ExerciseMcq();
+        enC1S4.setTargetLanguage(Language.EN);
+        enC1S4.setDifficultyLevel(LanguageLevel.C1);
+        enC1S4.setTopic("synonyms");
+        enC1S4.setQuestionText("Which word is a synonym of 'astute'?");
+        enC1S4.setCorrectAnswer("shrewd");
+        enC1S4.setWrongOption1("naive");
+        enC1S4.setWrongOption2("foolish");
+        enC1S4.setWrongOption3("obtuse");
+        enC1S4.setXpReward(30);
+        enC1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC1S4);
+
+        // C2 Level - Sophisticated Synonyms
+        ExerciseMcq enC2S1 = new ExerciseMcq();
+        enC2S1.setTargetLanguage(Language.EN);
+        enC2S1.setDifficultyLevel(LanguageLevel.C2);
+        enC2S1.setTopic("synonyms");
+        enC2S1.setQuestionText("Which word is a synonym of 'ephemeral'?");
+        enC2S1.setCorrectAnswer("transient");
+        enC2S1.setWrongOption1("permanent");
+        enC2S1.setWrongOption2("lasting");
+        enC2S1.setWrongOption3("enduring");
+        enC2S1.setXpReward(35);
+        enC2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC2S1);
+
+        ExerciseMcq enC2S2 = new ExerciseMcq();
+        enC2S2.setTargetLanguage(Language.EN);
+        enC2S2.setDifficultyLevel(LanguageLevel.C2);
+        enC2S2.setTopic("synonyms");
+        enC2S2.setQuestionText("Which word is a synonym of 'ubiquitous'?");
+        enC2S2.setCorrectAnswer("omnipresent");
+        enC2S2.setWrongOption1("rare");
+        enC2S2.setWrongOption2("scarce");
+        enC2S2.setWrongOption3("uncommon");
+        enC2S2.setXpReward(35);
+        enC2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC2S2);
+
+        ExerciseMcq enC2S3 = new ExerciseMcq();
+        enC2S3.setTargetLanguage(Language.EN);
+        enC2S3.setDifficultyLevel(LanguageLevel.C2);
+        enC2S3.setTopic("synonyms");
+        enC2S3.setQuestionText("Which word is a synonym of 'eloquent'?");
+        enC2S3.setCorrectAnswer("articulate");
+        enC2S3.setWrongOption1("inarticulate");
+        enC2S3.setWrongOption2("mumbling");
+        enC2S3.setWrongOption3("incoherent");
+        enC2S3.setXpReward(35);
+        enC2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC2S3);
+
+        ExerciseMcq enC2S4 = new ExerciseMcq();
+        enC2S4.setTargetLanguage(Language.EN);
+        enC2S4.setDifficultyLevel(LanguageLevel.C2);
+        enC2S4.setTopic("synonyms");
+        enC2S4.setQuestionText("Which word is a synonym of 'meticulous'?");
+        enC2S4.setCorrectAnswer("scrupulous");
+        enC2S4.setWrongOption1("careless");
+        enC2S4.setWrongOption2("sloppy");
+        enC2S4.setWrongOption3("negligent");
+        enC2S4.setXpReward(35);
+        enC2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC2S4);
+
+        logger.info("English SYNONYM exercises seeded: 24 MCQ");
+    }
+
+    private void seedGermanSynonymExercises() {
+        logger.info("Seeding German SYNONYM exercises...");
+
+        // A1 Level - Basic Synonyms
+        ExerciseMcq deA1S1 = new ExerciseMcq();
+        deA1S1.setTargetLanguage(Language.DE);
+        deA1S1.setDifficultyLevel(LanguageLevel.A1);
+        deA1S1.setTopic("synonyme");
+        deA1S1.setQuestionText("Welches Wort ist ein Synonym von 'glücklich'?");
+        deA1S1.setCorrectAnswer("froh");
+        deA1S1.setWrongOption1("traurig");
+        deA1S1.setWrongOption2("wütend");
+        deA1S1.setWrongOption3("müde");
+        deA1S1.setXpReward(10);
+        deA1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA1S1);
+
+        ExerciseMcq deA1S2 = new ExerciseMcq();
+        deA1S2.setTargetLanguage(Language.DE);
+        deA1S2.setDifficultyLevel(LanguageLevel.A1);
+        deA1S2.setTopic("synonyme");
+        deA1S2.setQuestionText("Welches Wort ist ein Synonym von 'groß'?");
+        deA1S2.setCorrectAnswer("riesig");
+        deA1S2.setWrongOption1("klein");
+        deA1S2.setWrongOption2("winzig");
+        deA1S2.setWrongOption3("kurz");
+        deA1S2.setXpReward(10);
+        deA1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA1S2);
+
+        ExerciseMcq deA1S3 = new ExerciseMcq();
+        deA1S3.setTargetLanguage(Language.DE);
+        deA1S3.setDifficultyLevel(LanguageLevel.A1);
+        deA1S3.setTopic("synonyme");
+        deA1S3.setQuestionText("Welches Wort ist ein Synonym von 'schnell'?");
+        deA1S3.setCorrectAnswer("rasch");
+        deA1S3.setWrongOption1("langsam");
+        deA1S3.setWrongOption2("schwer");
+        deA1S3.setWrongOption3("träge");
+        deA1S3.setXpReward(10);
+        deA1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA1S3);
+
+        ExerciseMcq deA1S4 = new ExerciseMcq();
+        deA1S4.setTargetLanguage(Language.DE);
+        deA1S4.setDifficultyLevel(LanguageLevel.A1);
+        deA1S4.setTopic("synonyme");
+        deA1S4.setQuestionText("Welches Wort ist ein Synonym von 'klein'?");
+        deA1S4.setCorrectAnswer("winzig");
+        deA1S4.setWrongOption1("groß");
+        deA1S4.setWrongOption2("riesig");
+        deA1S4.setWrongOption3("hoch");
+        deA1S4.setXpReward(10);
+        deA1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA1S4);
+
+        // A2 Level - Common Synonyms
+        ExerciseMcq deA2S1 = new ExerciseMcq();
+        deA2S1.setTargetLanguage(Language.DE);
+        deA2S1.setDifficultyLevel(LanguageLevel.A2);
+        deA2S1.setTopic("synonyme");
+        deA2S1.setQuestionText("Welches Wort ist ein Synonym von 'schön'?");
+        deA2S1.setCorrectAnswer("hübsch");
+        deA2S1.setWrongOption1("hässlich");
+        deA2S1.setWrongOption2("schlicht");
+        deA2S1.setWrongOption3("langweilig");
+        deA2S1.setXpReward(15);
+        deA2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA2S1);
+
+        ExerciseMcq deA2S2 = new ExerciseMcq();
+        deA2S2.setTargetLanguage(Language.DE);
+        deA2S2.setDifficultyLevel(LanguageLevel.A2);
+        deA2S2.setTopic("synonyme");
+        deA2S2.setQuestionText("Welches Wort ist ein Synonym von 'klug'?");
+        deA2S2.setCorrectAnswer("schlau");
+        deA2S2.setWrongOption1("dumm");
+        deA2S2.setWrongOption2("langsam");
+        deA2S2.setWrongOption3("töricht");
+        deA2S2.setXpReward(15);
+        deA2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA2S2);
+
+        ExerciseMcq deA2S3 = new ExerciseMcq();
+        deA2S3.setTargetLanguage(Language.DE);
+        deA2S3.setDifficultyLevel(LanguageLevel.A2);
+        deA2S3.setTopic("synonyme");
+        deA2S3.setQuestionText("Welches Wort ist ein Synonym von 'beginnen'?");
+        deA2S3.setCorrectAnswer("anfangen");
+        deA2S3.setWrongOption1("beenden");
+        deA2S3.setWrongOption2("aufhören");
+        deA2S3.setWrongOption3("stoppen");
+        deA2S3.setXpReward(15);
+        deA2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA2S3);
+
+        ExerciseMcq deA2S4 = new ExerciseMcq();
+        deA2S4.setTargetLanguage(Language.DE);
+        deA2S4.setDifficultyLevel(LanguageLevel.A2);
+        deA2S4.setTopic("synonyme");
+        deA2S4.setQuestionText("Welches Wort ist ein Synonym von 'wütend'?");
+        deA2S4.setCorrectAnswer("zornig");
+        deA2S4.setWrongOption1("glücklich");
+        deA2S4.setWrongOption2("ruhig");
+        deA2S4.setWrongOption3("zufrieden");
+        deA2S4.setXpReward(15);
+        deA2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA2S4);
+
+        // B1 Level - Varied Synonyms
+        ExerciseMcq deB1S1 = new ExerciseMcq();
+        deB1S1.setTargetLanguage(Language.DE);
+        deB1S1.setDifficultyLevel(LanguageLevel.B1);
+        deB1S1.setTopic("synonyme");
+        deB1S1.setQuestionText("Welches Wort ist ein Synonym von 'schwierig'?");
+        deB1S1.setCorrectAnswer("kompliziert");
+        deB1S1.setWrongOption1("einfach");
+        deB1S1.setWrongOption2("leicht");
+        deB1S1.setWrongOption3("simpel");
+        deB1S1.setXpReward(20);
+        deB1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB1S1);
+
+        ExerciseMcq deB1S2 = new ExerciseMcq();
+        deB1S2.setTargetLanguage(Language.DE);
+        deB1S2.setDifficultyLevel(LanguageLevel.B1);
+        deB1S2.setTopic("synonyme");
+        deB1S2.setQuestionText("Welches Wort ist ein Synonym von 'wichtig'?");
+        deB1S2.setCorrectAnswer("bedeutend");
+        deB1S2.setWrongOption1("unwichtig");
+        deB1S2.setWrongOption2("nebensächlich");
+        deB1S2.setWrongOption3("trivial");
+        deB1S2.setXpReward(20);
+        deB1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB1S2);
+
+        ExerciseMcq deB1S3 = new ExerciseMcq();
+        deB1S3.setTargetLanguage(Language.DE);
+        deB1S3.setDifficultyLevel(LanguageLevel.B1);
+        deB1S3.setTopic("synonyme");
+        deB1S3.setQuestionText("Welches Wort ist ein Synonym von 'seltsam'?");
+        deB1S3.setCorrectAnswer("merkwürdig");
+        deB1S3.setWrongOption1("normal");
+        deB1S3.setWrongOption2("üblich");
+        deB1S3.setWrongOption3("gewöhnlich");
+        deB1S3.setXpReward(20);
+        deB1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB1S3);
+
+        ExerciseMcq deB1S4 = new ExerciseMcq();
+        deB1S4.setTargetLanguage(Language.DE);
+        deB1S4.setDifficultyLevel(LanguageLevel.B1);
+        deB1S4.setTopic("synonyme");
+        deB1S4.setQuestionText("Welches Wort ist ein Synonym von 'müde'?");
+        deB1S4.setCorrectAnswer("erschöpft");
+        deB1S4.setWrongOption1("energisch");
+        deB1S4.setWrongOption2("aktiv");
+        deB1S4.setWrongOption3("munter");
+        deB1S4.setXpReward(20);
+        deB1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB1S4);
+
+        // B2 Level - Abstract Synonyms
+        ExerciseMcq deB2S1 = new ExerciseMcq();
+        deB2S1.setTargetLanguage(Language.DE);
+        deB2S1.setDifficultyLevel(LanguageLevel.B2);
+        deB2S1.setTopic("synonyme");
+        deB2S1.setQuestionText("Welches Wort ist ein Synonym von 'mutig'?");
+        deB2S1.setCorrectAnswer("tapfer");
+        deB2S1.setWrongOption1("feige");
+        deB2S1.setWrongOption2("ängstlich");
+        deB2S1.setWrongOption3("schüchtern");
+        deB2S1.setXpReward(25);
+        deB2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB2S1);
+
+        ExerciseMcq deB2S2 = new ExerciseMcq();
+        deB2S2.setTargetLanguage(Language.DE);
+        deB2S2.setDifficultyLevel(LanguageLevel.B2);
+        deB2S2.setTopic("synonyme");
+        deB2S2.setQuestionText("Welches Wort ist ein Synonym von 'großzügig'?");
+        deB2S2.setCorrectAnswer("freigebig");
+        deB2S2.setWrongOption1("geizig");
+        deB2S2.setWrongOption2("selbstsüchtig");
+        deB2S2.setWrongOption3("knauserig");
+        deB2S2.setXpReward(25);
+        deB2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB2S2);
+
+        ExerciseMcq deB2S3 = new ExerciseMcq();
+        deB2S3.setTargetLanguage(Language.DE);
+        deB2S3.setDifficultyLevel(LanguageLevel.B2);
+        deB2S3.setTopic("synonyme");
+        deB2S3.setQuestionText("Welches Wort ist ein Synonym von 'alt'?");
+        deB2S3.setCorrectAnswer("antik");
+        deB2S3.setWrongOption1("modern");
+        deB2S3.setWrongOption2("neu");
+        deB2S3.setWrongOption3("aktuell");
+        deB2S3.setXpReward(25);
+        deB2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB2S3);
+
+        ExerciseMcq deB2S4 = new ExerciseMcq();
+        deB2S4.setTargetLanguage(Language.DE);
+        deB2S4.setDifficultyLevel(LanguageLevel.B2);
+        deB2S4.setTopic("synonyme");
+        deB2S4.setQuestionText("Welches Wort ist ein Synonym von 'reich'?");
+        deB2S4.setCorrectAnswer("wohlhabend");
+        deB2S4.setWrongOption1("arm");
+        deB2S4.setWrongOption2("mittellos");
+        deB2S4.setWrongOption3("bedürftig");
+        deB2S4.setXpReward(25);
+        deB2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB2S4);
+
+        // C1 Level - Nuanced Synonyms
+        ExerciseMcq deC1S1 = new ExerciseMcq();
+        deC1S1.setTargetLanguage(Language.DE);
+        deC1S1.setDifficultyLevel(LanguageLevel.C1);
+        deC1S1.setTopic("synonyme");
+        deC1S1.setQuestionText("Welches Wort ist ein Synonym von 'rasend'?");
+        deC1S1.setCorrectAnswer("tobend");
+        deC1S1.setWrongOption1("ruhig");
+        deC1S1.setWrongOption2("friedlich");
+        deC1S1.setWrongOption3("gelassen");
+        deC1S1.setXpReward(30);
+        deC1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC1S1);
+
+        ExerciseMcq deC1S2 = new ExerciseMcq();
+        deC1S2.setTargetLanguage(Language.DE);
+        deC1S2.setDifficultyLevel(LanguageLevel.C1);
+        deC1S2.setTopic("synonyme");
+        deC1S2.setQuestionText("Welches Wort ist ein Synonym von 'betrübt'?");
+        deC1S2.setCorrectAnswer("niedergeschlagen");
+        deC1S2.setWrongOption1("fröhlich");
+        deC1S2.setWrongOption2("heiter");
+        deC1S2.setWrongOption3("vergnügt");
+        deC1S2.setXpReward(30);
+        deC1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC1S2);
+
+        ExerciseMcq deC1S3 = new ExerciseMcq();
+        deC1S3.setTargetLanguage(Language.DE);
+        deC1S3.setDifficultyLevel(LanguageLevel.C1);
+        deC1S3.setTopic("synonyme");
+        deC1S3.setQuestionText("Welches Wort ist ein Synonym von 'stur'?");
+        deC1S3.setCorrectAnswer("hartnäckig");
+        deC1S3.setWrongOption1("flexibel");
+        deC1S3.setWrongOption2("nachgiebig");
+        deC1S3.setWrongOption3("anpassungsfähig");
+        deC1S3.setXpReward(30);
+        deC1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC1S3);
+
+        ExerciseMcq deC1S4 = new ExerciseMcq();
+        deC1S4.setTargetLanguage(Language.DE);
+        deC1S4.setDifficultyLevel(LanguageLevel.C1);
+        deC1S4.setTopic("synonyme");
+        deC1S4.setQuestionText("Welches Wort ist ein Synonym von 'scharfsinnig'?");
+        deC1S4.setCorrectAnswer("klarsichtig");
+        deC1S4.setWrongOption1("naiv");
+        deC1S4.setWrongOption2("töricht");
+        deC1S4.setWrongOption3("begriffsstutzig");
+        deC1S4.setXpReward(30);
+        deC1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC1S4);
+
+        // C2 Level - Sophisticated Synonyms
+        ExerciseMcq deC2S1 = new ExerciseMcq();
+        deC2S1.setTargetLanguage(Language.DE);
+        deC2S1.setDifficultyLevel(LanguageLevel.C2);
+        deC2S1.setTopic("synonyme");
+        deC2S1.setQuestionText("Welches Wort ist ein Synonym von 'vergänglich'?");
+        deC2S1.setCorrectAnswer("flüchtig");
+        deC2S1.setWrongOption1("dauerhaft");
+        deC2S1.setWrongOption2("beständig");
+        deC2S1.setWrongOption3("ewig");
+        deC2S1.setXpReward(35);
+        deC2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC2S1);
+
+        ExerciseMcq deC2S2 = new ExerciseMcq();
+        deC2S2.setTargetLanguage(Language.DE);
+        deC2S2.setDifficultyLevel(LanguageLevel.C2);
+        deC2S2.setTopic("synonyme");
+        deC2S2.setQuestionText("Welches Wort ist ein Synonym von 'allgegenwärtig'?");
+        deC2S2.setCorrectAnswer("omnipräsent");
+        deC2S2.setWrongOption1("selten");
+        deC2S2.setWrongOption2("rar");
+        deC2S2.setWrongOption3("ungewöhnlich");
+        deC2S2.setXpReward(35);
+        deC2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC2S2);
+
+        ExerciseMcq deC2S3 = new ExerciseMcq();
+        deC2S3.setTargetLanguage(Language.DE);
+        deC2S3.setDifficultyLevel(LanguageLevel.C2);
+        deC2S3.setTopic("synonyme");
+        deC2S3.setQuestionText("Welches Wort ist ein Synonym von 'beredt'?");
+        deC2S3.setCorrectAnswer("wortgewandt");
+        deC2S3.setWrongOption1("ungeschickt");
+        deC2S3.setWrongOption2("stammelnd");
+        deC2S3.setWrongOption3("unbeholfen");
+        deC2S3.setXpReward(35);
+        deC2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC2S3);
+
+        ExerciseMcq deC2S4 = new ExerciseMcq();
+        deC2S4.setTargetLanguage(Language.DE);
+        deC2S4.setDifficultyLevel(LanguageLevel.C2);
+        deC2S4.setTopic("synonyme");
+        deC2S4.setQuestionText("Welches Wort ist ein Synonym von 'akribisch'?");
+        deC2S4.setCorrectAnswer("penibel");
+        deC2S4.setWrongOption1("nachlässig");
+        deC2S4.setWrongOption2("schlampig");
+        deC2S4.setWrongOption3("ungenau");
+        deC2S4.setXpReward(35);
+        deC2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC2S4);
+
+        logger.info("German SYNONYM exercises seeded: 24 MCQ");
     }
 
     /**
