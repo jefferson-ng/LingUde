@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * CommandLineRunner that automatically seeds the database with exercise data
  * from the database_init directory content.
  *
- * This seeder creates 24 exercises (12 English + 12 German) across all CEFR levels (A1-C2).
+ * This seeder creates 96 exercises (48 English + 48 German) across all CEFR levels (A1-C2).
  * Data is based on exercises_content.md in the database_init directory.
  */
 

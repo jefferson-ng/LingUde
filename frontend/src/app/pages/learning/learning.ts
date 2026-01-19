@@ -286,7 +286,7 @@ export class Learning implements OnInit {
     const targetLevel = this.userTargetLevel();
     const targetLanguage = this.userLanguage();
 
-    const levelsPerDifficulty = 1;
+    const levelsPerDifficulty = 4;
     const existingLevels = this.levels();
     const newLevels: Level[] = [];
 
