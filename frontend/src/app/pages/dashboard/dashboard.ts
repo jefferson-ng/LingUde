@@ -71,7 +71,7 @@ export class Dashboard implements OnInit {
   }
 
   private loadLeaderboardData(): void {
-    this.leaderboardService.getFriendsLeaderboard().subscribe({
+    this.leaderboardService.getGlobalLeaderboard().subscribe({
       next: (data) => {
         this.leaderboardData.set(data);
         // Find current user's rank
