@@ -13,11 +13,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 /**
- * CommandLineRunner that automatically seeds the database with exercise data
- * from the database_init directory content.
+ * CommandLineRunner that automatically seeds the database with exercise data.
  *
- * This seeder creates 24 exercises (12 English + 12 German) across all CEFR levels (A1-C2).
- * Data is based on exercises_content.md in the database_init directory.
+ * This seeder creates 232 exercises (116 English + 116 German) across all CEFR levels (A1-C2):
+ * - 140 MCQ exercises (35 VOCABULARY + 57 GRAMMAR + 48 SYNONYM)
+ * - 92 Fill-in-the-Blank exercises (42 VOCABULARY + 50 GRAMMAR)
+ *
+ * The seeder is idempotent - it checks for existing exercises before inserting,
+ * so it can be run multiple times safely without creating duplicates.
  */
 
 @Component
@@ -36,29 +39,33 @@ public class ExerciseDataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Check if data already exists
-        long mcqCount = mcqRepository.count();
-        long fillBlankCount = fillBlankRepository.count();
+        long initialMcqCount = mcqRepository.count();
+        long initialFillBlankCount = fillBlankRepository.count();
 
-        if (mcqCount > 0 || fillBlankCount > 0) {
-            logger.info("Exercise data already exists (MCQ: {}, Fill-Blank: {}), skipping seeding",
-                    mcqCount, fillBlankCount);
-            return;
-        }
+        logger.info("Starting exercise data seeding (existing: {} MCQ, {} Fill-Blank)...",
+                initialMcqCount, initialFillBlankCount);
 
-        logger.info("Starting exercise data seeding...");
-
+        // Seed all exercises - helper methods ensure no duplicates are created
         seedEnglishExercises();
         seedGermanExercises();
+        seedEnglishGrammarExercises();
+        seedGermanGrammarExercises();
+        seedEnglishSynonymExercises();
+        seedGermanSynonymExercises();
 
-        long newMcqCount = mcqRepository.count();
-        long newFillBlankCount = fillBlankRepository.count();
+        long finalMcqCount = mcqRepository.count();
+        long finalFillBlankCount = fillBlankRepository.count();
+        long newMcqAdded = finalMcqCount - initialMcqCount;
+        long newFillBlankAdded = finalFillBlankCount - initialFillBlankCount;
 
-        logger.info("Exercise data seeding completed!");
-        logger.info("Created {} MCQ exercises", newMcqCount);
-        logger.info("Created {} Fill-in-the-Blank exercises", newFillBlankCount);
-        logger.info("Total: {} exercises (48 English + 48 German)", newMcqCount + newFillBlankCount);
-        logger.info("Total XP Available: 2160 (1080 EN + 1080 DE)");
+        if (newMcqAdded > 0 || newFillBlankAdded > 0) {
+            logger.info("Exercise data seeding completed!");
+            logger.info("Added {} new MCQ exercises (total: {})", newMcqAdded, finalMcqCount);
+            logger.info("Added {} new Fill-in-the-Blank exercises (total: {})", newFillBlankAdded, finalFillBlankCount);
+        } else {
+            logger.info("All exercises already exist, no new exercises added.");
+        }
+        logger.info("Total exercises in database: {} (expected: 232)", finalMcqCount + finalFillBlankCount);
     }
 
     private void seedEnglishExercises() {
@@ -76,7 +83,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1Mcq.setWrongOption3("be");
         enA1Mcq.setXpReward(10);
         enA1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA1Mcq);
+        saveMcqIfNotExists(enA1Mcq);
 
         ExerciseMcq enA1_2Mcq = new ExerciseMcq();
         enA1_2Mcq.setTargetLanguage(Language.EN);
@@ -89,7 +96,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_2Mcq.setWrongOption3("Please");
         enA1_2Mcq.setXpReward(10);
         enA1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA1_2Mcq);
+        saveMcqIfNotExists(enA1_2Mcq);
 
         ExerciseMcq enA1_3Mcq = new ExerciseMcq();
         enA1_3Mcq.setTargetLanguage(Language.EN);
@@ -102,7 +109,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_3Mcq.setWrongOption3("Do you like coffee?");
         enA1_3Mcq.setXpReward(10);
         enA1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA1_3Mcq);
+        saveMcqIfNotExists(enA1_3Mcq);
 
         ExerciseMcq enA1_4Mcq = new ExerciseMcq();
         enA1_4Mcq.setTargetLanguage(Language.EN);
@@ -115,7 +122,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_4Mcq.setWrongOption3("Welcome");
         enA1_4Mcq.setXpReward(10);
         enA1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA1_4Mcq);
+        saveMcqIfNotExists(enA1_4Mcq);
 
         ExerciseFillBlank enA1Fill = new ExerciseFillBlank();
         enA1Fill.setTargetLanguage(Language.EN);
@@ -125,7 +132,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1Fill.setCorrectAnswer("is");
         enA1Fill.setXpReward(10);
         enA1Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enA1Fill);
+        saveFillBlankIfNotExists(enA1Fill);
 
         ExerciseFillBlank enA1_2Fill = new ExerciseFillBlank();
         enA1_2Fill.setTargetLanguage(Language.EN);
@@ -135,7 +142,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_2Fill.setCorrectAnswer("meet");
         enA1_2Fill.setXpReward(10);
         enA1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA1_2Fill);
+        saveFillBlankIfNotExists(enA1_2Fill);
 
         ExerciseFillBlank enA1_3Fill = new ExerciseFillBlank();
         enA1_3Fill.setTargetLanguage(Language.EN);
@@ -145,7 +152,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_3Fill.setCorrectAnswer("morning");
         enA1_3Fill.setXpReward(10);
         enA1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA1_3Fill);
+        saveFillBlankIfNotExists(enA1_3Fill);
 
         ExerciseFillBlank enA1_4Fill = new ExerciseFillBlank();
         enA1_4Fill.setTargetLanguage(Language.EN);
@@ -155,7 +162,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA1_4Fill.setCorrectAnswer("Germany");
         enA1_4Fill.setXpReward(10);
         enA1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA1_4Fill);
+        saveFillBlankIfNotExists(enA1_4Fill);
 
 
         // A2 Level - Daily Routines & Simple Descriptions
@@ -170,7 +177,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2Mcq.setWrongOption3("ate");
         enA2Mcq.setXpReward(15);
         enA2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enA2Mcq);
+        saveMcqIfNotExists(enA2Mcq);
 
         ExerciseMcq enA2_2Mcq = new ExerciseMcq();
         enA2_2Mcq.setTargetLanguage(Language.EN);
@@ -183,7 +190,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_2Mcq.setWrongOption3("going");
         enA2_2Mcq.setXpReward(15);
         enA2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA2_2Mcq);
+        saveMcqIfNotExists(enA2_2Mcq);
 
         ExerciseMcq enA2_3Mcq = new ExerciseMcq();
         enA2_3Mcq.setTargetLanguage(Language.EN);
@@ -196,7 +203,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_3Mcq.setWrongOption3("watching");
         enA2_3Mcq.setXpReward(15);
         enA2_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA2_3Mcq);
+        saveMcqIfNotExists(enA2_3Mcq);
 
         ExerciseMcq enA2_4Mcq = new ExerciseMcq();
         enA2_4Mcq.setTargetLanguage(Language.EN);
@@ -209,7 +216,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_4Mcq.setWrongOption3("huge");
         enA2_4Mcq.setXpReward(15);
         enA2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enA2_4Mcq);
+        saveMcqIfNotExists(enA2_4Mcq);
 
         ExerciseFillBlank enA2Fill = new ExerciseFillBlank();
         enA2Fill.setTargetLanguage(Language.EN);
@@ -219,7 +226,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2Fill.setCorrectAnswer("nice");
         enA2Fill.setXpReward(15);
         enA2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA2Fill);
+        saveFillBlankIfNotExists(enA2Fill);
 
         ExerciseFillBlank enA2_2Fill = new ExerciseFillBlank();
         enA2_2Fill.setTargetLanguage(Language.EN);
@@ -229,7 +236,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_2Fill.setCorrectAnswer("noon");
         enA2_2Fill.setXpReward(15);
         enA2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA2_2Fill);
+        saveFillBlankIfNotExists(enA2_2Fill);
 
         ExerciseFillBlank enA2_3Fill = new ExerciseFillBlank();
         enA2_3Fill.setTargetLanguage(Language.EN);
@@ -239,7 +246,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_3Fill.setCorrectAnswer("midnight");
         enA2_3Fill.setXpReward(15);
         enA2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA2_3Fill);
+        saveFillBlankIfNotExists(enA2_3Fill);
 
         ExerciseFillBlank enA2_4Fill = new ExerciseFillBlank();
         enA2_4Fill.setTargetLanguage(Language.EN);
@@ -249,7 +256,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enA2_4Fill.setCorrectAnswer("interesting");
         enA2_4Fill.setXpReward(15);
         enA2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enA2_4Fill);
+        saveFillBlankIfNotExists(enA2_4Fill);
 
 
         // B1 Level - Travel & Past Experiences
@@ -264,7 +271,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1Mcq.setWrongOption3("gone");
         enB1Mcq.setXpReward(20);
         enB1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB1Mcq);
+        saveMcqIfNotExists(enB1Mcq);
 
         ExerciseMcq enB1_2Mcq = new ExerciseMcq();
         enB1_2Mcq.setTargetLanguage(Language.EN);
@@ -277,7 +284,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_2Mcq.setWrongOption3("misses");
         enB1_2Mcq.setXpReward(20);
         enB1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB1_2Mcq);
+        saveMcqIfNotExists(enB1_2Mcq);
 
         ExerciseMcq enB1_3Mcq = new ExerciseMcq();
         enB1_3Mcq.setTargetLanguage(Language.EN);
@@ -290,7 +297,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_3Mcq.setWrongOption3("comforting");
         enB1_3Mcq.setXpReward(20);
         enB1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB1_3Mcq);
+        saveMcqIfNotExists(enB1_3Mcq);
 
         ExerciseMcq enB1_4Mcq = new ExerciseMcq();
         enB1_4Mcq.setTargetLanguage(Language.EN);
@@ -303,7 +310,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_4Mcq.setWrongOption3("saw");
         enB1_4Mcq.setXpReward(20);
         enB1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB1_4Mcq);
+        saveMcqIfNotExists(enB1_4Mcq);
 
         ExerciseFillBlank enB1Fill = new ExerciseFillBlank();
         enB1Fill.setTargetLanguage(Language.EN);
@@ -313,7 +320,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1Fill.setCorrectAnswer("never");
         enB1Fill.setXpReward(20);
         enB1Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(enB1Fill);
+        saveFillBlankIfNotExists(enB1Fill);
 
         ExerciseFillBlank enB1_2Fill = new ExerciseFillBlank();
         enB1_2Fill.setTargetLanguage(Language.EN);
@@ -323,7 +330,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_2Fill.setCorrectAnswer("beach");
         enB1_2Fill.setXpReward(20);
         enB1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB1_2Fill);
+        saveFillBlankIfNotExists(enB1_2Fill);
 
         ExerciseFillBlank enB1_3Fill = new ExerciseFillBlank();
         enB1_3Fill.setTargetLanguage(Language.EN);
@@ -333,7 +340,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_3Fill.setCorrectAnswer("traffic");
         enB1_3Fill.setXpReward(20);
         enB1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB1_3Fill);
+        saveFillBlankIfNotExists(enB1_3Fill);
 
         ExerciseFillBlank enB1_4Fill = new ExerciseFillBlank();
         enB1_4Fill.setTargetLanguage(Language.EN);
@@ -343,7 +350,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB1_4Fill.setCorrectAnswer("exciting");
         enB1_4Fill.setXpReward(20);
         enB1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB1_4Fill);
+        saveFillBlankIfNotExists(enB1_4Fill);
 
 
         // B2 Level - Opinions & Abstract Concepts
@@ -358,7 +365,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2Mcq.setWrongOption3("improve");
         enB2Mcq.setXpReward(25);
         enB2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enB2Mcq);
+        saveMcqIfNotExists(enB2Mcq);
 
         ExerciseMcq enB2_2Mcq = new ExerciseMcq();
         enB2_2Mcq.setTargetLanguage(Language.EN);
@@ -371,7 +378,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_2Mcq.setWrongOption3("succeeds");
         enB2_2Mcq.setXpReward(25);
         enB2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB2_2Mcq);
+        saveMcqIfNotExists(enB2_2Mcq);
 
         ExerciseMcq enB2_3Mcq = new ExerciseMcq();
         enB2_3Mcq.setTargetLanguage(Language.EN);
@@ -384,7 +391,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_3Mcq.setWrongOption3("behaviors");
         enB2_3Mcq.setXpReward(25);
         enB2_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB2_3Mcq);
+        saveMcqIfNotExists(enB2_3Mcq);
 
         ExerciseMcq enB2_4Mcq = new ExerciseMcq();
         enB2_4Mcq.setTargetLanguage(Language.EN);
@@ -397,7 +404,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_4Mcq.setWrongOption3("conditioned");
         enB2_4Mcq.setXpReward(25);
         enB2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enB2_4Mcq);
+        saveMcqIfNotExists(enB2_4Mcq);
 
 
         ExerciseFillBlank enB2Fill = new ExerciseFillBlank();
@@ -408,7 +415,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2Fill.setCorrectAnswer("perseverance");
         enB2Fill.setXpReward(25);
         enB2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB2Fill);
+        saveFillBlankIfNotExists(enB2Fill);
 
         ExerciseFillBlank enB2_2Fill = new ExerciseFillBlank();
         enB2_2Fill.setTargetLanguage(Language.EN);
@@ -418,7 +425,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_2Fill.setCorrectAnswer("issues");
         enB2_2Fill.setXpReward(25);
         enB2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB2_2Fill);
+        saveFillBlankIfNotExists(enB2_2Fill);
 
         ExerciseFillBlank enB2_3Fill = new ExerciseFillBlank();
         enB2_3Fill.setTargetLanguage(Language.EN);
@@ -428,7 +435,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_3Fill.setCorrectAnswer("informed");
         enB2_3Fill.setXpReward(25);
         enB2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB2_3Fill);
+        saveFillBlankIfNotExists(enB2_3Fill);
 
         ExerciseFillBlank enB2_4Fill = new ExerciseFillBlank();
         enB2_4Fill.setTargetLanguage(Language.EN);
@@ -438,7 +445,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enB2_4Fill.setCorrectAnswer("innovation");
         enB2_4Fill.setXpReward(25);
         enB2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enB2_4Fill);
+        saveFillBlankIfNotExists(enB2_4Fill);
 
 
         // C1 Level - Complex Ideas & Nuanced Language
@@ -453,7 +460,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1Mcq.setWrongOption3("indicated");
         enC1Mcq.setXpReward(30);
         enC1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(enC1Mcq);
+        saveMcqIfNotExists(enC1Mcq);
 
         ExerciseMcq enC1_2Mcq = new ExerciseMcq();
         enC1_2Mcq.setTargetLanguage(Language.EN);
@@ -466,7 +473,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_2Mcq.setWrongOption3("examining");
         enC1_2Mcq.setXpReward(30);
         enC1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC1_2Mcq);
+        saveMcqIfNotExists(enC1_2Mcq);
 
         ExerciseMcq enC1_3Mcq = new ExerciseMcq();
         enC1_3Mcq.setTargetLanguage(Language.EN);
@@ -479,7 +486,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_3Mcq.setWrongOption3("collecting");
         enC1_3Mcq.setXpReward(30);
         enC1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC1_3Mcq);
+        saveMcqIfNotExists(enC1_3Mcq);
 
         ExerciseMcq enC1_4Mcq = new ExerciseMcq();
         enC1_4Mcq.setTargetLanguage(Language.EN);
@@ -492,7 +499,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_4Mcq.setWrongOption3("vaguer");
         enC1_4Mcq.setXpReward(30);
         enC1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC1_4Mcq);
+        saveMcqIfNotExists(enC1_4Mcq);
 
         ExerciseFillBlank enC1Fill = new ExerciseFillBlank();
         enC1Fill.setTargetLanguage(Language.EN);
@@ -502,7 +509,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1Fill.setCorrectAnswer("compelling");
         enC1Fill.setXpReward(30);
         enC1Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC1Fill);
+        saveFillBlankIfNotExists(enC1Fill);
 
         ExerciseFillBlank enC1_2Fill = new ExerciseFillBlank();
         enC1_2Fill.setTargetLanguage(Language.EN);
@@ -512,7 +519,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_2Fill.setCorrectAnswer("ambiguous");
         enC1_2Fill.setXpReward(30);
         enC1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC1_2Fill);
+        saveFillBlankIfNotExists(enC1_2Fill);
 
         ExerciseFillBlank enC1_3Fill = new ExerciseFillBlank();
         enC1_3Fill.setTargetLanguage(Language.EN);
@@ -522,7 +529,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_3Fill.setCorrectAnswer("analysis");
         enC1_3Fill.setXpReward(30);
         enC1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC1_3Fill);
+        saveFillBlankIfNotExists(enC1_3Fill);
 
         ExerciseFillBlank enC1_4Fill = new ExerciseFillBlank();
         enC1_4Fill.setTargetLanguage(Language.EN);
@@ -532,7 +539,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC1_4Fill.setCorrectAnswer("multidisciplinary");
         enC1_4Fill.setXpReward(30);
         enC1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC1_4Fill);
+        saveFillBlankIfNotExists(enC1_4Fill);
 
 
         // C2 Level - Idiomatic Expressions & Sophisticated Language
@@ -547,7 +554,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2Mcq.setWrongOption3("conclusion");
         enC2Mcq.setXpReward(35);
         enC2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC2Mcq);
+        saveMcqIfNotExists(enC2Mcq);
 
         ExerciseMcq enC2_2Mcq = new ExerciseMcq();
         enC2_2Mcq.setTargetLanguage(Language.EN);
@@ -560,7 +567,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_2Mcq.setWrongOption3("on the side");
         enC2_2Mcq.setXpReward(35);
         enC2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC2_2Mcq);
+        saveMcqIfNotExists(enC2_2Mcq);
 
         ExerciseMcq enC2_3Mcq = new ExerciseMcq();
         enC2_3Mcq.setTargetLanguage(Language.EN);
@@ -573,7 +580,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_3Mcq.setWrongOption3("in the moment");
         enC2_3Mcq.setXpReward(35);
         enC2_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC2_3Mcq);
+        saveMcqIfNotExists(enC2_3Mcq);
 
         ExerciseMcq enC2_4Mcq = new ExerciseMcq();
         enC2_4Mcq.setTargetLanguage(Language.EN);
@@ -586,7 +593,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_4Mcq.setWrongOption3("persuading");
         enC2_4Mcq.setXpReward(35);
         enC2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(enC2_4Mcq);
+        saveMcqIfNotExists(enC2_4Mcq);
 
 
         ExerciseFillBlank enC2Fill = new ExerciseFillBlank();
@@ -597,7 +604,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2Fill.setCorrectAnswer("unparalleled");
         enC2Fill.setXpReward(35);
         enC2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC2Fill);
+        saveFillBlankIfNotExists(enC2Fill);
 
         ExerciseFillBlank enC2_2Fill = new ExerciseFillBlank();
         enC2_2Fill.setTargetLanguage(Language.EN);
@@ -607,7 +614,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_2Fill.setCorrectAnswer("profound");
         enC2_2Fill.setXpReward(35);
         enC2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC2_2Fill);
+        saveFillBlankIfNotExists(enC2_2Fill);
 
         ExerciseFillBlank enC2_3Fill = new ExerciseFillBlank();
         enC2_3Fill.setTargetLanguage(Language.EN);
@@ -617,7 +624,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_3Fill.setCorrectAnswer("nuanced");
         enC2_3Fill.setXpReward(35);
         enC2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC2_3Fill);
+        saveFillBlankIfNotExists(enC2_3Fill);
 
         ExerciseFillBlank enC2_4Fill = new ExerciseFillBlank();
         enC2_4Fill.setTargetLanguage(Language.EN);
@@ -627,7 +634,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         enC2_4Fill.setCorrectAnswer("composure");
         enC2_4Fill.setXpReward(35);
         enC2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(enC2_4Fill);
+        saveFillBlankIfNotExists(enC2_4Fill);
 
         logger.info("English exercises seeded: 24 MCQ + 24 Fill-Blank = 48 total");
     }
@@ -647,7 +654,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1Mcq.setWrongOption3("ging");
         deA1Mcq.setXpReward(10);
         deA1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA1Mcq);
+        saveMcqIfNotExists(deA1Mcq);
 
         ExerciseMcq deA1_2Mcq = new ExerciseMcq();
         deA1_2Mcq.setTargetLanguage(Language.DE);
@@ -660,7 +667,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_2Mcq.setWrongOption3("Bitte");
         deA1_2Mcq.setXpReward(10);
         deA1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deA1_2Mcq);
+        saveMcqIfNotExists(deA1_2Mcq);
 
         ExerciseMcq deA1_3Mcq = new ExerciseMcq();
         deA1_3Mcq.setTargetLanguage(Language.DE);
@@ -673,7 +680,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_3Mcq.setWrongOption3("Bitte");
         deA1_3Mcq.setXpReward(10);
         deA1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deA1_3Mcq);
+        saveMcqIfNotExists(deA1_3Mcq);
 
         ExerciseMcq deA1_4Mcq = new ExerciseMcq();
         deA1_4Mcq.setTargetLanguage(Language.DE);
@@ -686,7 +693,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_4Mcq.setWrongOption3("Magst du Kaffee?");
         deA1_4Mcq.setXpReward(10);
         deA1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deA1_4Mcq);
+        saveMcqIfNotExists(deA1_4Mcq);
 
         ExerciseFillBlank deA1Fill = new ExerciseFillBlank();
         deA1Fill.setTargetLanguage(Language.DE);
@@ -696,7 +703,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1Fill.setCorrectAnswer("ist");
         deA1Fill.setXpReward(10);
         deA1Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA1Fill);
+        saveFillBlankIfNotExists(deA1Fill);
 
         ExerciseFillBlank deA1_2Fill = new ExerciseFillBlank();
         deA1_2Fill.setTargetLanguage(Language.DE);
@@ -706,7 +713,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_2Fill.setCorrectAnswer("Guten");
         deA1_2Fill.setXpReward(10);
         deA1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA1_2Fill);
+        saveFillBlankIfNotExists(deA1_2Fill);
 
         ExerciseFillBlank deA1_3Fill = new ExerciseFillBlank();
         deA1_3Fill.setTargetLanguage(Language.DE);
@@ -716,7 +723,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_3Fill.setCorrectAnswer("bin");
         deA1_3Fill.setXpReward(10);
         deA1_3Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA1_3Fill);
+        saveFillBlankIfNotExists(deA1_3Fill);
 
         ExerciseFillBlank deA1_4Fill = new ExerciseFillBlank();
         deA1_4Fill.setTargetLanguage(Language.DE);
@@ -726,7 +733,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA1_4Fill.setCorrectAnswer("Deutschland");
         deA1_4Fill.setXpReward(10);
         deA1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA1_4Fill);
+        saveFillBlankIfNotExists(deA1_4Fill);
 
 
         // A2 Level - Alltag (Daily Routines & Simple Descriptions)
@@ -741,7 +748,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2Mcq.setWrongOption3("aß");
         deA2Mcq.setXpReward(15);
         deA2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2Mcq);
+        saveMcqIfNotExists(deA2Mcq);
 
         ExerciseMcq deA2_2Mcq = new ExerciseMcq();
         deA2_2Mcq.setTargetLanguage(Language.DE);
@@ -754,7 +761,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_2Mcq.setWrongOption3("gegangen");
         deA2_2Mcq.setXpReward(15);
         deA2_2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2_2Mcq);
+        saveMcqIfNotExists(deA2_2Mcq);
 
         ExerciseMcq deA2_3Mcq = new ExerciseMcq();
         deA2_3Mcq.setTargetLanguage(Language.DE);
@@ -767,7 +774,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_3Mcq.setWrongOption3("sah");
         deA2_3Mcq.setXpReward(15);
         deA2_3Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deA2_3Mcq);
+        saveMcqIfNotExists(deA2_3Mcq);
 
         ExerciseMcq deA2_4Mcq = new ExerciseMcq();
         deA2_4Mcq.setTargetLanguage(Language.DE);
@@ -780,7 +787,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_4Mcq.setWrongOption3("gemütlichere");
         deA2_4Mcq.setXpReward(15);
         deA2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deA2_4Mcq);
+        saveMcqIfNotExists(deA2_4Mcq);
 
         ExerciseFillBlank deA2Fill = new ExerciseFillBlank();
         deA2Fill.setTargetLanguage(Language.DE);
@@ -790,7 +797,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2Fill.setCorrectAnswer("schön");
         deA2Fill.setXpReward(15);
         deA2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA2Fill);
+        saveFillBlankIfNotExists(deA2Fill);
 
         ExerciseFillBlank deA2_2Fill = new ExerciseFillBlank();
         deA2_2Fill.setTargetLanguage(Language.DE);
@@ -800,7 +807,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_2Fill.setCorrectAnswer("7");
         deA2_2Fill.setXpReward(15);
         deA2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA2_2Fill);
+        saveFillBlankIfNotExists(deA2_2Fill);
 
         ExerciseFillBlank deA2_3Fill = new ExerciseFillBlank();
         deA2_3Fill.setTargetLanguage(Language.DE);
@@ -810,7 +817,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_3Fill.setCorrectAnswer("gehe");
         deA2_3Fill.setXpReward(15);
         deA2_3Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deA2_3Fill);
+        saveFillBlankIfNotExists(deA2_3Fill);
 
         ExerciseFillBlank deA2_4Fill = new ExerciseFillBlank();
         deA2_4Fill.setTargetLanguage(Language.DE);
@@ -820,7 +827,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deA2_4Fill.setCorrectAnswer("Freunde");
         deA2_4Fill.setXpReward(15);
         deA2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deA2_4Fill);
+        saveFillBlankIfNotExists(deA2_4Fill);
 
 
         // B1 Level - Reisen (Travel & Past Experiences)
@@ -835,7 +842,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1Mcq.setWrongOption3("gefahren");
         deB1Mcq.setXpReward(20);
         deB1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB1Mcq);
+        saveMcqIfNotExists(deB1Mcq);
 
         ExerciseMcq deB1_2Mcq = new ExerciseMcq();
         deB1_2Mcq.setTargetLanguage(Language.DE);
@@ -848,7 +855,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_2Mcq.setWrongOption3("verpasst");
         deB1_2Mcq.setXpReward(20);
         deB1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB1_2Mcq);
+        saveMcqIfNotExists(deB1_2Mcq);
 
         ExerciseMcq deB1_3Mcq = new ExerciseMcq();
         deB1_3Mcq.setTargetLanguage(Language.DE);
@@ -861,7 +868,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_3Mcq.setWrongOption3("komfortabler");
         deB1_3Mcq.setXpReward(20);
         deB1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB1_3Mcq);
+        saveMcqIfNotExists(deB1_3Mcq);
 
         ExerciseMcq deB1_4Mcq = new ExerciseMcq();
         deB1_4Mcq.setTargetLanguage(Language.DE);
@@ -874,7 +881,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_4Mcq.setWrongOption3("schönere");
         deB1_4Mcq.setXpReward(20);
         deB1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB1_4Mcq);
+        saveMcqIfNotExists(deB1_4Mcq);
 
         ExerciseFillBlank deB1Fill = new ExerciseFillBlank();
         deB1Fill.setTargetLanguage(Language.DE);
@@ -884,7 +891,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1Fill.setCorrectAnswer("nie");
         deB1Fill.setXpReward(20);
         deB1Fill.setContentType(ExerciseContentType.GRAMMAR);
-        fillBlankRepository.save(deB1Fill);
+        saveFillBlankIfNotExists(deB1Fill);
 
         ExerciseFillBlank deB1_2Fill = new ExerciseFillBlank();
         deB1_2Fill.setTargetLanguage(Language.DE);
@@ -894,7 +901,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_2Fill.setCorrectAnswer("Strandes");
         deB1_2Fill.setXpReward(20);
         deB1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB1_2Fill);
+        saveFillBlankIfNotExists(deB1_2Fill);
 
         ExerciseFillBlank deB1_3Fill = new ExerciseFillBlank();
         deB1_3Fill.setTargetLanguage(Language.DE);
@@ -904,7 +911,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_3Fill.setCorrectAnswer("Schnees");
         deB1_3Fill.setXpReward(20);
         deB1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB1_3Fill);
+        saveFillBlankIfNotExists(deB1_3Fill);
 
         ExerciseFillBlank deB1_4Fill = new ExerciseFillBlank();
         deB1_4Fill.setTargetLanguage(Language.DE);
@@ -914,7 +921,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB1_4Fill.setCorrectAnswer("aufregendsten");
         deB1_4Fill.setXpReward(20);
         deB1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB1_4Fill);
+        saveFillBlankIfNotExists(deB1_4Fill);
 
 
         // B2 Level - Meinungen (Opinions & Abstract Concepts)
@@ -929,7 +936,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2Mcq.setWrongOption3("verbesserte");
         deB2Mcq.setXpReward(25);
         deB2Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB2Mcq);
+        saveMcqIfNotExists(deB2Mcq);
 
         ExerciseMcq deB2_2Mcq = new ExerciseMcq();
         deB2_2Mcq.setTargetLanguage(Language.DE);
@@ -942,7 +949,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_2Mcq.setWrongOption3("erfolgreiche");
         deB2_2Mcq.setXpReward(25);
         deB2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB2_2Mcq);
+        saveMcqIfNotExists(deB2_2Mcq);
 
         ExerciseMcq deB2_3Mcq = new ExerciseMcq();
         deB2_3Mcq.setTargetLanguage(Language.DE);
@@ -955,7 +962,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_3Mcq.setWrongOption3("hatten");
         deB2_3Mcq.setXpReward(25);
         deB2_3Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deB2_3Mcq);
+        saveMcqIfNotExists(deB2_3Mcq);
 
         ExerciseMcq deB2_4Mcq = new ExerciseMcq();
         deB2_4Mcq.setTargetLanguage(Language.DE);
@@ -968,7 +975,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_4Mcq.setWrongOption3("Verhandlungen");
         deB2_4Mcq.setXpReward(25);
         deB2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deB2_4Mcq);
+        saveMcqIfNotExists(deB2_4Mcq);
 
         ExerciseFillBlank deB2Fill = new ExerciseFillBlank();
         deB2Fill.setTargetLanguage(Language.DE);
@@ -978,7 +985,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2Fill.setCorrectAnswer("Ausdauer");
         deB2Fill.setXpReward(25);
         deB2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB2Fill);
+        saveFillBlankIfNotExists(deB2Fill);
 
         ExerciseFillBlank deB2_2Fill = new ExerciseFillBlank();
         deB2_2Fill.setTargetLanguage(Language.DE);
@@ -988,7 +995,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_2Fill.setCorrectAnswer("Probleme");
         deB2_2Fill.setXpReward(25);
         deB2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB2_2Fill);
+        saveFillBlankIfNotExists(deB2_2Fill);
 
         ExerciseFillBlank deB2_3Fill = new ExerciseFillBlank();
         deB2_3Fill.setTargetLanguage(Language.DE);
@@ -998,7 +1005,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_3Fill.setCorrectAnswer("informierte");
         deB2_3Fill.setXpReward(25);
         deB2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB2_3Fill);
+        saveFillBlankIfNotExists(deB2_3Fill);
 
         ExerciseFillBlank deB2_4Fill = new ExerciseFillBlank();
         deB2_4Fill.setTargetLanguage(Language.DE);
@@ -1008,7 +1015,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deB2_4Fill.setCorrectAnswer("Innovation");
         deB2_4Fill.setXpReward(25);
         deB2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deB2_4Fill);
+        saveFillBlankIfNotExists(deB2_4Fill);
 
         // C1 Level - Komplexe Ideen (Complex Ideas & Nuanced Language)
         ExerciseMcq deC1Mcq = new ExerciseMcq();
@@ -1022,7 +1029,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1Mcq.setWrongOption3("gedeutet");
         deC1Mcq.setXpReward(30);
         deC1Mcq.setContentType(ExerciseContentType.GRAMMAR);
-        mcqRepository.save(deC1Mcq);
+        saveMcqIfNotExists(deC1Mcq);
 
         ExerciseMcq deC1_2Mcq = new ExerciseMcq();
         deC1_2Mcq.setTargetLanguage(Language.DE);
@@ -1035,7 +1042,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_2Mcq.setWrongOption3("untersuchend");
         deC1_2Mcq.setXpReward(30);
         deC1_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC1_2Mcq);
+        saveMcqIfNotExists(deC1_2Mcq);
 
         ExerciseMcq deC1_3Mcq = new ExerciseMcq();
         deC1_3Mcq.setTargetLanguage(Language.DE);
@@ -1048,7 +1055,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_3Mcq.setWrongOption3("erhoben");
         deC1_3Mcq.setXpReward(30);
         deC1_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC1_3Mcq);
+        saveMcqIfNotExists(deC1_3Mcq);
 
         ExerciseMcq deC1_4Mcq = new ExerciseMcq();
         deC1_4Mcq.setTargetLanguage(Language.DE);
@@ -1061,7 +1068,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_4Mcq.setWrongOption3("vagee");
         deC1_4Mcq.setXpReward(30);
         deC1_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC1_4Mcq);
+        saveMcqIfNotExists(deC1_4Mcq);
 
         ExerciseFillBlank deC1Fill = new ExerciseFillBlank();
         deC1Fill.setTargetLanguage(Language.DE);
@@ -1071,7 +1078,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1Fill.setCorrectAnswer("überzeugend");
         deC1Fill.setXpReward(30);
         deC1Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC1Fill);
+        saveFillBlankIfNotExists(deC1Fill);
 
         ExerciseFillBlank deC1_2Fill = new ExerciseFillBlank();
         deC1_2Fill.setTargetLanguage(Language.DE);
@@ -1081,7 +1088,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_2Fill.setCorrectAnswer("mehrdeutig");
         deC1_2Fill.setXpReward(30);
         deC1_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC1_2Fill);
+        saveFillBlankIfNotExists(deC1_2Fill);
 
         ExerciseFillBlank deC1_3Fill = new ExerciseFillBlank();
         deC1_3Fill.setTargetLanguage(Language.DE);
@@ -1091,7 +1098,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_3Fill.setCorrectAnswer("Analyse");
         deC1_3Fill.setXpReward(30);
         deC1_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC1_3Fill);
+        saveFillBlankIfNotExists(deC1_3Fill);
 
         ExerciseFillBlank deC1_4Fill = new ExerciseFillBlank();
         deC1_4Fill.setTargetLanguage(Language.DE);
@@ -1101,7 +1108,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC1_4Fill.setCorrectAnswer("interdisziplinären");
         deC1_4Fill.setXpReward(30);
         deC1_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC1_4Fill);
+        saveFillBlankIfNotExists(deC1_4Fill);
 
 
         // C2 Level - Gehobene Sprache (Idiomatic Expressions & Sophisticated Language)
@@ -1116,7 +1123,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2Mcq.setWrongOption3("Fertigstellung");
         deC2Mcq.setXpReward(35);
         deC2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC2Mcq);
+        saveMcqIfNotExists(deC2Mcq);
 
         ExerciseMcq deC2_2Mcq = new ExerciseMcq();
         deC2_2Mcq.setTargetLanguage(Language.DE);
@@ -1129,7 +1136,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_2Mcq.setWrongOption3("aus der Form");
         deC2_2Mcq.setXpReward(35);
         deC2_2Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC2_2Mcq);
+        saveMcqIfNotExists(deC2_2Mcq);
 
         ExerciseMcq deC2_3Mcq = new ExerciseMcq();
         deC2_3Mcq.setTargetLanguage(Language.DE);
@@ -1142,7 +1149,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_3Mcq.setWrongOption3("in aller Ruhe");
         deC2_3Mcq.setXpReward(35);
         deC2_3Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC2_3Mcq);
+        saveMcqIfNotExists(deC2_3Mcq);
 
         ExerciseMcq deC2_4Mcq = new ExerciseMcq();
         deC2_4Mcq.setTargetLanguage(Language.DE);
@@ -1155,7 +1162,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_4Mcq.setWrongOption3("überzeugender");
         deC2_4Mcq.setXpReward(35);
         deC2_4Mcq.setContentType(ExerciseContentType.VOCABULARY);
-        mcqRepository.save(deC2_4Mcq);
+        saveMcqIfNotExists(deC2_4Mcq);
 
         ExerciseFillBlank deC2Fill = new ExerciseFillBlank();
         deC2Fill.setTargetLanguage(Language.DE);
@@ -1165,7 +1172,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2Fill.setCorrectAnswer("unvergleichliche");
         deC2Fill.setXpReward(35);
         deC2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC2Fill);
+        saveFillBlankIfNotExists(deC2Fill);
 
         ExerciseFillBlank deC2_2Fill = new ExerciseFillBlank();
         deC2_2Fill.setTargetLanguage(Language.DE);
@@ -1175,7 +1182,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_2Fill.setCorrectAnswer("tiefgründig");
         deC2_2Fill.setXpReward(35);
         deC2_2Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC2_2Fill);
+        saveFillBlankIfNotExists(deC2_2Fill);
 
         ExerciseFillBlank deC2_3Fill = new ExerciseFillBlank();
         deC2_3Fill.setTargetLanguage(Language.DE);
@@ -1185,7 +1192,7 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_3Fill.setCorrectAnswer("nuancierte");
         deC2_3Fill.setXpReward(35);
         deC2_3Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC2_3Fill);
+        saveFillBlankIfNotExists(deC2_3Fill);
 
         ExerciseFillBlank deC2_4Fill = new ExerciseFillBlank();
         deC2_4Fill.setTargetLanguage(Language.DE);
@@ -1195,8 +1202,1724 @@ public class ExerciseDataSeeder implements CommandLineRunner {
         deC2_4Fill.setCorrectAnswer("Gelassenheit");
         deC2_4Fill.setXpReward(35);
         deC2_4Fill.setContentType(ExerciseContentType.VOCABULARY);
-        fillBlankRepository.save(deC2_4Fill);
+        saveFillBlankIfNotExists(deC2_4Fill);
 
         logger.info("German exercises seeded: 24 MCQ + 24 Fill-Blank = 48 total");
+    }
+
+    private void seedEnglishGrammarExercises() {
+        logger.info("Seeding English GRAMMAR exercises...");
+
+        // EN A1 MCQ GRAMMAR (4)
+        ExerciseMcq enA1G1 = new ExerciseMcq();
+        enA1G1.setTargetLanguage(Language.EN);
+        enA1G1.setDifficultyLevel(LanguageLevel.A1);
+        enA1G1.setTopic("articles");
+        enA1G1.setQuestionText("I have ___ apple.");
+        enA1G1.setCorrectAnswer("an");
+        enA1G1.setWrongOption1("a");
+        enA1G1.setWrongOption2("the");
+        enA1G1.setWrongOption3("some");
+        enA1G1.setXpReward(10);
+        enA1G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enA1G1);
+
+        ExerciseMcq enA1G2 = new ExerciseMcq();
+        enA1G2.setTargetLanguage(Language.EN);
+        enA1G2.setDifficultyLevel(LanguageLevel.A1);
+        enA1G2.setTopic("to_be");
+        enA1G2.setQuestionText("She ___ a teacher.");
+        enA1G2.setCorrectAnswer("is");
+        enA1G2.setWrongOption1("are");
+        enA1G2.setWrongOption2("am");
+        enA1G2.setWrongOption3("be");
+        enA1G2.setXpReward(10);
+        enA1G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enA1G2);
+
+        ExerciseMcq enA1G3 = new ExerciseMcq();
+        enA1G3.setTargetLanguage(Language.EN);
+        enA1G3.setDifficultyLevel(LanguageLevel.A1);
+        enA1G3.setTopic("pronouns");
+        enA1G3.setQuestionText("___ am from Germany.");
+        enA1G3.setCorrectAnswer("I");
+        enA1G3.setWrongOption1("He");
+        enA1G3.setWrongOption2("She");
+        enA1G3.setWrongOption3("You");
+        enA1G3.setXpReward(10);
+        enA1G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enA1G3);
+
+        ExerciseMcq enA1G4 = new ExerciseMcq();
+        enA1G4.setTargetLanguage(Language.EN);
+        enA1G4.setDifficultyLevel(LanguageLevel.A1);
+        enA1G4.setTopic("plurals");
+        enA1G4.setQuestionText("There are three ___ on the table.");
+        enA1G4.setCorrectAnswer("books");
+        enA1G4.setWrongOption1("book");
+        enA1G4.setWrongOption2("bookes");
+        enA1G4.setWrongOption3("bookies");
+        enA1G4.setXpReward(10);
+        enA1G4.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enA1G4);
+
+        // EN A2 MCQ GRAMMAR (4)
+        ExerciseMcq enA2G1 = new ExerciseMcq();
+        enA2G1.setTargetLanguage(Language.EN);
+        enA2G1.setDifficultyLevel(LanguageLevel.A2);
+        enA2G1.setTopic("present_continuous");
+        enA2G1.setQuestionText("Look! The children ___ in the park.");
+        enA2G1.setCorrectAnswer("are playing");
+        enA2G1.setWrongOption1("is playing");
+        enA2G1.setWrongOption2("plays");
+        enA2G1.setWrongOption3("play");
+        enA2G1.setXpReward(15);
+        enA2G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enA2G1);
+
+        ExerciseMcq enA2G2 = new ExerciseMcq();
+        enA2G2.setTargetLanguage(Language.EN);
+        enA2G2.setDifficultyLevel(LanguageLevel.A2);
+        enA2G2.setTopic("past_simple");
+        enA2G2.setQuestionText("Yesterday, I ___ to the cinema.");
+        enA2G2.setCorrectAnswer("went");
+        enA2G2.setWrongOption1("go");
+        enA2G2.setWrongOption2("goes");
+        enA2G2.setWrongOption3("going");
+        enA2G2.setXpReward(15);
+        enA2G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enA2G2);
+
+        ExerciseMcq enA2G3 = new ExerciseMcq();
+        enA2G3.setTargetLanguage(Language.EN);
+        enA2G3.setDifficultyLevel(LanguageLevel.A2);
+        enA2G3.setTopic("possessives");
+        enA2G3.setQuestionText("This is ___ car. It belongs to John.");
+        enA2G3.setCorrectAnswer("his");
+        enA2G3.setWrongOption1("her");
+        enA2G3.setWrongOption2("its");
+        enA2G3.setWrongOption3("their");
+        enA2G3.setXpReward(15);
+        enA2G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enA2G3);
+
+        ExerciseMcq enA2G4 = new ExerciseMcq();
+        enA2G4.setTargetLanguage(Language.EN);
+        enA2G4.setDifficultyLevel(LanguageLevel.A2);
+        enA2G4.setTopic("comparatives");
+        enA2G4.setQuestionText("My house is ___ than yours.");
+        enA2G4.setCorrectAnswer("bigger");
+        enA2G4.setWrongOption1("more big");
+        enA2G4.setWrongOption2("big");
+        enA2G4.setWrongOption3("biggest");
+        enA2G4.setXpReward(15);
+        enA2G4.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enA2G4);
+
+        // EN B1 MCQ GRAMMAR (4)
+        ExerciseMcq enB1G1 = new ExerciseMcq();
+        enB1G1.setTargetLanguage(Language.EN);
+        enB1G1.setDifficultyLevel(LanguageLevel.B1);
+        enB1G1.setTopic("present_perfect");
+        enB1G1.setQuestionText("I have never ___ to Japan.");
+        enB1G1.setCorrectAnswer("been");
+        enB1G1.setWrongOption1("went");
+        enB1G1.setWrongOption2("go");
+        enB1G1.setWrongOption3("gone");
+        enB1G1.setXpReward(20);
+        enB1G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enB1G1);
+
+        ExerciseMcq enB1G2 = new ExerciseMcq();
+        enB1G2.setTargetLanguage(Language.EN);
+        enB1G2.setDifficultyLevel(LanguageLevel.B1);
+        enB1G2.setTopic("past_perfect");
+        enB1G2.setQuestionText("By the time I arrived, they had already ___.");
+        enB1G2.setCorrectAnswer("left");
+        enB1G2.setWrongOption1("leave");
+        enB1G2.setWrongOption2("leaving");
+        enB1G2.setWrongOption3("leaves");
+        enB1G2.setXpReward(20);
+        enB1G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enB1G2);
+
+        ExerciseMcq enB1G3 = new ExerciseMcq();
+        enB1G3.setTargetLanguage(Language.EN);
+        enB1G3.setDifficultyLevel(LanguageLevel.B1);
+        enB1G3.setTopic("relative_clauses");
+        enB1G3.setQuestionText("The man ___ called you is my uncle.");
+        enB1G3.setCorrectAnswer("who");
+        enB1G3.setWrongOption1("which");
+        enB1G3.setWrongOption2("what");
+        enB1G3.setWrongOption3("whom");
+        enB1G3.setXpReward(20);
+        enB1G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enB1G3);
+
+        ExerciseMcq enB1G4 = new ExerciseMcq();
+        enB1G4.setTargetLanguage(Language.EN);
+        enB1G4.setDifficultyLevel(LanguageLevel.B1);
+        enB1G4.setTopic("modals");
+        enB1G4.setQuestionText("You ___ see a doctor. You look ill.");
+        enB1G4.setCorrectAnswer("should");
+        enB1G4.setWrongOption1("would");
+        enB1G4.setWrongOption2("could");
+        enB1G4.setWrongOption3("might");
+        enB1G4.setXpReward(20);
+        enB1G4.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enB1G4);
+
+        // EN B2 MCQ GRAMMAR (4)
+        ExerciseMcq enB2G1 = new ExerciseMcq();
+        enB2G1.setTargetLanguage(Language.EN);
+        enB2G1.setDifficultyLevel(LanguageLevel.B2);
+        enB2G1.setTopic("conditionals");
+        enB2G1.setQuestionText("If I ___ more money, I would travel the world.");
+        enB2G1.setCorrectAnswer("had");
+        enB2G1.setWrongOption1("have");
+        enB2G1.setWrongOption2("will have");
+        enB2G1.setWrongOption3("had had");
+        enB2G1.setXpReward(25);
+        enB2G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enB2G1);
+
+        ExerciseMcq enB2G2 = new ExerciseMcq();
+        enB2G2.setTargetLanguage(Language.EN);
+        enB2G2.setDifficultyLevel(LanguageLevel.B2);
+        enB2G2.setTopic("passive_voice");
+        enB2G2.setQuestionText("The letter ___ by the secretary yesterday.");
+        enB2G2.setCorrectAnswer("was written");
+        enB2G2.setWrongOption1("is written");
+        enB2G2.setWrongOption2("wrote");
+        enB2G2.setWrongOption3("has written");
+        enB2G2.setXpReward(25);
+        enB2G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enB2G2);
+
+        ExerciseMcq enB2G3 = new ExerciseMcq();
+        enB2G3.setTargetLanguage(Language.EN);
+        enB2G3.setDifficultyLevel(LanguageLevel.B2);
+        enB2G3.setTopic("reported_speech");
+        enB2G3.setQuestionText("She said that she ___ tired.");
+        enB2G3.setCorrectAnswer("was");
+        enB2G3.setWrongOption1("is");
+        enB2G3.setWrongOption2("be");
+        enB2G3.setWrongOption3("were");
+        enB2G3.setXpReward(25);
+        enB2G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enB2G3);
+
+        ExerciseMcq enB2G4 = new ExerciseMcq();
+        enB2G4.setTargetLanguage(Language.EN);
+        enB2G4.setDifficultyLevel(LanguageLevel.B2);
+        enB2G4.setTopic("wish_clauses");
+        enB2G4.setQuestionText("I wish I ___ speak French fluently.");
+        enB2G4.setCorrectAnswer("could");
+        enB2G4.setWrongOption1("can");
+        enB2G4.setWrongOption2("would");
+        enB2G4.setWrongOption3("will");
+        enB2G4.setXpReward(25);
+        enB2G4.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enB2G4);
+
+        // EN C1 MCQ GRAMMAR (3)
+        ExerciseMcq enC1G1 = new ExerciseMcq();
+        enC1G1.setTargetLanguage(Language.EN);
+        enC1G1.setDifficultyLevel(LanguageLevel.C1);
+        enC1G1.setTopic("subjunctive");
+        enC1G1.setQuestionText("The manager insisted that he ___ present at the meeting.");
+        enC1G1.setCorrectAnswer("be");
+        enC1G1.setWrongOption1("is");
+        enC1G1.setWrongOption2("was");
+        enC1G1.setWrongOption3("were");
+        enC1G1.setXpReward(30);
+        enC1G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enC1G1);
+
+        ExerciseMcq enC1G2 = new ExerciseMcq();
+        enC1G2.setTargetLanguage(Language.EN);
+        enC1G2.setDifficultyLevel(LanguageLevel.C1);
+        enC1G2.setTopic("inversion");
+        enC1G2.setQuestionText("Not only ___ he late, but he also forgot the documents.");
+        enC1G2.setCorrectAnswer("was");
+        enC1G2.setWrongOption1("is");
+        enC1G2.setWrongOption2("did");
+        enC1G2.setWrongOption3("had");
+        enC1G2.setXpReward(30);
+        enC1G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enC1G2);
+
+        ExerciseMcq enC1G3 = new ExerciseMcq();
+        enC1G3.setTargetLanguage(Language.EN);
+        enC1G3.setDifficultyLevel(LanguageLevel.C1);
+        enC1G3.setTopic("cleft_sentences");
+        enC1G3.setQuestionText("It ___ John who broke the window.");
+        enC1G3.setCorrectAnswer("was");
+        enC1G3.setWrongOption1("is");
+        enC1G3.setWrongOption2("were");
+        enC1G3.setWrongOption3("has");
+        enC1G3.setXpReward(30);
+        enC1G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enC1G3);
+
+        // EN C2 MCQ GRAMMAR (3)
+        ExerciseMcq enC2G1 = new ExerciseMcq();
+        enC2G1.setTargetLanguage(Language.EN);
+        enC2G1.setDifficultyLevel(LanguageLevel.C2);
+        enC2G1.setTopic("mixed_conditionals");
+        enC2G1.setQuestionText("If she had studied harder, she ___ a better job now.");
+        enC2G1.setCorrectAnswer("would have");
+        enC2G1.setWrongOption1("will have");
+        enC2G1.setWrongOption2("would has");
+        enC2G1.setWrongOption3("had");
+        enC2G1.setXpReward(35);
+        enC2G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enC2G1);
+
+        ExerciseMcq enC2G2 = new ExerciseMcq();
+        enC2G2.setTargetLanguage(Language.EN);
+        enC2G2.setDifficultyLevel(LanguageLevel.C2);
+        enC2G2.setTopic("ellipsis");
+        enC2G2.setQuestionText("She can speak French and so ___ I.");
+        enC2G2.setCorrectAnswer("can");
+        enC2G2.setWrongOption1("do");
+        enC2G2.setWrongOption2("am");
+        enC2G2.setWrongOption3("have");
+        enC2G2.setXpReward(35);
+        enC2G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enC2G2);
+
+        ExerciseMcq enC2G3 = new ExerciseMcq();
+        enC2G3.setTargetLanguage(Language.EN);
+        enC2G3.setDifficultyLevel(LanguageLevel.C2);
+        enC2G3.setTopic("nominalization");
+        enC2G3.setQuestionText("The ___ of the project took three months.");
+        enC2G3.setCorrectAnswer("completion");
+        enC2G3.setWrongOption1("complete");
+        enC2G3.setWrongOption2("completing");
+        enC2G3.setWrongOption3("completed");
+        enC2G3.setXpReward(35);
+        enC2G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(enC2G3);
+
+        // EN A1 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank enA1GF1 = new ExerciseFillBlank();
+        enA1GF1.setTargetLanguage(Language.EN);
+        enA1GF1.setDifficultyLevel(LanguageLevel.A1);
+        enA1GF1.setTopic("to_be");
+        enA1GF1.setSentenceWithBlank("I ___ a student.");
+        enA1GF1.setCorrectAnswer("am");
+        enA1GF1.setXpReward(10);
+        enA1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enA1GF1);
+
+        ExerciseFillBlank enA1GF2 = new ExerciseFillBlank();
+        enA1GF2.setTargetLanguage(Language.EN);
+        enA1GF2.setDifficultyLevel(LanguageLevel.A1);
+        enA1GF2.setTopic("to_be");
+        enA1GF2.setSentenceWithBlank("They ___ my friends.");
+        enA1GF2.setCorrectAnswer("are");
+        enA1GF2.setXpReward(10);
+        enA1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enA1GF2);
+
+        ExerciseFillBlank enA1GF3 = new ExerciseFillBlank();
+        enA1GF3.setTargetLanguage(Language.EN);
+        enA1GF3.setDifficultyLevel(LanguageLevel.A1);
+        enA1GF3.setTopic("articles");
+        enA1GF3.setSentenceWithBlank("She has ___ cat.");
+        enA1GF3.setCorrectAnswer("a");
+        enA1GF3.setXpReward(10);
+        enA1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enA1GF3);
+
+        ExerciseFillBlank enA1GF4 = new ExerciseFillBlank();
+        enA1GF4.setTargetLanguage(Language.EN);
+        enA1GF4.setDifficultyLevel(LanguageLevel.A1);
+        enA1GF4.setTopic("pronouns");
+        enA1GF4.setSentenceWithBlank("___ is my brother Tom.");
+        enA1GF4.setCorrectAnswer("This");
+        enA1GF4.setXpReward(10);
+        enA1GF4.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enA1GF4);
+
+        // EN A2 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank enA2GF1 = new ExerciseFillBlank();
+        enA2GF1.setTargetLanguage(Language.EN);
+        enA2GF1.setDifficultyLevel(LanguageLevel.A2);
+        enA2GF1.setTopic("past_simple");
+        enA2GF1.setSentenceWithBlank("She ___ to school yesterday.");
+        enA2GF1.setCorrectAnswer("went");
+        enA2GF1.setXpReward(15);
+        enA2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enA2GF1);
+
+        ExerciseFillBlank enA2GF2 = new ExerciseFillBlank();
+        enA2GF2.setTargetLanguage(Language.EN);
+        enA2GF2.setDifficultyLevel(LanguageLevel.A2);
+        enA2GF2.setTopic("possessives");
+        enA2GF2.setSentenceWithBlank("This book is mine. That book is ___.");
+        enA2GF2.setCorrectAnswer("yours");
+        enA2GF2.setXpReward(15);
+        enA2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enA2GF2);
+
+        ExerciseFillBlank enA2GF3 = new ExerciseFillBlank();
+        enA2GF3.setTargetLanguage(Language.EN);
+        enA2GF3.setDifficultyLevel(LanguageLevel.A2);
+        enA2GF3.setTopic("present_continuous");
+        enA2GF3.setSentenceWithBlank("She ___ cooking dinner right now.");
+        enA2GF3.setCorrectAnswer("is");
+        enA2GF3.setXpReward(15);
+        enA2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enA2GF3);
+
+        ExerciseFillBlank enA2GF4 = new ExerciseFillBlank();
+        enA2GF4.setTargetLanguage(Language.EN);
+        enA2GF4.setDifficultyLevel(LanguageLevel.A2);
+        enA2GF4.setTopic("prepositions");
+        enA2GF4.setSentenceWithBlank("The book is ___ the table.");
+        enA2GF4.setCorrectAnswer("on");
+        enA2GF4.setXpReward(15);
+        enA2GF4.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enA2GF4);
+
+        // EN B1 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank enB1GF1 = new ExerciseFillBlank();
+        enB1GF1.setTargetLanguage(Language.EN);
+        enB1GF1.setDifficultyLevel(LanguageLevel.B1);
+        enB1GF1.setTopic("present_perfect");
+        enB1GF1.setSentenceWithBlank("I have ___ finished my homework.");
+        enB1GF1.setCorrectAnswer("just");
+        enB1GF1.setXpReward(20);
+        enB1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enB1GF1);
+
+        ExerciseFillBlank enB1GF2 = new ExerciseFillBlank();
+        enB1GF2.setTargetLanguage(Language.EN);
+        enB1GF2.setDifficultyLevel(LanguageLevel.B1);
+        enB1GF2.setTopic("relative_clauses");
+        enB1GF2.setSentenceWithBlank("The woman ___ lives next door is a doctor.");
+        enB1GF2.setCorrectAnswer("who");
+        enB1GF2.setXpReward(20);
+        enB1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enB1GF2);
+
+        ExerciseFillBlank enB1GF3 = new ExerciseFillBlank();
+        enB1GF3.setTargetLanguage(Language.EN);
+        enB1GF3.setDifficultyLevel(LanguageLevel.B1);
+        enB1GF3.setTopic("modals");
+        enB1GF3.setSentenceWithBlank("You ___ wear a seatbelt. It is the law.");
+        enB1GF3.setCorrectAnswer("must");
+        enB1GF3.setXpReward(20);
+        enB1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enB1GF3);
+
+        ExerciseFillBlank enB1GF4 = new ExerciseFillBlank();
+        enB1GF4.setTargetLanguage(Language.EN);
+        enB1GF4.setDifficultyLevel(LanguageLevel.B1);
+        enB1GF4.setTopic("connectors");
+        enB1GF4.setSentenceWithBlank("I stayed home ___ I was feeling sick.");
+        enB1GF4.setCorrectAnswer("because");
+        enB1GF4.setXpReward(20);
+        enB1GF4.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enB1GF4);
+
+        // EN B2 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank enB2GF1 = new ExerciseFillBlank();
+        enB2GF1.setTargetLanguage(Language.EN);
+        enB2GF1.setDifficultyLevel(LanguageLevel.B2);
+        enB2GF1.setTopic("passive_voice");
+        enB2GF1.setSentenceWithBlank("The report ___ written by the team last week.");
+        enB2GF1.setCorrectAnswer("was");
+        enB2GF1.setXpReward(25);
+        enB2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enB2GF1);
+
+        ExerciseFillBlank enB2GF2 = new ExerciseFillBlank();
+        enB2GF2.setTargetLanguage(Language.EN);
+        enB2GF2.setDifficultyLevel(LanguageLevel.B2);
+        enB2GF2.setTopic("conditionals");
+        enB2GF2.setSentenceWithBlank("If I were you, I ___ accept the offer.");
+        enB2GF2.setCorrectAnswer("would");
+        enB2GF2.setXpReward(25);
+        enB2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enB2GF2);
+
+        ExerciseFillBlank enB2GF3 = new ExerciseFillBlank();
+        enB2GF3.setTargetLanguage(Language.EN);
+        enB2GF3.setDifficultyLevel(LanguageLevel.B2);
+        enB2GF3.setTopic("reported_speech");
+        enB2GF3.setSentenceWithBlank("He told me that he ___ busy the day before.");
+        enB2GF3.setCorrectAnswer("had been");
+        enB2GF3.setXpReward(25);
+        enB2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enB2GF3);
+
+        ExerciseFillBlank enB2GF4 = new ExerciseFillBlank();
+        enB2GF4.setTargetLanguage(Language.EN);
+        enB2GF4.setDifficultyLevel(LanguageLevel.B2);
+        enB2GF4.setTopic("gerunds_infinitives");
+        enB2GF4.setSentenceWithBlank("She suggested ___ to the beach.");
+        enB2GF4.setCorrectAnswer("going");
+        enB2GF4.setXpReward(25);
+        enB2GF4.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enB2GF4);
+
+        // EN C1 Fill-blank GRAMMAR (3)
+        ExerciseFillBlank enC1GF1 = new ExerciseFillBlank();
+        enC1GF1.setTargetLanguage(Language.EN);
+        enC1GF1.setDifficultyLevel(LanguageLevel.C1);
+        enC1GF1.setTopic("inversion");
+        enC1GF1.setSentenceWithBlank("Never ___ I seen such a beautiful sunset.");
+        enC1GF1.setCorrectAnswer("have");
+        enC1GF1.setXpReward(30);
+        enC1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enC1GF1);
+
+        ExerciseFillBlank enC1GF2 = new ExerciseFillBlank();
+        enC1GF2.setTargetLanguage(Language.EN);
+        enC1GF2.setDifficultyLevel(LanguageLevel.C1);
+        enC1GF2.setTopic("participle_clauses");
+        enC1GF2.setSentenceWithBlank("___ finished the exam, she left the room.");
+        enC1GF2.setCorrectAnswer("Having");
+        enC1GF2.setXpReward(30);
+        enC1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enC1GF2);
+
+        ExerciseFillBlank enC1GF3 = new ExerciseFillBlank();
+        enC1GF3.setTargetLanguage(Language.EN);
+        enC1GF3.setDifficultyLevel(LanguageLevel.C1);
+        enC1GF3.setTopic("subjunctive");
+        enC1GF3.setSentenceWithBlank("It is essential that she ___ on time.");
+        enC1GF3.setCorrectAnswer("be");
+        enC1GF3.setXpReward(30);
+        enC1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enC1GF3);
+
+        // EN C2 Fill-blank GRAMMAR (3)
+        ExerciseFillBlank enC2GF1 = new ExerciseFillBlank();
+        enC2GF1.setTargetLanguage(Language.EN);
+        enC2GF1.setDifficultyLevel(LanguageLevel.C2);
+        enC2GF1.setTopic("ellipsis");
+        enC2GF1.setSentenceWithBlank("She wanted to help, but she could ___.");
+        enC2GF1.setCorrectAnswer("not");
+        enC2GF1.setXpReward(35);
+        enC2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enC2GF1);
+
+        ExerciseFillBlank enC2GF2 = new ExerciseFillBlank();
+        enC2GF2.setTargetLanguage(Language.EN);
+        enC2GF2.setDifficultyLevel(LanguageLevel.C2);
+        enC2GF2.setTopic("fronting");
+        enC2GF2.setSentenceWithBlank("Strange ___ it may seem, he was right.");
+        enC2GF2.setCorrectAnswer("as");
+        enC2GF2.setXpReward(35);
+        enC2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enC2GF2);
+
+        ExerciseFillBlank enC2GF3 = new ExerciseFillBlank();
+        enC2GF3.setTargetLanguage(Language.EN);
+        enC2GF3.setDifficultyLevel(LanguageLevel.C2);
+        enC2GF3.setTopic("emphasis");
+        enC2GF3.setSentenceWithBlank("What I need ___ a good rest.");
+        enC2GF3.setCorrectAnswer("is");
+        enC2GF3.setXpReward(35);
+        enC2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(enC2GF3);
+
+        logger.info("English GRAMMAR exercises seeded: 22 MCQ + 22 Fill-Blank = 44 total");
+    }
+
+    private void seedGermanGrammarExercises() {
+        logger.info("Seeding German GRAMMAR exercises...");
+
+        // DE A1 MCQ GRAMMAR (4)
+        ExerciseMcq deA1G1 = new ExerciseMcq();
+        deA1G1.setTargetLanguage(Language.DE);
+        deA1G1.setDifficultyLevel(LanguageLevel.A1);
+        deA1G1.setTopic("artikel");
+        deA1G1.setQuestionText("Das ist ___ Buch.");
+        deA1G1.setCorrectAnswer("ein");
+        deA1G1.setWrongOption1("eine");
+        deA1G1.setWrongOption2("einen");
+        deA1G1.setWrongOption3("einer");
+        deA1G1.setXpReward(10);
+        deA1G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deA1G1);
+
+        ExerciseMcq deA1G2 = new ExerciseMcq();
+        deA1G2.setTargetLanguage(Language.DE);
+        deA1G2.setDifficultyLevel(LanguageLevel.A1);
+        deA1G2.setTopic("verben");
+        deA1G2.setQuestionText("Ich ___ Deutsch.");
+        deA1G2.setCorrectAnswer("lerne");
+        deA1G2.setWrongOption1("lernst");
+        deA1G2.setWrongOption2("lernt");
+        deA1G2.setWrongOption3("lernen");
+        deA1G2.setXpReward(10);
+        deA1G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deA1G2);
+
+        ExerciseMcq deA1G3 = new ExerciseMcq();
+        deA1G3.setTargetLanguage(Language.DE);
+        deA1G3.setDifficultyLevel(LanguageLevel.A1);
+        deA1G3.setTopic("sein");
+        deA1G3.setQuestionText("Wir ___ aus Deutschland.");
+        deA1G3.setCorrectAnswer("sind");
+        deA1G3.setWrongOption1("ist");
+        deA1G3.setWrongOption2("bin");
+        deA1G3.setWrongOption3("seid");
+        deA1G3.setXpReward(10);
+        deA1G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deA1G3);
+
+        ExerciseMcq deA1G4 = new ExerciseMcq();
+        deA1G4.setTargetLanguage(Language.DE);
+        deA1G4.setDifficultyLevel(LanguageLevel.A1);
+        deA1G4.setTopic("haben");
+        deA1G4.setQuestionText("Er ___ einen Hund.");
+        deA1G4.setCorrectAnswer("hat");
+        deA1G4.setWrongOption1("habe");
+        deA1G4.setWrongOption2("hast");
+        deA1G4.setWrongOption3("haben");
+        deA1G4.setXpReward(10);
+        deA1G4.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deA1G4);
+
+        // DE A2 MCQ GRAMMAR (4)
+        ExerciseMcq deA2G1 = new ExerciseMcq();
+        deA2G1.setTargetLanguage(Language.DE);
+        deA2G1.setDifficultyLevel(LanguageLevel.A2);
+        deA2G1.setTopic("akkusativ");
+        deA2G1.setQuestionText("Ich sehe ___ Mann.");
+        deA2G1.setCorrectAnswer("den");
+        deA2G1.setWrongOption1("der");
+        deA2G1.setWrongOption2("dem");
+        deA2G1.setWrongOption3("des");
+        deA2G1.setXpReward(15);
+        deA2G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deA2G1);
+
+        ExerciseMcq deA2G2 = new ExerciseMcq();
+        deA2G2.setTargetLanguage(Language.DE);
+        deA2G2.setDifficultyLevel(LanguageLevel.A2);
+        deA2G2.setTopic("modalverben");
+        deA2G2.setQuestionText("Ich ___ Deutsch sprechen.");
+        deA2G2.setCorrectAnswer("kann");
+        deA2G2.setWrongOption1("können");
+        deA2G2.setWrongOption2("kannst");
+        deA2G2.setWrongOption3("konnte");
+        deA2G2.setXpReward(15);
+        deA2G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deA2G2);
+
+        ExerciseMcq deA2G3 = new ExerciseMcq();
+        deA2G3.setTargetLanguage(Language.DE);
+        deA2G3.setDifficultyLevel(LanguageLevel.A2);
+        deA2G3.setTopic("perfekt");
+        deA2G3.setQuestionText("Ich habe gestern einen Film ___.");
+        deA2G3.setCorrectAnswer("gesehen");
+        deA2G3.setWrongOption1("sehen");
+        deA2G3.setWrongOption2("sah");
+        deA2G3.setWrongOption3("geseht");
+        deA2G3.setXpReward(15);
+        deA2G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deA2G3);
+
+        ExerciseMcq deA2G4 = new ExerciseMcq();
+        deA2G4.setTargetLanguage(Language.DE);
+        deA2G4.setDifficultyLevel(LanguageLevel.A2);
+        deA2G4.setTopic("trennbare_verben");
+        deA2G4.setQuestionText("Ich stehe jeden Tag um 7 Uhr ___.");
+        deA2G4.setCorrectAnswer("auf");
+        deA2G4.setWrongOption1("an");
+        deA2G4.setWrongOption2("ab");
+        deA2G4.setWrongOption3("ein");
+        deA2G4.setXpReward(15);
+        deA2G4.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deA2G4);
+
+        // DE B1 MCQ GRAMMAR (4)
+        ExerciseMcq deB1G1 = new ExerciseMcq();
+        deB1G1.setTargetLanguage(Language.DE);
+        deB1G1.setDifficultyLevel(LanguageLevel.B1);
+        deB1G1.setTopic("dativ");
+        deB1G1.setQuestionText("Ich gebe ___ Frau das Geschenk.");
+        deB1G1.setCorrectAnswer("der");
+        deB1G1.setWrongOption1("die");
+        deB1G1.setWrongOption2("den");
+        deB1G1.setWrongOption3("das");
+        deB1G1.setXpReward(20);
+        deB1G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deB1G1);
+
+        ExerciseMcq deB1G2 = new ExerciseMcq();
+        deB1G2.setTargetLanguage(Language.DE);
+        deB1G2.setDifficultyLevel(LanguageLevel.B1);
+        deB1G2.setTopic("nebensaetze");
+        deB1G2.setQuestionText("Ich bleibe zu Hause, ___ es regnet.");
+        deB1G2.setCorrectAnswer("weil");
+        deB1G2.setWrongOption1("denn");
+        deB1G2.setWrongOption2("aber");
+        deB1G2.setWrongOption3("und");
+        deB1G2.setXpReward(20);
+        deB1G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deB1G2);
+
+        ExerciseMcq deB1G3 = new ExerciseMcq();
+        deB1G3.setTargetLanguage(Language.DE);
+        deB1G3.setDifficultyLevel(LanguageLevel.B1);
+        deB1G3.setTopic("relativsaetze");
+        deB1G3.setQuestionText("Der Mann, ___ dort steht, ist mein Vater.");
+        deB1G3.setCorrectAnswer("der");
+        deB1G3.setWrongOption1("den");
+        deB1G3.setWrongOption2("dem");
+        deB1G3.setWrongOption3("dessen");
+        deB1G3.setXpReward(20);
+        deB1G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deB1G3);
+
+        ExerciseMcq deB1G4 = new ExerciseMcq();
+        deB1G4.setTargetLanguage(Language.DE);
+        deB1G4.setDifficultyLevel(LanguageLevel.B1);
+        deB1G4.setTopic("praeteritum");
+        deB1G4.setQuestionText("Als ich jung ___, spielte ich oft Fußball.");
+        deB1G4.setCorrectAnswer("war");
+        deB1G4.setWrongOption1("bin");
+        deB1G4.setWrongOption2("sei");
+        deB1G4.setWrongOption3("wäre");
+        deB1G4.setXpReward(20);
+        deB1G4.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deB1G4);
+
+        // DE B2 MCQ GRAMMAR (4)
+        ExerciseMcq deB2G1 = new ExerciseMcq();
+        deB2G1.setTargetLanguage(Language.DE);
+        deB2G1.setDifficultyLevel(LanguageLevel.B2);
+        deB2G1.setTopic("konjunktiv_ii");
+        deB2G1.setQuestionText("Wenn ich reich ___, würde ich reisen.");
+        deB2G1.setCorrectAnswer("wäre");
+        deB2G1.setWrongOption1("bin");
+        deB2G1.setWrongOption2("war");
+        deB2G1.setWrongOption3("sei");
+        deB2G1.setXpReward(25);
+        deB2G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deB2G1);
+
+        ExerciseMcq deB2G2 = new ExerciseMcq();
+        deB2G2.setTargetLanguage(Language.DE);
+        deB2G2.setDifficultyLevel(LanguageLevel.B2);
+        deB2G2.setTopic("passiv");
+        deB2G2.setQuestionText("Das Haus ___ letztes Jahr gebaut.");
+        deB2G2.setCorrectAnswer("wurde");
+        deB2G2.setWrongOption1("wird");
+        deB2G2.setWrongOption2("war");
+        deB2G2.setWrongOption3("worden");
+        deB2G2.setXpReward(25);
+        deB2G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deB2G2);
+
+        ExerciseMcq deB2G3 = new ExerciseMcq();
+        deB2G3.setTargetLanguage(Language.DE);
+        deB2G3.setDifficultyLevel(LanguageLevel.B2);
+        deB2G3.setTopic("indirekte_rede");
+        deB2G3.setQuestionText("Er sagte, er ___ keine Zeit.");
+        deB2G3.setCorrectAnswer("habe");
+        deB2G3.setWrongOption1("hat");
+        deB2G3.setWrongOption2("hätte");
+        deB2G3.setWrongOption3("haben");
+        deB2G3.setXpReward(25);
+        deB2G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deB2G3);
+
+        ExerciseMcq deB2G4 = new ExerciseMcq();
+        deB2G4.setTargetLanguage(Language.DE);
+        deB2G4.setDifficultyLevel(LanguageLevel.B2);
+        deB2G4.setTopic("infinitiv_mit_zu");
+        deB2G4.setQuestionText("Es ist wichtig, pünktlich ___ sein.");
+        deB2G4.setCorrectAnswer("zu");
+        deB2G4.setWrongOption1("um");
+        deB2G4.setWrongOption2("für");
+        deB2G4.setWrongOption3("-");
+        deB2G4.setXpReward(25);
+        deB2G4.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deB2G4);
+
+        // DE C1 MCQ GRAMMAR (3)
+        ExerciseMcq deC1G1 = new ExerciseMcq();
+        deC1G1.setTargetLanguage(Language.DE);
+        deC1G1.setDifficultyLevel(LanguageLevel.C1);
+        deC1G1.setTopic("genitiv");
+        deC1G1.setQuestionText("Das ist das Auto ___ Mannes.");
+        deC1G1.setCorrectAnswer("des");
+        deC1G1.setWrongOption1("dem");
+        deC1G1.setWrongOption2("den");
+        deC1G1.setWrongOption3("der");
+        deC1G1.setXpReward(30);
+        deC1G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deC1G1);
+
+        ExerciseMcq deC1G2 = new ExerciseMcq();
+        deC1G2.setTargetLanguage(Language.DE);
+        deC1G2.setDifficultyLevel(LanguageLevel.C1);
+        deC1G2.setTopic("partizipial");
+        deC1G2.setQuestionText("Die ___ Arbeit wurde anerkannt.");
+        deC1G2.setCorrectAnswer("geleistete");
+        deC1G2.setWrongOption1("leistende");
+        deC1G2.setWrongOption2("geleistet");
+        deC1G2.setWrongOption3("leisten");
+        deC1G2.setXpReward(30);
+        deC1G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deC1G2);
+
+        ExerciseMcq deC1G3 = new ExerciseMcq();
+        deC1G3.setTargetLanguage(Language.DE);
+        deC1G3.setDifficultyLevel(LanguageLevel.C1);
+        deC1G3.setTopic("nominalisierung");
+        deC1G3.setQuestionText("Das ___ der Aufgabe dauerte lange.");
+        deC1G3.setCorrectAnswer("Lösen");
+        deC1G3.setWrongOption1("Lösung");
+        deC1G3.setWrongOption2("Gelöst");
+        deC1G3.setWrongOption3("Lösend");
+        deC1G3.setXpReward(30);
+        deC1G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deC1G3);
+
+        // DE C2 MCQ GRAMMAR (3)
+        ExerciseMcq deC2G1 = new ExerciseMcq();
+        deC2G1.setTargetLanguage(Language.DE);
+        deC2G1.setDifficultyLevel(LanguageLevel.C2);
+        deC2G1.setTopic("konjunktiv_i");
+        deC2G1.setQuestionText("Er behauptete, er ___ unschuldig.");
+        deC2G1.setCorrectAnswer("sei");
+        deC2G1.setWrongOption1("ist");
+        deC2G1.setWrongOption2("wäre");
+        deC2G1.setWrongOption3("war");
+        deC2G1.setXpReward(35);
+        deC2G1.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deC2G1);
+
+        ExerciseMcq deC2G2 = new ExerciseMcq();
+        deC2G2.setTargetLanguage(Language.DE);
+        deC2G2.setDifficultyLevel(LanguageLevel.C2);
+        deC2G2.setTopic("erweitertes_partizip");
+        deC2G2.setQuestionText("Der ___ Mann ist mein Kollege.");
+        deC2G2.setCorrectAnswer("dort stehende");
+        deC2G2.setWrongOption1("dort steht");
+        deC2G2.setWrongOption2("dort gestanden");
+        deC2G2.setWrongOption3("dort stehen");
+        deC2G2.setXpReward(35);
+        deC2G2.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deC2G2);
+
+        ExerciseMcq deC2G3 = new ExerciseMcq();
+        deC2G3.setTargetLanguage(Language.DE);
+        deC2G3.setDifficultyLevel(LanguageLevel.C2);
+        deC2G3.setTopic("nomen_verb_verbindungen");
+        deC2G3.setQuestionText("Er hat eine Entscheidung ___.");
+        deC2G3.setCorrectAnswer("getroffen");
+        deC2G3.setWrongOption1("gemacht");
+        deC2G3.setWrongOption2("genommen");
+        deC2G3.setWrongOption3("gegeben");
+        deC2G3.setXpReward(35);
+        deC2G3.setContentType(ExerciseContentType.GRAMMAR);
+        saveMcqIfNotExists(deC2G3);
+
+        // DE A1 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank deA1GF1 = new ExerciseFillBlank();
+        deA1GF1.setTargetLanguage(Language.DE);
+        deA1GF1.setDifficultyLevel(LanguageLevel.A1);
+        deA1GF1.setTopic("sein");
+        deA1GF1.setSentenceWithBlank("Ich ___ Student.");
+        deA1GF1.setCorrectAnswer("bin");
+        deA1GF1.setXpReward(10);
+        deA1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deA1GF1);
+
+        ExerciseFillBlank deA1GF2 = new ExerciseFillBlank();
+        deA1GF2.setTargetLanguage(Language.DE);
+        deA1GF2.setDifficultyLevel(LanguageLevel.A1);
+        deA1GF2.setTopic("haben");
+        deA1GF2.setSentenceWithBlank("Er ___ zwei Kinder.");
+        deA1GF2.setCorrectAnswer("hat");
+        deA1GF2.setXpReward(10);
+        deA1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deA1GF2);
+
+        ExerciseFillBlank deA1GF3 = new ExerciseFillBlank();
+        deA1GF3.setTargetLanguage(Language.DE);
+        deA1GF3.setDifficultyLevel(LanguageLevel.A1);
+        deA1GF3.setTopic("artikel");
+        deA1GF3.setSentenceWithBlank("___ Apfel ist rot.");
+        deA1GF3.setCorrectAnswer("Der");
+        deA1GF3.setXpReward(10);
+        deA1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deA1GF3);
+
+        ExerciseFillBlank deA1GF4 = new ExerciseFillBlank();
+        deA1GF4.setTargetLanguage(Language.DE);
+        deA1GF4.setDifficultyLevel(LanguageLevel.A1);
+        deA1GF4.setTopic("verben");
+        deA1GF4.setSentenceWithBlank("Du ___ sehr gut Deutsch.");
+        deA1GF4.setCorrectAnswer("sprichst");
+        deA1GF4.setXpReward(10);
+        deA1GF4.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deA1GF4);
+
+        // DE A2 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank deA2GF1 = new ExerciseFillBlank();
+        deA2GF1.setTargetLanguage(Language.DE);
+        deA2GF1.setDifficultyLevel(LanguageLevel.A2);
+        deA2GF1.setTopic("akkusativ");
+        deA2GF1.setSentenceWithBlank("Ich kaufe ___ Buch.");
+        deA2GF1.setCorrectAnswer("ein");
+        deA2GF1.setXpReward(15);
+        deA2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deA2GF1);
+
+        ExerciseFillBlank deA2GF2 = new ExerciseFillBlank();
+        deA2GF2.setTargetLanguage(Language.DE);
+        deA2GF2.setDifficultyLevel(LanguageLevel.A2);
+        deA2GF2.setTopic("trennbare_verben");
+        deA2GF2.setSentenceWithBlank("Ich stehe jeden Morgen um 7 Uhr ___.");
+        deA2GF2.setCorrectAnswer("auf");
+        deA2GF2.setXpReward(15);
+        deA2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deA2GF2);
+
+        ExerciseFillBlank deA2GF3 = new ExerciseFillBlank();
+        deA2GF3.setTargetLanguage(Language.DE);
+        deA2GF3.setDifficultyLevel(LanguageLevel.A2);
+        deA2GF3.setTopic("perfekt");
+        deA2GF3.setSentenceWithBlank("Ich habe einen Kuchen ___.");
+        deA2GF3.setCorrectAnswer("gebacken");
+        deA2GF3.setXpReward(15);
+        deA2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deA2GF3);
+
+        ExerciseFillBlank deA2GF4 = new ExerciseFillBlank();
+        deA2GF4.setTargetLanguage(Language.DE);
+        deA2GF4.setDifficultyLevel(LanguageLevel.A2);
+        deA2GF4.setTopic("praepositionen");
+        deA2GF4.setSentenceWithBlank("Das Buch liegt ___ dem Tisch.");
+        deA2GF4.setCorrectAnswer("auf");
+        deA2GF4.setXpReward(15);
+        deA2GF4.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deA2GF4);
+
+        // DE B1 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank deB1GF1 = new ExerciseFillBlank();
+        deB1GF1.setTargetLanguage(Language.DE);
+        deB1GF1.setDifficultyLevel(LanguageLevel.B1);
+        deB1GF1.setTopic("dativ");
+        deB1GF1.setSentenceWithBlank("Ich helfe ___ Frau.");
+        deB1GF1.setCorrectAnswer("der");
+        deB1GF1.setXpReward(20);
+        deB1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deB1GF1);
+
+        ExerciseFillBlank deB1GF2 = new ExerciseFillBlank();
+        deB1GF2.setTargetLanguage(Language.DE);
+        deB1GF2.setDifficultyLevel(LanguageLevel.B1);
+        deB1GF2.setTopic("nebensaetze");
+        deB1GF2.setSentenceWithBlank("Ich weiß nicht, ___ er kommt.");
+        deB1GF2.setCorrectAnswer("ob");
+        deB1GF2.setXpReward(20);
+        deB1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deB1GF2);
+
+        ExerciseFillBlank deB1GF3 = new ExerciseFillBlank();
+        deB1GF3.setTargetLanguage(Language.DE);
+        deB1GF3.setDifficultyLevel(LanguageLevel.B1);
+        deB1GF3.setTopic("reflexive_verben");
+        deB1GF3.setSentenceWithBlank("Ich freue ___ auf den Urlaub.");
+        deB1GF3.setCorrectAnswer("mich");
+        deB1GF3.setXpReward(20);
+        deB1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deB1GF3);
+
+        ExerciseFillBlank deB1GF4 = new ExerciseFillBlank();
+        deB1GF4.setTargetLanguage(Language.DE);
+        deB1GF4.setDifficultyLevel(LanguageLevel.B1);
+        deB1GF4.setTopic("komparativ");
+        deB1GF4.setSentenceWithBlank("Berlin ist ___ als München.");
+        deB1GF4.setCorrectAnswer("größer");
+        deB1GF4.setXpReward(20);
+        deB1GF4.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deB1GF4);
+
+        // DE B2 Fill-blank GRAMMAR (4)
+        ExerciseFillBlank deB2GF1 = new ExerciseFillBlank();
+        deB2GF1.setTargetLanguage(Language.DE);
+        deB2GF1.setDifficultyLevel(LanguageLevel.B2);
+        deB2GF1.setTopic("konjunktiv_ii");
+        deB2GF1.setSentenceWithBlank("Wenn ich Zeit ___, würde ich kommen.");
+        deB2GF1.setCorrectAnswer("hätte");
+        deB2GF1.setXpReward(25);
+        deB2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deB2GF1);
+
+        ExerciseFillBlank deB2GF2 = new ExerciseFillBlank();
+        deB2GF2.setTargetLanguage(Language.DE);
+        deB2GF2.setDifficultyLevel(LanguageLevel.B2);
+        deB2GF2.setTopic("passiv");
+        deB2GF2.setSentenceWithBlank("Das Fenster wurde von mir ___.");
+        deB2GF2.setCorrectAnswer("geöffnet");
+        deB2GF2.setXpReward(25);
+        deB2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deB2GF2);
+
+        ExerciseFillBlank deB2GF3 = new ExerciseFillBlank();
+        deB2GF3.setTargetLanguage(Language.DE);
+        deB2GF3.setDifficultyLevel(LanguageLevel.B2);
+        deB2GF3.setTopic("plusquamperfekt");
+        deB2GF3.setSentenceWithBlank("Nachdem ich gegessen ___, ging ich spazieren.");
+        deB2GF3.setCorrectAnswer("hatte");
+        deB2GF3.setXpReward(25);
+        deB2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deB2GF3);
+
+        ExerciseFillBlank deB2GF4 = new ExerciseFillBlank();
+        deB2GF4.setTargetLanguage(Language.DE);
+        deB2GF4.setDifficultyLevel(LanguageLevel.B2);
+        deB2GF4.setTopic("konnektoren");
+        deB2GF4.setSentenceWithBlank("Er kam nicht, ___ er krank war.");
+        deB2GF4.setCorrectAnswer("obwohl");
+        deB2GF4.setXpReward(25);
+        deB2GF4.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deB2GF4);
+
+        // DE C1 Fill-blank GRAMMAR (3)
+        ExerciseFillBlank deC1GF1 = new ExerciseFillBlank();
+        deC1GF1.setTargetLanguage(Language.DE);
+        deC1GF1.setDifficultyLevel(LanguageLevel.C1);
+        deC1GF1.setTopic("genitiv");
+        deC1GF1.setSentenceWithBlank("Trotz ___ Regens gingen wir spazieren.");
+        deC1GF1.setCorrectAnswer("des");
+        deC1GF1.setXpReward(30);
+        deC1GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deC1GF1);
+
+        ExerciseFillBlank deC1GF2 = new ExerciseFillBlank();
+        deC1GF2.setTargetLanguage(Language.DE);
+        deC1GF2.setDifficultyLevel(LanguageLevel.C1);
+        deC1GF2.setTopic("partizipial");
+        deC1GF2.setSentenceWithBlank("Die ___ Aufgabe war sehr schwierig.");
+        deC1GF2.setCorrectAnswer("gestellte");
+        deC1GF2.setXpReward(30);
+        deC1GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deC1GF2);
+
+        ExerciseFillBlank deC1GF3 = new ExerciseFillBlank();
+        deC1GF3.setTargetLanguage(Language.DE);
+        deC1GF3.setDifficultyLevel(LanguageLevel.C1);
+        deC1GF3.setTopic("futur_ii");
+        deC1GF3.setSentenceWithBlank("Bis morgen werde ich die Arbeit ___ haben.");
+        deC1GF3.setCorrectAnswer("beendet");
+        deC1GF3.setXpReward(30);
+        deC1GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deC1GF3);
+
+        // DE C2 Fill-blank GRAMMAR (3)
+        ExerciseFillBlank deC2GF1 = new ExerciseFillBlank();
+        deC2GF1.setTargetLanguage(Language.DE);
+        deC2GF1.setDifficultyLevel(LanguageLevel.C2);
+        deC2GF1.setTopic("konjunktiv_i");
+        deC2GF1.setSentenceWithBlank("Er sagt, er ___ krank.");
+        deC2GF1.setCorrectAnswer("sei");
+        deC2GF1.setXpReward(35);
+        deC2GF1.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deC2GF1);
+
+        ExerciseFillBlank deC2GF2 = new ExerciseFillBlank();
+        deC2GF2.setTargetLanguage(Language.DE);
+        deC2GF2.setDifficultyLevel(LanguageLevel.C2);
+        deC2GF2.setTopic("nomen_verb");
+        deC2GF2.setSentenceWithBlank("Sie hat großen Einfluss auf ihn ___.");
+        deC2GF2.setCorrectAnswer("ausgeübt");
+        deC2GF2.setXpReward(35);
+        deC2GF2.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deC2GF2);
+
+        ExerciseFillBlank deC2GF3 = new ExerciseFillBlank();
+        deC2GF3.setTargetLanguage(Language.DE);
+        deC2GF3.setDifficultyLevel(LanguageLevel.C2);
+        deC2GF3.setTopic("modalpartikeln");
+        deC2GF3.setSentenceWithBlank("Das ist ___ interessant!");
+        deC2GF3.setCorrectAnswer("ja");
+        deC2GF3.setXpReward(35);
+        deC2GF3.setContentType(ExerciseContentType.GRAMMAR);
+        saveFillBlankIfNotExists(deC2GF3);
+
+        logger.info("German GRAMMAR exercises seeded: 22 MCQ + 22 Fill-Blank = 44 total");
+    }
+
+    private void seedEnglishSynonymExercises() {
+        logger.info("Seeding English SYNONYM exercises...");
+
+        // A1 Level - Basic Synonyms
+        ExerciseMcq enA1S1 = new ExerciseMcq();
+        enA1S1.setTargetLanguage(Language.EN);
+        enA1S1.setDifficultyLevel(LanguageLevel.A1);
+        enA1S1.setTopic("synonyms");
+        enA1S1.setQuestionText("Which word is a synonym of 'happy'?");
+        enA1S1.setCorrectAnswer("joyful");
+        enA1S1.setWrongOption1("sad");
+        enA1S1.setWrongOption2("angry");
+        enA1S1.setWrongOption3("tired");
+        enA1S1.setXpReward(10);
+        enA1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA1S1);
+
+        ExerciseMcq enA1S2 = new ExerciseMcq();
+        enA1S2.setTargetLanguage(Language.EN);
+        enA1S2.setDifficultyLevel(LanguageLevel.A1);
+        enA1S2.setTopic("synonyms");
+        enA1S2.setQuestionText("Which word is a synonym of 'big'?");
+        enA1S2.setCorrectAnswer("large");
+        enA1S2.setWrongOption1("small");
+        enA1S2.setWrongOption2("tiny");
+        enA1S2.setWrongOption3("short");
+        enA1S2.setXpReward(10);
+        enA1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA1S2);
+
+        ExerciseMcq enA1S3 = new ExerciseMcq();
+        enA1S3.setTargetLanguage(Language.EN);
+        enA1S3.setDifficultyLevel(LanguageLevel.A1);
+        enA1S3.setTopic("synonyms");
+        enA1S3.setQuestionText("Which word is a synonym of 'fast'?");
+        enA1S3.setCorrectAnswer("quick");
+        enA1S3.setWrongOption1("slow");
+        enA1S3.setWrongOption2("heavy");
+        enA1S3.setWrongOption3("tall");
+        enA1S3.setXpReward(10);
+        enA1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA1S3);
+
+        ExerciseMcq enA1S4 = new ExerciseMcq();
+        enA1S4.setTargetLanguage(Language.EN);
+        enA1S4.setDifficultyLevel(LanguageLevel.A1);
+        enA1S4.setTopic("synonyms");
+        enA1S4.setQuestionText("Which word is a synonym of 'small'?");
+        enA1S4.setCorrectAnswer("little");
+        enA1S4.setWrongOption1("big");
+        enA1S4.setWrongOption2("large");
+        enA1S4.setWrongOption3("huge");
+        enA1S4.setXpReward(10);
+        enA1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA1S4);
+
+        // A2 Level - Common Synonyms
+        ExerciseMcq enA2S1 = new ExerciseMcq();
+        enA2S1.setTargetLanguage(Language.EN);
+        enA2S1.setDifficultyLevel(LanguageLevel.A2);
+        enA2S1.setTopic("synonyms");
+        enA2S1.setQuestionText("Which word is a synonym of 'beautiful'?");
+        enA2S1.setCorrectAnswer("pretty");
+        enA2S1.setWrongOption1("ugly");
+        enA2S1.setWrongOption2("plain");
+        enA2S1.setWrongOption3("dull");
+        enA2S1.setXpReward(15);
+        enA2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA2S1);
+
+        ExerciseMcq enA2S2 = new ExerciseMcq();
+        enA2S2.setTargetLanguage(Language.EN);
+        enA2S2.setDifficultyLevel(LanguageLevel.A2);
+        enA2S2.setTopic("synonyms");
+        enA2S2.setQuestionText("Which word is a synonym of 'smart'?");
+        enA2S2.setCorrectAnswer("clever");
+        enA2S2.setWrongOption1("stupid");
+        enA2S2.setWrongOption2("slow");
+        enA2S2.setWrongOption3("dumb");
+        enA2S2.setXpReward(15);
+        enA2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA2S2);
+
+        ExerciseMcq enA2S3 = new ExerciseMcq();
+        enA2S3.setTargetLanguage(Language.EN);
+        enA2S3.setDifficultyLevel(LanguageLevel.A2);
+        enA2S3.setTopic("synonyms");
+        enA2S3.setQuestionText("Which word is a synonym of 'begin'?");
+        enA2S3.setCorrectAnswer("start");
+        enA2S3.setWrongOption1("finish");
+        enA2S3.setWrongOption2("end");
+        enA2S3.setWrongOption3("stop");
+        enA2S3.setXpReward(15);
+        enA2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA2S3);
+
+        ExerciseMcq enA2S4 = new ExerciseMcq();
+        enA2S4.setTargetLanguage(Language.EN);
+        enA2S4.setDifficultyLevel(LanguageLevel.A2);
+        enA2S4.setTopic("synonyms");
+        enA2S4.setQuestionText("Which word is a synonym of 'angry'?");
+        enA2S4.setCorrectAnswer("mad");
+        enA2S4.setWrongOption1("happy");
+        enA2S4.setWrongOption2("calm");
+        enA2S4.setWrongOption3("pleased");
+        enA2S4.setXpReward(15);
+        enA2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enA2S4);
+
+        // B1 Level - Varied Synonyms
+        ExerciseMcq enB1S1 = new ExerciseMcq();
+        enB1S1.setTargetLanguage(Language.EN);
+        enB1S1.setDifficultyLevel(LanguageLevel.B1);
+        enB1S1.setTopic("synonyms");
+        enB1S1.setQuestionText("Which word is a synonym of 'difficult'?");
+        enB1S1.setCorrectAnswer("challenging");
+        enB1S1.setWrongOption1("easy");
+        enB1S1.setWrongOption2("simple");
+        enB1S1.setWrongOption3("basic");
+        enB1S1.setXpReward(20);
+        enB1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB1S1);
+
+        ExerciseMcq enB1S2 = new ExerciseMcq();
+        enB1S2.setTargetLanguage(Language.EN);
+        enB1S2.setDifficultyLevel(LanguageLevel.B1);
+        enB1S2.setTopic("synonyms");
+        enB1S2.setQuestionText("Which word is a synonym of 'important'?");
+        enB1S2.setCorrectAnswer("significant");
+        enB1S2.setWrongOption1("trivial");
+        enB1S2.setWrongOption2("minor");
+        enB1S2.setWrongOption3("irrelevant");
+        enB1S2.setXpReward(20);
+        enB1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB1S2);
+
+        ExerciseMcq enB1S3 = new ExerciseMcq();
+        enB1S3.setTargetLanguage(Language.EN);
+        enB1S3.setDifficultyLevel(LanguageLevel.B1);
+        enB1S3.setTopic("synonyms");
+        enB1S3.setQuestionText("Which word is a synonym of 'strange'?");
+        enB1S3.setCorrectAnswer("weird");
+        enB1S3.setWrongOption1("normal");
+        enB1S3.setWrongOption2("usual");
+        enB1S3.setWrongOption3("common");
+        enB1S3.setXpReward(20);
+        enB1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB1S3);
+
+        ExerciseMcq enB1S4 = new ExerciseMcq();
+        enB1S4.setTargetLanguage(Language.EN);
+        enB1S4.setDifficultyLevel(LanguageLevel.B1);
+        enB1S4.setTopic("synonyms");
+        enB1S4.setQuestionText("Which word is a synonym of 'tired'?");
+        enB1S4.setCorrectAnswer("exhausted");
+        enB1S4.setWrongOption1("energetic");
+        enB1S4.setWrongOption2("active");
+        enB1S4.setWrongOption3("lively");
+        enB1S4.setXpReward(20);
+        enB1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB1S4);
+
+        // B2 Level - Abstract Synonyms
+        ExerciseMcq enB2S1 = new ExerciseMcq();
+        enB2S1.setTargetLanguage(Language.EN);
+        enB2S1.setDifficultyLevel(LanguageLevel.B2);
+        enB2S1.setTopic("synonyms");
+        enB2S1.setQuestionText("Which word is a synonym of 'brave'?");
+        enB2S1.setCorrectAnswer("courageous");
+        enB2S1.setWrongOption1("cowardly");
+        enB2S1.setWrongOption2("fearful");
+        enB2S1.setWrongOption3("timid");
+        enB2S1.setXpReward(25);
+        enB2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB2S1);
+
+        ExerciseMcq enB2S2 = new ExerciseMcq();
+        enB2S2.setTargetLanguage(Language.EN);
+        enB2S2.setDifficultyLevel(LanguageLevel.B2);
+        enB2S2.setTopic("synonyms");
+        enB2S2.setQuestionText("Which word is a synonym of 'generous'?");
+        enB2S2.setCorrectAnswer("charitable");
+        enB2S2.setWrongOption1("greedy");
+        enB2S2.setWrongOption2("selfish");
+        enB2S2.setWrongOption3("stingy");
+        enB2S2.setXpReward(25);
+        enB2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB2S2);
+
+        ExerciseMcq enB2S3 = new ExerciseMcq();
+        enB2S3.setTargetLanguage(Language.EN);
+        enB2S3.setDifficultyLevel(LanguageLevel.B2);
+        enB2S3.setTopic("synonyms");
+        enB2S3.setQuestionText("Which word is a synonym of 'ancient'?");
+        enB2S3.setCorrectAnswer("antique");
+        enB2S3.setWrongOption1("modern");
+        enB2S3.setWrongOption2("new");
+        enB2S3.setWrongOption3("recent");
+        enB2S3.setXpReward(25);
+        enB2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB2S3);
+
+        ExerciseMcq enB2S4 = new ExerciseMcq();
+        enB2S4.setTargetLanguage(Language.EN);
+        enB2S4.setDifficultyLevel(LanguageLevel.B2);
+        enB2S4.setTopic("synonyms");
+        enB2S4.setQuestionText("Which word is a synonym of 'wealthy'?");
+        enB2S4.setCorrectAnswer("affluent");
+        enB2S4.setWrongOption1("poor");
+        enB2S4.setWrongOption2("broke");
+        enB2S4.setWrongOption3("needy");
+        enB2S4.setXpReward(25);
+        enB2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enB2S4);
+
+        // C1 Level - Nuanced Synonyms
+        ExerciseMcq enC1S1 = new ExerciseMcq();
+        enC1S1.setTargetLanguage(Language.EN);
+        enC1S1.setDifficultyLevel(LanguageLevel.C1);
+        enC1S1.setTopic("synonyms");
+        enC1S1.setQuestionText("Which word is a synonym of 'furious'?");
+        enC1S1.setCorrectAnswer("enraged");
+        enC1S1.setWrongOption1("calm");
+        enC1S1.setWrongOption2("peaceful");
+        enC1S1.setWrongOption3("serene");
+        enC1S1.setXpReward(30);
+        enC1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC1S1);
+
+        ExerciseMcq enC1S2 = new ExerciseMcq();
+        enC1S2.setTargetLanguage(Language.EN);
+        enC1S2.setDifficultyLevel(LanguageLevel.C1);
+        enC1S2.setTopic("synonyms");
+        enC1S2.setQuestionText("Which word is a synonym of 'melancholy'?");
+        enC1S2.setCorrectAnswer("sorrowful");
+        enC1S2.setWrongOption1("cheerful");
+        enC1S2.setWrongOption2("joyous");
+        enC1S2.setWrongOption3("elated");
+        enC1S2.setXpReward(30);
+        enC1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC1S2);
+
+        ExerciseMcq enC1S3 = new ExerciseMcq();
+        enC1S3.setTargetLanguage(Language.EN);
+        enC1S3.setDifficultyLevel(LanguageLevel.C1);
+        enC1S3.setTopic("synonyms");
+        enC1S3.setQuestionText("Which word is a synonym of 'stubborn'?");
+        enC1S3.setCorrectAnswer("obstinate");
+        enC1S3.setWrongOption1("flexible");
+        enC1S3.setWrongOption2("yielding");
+        enC1S3.setWrongOption3("compliant");
+        enC1S3.setXpReward(30);
+        enC1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC1S3);
+
+        ExerciseMcq enC1S4 = new ExerciseMcq();
+        enC1S4.setTargetLanguage(Language.EN);
+        enC1S4.setDifficultyLevel(LanguageLevel.C1);
+        enC1S4.setTopic("synonyms");
+        enC1S4.setQuestionText("Which word is a synonym of 'astute'?");
+        enC1S4.setCorrectAnswer("shrewd");
+        enC1S4.setWrongOption1("naive");
+        enC1S4.setWrongOption2("foolish");
+        enC1S4.setWrongOption3("obtuse");
+        enC1S4.setXpReward(30);
+        enC1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC1S4);
+
+        // C2 Level - Sophisticated Synonyms
+        ExerciseMcq enC2S1 = new ExerciseMcq();
+        enC2S1.setTargetLanguage(Language.EN);
+        enC2S1.setDifficultyLevel(LanguageLevel.C2);
+        enC2S1.setTopic("synonyms");
+        enC2S1.setQuestionText("Which word is a synonym of 'ephemeral'?");
+        enC2S1.setCorrectAnswer("transient");
+        enC2S1.setWrongOption1("permanent");
+        enC2S1.setWrongOption2("lasting");
+        enC2S1.setWrongOption3("enduring");
+        enC2S1.setXpReward(35);
+        enC2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC2S1);
+
+        ExerciseMcq enC2S2 = new ExerciseMcq();
+        enC2S2.setTargetLanguage(Language.EN);
+        enC2S2.setDifficultyLevel(LanguageLevel.C2);
+        enC2S2.setTopic("synonyms");
+        enC2S2.setQuestionText("Which word is a synonym of 'ubiquitous'?");
+        enC2S2.setCorrectAnswer("omnipresent");
+        enC2S2.setWrongOption1("rare");
+        enC2S2.setWrongOption2("scarce");
+        enC2S2.setWrongOption3("uncommon");
+        enC2S2.setXpReward(35);
+        enC2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC2S2);
+
+        ExerciseMcq enC2S3 = new ExerciseMcq();
+        enC2S3.setTargetLanguage(Language.EN);
+        enC2S3.setDifficultyLevel(LanguageLevel.C2);
+        enC2S3.setTopic("synonyms");
+        enC2S3.setQuestionText("Which word is a synonym of 'eloquent'?");
+        enC2S3.setCorrectAnswer("articulate");
+        enC2S3.setWrongOption1("inarticulate");
+        enC2S3.setWrongOption2("mumbling");
+        enC2S3.setWrongOption3("incoherent");
+        enC2S3.setXpReward(35);
+        enC2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC2S3);
+
+        ExerciseMcq enC2S4 = new ExerciseMcq();
+        enC2S4.setTargetLanguage(Language.EN);
+        enC2S4.setDifficultyLevel(LanguageLevel.C2);
+        enC2S4.setTopic("synonyms");
+        enC2S4.setQuestionText("Which word is a synonym of 'meticulous'?");
+        enC2S4.setCorrectAnswer("scrupulous");
+        enC2S4.setWrongOption1("careless");
+        enC2S4.setWrongOption2("sloppy");
+        enC2S4.setWrongOption3("negligent");
+        enC2S4.setXpReward(35);
+        enC2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(enC2S4);
+
+        logger.info("English SYNONYM exercises seeded: 24 MCQ");
+    }
+
+    private void seedGermanSynonymExercises() {
+        logger.info("Seeding German SYNONYM exercises...");
+
+        // A1 Level - Basic Synonyms
+        ExerciseMcq deA1S1 = new ExerciseMcq();
+        deA1S1.setTargetLanguage(Language.DE);
+        deA1S1.setDifficultyLevel(LanguageLevel.A1);
+        deA1S1.setTopic("synonyme");
+        deA1S1.setQuestionText("Welches Wort ist ein Synonym von 'glücklich'?");
+        deA1S1.setCorrectAnswer("froh");
+        deA1S1.setWrongOption1("traurig");
+        deA1S1.setWrongOption2("wütend");
+        deA1S1.setWrongOption3("müde");
+        deA1S1.setXpReward(10);
+        deA1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA1S1);
+
+        ExerciseMcq deA1S2 = new ExerciseMcq();
+        deA1S2.setTargetLanguage(Language.DE);
+        deA1S2.setDifficultyLevel(LanguageLevel.A1);
+        deA1S2.setTopic("synonyme");
+        deA1S2.setQuestionText("Welches Wort ist ein Synonym von 'groß'?");
+        deA1S2.setCorrectAnswer("riesig");
+        deA1S2.setWrongOption1("klein");
+        deA1S2.setWrongOption2("winzig");
+        deA1S2.setWrongOption3("kurz");
+        deA1S2.setXpReward(10);
+        deA1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA1S2);
+
+        ExerciseMcq deA1S3 = new ExerciseMcq();
+        deA1S3.setTargetLanguage(Language.DE);
+        deA1S3.setDifficultyLevel(LanguageLevel.A1);
+        deA1S3.setTopic("synonyme");
+        deA1S3.setQuestionText("Welches Wort ist ein Synonym von 'schnell'?");
+        deA1S3.setCorrectAnswer("rasch");
+        deA1S3.setWrongOption1("langsam");
+        deA1S3.setWrongOption2("schwer");
+        deA1S3.setWrongOption3("träge");
+        deA1S3.setXpReward(10);
+        deA1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA1S3);
+
+        ExerciseMcq deA1S4 = new ExerciseMcq();
+        deA1S4.setTargetLanguage(Language.DE);
+        deA1S4.setDifficultyLevel(LanguageLevel.A1);
+        deA1S4.setTopic("synonyme");
+        deA1S4.setQuestionText("Welches Wort ist ein Synonym von 'klein'?");
+        deA1S4.setCorrectAnswer("winzig");
+        deA1S4.setWrongOption1("groß");
+        deA1S4.setWrongOption2("riesig");
+        deA1S4.setWrongOption3("hoch");
+        deA1S4.setXpReward(10);
+        deA1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA1S4);
+
+        // A2 Level - Common Synonyms
+        ExerciseMcq deA2S1 = new ExerciseMcq();
+        deA2S1.setTargetLanguage(Language.DE);
+        deA2S1.setDifficultyLevel(LanguageLevel.A2);
+        deA2S1.setTopic("synonyme");
+        deA2S1.setQuestionText("Welches Wort ist ein Synonym von 'schön'?");
+        deA2S1.setCorrectAnswer("hübsch");
+        deA2S1.setWrongOption1("hässlich");
+        deA2S1.setWrongOption2("schlicht");
+        deA2S1.setWrongOption3("langweilig");
+        deA2S1.setXpReward(15);
+        deA2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA2S1);
+
+        ExerciseMcq deA2S2 = new ExerciseMcq();
+        deA2S2.setTargetLanguage(Language.DE);
+        deA2S2.setDifficultyLevel(LanguageLevel.A2);
+        deA2S2.setTopic("synonyme");
+        deA2S2.setQuestionText("Welches Wort ist ein Synonym von 'klug'?");
+        deA2S2.setCorrectAnswer("schlau");
+        deA2S2.setWrongOption1("dumm");
+        deA2S2.setWrongOption2("langsam");
+        deA2S2.setWrongOption3("töricht");
+        deA2S2.setXpReward(15);
+        deA2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA2S2);
+
+        ExerciseMcq deA2S3 = new ExerciseMcq();
+        deA2S3.setTargetLanguage(Language.DE);
+        deA2S3.setDifficultyLevel(LanguageLevel.A2);
+        deA2S3.setTopic("synonyme");
+        deA2S3.setQuestionText("Welches Wort ist ein Synonym von 'beginnen'?");
+        deA2S3.setCorrectAnswer("anfangen");
+        deA2S3.setWrongOption1("beenden");
+        deA2S3.setWrongOption2("aufhören");
+        deA2S3.setWrongOption3("stoppen");
+        deA2S3.setXpReward(15);
+        deA2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA2S3);
+
+        ExerciseMcq deA2S4 = new ExerciseMcq();
+        deA2S4.setTargetLanguage(Language.DE);
+        deA2S4.setDifficultyLevel(LanguageLevel.A2);
+        deA2S4.setTopic("synonyme");
+        deA2S4.setQuestionText("Welches Wort ist ein Synonym von 'wütend'?");
+        deA2S4.setCorrectAnswer("zornig");
+        deA2S4.setWrongOption1("glücklich");
+        deA2S4.setWrongOption2("ruhig");
+        deA2S4.setWrongOption3("zufrieden");
+        deA2S4.setXpReward(15);
+        deA2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deA2S4);
+
+        // B1 Level - Varied Synonyms
+        ExerciseMcq deB1S1 = new ExerciseMcq();
+        deB1S1.setTargetLanguage(Language.DE);
+        deB1S1.setDifficultyLevel(LanguageLevel.B1);
+        deB1S1.setTopic("synonyme");
+        deB1S1.setQuestionText("Welches Wort ist ein Synonym von 'schwierig'?");
+        deB1S1.setCorrectAnswer("kompliziert");
+        deB1S1.setWrongOption1("einfach");
+        deB1S1.setWrongOption2("leicht");
+        deB1S1.setWrongOption3("simpel");
+        deB1S1.setXpReward(20);
+        deB1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB1S1);
+
+        ExerciseMcq deB1S2 = new ExerciseMcq();
+        deB1S2.setTargetLanguage(Language.DE);
+        deB1S2.setDifficultyLevel(LanguageLevel.B1);
+        deB1S2.setTopic("synonyme");
+        deB1S2.setQuestionText("Welches Wort ist ein Synonym von 'wichtig'?");
+        deB1S2.setCorrectAnswer("bedeutend");
+        deB1S2.setWrongOption1("unwichtig");
+        deB1S2.setWrongOption2("nebensächlich");
+        deB1S2.setWrongOption3("trivial");
+        deB1S2.setXpReward(20);
+        deB1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB1S2);
+
+        ExerciseMcq deB1S3 = new ExerciseMcq();
+        deB1S3.setTargetLanguage(Language.DE);
+        deB1S3.setDifficultyLevel(LanguageLevel.B1);
+        deB1S3.setTopic("synonyme");
+        deB1S3.setQuestionText("Welches Wort ist ein Synonym von 'seltsam'?");
+        deB1S3.setCorrectAnswer("merkwürdig");
+        deB1S3.setWrongOption1("normal");
+        deB1S3.setWrongOption2("üblich");
+        deB1S3.setWrongOption3("gewöhnlich");
+        deB1S3.setXpReward(20);
+        deB1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB1S3);
+
+        ExerciseMcq deB1S4 = new ExerciseMcq();
+        deB1S4.setTargetLanguage(Language.DE);
+        deB1S4.setDifficultyLevel(LanguageLevel.B1);
+        deB1S4.setTopic("synonyme");
+        deB1S4.setQuestionText("Welches Wort ist ein Synonym von 'müde'?");
+        deB1S4.setCorrectAnswer("erschöpft");
+        deB1S4.setWrongOption1("energisch");
+        deB1S4.setWrongOption2("aktiv");
+        deB1S4.setWrongOption3("munter");
+        deB1S4.setXpReward(20);
+        deB1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB1S4);
+
+        // B2 Level - Abstract Synonyms
+        ExerciseMcq deB2S1 = new ExerciseMcq();
+        deB2S1.setTargetLanguage(Language.DE);
+        deB2S1.setDifficultyLevel(LanguageLevel.B2);
+        deB2S1.setTopic("synonyme");
+        deB2S1.setQuestionText("Welches Wort ist ein Synonym von 'mutig'?");
+        deB2S1.setCorrectAnswer("tapfer");
+        deB2S1.setWrongOption1("feige");
+        deB2S1.setWrongOption2("ängstlich");
+        deB2S1.setWrongOption3("schüchtern");
+        deB2S1.setXpReward(25);
+        deB2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB2S1);
+
+        ExerciseMcq deB2S2 = new ExerciseMcq();
+        deB2S2.setTargetLanguage(Language.DE);
+        deB2S2.setDifficultyLevel(LanguageLevel.B2);
+        deB2S2.setTopic("synonyme");
+        deB2S2.setQuestionText("Welches Wort ist ein Synonym von 'großzügig'?");
+        deB2S2.setCorrectAnswer("freigebig");
+        deB2S2.setWrongOption1("geizig");
+        deB2S2.setWrongOption2("selbstsüchtig");
+        deB2S2.setWrongOption3("knauserig");
+        deB2S2.setXpReward(25);
+        deB2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB2S2);
+
+        ExerciseMcq deB2S3 = new ExerciseMcq();
+        deB2S3.setTargetLanguage(Language.DE);
+        deB2S3.setDifficultyLevel(LanguageLevel.B2);
+        deB2S3.setTopic("synonyme");
+        deB2S3.setQuestionText("Welches Wort ist ein Synonym von 'alt'?");
+        deB2S3.setCorrectAnswer("antik");
+        deB2S3.setWrongOption1("modern");
+        deB2S3.setWrongOption2("neu");
+        deB2S3.setWrongOption3("aktuell");
+        deB2S3.setXpReward(25);
+        deB2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB2S3);
+
+        ExerciseMcq deB2S4 = new ExerciseMcq();
+        deB2S4.setTargetLanguage(Language.DE);
+        deB2S4.setDifficultyLevel(LanguageLevel.B2);
+        deB2S4.setTopic("synonyme");
+        deB2S4.setQuestionText("Welches Wort ist ein Synonym von 'reich'?");
+        deB2S4.setCorrectAnswer("wohlhabend");
+        deB2S4.setWrongOption1("arm");
+        deB2S4.setWrongOption2("mittellos");
+        deB2S4.setWrongOption3("bedürftig");
+        deB2S4.setXpReward(25);
+        deB2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deB2S4);
+
+        // C1 Level - Nuanced Synonyms
+        ExerciseMcq deC1S1 = new ExerciseMcq();
+        deC1S1.setTargetLanguage(Language.DE);
+        deC1S1.setDifficultyLevel(LanguageLevel.C1);
+        deC1S1.setTopic("synonyme");
+        deC1S1.setQuestionText("Welches Wort ist ein Synonym von 'rasend'?");
+        deC1S1.setCorrectAnswer("tobend");
+        deC1S1.setWrongOption1("ruhig");
+        deC1S1.setWrongOption2("friedlich");
+        deC1S1.setWrongOption3("gelassen");
+        deC1S1.setXpReward(30);
+        deC1S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC1S1);
+
+        ExerciseMcq deC1S2 = new ExerciseMcq();
+        deC1S2.setTargetLanguage(Language.DE);
+        deC1S2.setDifficultyLevel(LanguageLevel.C1);
+        deC1S2.setTopic("synonyme");
+        deC1S2.setQuestionText("Welches Wort ist ein Synonym von 'betrübt'?");
+        deC1S2.setCorrectAnswer("niedergeschlagen");
+        deC1S2.setWrongOption1("fröhlich");
+        deC1S2.setWrongOption2("heiter");
+        deC1S2.setWrongOption3("vergnügt");
+        deC1S2.setXpReward(30);
+        deC1S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC1S2);
+
+        ExerciseMcq deC1S3 = new ExerciseMcq();
+        deC1S3.setTargetLanguage(Language.DE);
+        deC1S3.setDifficultyLevel(LanguageLevel.C1);
+        deC1S3.setTopic("synonyme");
+        deC1S3.setQuestionText("Welches Wort ist ein Synonym von 'stur'?");
+        deC1S3.setCorrectAnswer("hartnäckig");
+        deC1S3.setWrongOption1("flexibel");
+        deC1S3.setWrongOption2("nachgiebig");
+        deC1S3.setWrongOption3("anpassungsfähig");
+        deC1S3.setXpReward(30);
+        deC1S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC1S3);
+
+        ExerciseMcq deC1S4 = new ExerciseMcq();
+        deC1S4.setTargetLanguage(Language.DE);
+        deC1S4.setDifficultyLevel(LanguageLevel.C1);
+        deC1S4.setTopic("synonyme");
+        deC1S4.setQuestionText("Welches Wort ist ein Synonym von 'scharfsinnig'?");
+        deC1S4.setCorrectAnswer("klarsichtig");
+        deC1S4.setWrongOption1("naiv");
+        deC1S4.setWrongOption2("töricht");
+        deC1S4.setWrongOption3("begriffsstutzig");
+        deC1S4.setXpReward(30);
+        deC1S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC1S4);
+
+        // C2 Level - Sophisticated Synonyms
+        ExerciseMcq deC2S1 = new ExerciseMcq();
+        deC2S1.setTargetLanguage(Language.DE);
+        deC2S1.setDifficultyLevel(LanguageLevel.C2);
+        deC2S1.setTopic("synonyme");
+        deC2S1.setQuestionText("Welches Wort ist ein Synonym von 'vergänglich'?");
+        deC2S1.setCorrectAnswer("flüchtig");
+        deC2S1.setWrongOption1("dauerhaft");
+        deC2S1.setWrongOption2("beständig");
+        deC2S1.setWrongOption3("ewig");
+        deC2S1.setXpReward(35);
+        deC2S1.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC2S1);
+
+        ExerciseMcq deC2S2 = new ExerciseMcq();
+        deC2S2.setTargetLanguage(Language.DE);
+        deC2S2.setDifficultyLevel(LanguageLevel.C2);
+        deC2S2.setTopic("synonyme");
+        deC2S2.setQuestionText("Welches Wort ist ein Synonym von 'allgegenwärtig'?");
+        deC2S2.setCorrectAnswer("omnipräsent");
+        deC2S2.setWrongOption1("selten");
+        deC2S2.setWrongOption2("rar");
+        deC2S2.setWrongOption3("ungewöhnlich");
+        deC2S2.setXpReward(35);
+        deC2S2.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC2S2);
+
+        ExerciseMcq deC2S3 = new ExerciseMcq();
+        deC2S3.setTargetLanguage(Language.DE);
+        deC2S3.setDifficultyLevel(LanguageLevel.C2);
+        deC2S3.setTopic("synonyme");
+        deC2S3.setQuestionText("Welches Wort ist ein Synonym von 'beredt'?");
+        deC2S3.setCorrectAnswer("wortgewandt");
+        deC2S3.setWrongOption1("ungeschickt");
+        deC2S3.setWrongOption2("stammelnd");
+        deC2S3.setWrongOption3("unbeholfen");
+        deC2S3.setXpReward(35);
+        deC2S3.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC2S3);
+
+        ExerciseMcq deC2S4 = new ExerciseMcq();
+        deC2S4.setTargetLanguage(Language.DE);
+        deC2S4.setDifficultyLevel(LanguageLevel.C2);
+        deC2S4.setTopic("synonyme");
+        deC2S4.setQuestionText("Welches Wort ist ein Synonym von 'akribisch'?");
+        deC2S4.setCorrectAnswer("penibel");
+        deC2S4.setWrongOption1("nachlässig");
+        deC2S4.setWrongOption2("schlampig");
+        deC2S4.setWrongOption3("ungenau");
+        deC2S4.setXpReward(35);
+        deC2S4.setContentType(ExerciseContentType.SYNONYM);
+        saveMcqIfNotExists(deC2S4);
+
+        logger.info("German SYNONYM exercises seeded: 24 MCQ");
+    }
+
+    /**
+     * Saves an MCQ exercise only if an exercise with the same question_text doesn't already exist.
+     * This ensures idempotent seeding - safe to run multiple times without creating duplicates.
+     */
+    private void saveMcqIfNotExists(ExerciseMcq mcq) {
+        if (!mcqRepository.existsByQuestionText(mcq.getQuestionText())) {
+            mcqRepository.save(mcq);
+        }
+    }
+
+    /**
+     * Saves a Fill-Blank exercise only if an exercise with the same sentence_with_blank doesn't already exist.
+     * This ensures idempotent seeding - safe to run multiple times without creating duplicates.
+     */
+    private void saveFillBlankIfNotExists(ExerciseFillBlank fillBlank) {
+        if (!fillBlankRepository.existsBySentenceWithBlank(fillBlank.getSentenceWithBlank())) {
+            fillBlankRepository.save(fillBlank);
+        }
     }
 }

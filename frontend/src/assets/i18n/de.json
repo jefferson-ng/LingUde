@@ -24,7 +24,8 @@
     "leaderboard": "Bestenliste",
     "statistics": "Statistiken",
     "friends": "Freunde",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "admin": "Admin"
   },
   "user": {
     "level": "Level",
@@ -406,6 +407,61 @@
     "back": "Zurück",
     "continue": "Weiter",
     "saving": "Speichern..."
+  },
+  "admin": {
+    "users": {
+      "title": "Benutzerverwaltung",
+      "subtitle": "Alle registrierten Benutzer anzeigen und verwalten",
+      "loading": "Benutzer werden geladen...",
+      "errorLoad": "Benutzer konnten nicht geladen werden. Bitte erneut versuchen.",
+      "retry": "Erneut versuchen",
+      "noUsers": "Keine Benutzer gefunden",
+      "table": {
+        "username": "Benutzername",
+        "email": "E-Mail",
+        "role": "Rolle",
+        "xp": "XP",
+        "streak": "Streak"
+      },
+      "pagination": {
+        "showing": "Zeige",
+        "of": "von",
+        "previous": "Zurück",
+        "next": "Weiter"
+      },
+      "modal": {
+        "title": "Benutzerdetails",
+        "loading": "Benutzerdetails werden geladen...",
+        "userInfo": "Benutzerinformationen",
+        "username": "Benutzername",
+        "email": "E-Mail",
+        "role": "Rolle",
+        "displayName": "Anzeigename",
+        "profile": "Profil",
+        "bio": "Bio",
+        "location": "Standort",
+        "learning": "Lernfortschritt",
+        "language": "Sprache",
+        "currentLevel": "Aktuelles Niveau",
+        "targetLevel": "Zielniveau",
+        "xp": "XP",
+        "streak": "Streak",
+        "lastActivity": "Letzte Aktivität",
+        "achievements": "Erfolge",
+        "noAchievements": "Noch keine Erfolge"
+      },
+      "roleChange": {
+        "title": "Rolle ändern",
+        "description": "Ändere die Rolle dieses Benutzers, um Admin-Rechte zu vergeben oder zu entziehen.",
+        "makeAdmin": "Zum Admin machen",
+        "makeUser": "Zum Benutzer machen",
+        "confirmMessage": "Bist du sicher, dass du die Rolle von {{username}} auf {{newRole}} ändern möchtest?",
+        "confirm": "Ja, Rolle ändern",
+        "cancel": "Abbrechen",
+        "updating": "Aktualisiere...",
+        "error": "Rolle konnte nicht geändert werden. Bitte erneut versuchen."
+      }
+    }
   },
   "friends": {
     "title": "Freunde",

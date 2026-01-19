@@ -90,6 +90,21 @@
             </a>
           </li>
           }
+
+          <!-- Admin link - only visible to admins -->
+          @if (isAdmin()) {
+            <li class="nav-item">
+              <a
+                routerLink="/admin/users"
+                routerLinkActive="active"
+                class="nav-link admin-link"
+                (click)="closeSidebar()"
+              >
+                <lucide-icon [img]="ShieldIcon" class="nav-icon"></lucide-icon>
+                <span class="nav-label">{{ t('nav.admin') }}</span>
+              </a>
+            </li>
+          }
         </ul>
       </nav>
 
