@@ -1,6 +1,7 @@
 
 import { Routes } from '@angular/router';
 import { AuthGuard } from './services/auth.guard';
+import { AdminGuard } from './services/admin.guard';
 import {FriendsList} from './components/friends-list/friends-list';
 import {FriendsLayout} from './layouts/friends-layout/friends-layout';
 import {FriendRequests} from './components/friend-requests/friend-requests';
@@ -96,6 +97,21 @@ export const routes: Routes = [
           {
             path: 'search',
             component: FriendSearch
+          }
+        ]
+      },
+      {
+        path: 'admin',
+        canActivate: [AdminGuard],
+        children: [
+          {
+            path: '',
+            redirectTo: 'users',
+            pathMatch: 'full'
+          },
+          {
+            path: 'users',
+            loadComponent: () => import('./pages/admin/admin-users/admin-users').then(m => m.AdminUsers)
           }
         ]
       },

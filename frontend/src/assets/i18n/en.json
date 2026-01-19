@@ -23,7 +23,8 @@
     "leaderboard": "Leaderboard",
     "statistics": "Statistics",
     "friends": "Friends",
-    "settings": "Settings"
+    "settings": "Settings",
+    "admin": "Admin"
   },
   "user": {
     "level": "Level",
@@ -423,6 +424,61 @@
     "back": "Back",
     "continue": "Continue",
     "saving": "Saving..."
+  },
+  "admin": {
+    "users": {
+      "title": "User Management",
+      "subtitle": "View and manage all registered users",
+      "loading": "Loading users...",
+      "errorLoad": "Failed to load users. Please try again.",
+      "retry": "Retry",
+      "noUsers": "No users found",
+      "table": {
+        "username": "Username",
+        "email": "Email",
+        "role": "Role",
+        "xp": "XP",
+        "streak": "Streak"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "of": "of",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "modal": {
+        "title": "User Details",
+        "loading": "Loading user details...",
+        "userInfo": "User Information",
+        "username": "Username",
+        "email": "Email",
+        "role": "Role",
+        "displayName": "Display Name",
+        "profile": "Profile",
+        "bio": "Bio",
+        "location": "Location",
+        "learning": "Learning Progress",
+        "language": "Language",
+        "currentLevel": "Current Level",
+        "targetLevel": "Target Level",
+        "xp": "XP",
+        "streak": "Streak",
+        "lastActivity": "Last Activity",
+        "achievements": "Achievements",
+        "noAchievements": "No achievements yet"
+      },
+      "roleChange": {
+        "title": "Change Role",
+        "description": "Change this user's role to grant or revoke admin privileges.",
+        "makeAdmin": "Make Admin",
+        "makeUser": "Make User",
+        "confirmMessage": "Are you sure you want to change {{username}}'s role to {{newRole}}?",
+        "confirm": "Yes, Change Role",
+        "cancel": "Cancel",
+        "updating": "Updating...",
+        "error": "Failed to update role. Please try again."
+      }
+    }
   },
   "friends": {
     "title": "Friends",

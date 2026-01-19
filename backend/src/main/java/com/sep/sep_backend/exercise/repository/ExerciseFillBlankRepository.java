@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface ExerciseFillBlankRepository
         extends JpaRepository<ExerciseFillBlank, UUID>, JpaSpecificationExecutor<ExerciseFillBlank> {
+
+    boolean existsBySentenceWithBlank(String sentenceWithBlank);
 }
