@@ -3,7 +3,7 @@
     <!-- Chat Header -->
     <div class="chat-header">
       <div class="header-left">
-        <img src="assets/robert-otter.png" alt="Otto the Otter" class="header-icon otto-avatar">
+        <img src="assets/robert-otter.png" alt="Rob the Otter" class="header-icon rob-avatar">
         <div class="header-info">
           <h1>{{ t('chat.title') }}</h1>
         </div>
@@ -24,7 +24,7 @@
     <div class="messages-container" #messagesContainer>
       <!-- Welcome message when no messages -->
       <div class="welcome-message" *ngIf="messages().length === 0">
-        <img src="assets/robert-otter.png" alt="Otto the Otter" class="welcome-icon otto-avatar">
+        <img src="assets/robert-otter.png" alt="Rob the Otter" class="welcome-icon rob-avatar">
         <h2>{{ t('chat.welcomeTitle') }}</h2>
         <p>{{ t('chat.welcomeMessage') }}</p>
         <div class="suggested-prompts">
@@ -53,7 +53,7 @@
             @if (msg.role === 'USER') {
               <div class="user-avatar">{{ getUserInitial() }}</div>
             } @else {
-              <img src="assets/robert-otter.png" alt="Otto" class="otto-message-avatar">
+              <img src="assets/robert-otter.png" alt="Rob" class="rob-message-avatar">
             }
           </div>
           
@@ -68,10 +68,10 @@
           </div>
         </div>
 
-        <!-- Loading indicator with Otto thinking animation -->
-        <div class="message ai-message otto-thinking" *ngIf="isLoading()">
+        <!-- Loading indicator with Rob thinking animation -->
+        <div class="message ai-message rob-thinking" *ngIf="isLoading()">
           <div class="message-avatar thinking-avatar">
-            <img src="assets/robert-otter.png" alt="Otto" class="otto-message-avatar">
+            <img src="assets/robert-otter.png" alt="Rob" class="rob-message-avatar">
           </div>
           <div class="message-content">
             <div class="message-header">

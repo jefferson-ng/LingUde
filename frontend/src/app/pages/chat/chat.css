@@ -45,7 +45,7 @@
   color: white;
 }
 
-.header-icon.otto-avatar {
+.header-icon.rob-avatar {
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid #6366f1;
@@ -122,7 +122,7 @@
   margin-bottom: 24px;
 }
 
-.welcome-icon.otto-avatar {
+.welcome-icon.rob-avatar {
   width: 80px;
   height: 80px;
   object-fit: cover;
@@ -212,7 +212,7 @@
   color: white;
 }
 
-.otto-message-avatar {
+.rob-message-avatar {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -347,16 +347,16 @@
   }
 }
 
-/* Otto Thinking Animation */
-.otto-thinking .thinking-avatar {
-  animation: otto-bounce 1s ease-in-out infinite;
+/* Rob Thinking Animation */
+.rob-thinking .thinking-avatar {
+  animation: rob-bounce 1s ease-in-out infinite;
 }
 
-.otto-thinking .thinking-avatar img {
-  animation: otto-wiggle 0.5s ease-in-out infinite;
+.rob-thinking .thinking-avatar img {
+  animation: rob-wiggle 0.5s ease-in-out infinite;
 }
 
-@keyframes otto-bounce {
+@keyframes rob-bounce {
   0%, 100% {
     transform: translateY(0);
   }
@@ -365,7 +365,7 @@
   }
 }
 
-@keyframes otto-wiggle {
+@keyframes rob-wiggle {
   0%, 100% {
     transform: rotate(0deg);
   }
@@ -393,13 +393,13 @@
   }
 }
 
-.otto-thinking .typing-indicator {
+.rob-thinking .typing-indicator {
   background: var(--bg-secondary, #f5f5f5);
   border-radius: 16px;
   border-bottom-left-radius: 4px;
 }
 
-.otto-thinking .typing-indicator span {
+.rob-thinking .typing-indicator span {
   background: #6366f1;
 }
 
