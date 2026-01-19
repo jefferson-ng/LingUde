@@ -31,7 +31,7 @@
           <lucide-icon [img]="FlameIcon" [size]="40"></lucide-icon>
         </div>
         <div class="streak-content">
-          <h3 class="streak-title">{{ userStreak() }} {{ t('dashboard.days') }}</h3>
+          <h3 class="streak-title">{{ userStreak() }} {{ userStreak() === 1 ? t('dashboard.day') : t('dashboard.days') }}</h3>
           <p class="streak-subtitle">{{ t('dashboard.streak') }}</p>
         </div>
         <p class="streak-message">
