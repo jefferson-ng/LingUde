@@ -124,7 +124,7 @@ class ExerciseControllerTest {
         body.setSelectedAnswer("glad");
 
         var result = new SubmissionResultResponse(true, 15, "glad", "Great job!");
-        Mockito.when(service.submitMcq(eq(id), any(McqSubmissionRequest.class), any()))
+        Mockito.when(service.submitMcq(eq(id), any(McqSubmissionRequest.class), any(), any(Boolean.class)))
                 .thenReturn(result);
 
         mvc.perform(post("/api/exercises/mcq/{id}/submit", id)
@@ -195,7 +195,8 @@ class ExerciseControllerTest {
         Mockito.when(service.submitFillBlank(
                 org.mockito.ArgumentMatchers.eq(id),
                 org.mockito.ArgumentMatchers.any(FillBlankSubmissionRequest.class),
-                org.mockito.ArgumentMatchers.any())
+                org.mockito.ArgumentMatchers.any(),
+                org.mockito.ArgumentMatchers.any(Boolean.class))
         ).thenReturn(result);
 
         mvc.perform(post("/api/exercises/fillblank/{id}/submit", id)
