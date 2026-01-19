@@ -529,7 +529,8 @@
       "addXp": "XP vergeben",
       "getUserProfile": "Profil abgerufen",
       "getLevelProgress": "Fortschritt geprüft",
-      "getStreak": "Streak geprüft"
+      "getStreak": "Streak geprüft",
+      "getLeaderboardPosition": "Rangliste geprüft"
     },
     "toolResults": {
       "totalXp": "Gesamt",
@@ -540,7 +541,13 @@
       "longestStreak": "Bester Streak",
       "lastActive": "Zuletzt aktiv",
       "xpToNext": "XP bis",
-      "speaksLanguage": "Benutzersprache"
+      "speaksLanguage": "Benutzersprache",
+      "user": "Benutzer",
+      "friendsRank": "Freunde-Rang",
+      "globalRank": "Globaler Rang",
+      "of": "von",
+      "top": "Top",
+      "behind": "hinter"
     },
     "xpAwarded": "+{{amount}} XP",
     "reason": "Grund",

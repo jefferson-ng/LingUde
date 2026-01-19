@@ -2,10 +2,11 @@ import { Component, inject, signal, OnInit, ElementRef, ViewChild, AfterViewChec
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { LucideAngularModule, Send, Bot, User, Trash2, MessageSquare, ChevronDown, ChevronUp, History, Clock, Activity, Star, TrendingUp, Flame } from 'lucide-angular';
+import { LucideAngularModule, Send, Bot, User, Trash2, MessageSquare, ChevronDown, ChevronUp, History, Clock, Sparkles, Star, TrendingUp, Flame, Trophy, Wrench } from 'lucide-angular';
 import { MarkdownComponent } from 'ngx-markdown';
 import { ChatService } from '../../services/chat.service';
 import { ChatMessage, ChatSession } from '../../models/chat.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-chat',
@@ -19,6 +20,7 @@ export class Chat implements OnInit, AfterViewChecked {
   @ViewChild('messageInput') private messageInput!: ElementRef;
 
   private chatService = inject(ChatService);
+  private authService = inject(AuthService);
 
   // Icons
   readonly SendIcon = Send;
@@ -30,10 +32,12 @@ export class Chat implements OnInit, AfterViewChecked {
   readonly ChevronUpIcon = ChevronUp;
   readonly HistoryIcon = History;
   readonly ClockIcon = Clock;
-  readonly ActivityIcon = Activity;
+  readonly SparklesIcon = Sparkles;
+  readonly WrenchIcon = Wrench;
   readonly StarIcon = Star;
   readonly TrendingUpIcon = TrendingUp;
   readonly FlameIcon = Flame;
+  readonly TrophyIcon = Trophy;
 
   // State
   protected messages = signal<ChatMessage[]>([]);
@@ -48,10 +52,20 @@ export class Chat implements OnInit, AfterViewChecked {
   protected showHistoryPanel = signal(false);
   protected isLoadingSessions = signal(false);
 
+  // User info
+  protected userName = signal<string>('');
+
   // For auto-scroll
   private shouldScrollToBottom = false;
 
   ngOnInit(): void {
+    // Get current user info
+    this.authService.user$.subscribe(user => {
+      if (user) {
+        this.userName.set(user.username);
+      }
+    });
+
     // Subscribe to messages
     this.chatService.messages$.subscribe(messages => {
       this.messages.set(messages);
@@ -212,5 +226,10 @@ export class Chat implements OnInit, AfterViewChecked {
     } catch {
       return '';
     }
+  }
+
+  protected getUserInitial(): string {
+    const name = this.userName();
+    return name ? name.charAt(0).toUpperCase() : 'U';
   }
 }

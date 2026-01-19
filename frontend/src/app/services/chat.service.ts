@@ -113,8 +113,18 @@ export class ChatService {
    * Send a message to the AI tutor
    */
   sendMessage(message: string, sessionId?: string): Observable<ChatMessageResponse> {
+    // Add user message immediately to UI
+    const currentMessages = this.messagesSubject.value;
+    const userMessage: ChatMessage = {
+      role: 'USER',
+      content: message,
+      timestamp: new Date().toISOString()
+    };
+    this.messagesSubject.next([...currentMessages, userMessage]);
+
+    // Start loading animation
     this.loadingSubject.next(true);
-    
+
     const request: ChatMessageRequest = {
       message,
       sessionId: sessionId || this.currentSessionSubject.value || undefined
@@ -126,23 +136,15 @@ export class ChatService {
           // Update and persist current session
           this.currentSessionSubject.next(response.sessionId);
           this.saveSessionToStorage(response.sessionId);
-          
-          // Add user message and AI response to local messages
-          const currentMessages = this.messagesSubject.value;
-          const newMessages: ChatMessage[] = [
-            ...currentMessages,
-            {
-              role: 'USER',
-              content: message,
-              timestamp: new Date().toISOString()
-            },
-            {
-              role: 'MODEL',
-              content: response.response,
-              timestamp: response.timestamp
-            }
-          ];
-          this.messagesSubject.next(newMessages);
+
+          // Add AI response to messages (user message already added)
+          const currentMessagesAfterSend = this.messagesSubject.value;
+          const aiMessage: ChatMessage = {
+            role: 'MODEL',
+            content: response.response,
+            timestamp: response.timestamp
+          };
+          this.messagesSubject.next([...currentMessagesAfterSend, aiMessage]);
 
           // Add tool calls to debug info if available
           if (response.toolCalls && response.toolCalls.length > 0) {
@@ -242,9 +244,22 @@ export class ChatService {
 
   /**
    * Get tool activities for a session
+   * Maps backend ToolActivityDto to frontend format with 'type' field
+   * Backend returns descending order, we reverse to show oldest first
    */
   getToolActivities(sessionId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/sessions/${sessionId}/tools`).pipe(
+      map((activities) => activities
+        .map(activity => ({
+          type: 'tool',
+          name: activity.name,
+          arguments: activity.arguments,
+          result: activity.result,
+          durationMs: activity.durationMs,
+          timestamp: activity.timestamp
+        }))
+        .reverse() // Backend returns newest first, we want oldest first for chronological display
+      ),
       catchError((err) => {
         console.warn('Failed to load tool activities:', err);
         return of([]);

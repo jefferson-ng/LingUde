@@ -6,9 +6,6 @@
         <img src="assets/robert-otter.png" alt="Otto the Otter" class="header-icon otto-avatar">
         <div class="header-info">
           <h1>{{ t('chat.title') }}</h1>
-          <span class="session-info" *ngIf="currentSessionId()">
-            Session: {{ currentSessionId()?.slice(0, 8) }}...
-          </span>
         </div>
       </div>
       <div class="header-actions">
@@ -54,7 +51,7 @@
           
           <div class="message-avatar">
             @if (msg.role === 'USER') {
-              <lucide-icon [img]="UserIcon" [size]="20"></lucide-icon>
+              <div class="user-avatar">{{ getUserInitial() }}</div>
             } @else {
               <img src="assets/robert-otter.png" alt="Otto" class="otto-message-avatar">
             }
@@ -111,7 +108,6 @@
           <lucide-icon [img]="SendIcon" [size]="20"></lucide-icon>
         </button>
       </div>
-      <p class="input-hint">{{ t('chat.inputHint') }}</p>
     </div>
   </div>
 
@@ -119,7 +115,7 @@
   <div class="activity-panel" [class.collapsed]="!showActivityPanel()">
     <div class="activity-header" (click)="toggleActivityPanel()">
       <div class="activity-title">
-        <lucide-icon [img]="ActivityIcon" [size]="18"></lucide-icon>
+        <lucide-icon [img]="SparklesIcon" [size]="18"></lucide-icon>
         <span>{{ t('chat.toolActivity') }}</span>
         <span class="activity-count" *ngIf="toolActivities().length > 0">
           ({{ toolActivities().length }})
@@ -165,6 +161,11 @@
               </div>
               <div class="activity-meta">
                 @if (activity.result?.success) {
+                  @if (activity.result.username) {
+                    <span class="activity-result">
+                      {{ t('chat.toolResults.user') }}: {{ activity.result.username }}
+                    </span>
+                  }
                   <span class="activity-result">
                     {{ t('chat.toolResults.learning') }} {{ activity.result.learningLanguage }}
                     @if (activity.result.currentLevel) {
@@ -235,10 +236,48 @@
             </div>
           }
 
+          <!-- Leaderboard Position Activity -->
+          @else if (activity.name === 'getLeaderboardPosition') {
+            <div class="activity-icon leaderboard-icon">
+              <lucide-icon [img]="TrophyIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.getLeaderboardPosition') }}</span>
+                @if (activity.result?.globalRank !== undefined && activity.result?.globalRank !== null) {
+                  <span class="rank-badge">#{{ activity.result.globalRank }}</span>
+                }
+              </div>
+              <div class="activity-meta">
+                @if (activity.result?.success) {
+                  @if (activity.result.friendsRank !== null) {
+                    <span class="activity-result">
+                      {{ t('chat.toolResults.friendsRank') }}: #{{ activity.result.friendsRank }} {{ t('chat.toolResults.of') }} {{ activity.result.totalFriends }}
+                    </span>
+                  }
+                  @if (activity.result.globalRank !== null) {
+                    <span class="activity-result">
+                      {{ t('chat.toolResults.globalRank') }}: #{{ activity.result.globalRank }} {{ t('chat.toolResults.of') }} {{ activity.result.totalUsers }}
+                      @if (activity.result.topPercentile) {
+                        ({{ t('chat.toolResults.top') }} {{ activity.result.topPercentile }}%)
+                      }
+                    </span>
+                  }
+                  @if (activity.result.friendAbove) {
+                    <span class="activity-result">
+                      {{ activity.result.friendAbove.xpDifference }} XP {{ t('chat.toolResults.behind') }} {{ activity.result.friendAbove.username }}
+                    </span>
+                  }
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
           <!-- Other/Unknown Activity -->
           @else {
             <div class="activity-icon other-icon">
-              <lucide-icon [img]="ActivityIcon" [size]="18"></lucide-icon>
+              <lucide-icon [img]="WrenchIcon" [size]="18"></lucide-icon>
             </div>
             <div class="activity-details">
               <div class="activity-main">
@@ -257,7 +296,7 @@
 
       <ng-template #noActivity>
         <div class="no-activity">
-          <lucide-icon [img]="ActivityIcon" [size]="32"></lucide-icon>
+          <lucide-icon [img]="SparklesIcon" [size]="32"></lucide-icon>
           <p>{{ t('chat.noActivity') }}</p>
           <small>{{ t('chat.noActivityHint') }}</small>
         </div>
