@@ -47,9 +47,9 @@
     "lessons": "Lessons",
     "achievements": "Achievements",
     "dailyGoals": "Daily Goals",
-    "dailyLesson": "Daily Lesson",
-    "dailyLessonText": "Continue your learning journey with today's lesson.",
-    "startLesson": "Start Lesson",
+    "aiChat": "Chat with Otto",
+    "aiChatText": "Practice your language skills with Otto the Otter!",
+    "startChat": "Start Chat",
     "goals": "Daily Goals",
     "goalsRemaining": "2 more goals for today! You can do it!",
     "viewGoals": "View Goals"
