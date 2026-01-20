@@ -93,10 +93,13 @@ public class ChatController {
             session = conversationService.getOrCreateSession(userId, learningLanguage);
         }
 
-        // Easter egg: Check for /shakeit command
+        // Easter eggs: Check for special commands
         String userMessage = request.getMessage().trim();
         if (userMessage.equalsIgnoreCase("/shakeit")) {
             return handleShakeItEasterEgg(userId, session);
+        }
+        if (userMessage.equalsIgnoreCase("/nagit")) {
+            return handleNagitEasterEgg(userId, session);
         }
 
         // Send message and get AI response with tool call info
@@ -256,6 +259,83 @@ public class ChatController {
         "https://media1.tenor.com/m/cedC1kESxYcAAAAC/otter-dance.gif"
     };
 
+    // Array of surprised/bored otter GIF URLs for /nagit easter egg
+    private static final String[] NAGIT_OTTER_GIFS = {
+        "https://media1.tenor.com/m/4uLw1ym9J2MAAAAC/otter-surprised.gif",
+        "https://media1.tenor.com/m/XXpl59NmzLYAAAAC/otter-bored.gif"
+    };
+
+    /**
+     * Easter egg handler for /nagit command.
+     * Awards +11 XP and returns a random surprised/bored otter GIF.
+     */
+    private ResponseEntity<ChatMessageResponse> handleNagitEasterEgg(UUID userId, ChatSession session) {
+        log.info("🎉 Easter egg activated! User {} used /nagit", userId);
+
+        // Save user's command message
+        ChatMessage userMsg = new ChatMessage();
+        userMsg.setSession(session);
+        userMsg.setRole(ChatMessage.MessageRole.USER);
+        userMsg.setContent("/nagit");
+        userMsg.setCreatedAt(LocalDateTime.now());
+        messageRepository.save(userMsg);
+
+        // Award +11 XP and get updated user stats
+        Optional<UserLearning> learning = userLearningService.addXp(userId, 11);
+        Integer currentXp = learning.map(UserLearning::getXp).orElse(0);
+        Integer currentStreak = learning.map(UserLearning::getStreakCount).orElse(0);
+
+        // Randomly select an otter GIF
+        String randomGif = NAGIT_OTTER_GIFS[new java.util.Random().nextInt(NAGIT_OTTER_GIFS.length)];
+
+        // Easter egg response with otter GIF
+        String easterEggResponse = "🌟 **-.-** 🌟\n\n" +
+            "![Surprised Otter](" + randomGif + ")\n\n" +
+            " **+11 XP** 🦦💎";
+
+        // Save easter egg response
+        ChatMessage aiMsg = new ChatMessage();
+        aiMsg.setSession(session);
+        aiMsg.setRole(ChatMessage.MessageRole.MODEL);
+        aiMsg.setContent(easterEggResponse);
+        aiMsg.setCreatedAt(LocalDateTime.now());
+        messageRepository.save(aiMsg);
+
+        // Update session timestamp
+        session.setUpdatedAt(LocalDateTime.now());
+        sessionRepository.save(session);
+
+        ChatMessageResponse response = new ChatMessageResponse(
+            session.getId().toString(),
+            easterEggResponse,
+            LocalDateTime.now(),
+            currentXp,
+            currentStreak
+        );
+
+        // Add a fake toolCall to trigger frontend XP refresh
+        Map<String, Object> xpArgs = new java.util.HashMap<>();
+        xpArgs.put("xpAmount", 11);
+        xpArgs.put("reason", "Nagit easter egg discovered!");
+
+        Map<String, Object> xpResult = new java.util.HashMap<>();
+        xpResult.put("success", true);
+        xpResult.put("newXp", currentXp);
+        xpResult.put("xpAdded", 11);
+        xpResult.put("reason", "Nagit easter egg discovered!");
+
+        ConversationResult.ToolCallInfo toolCall = new ConversationResult.ToolCallInfo(
+            "addXp",
+            xpArgs,
+            xpResult,
+            0L
+        );
+
+        response.setToolCalls(java.util.List.of(toolCall));
+
+        return ResponseEntity.ok(response);
+    }
+
     /**
      * Easter egg handler for /shakeit command.
      * Awards +1 XP and returns a random dancing otter GIF.
@@ -282,7 +362,7 @@ public class ChatController {
         // Easter egg response with dancing otter GIF
         String easterEggResponse = "🎉 **SHAKE IT!** 🎉\n\n" +
             "![Dancing Otter](" + randomGif + ")\n\n" +
-            "You found the secret dance party! **+1 XP** awarded! 🦦✨";
+            " **+1 XP** awarded! 🦦✨";
 
         // Save easter egg response
         ChatMessage aiMsg = new ChatMessage();
