@@ -137,16 +137,19 @@ export class App implements OnInit {
    */
   private updateXPAndLevel(xp: number): void {
     this.userXP.set(xp);
-    
+
     // Calculate level (100 XP per level)
     const level = Math.floor(xp / 100) + 1;
     this.userLevel.set(level);
-    
-    // Calculate XP progress within current level
+
+    // Calculate XP needed for next level
+    const xpForNextLevel = level * 100;
+    this.xpForNextLevel.set(xpForNextLevel);
+
+    // Calculate XP progress within current level for progress bar
     const xpInLevel = xp % 100;
     this.xpInCurrentLevel.set(xpInLevel);
-    this.xpForNextLevel.set(100 - xpInLevel);
-    
+
     // Calculate progress percentage for the bar
     const percent = (xpInLevel / 100) * 100;
     this.xpProgressPercent.set(percent);
