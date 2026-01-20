@@ -35,6 +35,7 @@ export interface ExerciseDetailResponse {
   difficultyLevel: DifficultyLevel;
   topic: string;
   xpReward: number;
+  contentType?: 'VOCABULARY' | 'GRAMMAR' | 'SYNONYM';
 
   // MCQ fields (populated when type === 'MCQ')
   questionText?: string;
