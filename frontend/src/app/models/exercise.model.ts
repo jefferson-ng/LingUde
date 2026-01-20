@@ -21,6 +21,7 @@ export interface ExerciseSummaryResponse {
   topic: string;
   xpReward: number;
   previewText: string;  // Backend sends questionText or sentenceWithBlank as preview
+  contentType?: 'VOCABULARY' | 'GRAMMAR' | 'SYNONYM';
 }
 
 /**
@@ -34,11 +35,12 @@ export interface ExerciseDetailResponse {
   difficultyLevel: DifficultyLevel;
   topic: string;
   xpReward: number;
-  
+  contentType?: 'VOCABULARY' | 'GRAMMAR' | 'SYNONYM';
+
   // MCQ fields (populated when type === 'MCQ')
   questionText?: string;
   options?: string[];  // Already shuffled by backend
-  
+
   // Fill-Blank fields (populated when type === 'FILL_BLANK')
   sentenceWithBlank?: string;
 }
