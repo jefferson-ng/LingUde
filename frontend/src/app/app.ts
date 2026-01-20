@@ -6,6 +6,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
 import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X, Shield, MessageCircle } from 'lucide-angular';
 import { filter } from 'rxjs/operators';
+import { calculateLevelProgress } from './utils/level.utils';
 
 @Component({
   selector: 'app-root',
@@ -133,26 +134,17 @@ export class App implements OnInit {
   }
 
   /**
-   * Update XP and calculate level progress
+   * Update XP and calculate level progress using exponential leveling system
    */
   private updateXPAndLevel(xp: number): void {
     this.userXP.set(xp);
 
-    // Calculate level (100 XP per level)
-    const level = Math.floor(xp / 100) + 1;
-    this.userLevel.set(level);
-
-    // Calculate XP needed for next level
-    const xpForNextLevel = level * 100;
-    this.xpForNextLevel.set(xpForNextLevel);
-
-    // Calculate XP progress within current level for progress bar
-    const xpInLevel = xp % 100;
-    this.xpInCurrentLevel.set(xpInLevel);
-
-    // Calculate progress percentage for the bar
-    const percent = (xpInLevel / 100) * 100;
-    this.xpProgressPercent.set(percent);
+    // Calculate level progress using exponential formula
+    const progress = calculateLevelProgress(xp);
+    this.userLevel.set(progress.level);
+    this.xpInCurrentLevel.set(progress.xpInCurrentLevel);
+    this.xpForNextLevel.set(progress.xpRequiredForNextLevel);
+    this.xpProgressPercent.set(progress.progressPercent);
   }
 
   /**

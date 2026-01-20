@@ -276,7 +276,7 @@
               [class.selected]="selectedLevel()?.id === level.id"
               [attr.data-difficulty]="level.difficultyLevel"
             >
-              <button class="level-node" (click)="selectLevel(level, $event)" [disabled]="level.status === 'locked'">
+              <button class="level-node" (click)="selectLevel(level, $event)">
                 <div class="node-circle">
                   <div class="node-inner">
                     @if (level.status === 'locked') {
