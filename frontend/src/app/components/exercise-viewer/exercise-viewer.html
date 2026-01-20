@@ -1,4 +1,13 @@
 <div class="exercise-viewer">
+  <!-- Content Type Badge -->
+  @if (exerciseSignal()?.contentType) {
+    <div class="content-type-header">
+      <span class="content-badge" [ngClass]="getContentBadgeClass()">
+        {{ getContentTypeLabel() }}
+      </span>
+    </div>
+  }
+
   <!-- MCQ Exercise -->
   @if (exerciseSignal()?.type === 'MCQ') {
     <div class="mcq-exercise">
