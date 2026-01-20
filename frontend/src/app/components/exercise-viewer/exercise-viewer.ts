@@ -162,4 +162,32 @@ export class ExerciseViewerComponent implements OnChanges {
     if (!this.submitted() || ex?.type !== 'MCQ') return false;
     return option === this.selectedOption() && !this.isCorrect();
   }
+
+  getContentBadgeClass(): string {
+    const contentType = this.exerciseSignal()?.contentType;
+    switch (contentType) {
+      case 'VOCABULARY':
+        return 'badge-vocab';
+      case 'GRAMMAR':
+        return 'badge-grammar';
+      case 'SYNONYM':
+        return 'badge-synonym';
+      default:
+        return '';
+    }
+  }
+
+  getContentTypeLabel(): string {
+    const contentType = this.exerciseSignal()?.contentType;
+    switch (contentType) {
+      case 'VOCABULARY':
+        return 'Vocabulary';
+      case 'GRAMMAR':
+        return 'Grammar';
+      case 'SYNONYM':
+        return 'Synonym';
+      default:
+        return '';
+    }
+  }
 }
