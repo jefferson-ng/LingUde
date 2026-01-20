@@ -123,6 +123,18 @@ export interface UserProgress {
   completedAt?: Date;
   xpEarned: number;
   createdAt: Date;
+  incorrectAttempts?: number;
+}
+
+/**
+ * Incorrect Exercise Response from Backend
+ * Used for listing exercises with incorrect attempts
+ */
+export interface IncorrectExerciseResponse {
+  exerciseId: string;
+  exerciseType: ExerciseType;
+  xpEarned: number;
+  completedAt?: Date;
 }
 
 /**

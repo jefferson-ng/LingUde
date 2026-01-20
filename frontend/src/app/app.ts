@@ -197,8 +197,6 @@ export class App implements OnInit {
     { path: '/dashboard', translationKey: 'nav.dashboard', icon: 'home' },
     { path: '/chat', translationKey: 'nav.chat', icon: 'message-circle' },
     { path: '/learning', translationKey: 'nav.learning', icon: 'graduation-cap' },
-    { path: '/lessons', translationKey: 'nav.lessons', icon: 'book-open' },
-    { path: '/goals', translationKey: 'nav.goals', icon: 'target' },
     { path: '/friends', translationKey: 'nav.friends', icon: 'users' },
     { path: '/leaderboard', translationKey: 'nav.leaderboard', icon: 'trophy' }
   ];
