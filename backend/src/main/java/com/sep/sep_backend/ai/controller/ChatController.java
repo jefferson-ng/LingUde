@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -90,6 +91,12 @@ public class ChatController {
             session = existingSession;
         } else {
             session = conversationService.getOrCreateSession(userId, learningLanguage);
+        }
+
+        // Easter egg: Check for /shakeit command
+        String userMessage = request.getMessage().trim();
+        if (userMessage.equalsIgnoreCase("/shakeit")) {
+            return handleShakeItEasterEgg(userId, session);
         }
 
         // Send message and get AI response with tool call info
@@ -241,6 +248,83 @@ public class ChatController {
             .collect(Collectors.toList());
 
         return ResponseEntity.ok(activities);
+    }
+
+    // Array of dancing otter GIF URLs for variety
+    private static final String[] DANCING_OTTER_GIFS = {
+        "https://media1.tenor.com/m/iSoI8sDYdvwAAAAC/cute-otter.gif",
+        "https://media1.tenor.com/m/cedC1kESxYcAAAAC/otter-dance.gif"
+    };
+
+    /**
+     * Easter egg handler for /shakeit command.
+     * Awards +1 XP and returns a random dancing otter GIF.
+     */
+    private ResponseEntity<ChatMessageResponse> handleShakeItEasterEgg(UUID userId, ChatSession session) {
+        log.info("🎉 Easter egg activated! User {} used /shakeit", userId);
+
+        // Save user's command message
+        ChatMessage userMsg = new ChatMessage();
+        userMsg.setSession(session);
+        userMsg.setRole(ChatMessage.MessageRole.USER);
+        userMsg.setContent("/shakeit");
+        userMsg.setCreatedAt(LocalDateTime.now());
+        messageRepository.save(userMsg);
+
+        // Award +1 XP and get updated user stats
+        Optional<UserLearning> learning = userLearningService.addXp(userId, 1);
+        Integer currentXp = learning.map(UserLearning::getXp).orElse(0);
+        Integer currentStreak = learning.map(UserLearning::getStreakCount).orElse(0);
+
+        // Randomly select a dancing otter GIF
+        String randomGif = DANCING_OTTER_GIFS[new java.util.Random().nextInt(DANCING_OTTER_GIFS.length)];
+
+        // Easter egg response with dancing otter GIF
+        String easterEggResponse = "🎉 **SHAKE IT!** 🎉\n\n" +
+            "![Dancing Otter](" + randomGif + ")\n\n" +
+            "You found the secret dance party! **+1 XP** awarded! 🦦✨";
+
+        // Save easter egg response
+        ChatMessage aiMsg = new ChatMessage();
+        aiMsg.setSession(session);
+        aiMsg.setRole(ChatMessage.MessageRole.MODEL);
+        aiMsg.setContent(easterEggResponse);
+        aiMsg.setCreatedAt(LocalDateTime.now());
+        messageRepository.save(aiMsg);
+
+        // Update session timestamp
+        session.setUpdatedAt(LocalDateTime.now());
+        sessionRepository.save(session);
+
+        ChatMessageResponse response = new ChatMessageResponse(
+            session.getId().toString(),
+            easterEggResponse,
+            LocalDateTime.now(),
+            currentXp,
+            currentStreak
+        );
+
+        // Add a fake toolCall to trigger frontend XP refresh
+        Map<String, Object> xpArgs = new java.util.HashMap<>();
+        xpArgs.put("xpAmount", 1);
+        xpArgs.put("reason", "Easter egg discovered!");
+
+        Map<String, Object> xpResult = new java.util.HashMap<>();
+        xpResult.put("success", true);
+        xpResult.put("newXp", currentXp);
+        xpResult.put("xpAdded", 1);
+        xpResult.put("reason", "Easter egg discovered!");
+
+        ConversationResult.ToolCallInfo toolCall = new ConversationResult.ToolCallInfo(
+            "addXp",
+            xpArgs,
+            xpResult,
+            0L
+        );
+
+        response.setToolCalls(java.util.List.of(toolCall));
+
+        return ResponseEntity.ok(response);
     }
 
     /**
