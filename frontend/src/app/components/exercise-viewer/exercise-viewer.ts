@@ -37,6 +37,7 @@ export class ExerciseViewerComponent implements OnChanges {
   
   @Input() showFeedback = true;
   @Input() autoSubmit = false;
+  @Input() isPracticeMode = false;
   
   @Output() onSubmit = new EventEmitter<ExerciseResult>();
   @Output() onNext = new EventEmitter<void>();
@@ -112,7 +113,7 @@ export class ExerciseViewerComponent implements OnChanges {
       ? this.selectedOption() 
       : this.userAnswer();
 
-    this.exerciseService.submitAnswer(ex.id, ex.type, answer).subscribe({
+    this.exerciseService.submitAnswer(ex.id, ex.type, answer, this.isPracticeMode).subscribe({
       next: (result) => {
         this.submitted.set(true);
         this.isCorrect.set(result.correct);

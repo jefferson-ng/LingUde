@@ -37,6 +37,7 @@
     "partner": "Your LingUDE Partner",
     "motivationalMessage": "I'm proud of your progress! Let's learn together today.",
     "xpToNextLevel": "{{xp}} XP until Level 9",
+    "day": "Day",
     "days": "Days",
     "streak": "Learning Streak",
     "streakActive": "Amazing! Come back tomorrow to keep your streak going.",
@@ -44,15 +45,13 @@
     "streakInactiveZero": "Complete a task today to start your streak!",
     "leaderboard": "Leaderboard",
     "you": "You",
-    "lessons": "Lessons",
-    "achievements": "Achievements",
-    "dailyGoals": "Daily Goals",
+    "completedLevels": "Levels Done",
+    "toReview": "To Review",
+    "yourRank": "Your Rank",
+    "globalRanking": "global ranking",
     "dailyLesson": "Daily Lesson",
     "dailyLessonText": "Continue your learning journey with today's lesson.",
-    "startLesson": "Start Lesson",
-    "goals": "Daily Goals",
-    "goalsRemaining": "2 more goals for today! You can do it!",
-    "viewGoals": "View Goals"
+    "startLesson": "Start Lesson"
   },
   "lessons": {
     "title": "Lessons",
@@ -132,9 +131,27 @@
       "progress": "Progress",
       "whatYouWillLearn": "What you will learn:"
     },
+    "retryPrompt": {
+      "title": "Almost there!",
+      "message": "You answered {{count}} question(s) incorrectly. Would you like to retry them now?",
+      "retry": "Yes, retry",
+      "skip": "No, finish lesson"
+    },
     "lockedNotification": "Please complete the previous tasks first!",
     "levelPath": "Your Learning Path",
     "completeToUnlock": "Complete levels to unlock new ones",
+    "retryIncorrect": "Retry Incorrect Answers ({{count}})",
+    "practiceWidget": {
+      "title": "Practice",
+      "subtitle": "Exercises with mistakes",
+      "subtitleEmpty": "All correct!",
+      "exercisesToReview": "Exercises to review",
+      "progressText": "The fewer mistakes, the better!",
+      "startPractice": "Practice Now",
+      "emptyMessage": "Great job! You have no incorrect answers to practice. Keep it up!",
+      "allDone": "All done!",
+      "nothingToPractice": "Perfect! No exercises to practice right now. Keep going!"
+    },
     "popup": {
       "title": "Start Your Lesson",
       "lessonInfo": "Lesson {{current}} of {{total}}",

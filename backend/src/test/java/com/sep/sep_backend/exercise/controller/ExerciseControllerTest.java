@@ -12,9 +12,9 @@ import com.sep.sep_backend.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import jakarta.annotation.Resource;
 import java.util.List;
@@ -50,19 +50,19 @@ class ExerciseControllerTest {
     @Resource
     private MockMvc mvc;              // performs HTTP calls against the controller
 
-    @MockBean
+    @MockitoBean
     private ExerciseService service;  // mocked service layer
 
-    @MockBean
+    @MockitoBean
     private UserRepository userRepository; //  satisfies SepBackendApplication.run(...)
 
     // This is the important part: override the CommandLineRunner bean
-    @MockBean(name = "run")
+    @MockitoBean
     private CommandLineRunner commandLineRunner;
 
     // Mock JWT authentication filter so that SecurityConfig can be created in the test context
-    // @MockBean tells Spring Boot Test to register a Mockito mock as a bean in the application context
-    @MockBean
+    // @MockitoBean tells Spring Boot Test to register a Mockito mock as a bean in the application context
+    @MockitoBean
     // This mock instance will be injected into SecurityConfig's constructor instead of a real filter
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -124,7 +124,7 @@ class ExerciseControllerTest {
         body.setSelectedAnswer("glad");
 
         var result = new SubmissionResultResponse(true, 15, "glad", "Great job!");
-        Mockito.when(service.submitMcq(eq(id), any(McqSubmissionRequest.class), any()))
+        Mockito.when(service.submitMcq(eq(id), any(McqSubmissionRequest.class), any(), any(Boolean.class)))
                 .thenReturn(result);
 
         mvc.perform(post("/api/exercises/mcq/{id}/submit", id)
@@ -195,7 +195,8 @@ class ExerciseControllerTest {
         Mockito.when(service.submitFillBlank(
                 org.mockito.ArgumentMatchers.eq(id),
                 org.mockito.ArgumentMatchers.any(FillBlankSubmissionRequest.class),
-                org.mockito.ArgumentMatchers.any())
+                org.mockito.ArgumentMatchers.any(),
+                org.mockito.ArgumentMatchers.any(Boolean.class))
         ).thenReturn(result);
 
         mvc.perform(post("/api/exercises/fillblank/{id}/submit", id)

@@ -61,6 +61,9 @@ export class Learning implements OnInit {
   
   protected showLockedNotification = signal<boolean>(false);
   private notificationTimeout: any = null;
+  
+  protected showPracticeWidgetNotification = signal<boolean>(false);
+  private practiceNotificationTimeout: any = null;
 
   // Helper to check if a level is the first in its difficulty group (for showing headers)
   protected isFirstInDifficultyGroup(index: number): boolean {
@@ -80,6 +83,11 @@ export class Learning implements OnInit {
   protected currentExerciseSummaries = signal<ExerciseSummaryResponse[]>([]);
   protected currentExerciseIndex = signal<number>(0);
   protected currentExercise = signal<ExerciseDetailResponse | null>(null);
+  
+  // Practice Widget: Shows persistently saved incorrect exercises from backend
+  protected practiceWidgetCount = signal<number>(0);
+  private persistedIncorrectExercises: ExerciseSummaryResponse[] = [];
+  protected isPracticeMode = false; // Track if we're in practice mode from widget
 
   constructor(private exerciseService: ExerciseService) {}
 
@@ -163,11 +171,101 @@ export class Learning implements OnInit {
         }
         
         this.loadLevels();
+        this.loadPracticeWidgetCount();
       },
       error: (error) => {
         console.error('Error loading user learning data:', error);
       }
     });
+  }
+
+  /**
+   * Load count of persisted incorrect exercises from backend for Practice Widget
+   */
+  private loadPracticeWidgetCount(): void {
+    this.exerciseService.getIncorrectExercises().subscribe({
+      next: (incorrectExercises) => {
+        this.practiceWidgetCount.set(incorrectExercises.length);
+        console.log('📊 Practice Widget: Loaded', incorrectExercises.length, 'persisted incorrect exercises');
+      },
+      error: (error) => {
+        console.error('❌ Failed to load practice widget count:', error);
+        this.practiceWidgetCount.set(0);
+      }
+    });
+  }
+
+  /**
+   * Start practice mode with all persisted incorrect exercises from backend
+   */
+  protected startPracticeMode(): void {
+    console.log('🔄 Starting practice mode from widget');
+    
+    // If no exercises available, show notification instead
+    if (this.practiceWidgetCount() === 0) {
+      this.showPracticeNotification();
+      return;
+    }
+    
+    this.exerciseService.getIncorrectExercises().subscribe({
+      next: (incorrectExercises) => {
+        if (incorrectExercises.length === 0) {
+          console.log('No incorrect exercises to practice');
+          return;
+        }
+
+        // Fetch all exercise summaries and filter to only include incorrect ones
+        this.exerciseService.getExercises(this.userLanguage()).subscribe({
+          next: (allExercises) => {
+            const incorrectExerciseIds = new Set(incorrectExercises.map(e => e.exerciseId));
+            const exercisesToPractice = allExercises.filter(ex => incorrectExerciseIds.has(ex.id));
+            
+            console.log('📝 Starting practice with', exercisesToPractice.length, 'exercises');
+            this.currentExerciseSummaries.set(exercisesToPractice);
+            this.currentExerciseIndex.set(0);
+            this.exerciseMode.set(true);
+            this.isPracticeMode = true; // Enable practice mode
+            
+            // Load first exercise
+            if (exercisesToPractice.length > 0) {
+              const first = exercisesToPractice[0];
+              this.exerciseService.getExerciseById(first.id, first.type).subscribe({
+                next: (exercise) => {
+                  this.currentExercise.set(exercise);
+                },
+                error: (error) => {
+                  console.error('❌ Failed to load exercise:', error);
+                }
+              });
+            }
+          },
+          error: (error) => {
+            console.error('❌ Failed to load exercises:', error);
+          }
+        });
+      },
+      error: (error) => {
+        console.error('❌ Failed to load incorrect exercises:', error);
+      }
+    });
+  }
+
+  /**
+   * Show notification when trying to practice with no exercises
+   */
+  private showPracticeNotification(): void {
+    // Clear existing timeout
+    if (this.practiceNotificationTimeout) {
+      clearTimeout(this.practiceNotificationTimeout);
+    }
+
+    // Show notification
+    this.showPracticeWidgetNotification.set(true);
+
+    // Auto-hide after 3 seconds
+    this.practiceNotificationTimeout = setTimeout(() => {
+      this.showPracticeWidgetNotification.set(false);
+    }, 3000);
   }
 
   // Helper to get all difficulty levels in range (e.g., A2 to B2 = ['A2', 'B1', 'B2'])
@@ -188,7 +286,7 @@ export class Learning implements OnInit {
     const targetLevel = this.userTargetLevel();
     const targetLanguage = this.userLanguage();
 
-    const levelsPerDifficulty = 1;
+    const levelsPerDifficulty = 5;
     const existingLevels = this.levels();
     const newLevels: Level[] = [];
 
@@ -251,7 +349,7 @@ export class Learning implements OnInit {
           difficultyLevel: difficulty,
           status: status,
           stars: existingLevel?.stars || 0,
-          totalExercises: 2,
+          totalExercises: 3,
           completedExercises: existingLevel?.completedExercises || 0
         });
 
@@ -323,14 +421,21 @@ export class Learning implements OnInit {
         
         const mixedExercises: ExerciseSummaryResponse[] = [];
         const levelIndex = level.levelNumber - 1;
-        
-        if (levelIndex < mcqExercises.length) {
-          mixedExercises.push(mcqExercises[levelIndex]);
+        const mcqStartIndex = levelIndex * 2;  // 2 MCQs pro Level
+
+        // Add 2 MCQ exercises
+        if (mcqStartIndex < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[mcqStartIndex]);
         }
+        if (mcqStartIndex + 1 < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[mcqStartIndex + 1]);
+        }
+
+        // Add 1 Fill-Blank exercise
         if (levelIndex < fillBlankExercises.length) {
           mixedExercises.push(fillBlankExercises[levelIndex]);
         }
-        
+
         // Calculate total XP from exercises
         const totalXP = mixedExercises.reduce((sum, ex) => sum + ex.xpReward, 0);
         this.levelXP.set(totalXP);
@@ -356,6 +461,7 @@ export class Learning implements OnInit {
     // Keep the selected level so we can mark it as completed later
     this.selectedLevel.set(level);
     this.correctAnswersCount = 0;
+    this.isPracticeMode = false; // Disable practice mode for normal levels
 
     const targetLanguage = this.userLanguage();
     const difficultyLevel = level.difficultyLevel;
@@ -370,12 +476,20 @@ export class Learning implements OnInit {
         console.log(`Found ${mcqExercises.length} MCQ and ${fillBlankExercises.length} Fill-Blank exercises`);
         
         const mixedExercises: ExerciseSummaryResponse[] = [];
-        
-        // Take only 1 MCQ and 1 Fill-Blank per level
+
+        // Take 2 MCQ and 1 Fill-Blank per level
         const levelIndex = level.levelNumber - 1;
-        if (levelIndex < mcqExercises.length) {
-          mixedExercises.push(mcqExercises[levelIndex]);
+        const mcqStartIndex = levelIndex * 2;  // 2 MCQs pro Level
+
+        // Add 2 MCQ exercises
+        if (mcqStartIndex < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[mcqStartIndex]);
         }
+        if (mcqStartIndex + 1 < mcqExercises.length) {
+          mixedExercises.push(mcqExercises[mcqStartIndex + 1]);
+        }
+
+        // Add 1 Fill-Blank exercise
         if (levelIndex < fillBlankExercises.length) {
           mixedExercises.push(fillBlankExercises[levelIndex]);
         }
@@ -419,6 +533,10 @@ export class Learning implements OnInit {
       console.log(`✅ Correct answer! Total: ${this.correctAnswersCount}/${this.totalExercisesInLevel}`);
     } else {
       console.log(`❌ Incorrect answer. Total: ${this.correctAnswersCount}/${this.totalExercisesInLevel}`);
+      
+      // Update practice widget count immediately when answer is incorrect
+      // This ensures repeated exercises also update the widget
+      this.loadPracticeWidgetCount();
     }
     
     // Don't reload here - the exercise submission already updates XP via backend response
@@ -493,9 +611,11 @@ export class Learning implements OnInit {
     const summaries = this.currentExerciseSummaries();
 
     if (nextIndex < summaries.length) {
+      // More exercises in current list
       this.currentExerciseIndex.set(nextIndex);
       this.loadExerciseDetail(summaries[nextIndex]);
     } else {
+      // All done - complete level (incorrect answers are tracked in Practice Widget)
       this.completeLevel();
     }
   }
@@ -565,6 +685,10 @@ export class Learning implements OnInit {
     this.currentExerciseSummaries.set([]);
     this.currentExerciseIndex.set(0);
     this.selectedLevel.set(null);
+    this.isPracticeMode = false; // Reset practice mode flag
+    
+    // Reload practice widget count after completing exercises
+    this.loadPracticeWidgetCount();
 
     // CRITICAL: Set skip counter BEFORE any HTTP calls to prevent race conditions
     const willSaveProgress = levelWasCompleted && selectedLevelValue;
@@ -680,6 +804,8 @@ export class Learning implements OnInit {
         console.log('✅ Language updated in backend:', data);
         // Reload levels for new language
         this.loadLevels();
+        // Reload practice widget for new language
+        this.loadPracticeWidgetCount();
       },
       error: (err) => {
         console.error('❌ Failed to update language:', err);

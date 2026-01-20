@@ -397,6 +397,13 @@
   font-weight: 600;
 }
 
+.stat-sublabel {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
 /* Action Cards */
 .action-card {
   background: white;
