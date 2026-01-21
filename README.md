@@ -24,12 +24,19 @@ git push -uf origin main
 
 Das Projekt-Wiki ist über GitLab erreichbar: [Zum Wiki](./Wiki)
 
-- [Brainstorming-Dokument](./Wiki/Brainstorming.md)
-- [Protokoll-Dokument](./Wiki/Protokoll.md)
+### Frontend Documentation
 - [Routing](./Wiki/ROUTING_SETUP.md)
 - [DesignGuideline](./Wiki/design-guidelines.md)
 - [Transloco Guide](./Wiki/TRANSLOCO_GUIDE.md) - Internationalisierung (i18n) Dokumentation
 - [Language Learning Games](./Wiki/LANGUAGE_LEARNING_GAMES.md) - Sprachlernspiele mit Transloco
+
+### Backend Documentation
+- [AI Setup Guide](./Wiki/AI%20SETUP/AI_SETUP.md) - Complete guide to set up AI chat with Google Gemini
+- [AI Chat API Documentation](./Wiki/AI%20SETUP/API_CHAT.md) - REST API endpoints for the AI language tutor
+
+### Project Management
+- [Brainstorming-Dokument](./Wiki/Brainstorming.md)
+- [Protokoll-Dokument](./Wiki/Protokoll.md)
 
 ## Integrate with your tools
 

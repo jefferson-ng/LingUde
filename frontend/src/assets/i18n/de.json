@@ -17,6 +17,7 @@
   },
   "nav": {
     "dashboard": "Startseite",
+    "chat": "Rob der Otter",
     "learning": "Lernen",
     "lessons": "Lektionen",
     "goals": "Ziele",
@@ -49,9 +50,9 @@
     "toReview": "Zum Üben",
     "yourRank": "Dein Rang",
     "globalRanking": "globale Rangliste",
-    "dailyLesson": "Tägliche Lektion",
-    "dailyLessonText": "Setze deine Lernreise fort mit der heutigen Lektion.",
-    "startLesson": "Lektion starten"
+    "aiChat": "Chat mit Rob",
+    "aiChatText": "Übe deine Sprachkenntnisse mit Rob dem Otter!",
+    "startChat": "Chat starten"
   },
   "lessons": {
     "title": "Lektionen",
@@ -521,5 +522,61 @@
       "successMessage": "Anfrage erfolgreich gesendet",
       "errorMessage": "Beim Senden der Freundschaftsanfrage ist ein Fehler aufgetreten: "
     }
+  },
+  "chat": {
+    "title": "Rob der Otter",
+    "newChat": "Neuer Chat",
+    "welcomeTitle": "Hallo, ich bin Rob der Otter!",
+    "welcomeMessage": "Ich bin dein freundlicher Sprachlern-Begleiter! Frag mich etwas oder wähle ein Thema unten aus.",
+    "suggestedGrammar": "Grammatik üben",
+    "suggestedGrammarMsg": "Kannst du mir helfen, Grammatik zu üben?",
+    "suggestedVocab": "Vokabeln üben",
+    "suggestedVocabMsg": "Kannst du mir helfen, Vokabeln zu üben?",
+    "suggestedGreetings": "Begrüßungen lernen",
+    "suggestedGreetingsMsg": "Ich möchte Begrüßungen lernen.",
+    "you": "Du",
+    "tutor": "Rob",
+    "thinking": "denkt nach...",
+    "placeholder": "Schreibe deine Nachricht...",
+    "inputHint": "Enter zum Senden, Shift+Enter für neue Zeile",
+    "toolActivity": "Robs Aktivität",
+    "noActivity": "Noch keine Aktivität",
+    "noActivityHint": "Robs Aktionen während dieses Chats werden hier angezeigt",
+    "toolNames": {
+      "addXp": "XP vergeben",
+      "getUserProfile": "Profil abgerufen",
+      "getLevelProgress": "Fortschritt geprüft",
+      "getStreak": "Streak geprüft",
+      "getLeaderboardPosition": "Rangliste geprüft"
+    },
+    "toolResults": {
+      "totalXp": "Gesamt",
+      "speaks": "spricht",
+      "learning": "Lernt",
+      "level": "Level",
+      "days": "Tage",
+      "longestStreak": "Bester Streak",
+      "lastActive": "Zuletzt aktiv",
+      "xpToNext": "XP bis",
+      "speaksLanguage": "Benutzersprache",
+      "user": "Benutzer",
+      "friendsRank": "Freunde-Rang",
+      "globalRank": "Globaler Rang",
+      "of": "von",
+      "top": "Top",
+      "behind": "hinter"
+    },
+    "xpAwarded": "+{{amount}} XP",
+    "reason": "Grund",
+    "duration": "{{ms}}ms",
+    "history": "Chat-Verlauf",
+    "noSessions": "Keine früheren Chats",
+    "noSessionsHint": "Starte ein Gespräch, um deine erste Chat-Sitzung zu erstellen",
+    "messages": "Nachrichten",
+    "loadSession": "Laden",
+    "activeSession": "Aktiv",
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "daysAgo": "vor {{days}} Tagen"
   }
 }

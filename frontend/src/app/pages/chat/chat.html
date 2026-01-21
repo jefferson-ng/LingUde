@@ -1,0 +1,369 @@
+<div class="chat-container" *transloco="let t">
+  <div class="chat-main">
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="header-left">
+        <img src="assets/robert-otter.png" alt="Rob the Otter" class="header-icon rob-avatar">
+        <div class="header-info">
+          <h1>{{ t('chat.title') }}</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" (click)="toggleHistoryPanel()" [disabled]="isLoading()">
+          <lucide-icon [img]="HistoryIcon" [size]="18"></lucide-icon>
+          {{ t('chat.history') }}
+        </button>
+        <button class="btn-secondary" (click)="startNewChat()" [disabled]="isLoading()">
+          <lucide-icon [img]="MessageIcon" [size]="18"></lucide-icon>
+          {{ t('chat.newChat') }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="messages-container" #messagesContainer>
+      <!-- Welcome message when no messages -->
+      <div class="welcome-message" *ngIf="messages().length === 0">
+        <img src="assets/robert-otter.png" alt="Rob the Otter" class="welcome-icon rob-avatar">
+        <h2>{{ t('chat.welcomeTitle') }}</h2>
+        <p>{{ t('chat.welcomeMessage') }}</p>
+        <div class="suggested-prompts">
+          <button class="prompt-btn" (click)="messageText.set(t('chat.suggestedGrammarMsg'))">
+            📖 {{ t('chat.suggestedGrammar') }}
+          </button>
+          <button class="prompt-btn" (click)="messageText.set(t('chat.suggestedVocabMsg'))">
+            📚 {{ t('chat.suggestedVocab') }}
+          </button>
+          <button class="prompt-btn" (click)="messageText.set(t('chat.suggestedGreetingsMsg'))">
+            👋 {{ t('chat.suggestedGreetings') }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Messages -->
+      <div class="messages-list" *ngIf="messages().length > 0">
+        <div 
+          *ngFor="let msg of messages()" 
+          class="message" 
+          [class.user-message]="msg.role === 'USER'"
+          [class.ai-message]="msg.role === 'MODEL'"
+          [class.tool-message]="msg.role === 'TOOL'">
+          
+          <div class="message-avatar">
+            @if (msg.role === 'USER') {
+              <div class="user-avatar">{{ getUserInitial() }}</div>
+            } @else {
+              <img src="assets/robert-otter.png" alt="Rob" class="rob-message-avatar">
+            }
+          </div>
+          
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-role">
+                {{ msg.role === 'USER' ? t('chat.you') : t('chat.tutor') }}
+              </span>
+              <span class="message-time">{{ formatTimestamp(msg.timestamp) }}</span>
+            </div>
+            <markdown class="message-text" [data]="msg.content"></markdown>
+          </div>
+        </div>
+
+        <!-- Loading indicator with Rob thinking animation -->
+        <div class="message ai-message rob-thinking" *ngIf="isLoading()">
+          <div class="message-avatar thinking-avatar">
+            <img src="assets/robert-otter.png" alt="Rob" class="rob-message-avatar">
+          </div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-role">{{ t('chat.tutor') }}</span>
+              <span class="thinking-text">{{ t('chat.thinking') }}</span>
+            </div>
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-container">
+      <div class="input-wrapper">
+        <textarea
+          #messageInput
+          [value]="messageText()"
+          (input)="messageText.set($any($event.target).value)"
+          (keydown)="onKeyDown($event)"
+          [placeholder]="t('chat.placeholder')"
+          [disabled]="isLoading()"
+          rows="1"
+          class="message-input">
+        </textarea>
+        <button 
+          class="send-btn" 
+          (click)="sendMessage()" 
+          [disabled]="!messageText().trim() || isLoading()">
+          <lucide-icon [img]="SendIcon" [size]="20"></lucide-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool Activity Panel -->
+  <div class="activity-panel" [class.collapsed]="!showActivityPanel()">
+    <div class="activity-header" (click)="toggleActivityPanel()">
+      <div class="activity-title">
+        <lucide-icon [img]="SparklesIcon" [size]="18"></lucide-icon>
+        <span>{{ t('chat.toolActivity') }}</span>
+        <span class="activity-count" *ngIf="toolActivities().length > 0">
+          ({{ toolActivities().length }})
+        </span>
+      </div>
+      <lucide-icon
+        [img]="showActivityPanel() ? ChevronDownIcon : ChevronUpIcon"
+        [size]="18">
+      </lucide-icon>
+    </div>
+
+    <div class="activity-content" *ngIf="showActivityPanel()">
+      <div class="activity-list" *ngIf="toolActivities().length > 0; else noActivity">
+        <div class="activity-item" *ngFor="let activity of toolActivities()" [class]="'activity-' + activity.name">
+          <!-- XP Award Activity -->
+          @if (activity.name === 'addXp') {
+            <div class="activity-icon xp-icon">
+              <lucide-icon [img]="StarIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.addXp') }}</span>
+                <span class="xp-badge">+{{ activity.result?.xpAdded || activity.arguments?.xpAmount }} XP</span>
+              </div>
+              <div class="activity-meta">
+                <span class="activity-reason" *ngIf="activity.result?.reason || activity.arguments?.reason">{{ activity.result?.reason || activity.arguments?.reason }}</span>
+                <span class="activity-result" *ngIf="activity.result?.newXp !== undefined">
+                  {{ t('chat.toolResults.totalXp') }}: {{ activity.result.newXp }} XP
+                </span>
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Profile Check Activity -->
+          @else if (activity.name === 'getUserProfile') {
+            <div class="activity-icon profile-icon">
+              <lucide-icon [img]="UserIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.getUserProfile') }}</span>
+              </div>
+              <div class="activity-meta">
+                @if (activity.result?.success) {
+                  @if (activity.result.username) {
+                    <span class="activity-result">
+                      {{ t('chat.toolResults.user') }}: {{ activity.result.username }}
+                    </span>
+                  }
+                  <span class="activity-result">
+                    {{ t('chat.toolResults.learning') }} {{ activity.result.learningLanguage }}
+                    @if (activity.result.currentLevel) {
+                      · {{ t('chat.toolResults.level') }}: {{ activity.result.currentLevel }}
+                    }
+                    @if (activity.result.targetLevel) {
+                      → {{ activity.result.targetLevel }}
+                    }
+                  </span>
+                  @if (activity.result.uiLanguage) {
+                    <span class="activity-result">
+                      {{ t('chat.toolResults.speaksLanguage') }}: {{ activity.result.uiLanguage }}
+                    </span>
+                  }
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Progress Check Activity -->
+          @else if (activity.name === 'getLevelProgress') {
+            <div class="activity-icon progress-icon">
+              <lucide-icon [img]="TrendingUpIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.getLevelProgress') }}</span>
+                @if (activity.result?.progressPercent !== undefined) {
+                  <span class="progress-badge">{{ activity.result.progressPercent }}%</span>
+                }
+              </div>
+              <div class="activity-meta">
+                @if (activity.result?.success) {
+                  <span class="activity-result">
+                    {{ t('chat.toolResults.level') }}: {{ activity.result.currentLevel }}
+                    · {{ activity.result.currentXp }} XP
+                    @if (activity.result.xpForNextLevel > 0) {
+                      · {{ activity.result.xpForNextLevel }} {{ t('chat.toolResults.xpToNext') }} {{ activity.result.nextLevel }}
+                    }
+                  </span>
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Streak Check Activity -->
+          @else if (activity.name === 'getStreak') {
+            <div class="activity-icon streak-icon">
+              <lucide-icon [img]="FlameIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.getStreak') }}</span>
+                @if (activity.result?.streakCount !== undefined) {
+                  <span class="streak-badge">🔥 {{ activity.result.streakCount }} {{ t('chat.toolResults.days') }}</span>
+                }
+              </div>
+              <div class="activity-meta">
+                @if (activity.result?.success) {
+                  <span class="activity-result">
+                    {{ t('chat.toolResults.lastActive') }}: {{ activity.result.lastActivityDate }}
+                  </span>
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Leaderboard Position Activity -->
+          @else if (activity.name === 'getLeaderboardPosition') {
+            <div class="activity-icon leaderboard-icon">
+              <lucide-icon [img]="TrophyIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ t('chat.toolNames.getLeaderboardPosition') }}</span>
+                @if (activity.result?.globalRank !== undefined && activity.result?.globalRank !== null) {
+                  <span class="rank-badge">#{{ activity.result.globalRank }}</span>
+                }
+              </div>
+              <div class="activity-meta">
+                @if (activity.result?.success) {
+                  @if (activity.result.friendsRank !== null) {
+                    <span class="activity-result">
+                      {{ t('chat.toolResults.friendsRank') }}: #{{ activity.result.friendsRank }} {{ t('chat.toolResults.of') }} {{ activity.result.totalFriends }}
+                    </span>
+                  }
+                  @if (activity.result.globalRank !== null) {
+                    <span class="activity-result">
+                      {{ t('chat.toolResults.globalRank') }}: #{{ activity.result.globalRank }} {{ t('chat.toolResults.of') }} {{ activity.result.totalUsers }}
+                      @if (activity.result.topPercentile) {
+                        ({{ t('chat.toolResults.top') }} {{ activity.result.topPercentile }}%)
+                      }
+                    </span>
+                  }
+                  @if (activity.result.friendAbove) {
+                    <span class="activity-result">
+                      {{ activity.result.friendAbove.xpDifference }} XP {{ t('chat.toolResults.behind') }} {{ activity.result.friendAbove.username }}
+                    </span>
+                  }
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Other/Unknown Activity -->
+          @else {
+            <div class="activity-icon other-icon">
+              <lucide-icon [img]="WrenchIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="activity-details">
+              <div class="activity-main">
+                <span class="activity-label">{{ activity.name }}</span>
+              </div>
+              <div class="activity-meta">
+                @if (activity.result) {
+                  <span class="activity-result activity-result-json">{{ activity.result | json }}</span>
+                }
+                <span class="activity-time">{{ formatActivityTime(activity.timestamp) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <ng-template #noActivity>
+        <div class="no-activity">
+          <lucide-icon [img]="SparklesIcon" [size]="32"></lucide-icon>
+          <p>{{ t('chat.noActivity') }}</p>
+          <small>{{ t('chat.noActivityHint') }}</small>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- History Panel (Modal/Overlay) -->
+  <div class="history-overlay" *ngIf="showHistoryPanel()" (click)="toggleHistoryPanel()">
+    <div class="history-panel" (click)="$event.stopPropagation()">
+      <div class="history-header">
+        <div class="history-title">
+          <lucide-icon [img]="HistoryIcon" [size]="20"></lucide-icon>
+          <span>{{ t('chat.history') }}</span>
+        </div>
+        <button class="close-btn" (click)="toggleHistoryPanel()">
+          <lucide-icon [img]="ChevronUpIcon" [size]="20"></lucide-icon>
+        </button>
+      </div>
+
+      <div class="history-content">
+        <!-- Loading state -->
+        <div class="history-loading" *ngIf="isLoadingSessions()">
+          <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Sessions list -->
+        <div class="sessions-list" *ngIf="!isLoadingSessions() && sessions().length > 0">
+          <div
+            class="session-item"
+            *ngFor="let session of sessions()"
+            [class.active]="session.sessionId === currentSessionId()"
+            (click)="loadSession(session.sessionId)">
+            <div class="session-icon">
+              <lucide-icon [img]="MessageIcon" [size]="18"></lucide-icon>
+            </div>
+            <div class="session-info">
+              <div class="session-meta">
+                <span class="session-language">{{ session.learningLanguage }}</span>
+                <span class="session-date">
+                  <lucide-icon [img]="ClockIcon" [size]="12"></lucide-icon>
+                  @if (formatSessionDate(session.updatedAt) === 'today') {
+                    {{ t('chat.today') }}
+                  } @else if (formatSessionDate(session.updatedAt) === 'yesterday') {
+                    {{ t('chat.yesterday') }}
+                  } @else {
+                    {{ t('chat.daysAgo', { days: formatSessionDate(session.updatedAt) }) }}
+                  }
+                </span>
+              </div>
+              <div class="session-stats">
+                <span class="message-count">{{ session.messageCount }} {{ t('chat.messages') }}</span>
+                <span class="active-badge" *ngIf="session.sessionId === currentSessionId()">
+                  {{ t('chat.activeSession') }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="no-sessions" *ngIf="!isLoadingSessions() && sessions().length === 0">
+          <lucide-icon [img]="MessageIcon" [size]="40"></lucide-icon>
+          <p>{{ t('chat.noSessions') }}</p>
+          <small>{{ t('chat.noSessionsHint') }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

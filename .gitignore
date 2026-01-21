@@ -46,3 +46,8 @@ Thumbs.db
 CLAUDE.md
 .claude/
 *.http
+
+# Environment variables
+.env
+.env.local
+.env.*.local

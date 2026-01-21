@@ -1,4 +1,5 @@
 import { Component, signal, inject, OnInit, computed } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { CommonModule } from '@angular/common';
 import { UserLearningService } from '../../services/user-learning.service';
@@ -16,6 +17,7 @@ import { LucideAngularModule, Flame } from 'lucide-angular';
 export class Dashboard implements OnInit {
   private userLearningService = inject(UserLearningService);
   private leaderboardService = inject(LeaderboardService);
+  private router = inject(Router);
   private exerciseService = inject(ExerciseService);
 
   // Icons
@@ -156,6 +158,10 @@ export class Dashboard implements OnInit {
       'IT': 'Italian'
     };
     return code ? languageMap[code] || code : 'Not selected';
+  }
+
+  goToChat(): void {
+    this.router.navigate(['/chat']);
   }
 
   /**
