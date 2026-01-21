@@ -73,6 +73,8 @@
               >
               @if (item.icon === 'home') {
               <lucide-icon [img]="HomeIcon" class="nav-icon"></lucide-icon>
+              } @else if (item.icon === 'message-circle') {
+              <lucide-icon [img]="MessageCircleIcon" class="nav-icon"></lucide-icon>
               } @else if (item.icon === 'book-open') {
               <lucide-icon [img]="BookOpenIcon" class="nav-icon"></lucide-icon>
               } @else if (item.icon === 'graduation-cap') {
@@ -144,7 +146,7 @@
           <div class="xp-bar-container" title="Experience Points - Level {{ userLevel() }}">
             <div class="xp-bar-header">
               <span class="xp-level">Level {{ userLevel() }}</span>
-              <span class="xp-text">{{ xpInCurrentLevel() }}/100 XP</span>
+              <span class="xp-text">{{ userXP() }}/{{ xpForNextLevel() }} XP</span>
             </div>
             <div class="xp-bar-track">
               <div class="xp-bar-fill" [style.width.%]="xpProgressPercent()"></div>

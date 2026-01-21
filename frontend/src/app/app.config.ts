@@ -2,6 +2,7 @@ import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners, provi
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideTransloco } from '@jsverse/transloco';
+import { provideMarkdown } from 'ngx-markdown';
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './transloco-loader';
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
         prodMode: !isDevMode(),
       },
       loader: TranslocoHttpLoader
-    })
+    }),
+    provideMarkdown()
   ]
 };

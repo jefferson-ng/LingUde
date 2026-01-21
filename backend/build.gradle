@@ -36,6 +36,9 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    // Google Gemini AI SDK
+    implementation 'com.google.genai:google-genai:1.29.0'
+
     // Integrates Testcontainers with Spring Boot (auto-detects containers)
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 

@@ -4,7 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } fro
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
-import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X, Shield } from 'lucide-angular';
+import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X, Shield, MessageCircle } from 'lucide-angular';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -27,8 +27,9 @@ export class App implements OnInit {
   readonly LogOutIcon = LogOut;
   readonly MenuIcon = Menu;
   readonly XIcon = X;
-  readonly  UsersIcon = Users;
+  readonly UsersIcon = Users;
   readonly ShieldIcon = Shield;
+  readonly MessageCircleIcon = MessageCircle;
 
   protected readonly title = signal('LingUDE');
   protected readonly isAdmin = signal(false);
@@ -136,16 +137,19 @@ export class App implements OnInit {
    */
   private updateXPAndLevel(xp: number): void {
     this.userXP.set(xp);
-    
+
     // Calculate level (100 XP per level)
     const level = Math.floor(xp / 100) + 1;
     this.userLevel.set(level);
-    
-    // Calculate XP progress within current level
+
+    // Calculate XP needed for next level
+    const xpForNextLevel = level * 100;
+    this.xpForNextLevel.set(xpForNextLevel);
+
+    // Calculate XP progress within current level for progress bar
     const xpInLevel = xp % 100;
     this.xpInCurrentLevel.set(xpInLevel);
-    this.xpForNextLevel.set(100 - xpInLevel);
-    
+
     // Calculate progress percentage for the bar
     const percent = (xpInLevel / 100) * 100;
     this.xpProgressPercent.set(percent);
@@ -194,6 +198,7 @@ export class App implements OnInit {
 
   navItems = [
     { path: '/dashboard', translationKey: 'nav.dashboard', icon: 'home' },
+    { path: '/chat', translationKey: 'nav.chat', icon: 'message-circle' },
     { path: '/learning', translationKey: 'nav.learning', icon: 'graduation-cap' },
     { path: '/friends', translationKey: 'nav.friends', icon: 'users' },
     { path: '/leaderboard', translationKey: 'nav.leaderboard', icon: 'trophy' }

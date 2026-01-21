@@ -23,6 +23,9 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
+    env_file:
+      - path: ./backend/.env
+        required: false
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sep
       SPRING_DATASOURCE_USERNAME: sep
@@ -34,7 +37,6 @@ services:
       SPRING_MAIL_PASSWORD: ""
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
-
     depends_on:
       db:
         condition: service_healthy
