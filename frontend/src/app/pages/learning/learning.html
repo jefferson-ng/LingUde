@@ -155,34 +155,6 @@
       </div>
     }
     
-    <!-- Level Start Popup -->
-    @if (showLevelPopup() && selectedLevel()) {
-      <div class="level-popup" 
-           [class.completed]="selectedLevel()!.status === 'completed'"
-           [style.top.px]="popupPosition()?.top"
-           [style.left.px]="popupPosition()?.left">
-        <!-- Level Info -->
-        <div class="popup-content">
-          <h3 class="popup-title">{{ 'learning.popup.title' | transloco }}</h3>
-          <p class="popup-subtitle">
-            {{ 'learning.popup.lessonInfo' | transloco: { 
-              current: selectedLevel()!.levelNumber, 
-              total: levels().length 
-            } }}
-          </p>
-        </div>
-        
-        <!-- Start/Repeat Button -->
-        <button class="popup-start-button" (click)="startLevelFromPopup()">
-          @if (selectedLevel()!.status === 'completed') {
-            {{ 'learning.popup.repeat' | transloco }}
-          } @else {
-            {{ 'learning.popup.start' | transloco }} +{{ levelXP() }} XP
-          }
-        </button>
-      </div>
-    }
-    
     <!-- Level Path Header -->
     <div class="level-path-header">
       <h2 class="path-title">{{ 'learning.levelPath' | transloco }}</h2>
@@ -297,6 +269,30 @@
                   </div>
                 </div>
               </button>
+              
+              <!-- Level Popup (inside wrapper to scroll together) -->
+              @if (showLevelPopup() && selectedLevel()?.id === level.id) {
+                <div class="level-popup" 
+                     [class.completed]="level.status === 'completed'"
+                     [class.popup-left]="i % 2 !== 0">
+                  <div class="popup-content">
+                    <h3 class="popup-title">{{ 'learning.popup.title' | transloco }}</h3>
+                    <p class="popup-subtitle">
+                      {{ 'learning.popup.lessonInfo' | transloco: { 
+                        current: level.levelNumber, 
+                        total: levels().length 
+                      } }}
+                    </p>
+                  </div>
+                  <button class="popup-start-button" (click)="startLevelFromPopup()">
+                    @if (level.status === 'completed') {
+                      {{ 'learning.popup.repeat' | transloco }}
+                    } @else {
+                      {{ 'learning.popup.start' | transloco }} +{{ levelXP() }} XP
+                    }
+                  </button>
+                </div>
+              }
             </div>
           </div>
         }
