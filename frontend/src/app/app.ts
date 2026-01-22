@@ -6,10 +6,11 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
 import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X, Shield, MessageCircle } from 'lucide-angular';
 import { filter } from 'rxjs/operators';
+import { ShareButtonComponent } from './components/share-button/share-button';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, TranslocoDirective, LucideAngularModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, TranslocoDirective, LucideAngularModule, ShareButtonComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -34,6 +35,7 @@ export class App implements OnInit {
   protected readonly title = signal('LingUDE');
   protected readonly isAdmin = signal(false);
   protected readonly userLevel = signal(1);
+  protected readonly Math = Math;
   protected readonly userXP = signal(0);
   protected readonly userStreak = signal(0);
   protected readonly isStreakActiveToday = signal(false);
@@ -47,10 +49,6 @@ export class App implements OnInit {
   protected readonly isUserDropdownOpen = signal(false);
   protected readonly isSidebarOpen = signal(false);
   protected readonly isOnLevelSelection = signal(false);
-
-    // TODO: Replace with actual logged-in user ID from authentication service
-  // This is a temporary test user ID
-  // Removed TEST_USER_ID; use authenticated user only
 
   /**
    * Initialize component and load user XP data from backend
@@ -91,8 +89,8 @@ export class App implements OnInit {
         // Streak ist aktiv, wenn lastActivityDate heute ist UND streakCount > 0
         const today = new Date().toISOString().split('T')[0];
         // Handle both ISO datetime and date-only formats
-        const lastActivityDate = data.lastActivityDate?.includes('T') 
-          ? data.lastActivityDate.split('T')[0] 
+        const lastActivityDate = data.lastActivityDate?.includes('T')
+          ? data.lastActivityDate.split('T')[0]
           : data.lastActivityDate;
         const isActive = lastActivityDate === today && data.streakCount > 0;
         this.isStreakActiveToday.set(isActive);
@@ -118,8 +116,8 @@ export class App implements OnInit {
         // Streak ist aktiv, wenn lastActivityDate heute ist UND streakCount > 0
         const today = new Date().toISOString().split('T')[0];
         // Handle both ISO datetime and date-only formats
-        const lastActivityDate = data.lastActivityDate?.includes('T') 
-          ? data.lastActivityDate.split('T')[0] 
+        const lastActivityDate = data.lastActivityDate?.includes('T')
+          ? data.lastActivityDate.split('T')[0]
           : data.lastActivityDate;
         const isActive = lastActivityDate === today && data.streakCount > 0;
         this.isStreakActiveToday.set(isActive);
@@ -189,9 +187,10 @@ export class App implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    const clickedInside = target.closest('.user-profile');
 
-    if (!clickedInside && this.isUserDropdownOpen()) {
+    // Close user dropdown if clicking outside
+    const clickedInsideUserProfile = target.closest('.user-profile');
+    if (!clickedInsideUserProfile && this.isUserDropdownOpen()) {
       this.closeUserDropdown();
     }
   }
