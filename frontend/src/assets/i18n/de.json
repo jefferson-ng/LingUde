@@ -579,5 +579,13 @@
     "today": "Heute",
     "yesterday": "Gestern",
     "daysAgo": "vor {{days}} Tagen"
+  },
+  "share": {
+    "button": "Teilen",
+    "title": "LingUDE teilen",
+    "subtitle": "Lade deine Freunde ein und lernt gemeinsam Sprachen!",
+    "copyLink": "Link kopieren",
+    "linkCopied": "Link kopiert!",
+    "days": "Tage"
   }
 }

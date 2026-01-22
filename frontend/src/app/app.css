@@ -588,6 +588,34 @@
   }
 }
 
+/* Level Badge Styling */
+.level-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.level-badge:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+}
+
+.level-icon {
+  color: #3b82f6;
+}
+
+.level-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
 .settings-button {
   width: 2.5rem;
   height: 2.5rem;
@@ -654,7 +682,7 @@
   .sidebar {
     width: 240px;
   }
-  
+
   .app-header {
     padding: 1rem 1.5rem;
   }
@@ -665,12 +693,12 @@
   .mobile-menu-toggle {
     display: flex;
   }
-  
+
   /* Show overlay when sidebar is open */
   .sidebar-overlay {
     display: block;
   }
-  
+
   /* Sidebar mobile behavior */
   .sidebar {
     position: fixed;
@@ -682,53 +710,63 @@
     z-index: 1000;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
   }
-  
+
   .sidebar.mobile-open {
     transform: translateX(0);
   }
-  
+
   /* Main content takes full width */
   .main-content {
     width: 100%;
   }
-  
+
   /* Add padding to header for menu button */
   .app-header {
     padding: 1rem 1rem 1rem 4.5rem;
   }
-  
+
   .page-title {
     font-size: 1.25rem;
   }
-  
+
   /* Adjust header actions */
   .header-actions {
     gap: 0.5rem;
   }
-  
+
   .xp-bar-container {
     min-width: 150px;
     padding: 0.4rem 0.75rem;
   }
-  
+
   .xp-level {
     font-size: 0.8rem;
   }
-  
+
   .xp-text {
     font-size: 0.7rem;
   }
-  
+
   .xp-bar-track {
     height: 6px;
   }
-  
+
   .streak-counter {
     padding: 0.4rem 0.75rem;
   }
-  
+
+
   .streak-value {
     font-size: 1rem;
+  }
+
+  /* Level badge - compact on mobile */
+  .level-badge {
+    padding: 0.4rem 0.75rem;
+  }
+
+  .level-value {
+    font-size: 0.875rem;
   }
 }
 
@@ -736,37 +774,37 @@
   .page-title {
     font-size: 1.125rem;
   }
-  
+
   .user-name {
     font-size: 0.8rem;
   }
-  
+
   .user-level {
     font-size: 0.7rem;
   }
-  
+
   /* Compact XP bar on very small screens */
   .xp-bar-container {
     min-width: 120px;
     padding: 0.35rem 0.6rem;
   }
-  
+
   .xp-level {
     font-size: 0.75rem;
   }
-  
+
   .xp-text {
     font-size: 0.65rem;
   }
-  
+
   .xp-bar-track {
     height: 5px;
   }
-  
+
   .streak-counter {
     padding: 0.3rem 0.6rem;
   }
-  
+
   .sidebar {
     width: 260px;
   }
