@@ -198,9 +198,9 @@ export class App implements OnInit {
 
   navItems = [
     { path: '/dashboard', translationKey: 'nav.dashboard', icon: 'home' },
-    { path: '/chat', translationKey: 'nav.chat', icon: 'message-circle' },
     { path: '/learning', translationKey: 'nav.learning', icon: 'graduation-cap' },
     { path: '/pronunciation', translationKey: 'nav.pronunciation', icon: 'mic' },
+    { path: '/chat', translationKey: 'nav.chat', icon: 'message-circle' },
     { path: '/friends', translationKey: 'nav.friends', icon: 'users' },
     { path: '/leaderboard', translationKey: 'nav.leaderboard', icon: 'trophy' }
   ];

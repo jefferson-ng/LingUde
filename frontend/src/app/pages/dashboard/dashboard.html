@@ -109,6 +109,13 @@
         </div>
       </div>
 
+      <!-- Speaking Practice Card -->
+      <div class="action-card speaking-practice" (click)="goToSpeaking()">
+        <h4 class="action-title">{{ t('dashboard.speaking') }}</h4>
+        <p class="action-description">{{ t('dashboard.speakingText') }}</p>
+        <button class="btn-start-speaking">{{ t('dashboard.startSpeaking') }}</button>
+      </div>
+
       <!-- AI Chat Card -->
       <div class="action-card ai-chat" (click)="goToChat()">
         <div class="chat-card-header">

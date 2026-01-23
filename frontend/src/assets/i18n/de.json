@@ -21,7 +21,7 @@
     "learning": "Lernen",
     "lessons": "Lektionen",
     "goals": "Ziele",
-    "pronunciation": "Aussprache",
+    "pronunciation": "Sprechen",
     "leaderboard": "Bestenliste",
     "statistics": "Statistiken",
     "friends": "Freunde",
@@ -53,7 +53,10 @@
     "globalRanking": "globale Rangliste",
     "aiChat": "Chat mit Rob",
     "aiChatText": "Übe deine Sprachkenntnisse mit Rob dem Otter!",
-    "startChat": "Chat starten"
+    "startChat": "Chat starten",
+    "speaking": "Sprechen üben",
+    "speakingText": "Verbessere deine Aussprache mit sofortigem Feedback!",
+    "startSpeaking": "Sprechen starten"
   },
   "lessons": {
     "title": "Lektionen",

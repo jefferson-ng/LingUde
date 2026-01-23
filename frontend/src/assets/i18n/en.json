@@ -21,7 +21,7 @@
     "learning": "Learning",
     "lessons": "Lessons",
     "goals": "My Goals",
-    "pronunciation": "Pronunciation",
+    "pronunciation": "Speaking",
     "leaderboard": "Leaderboard",
     "statistics": "Statistics",
     "friends": "Friends",
@@ -53,7 +53,10 @@
     "globalRanking": "global ranking",
     "aiChat": "Chat with Rob",
     "aiChatText": "Practice your language skills with Rob the Otter!",
-    "startChat": "Start Chat"
+    "startChat": "Start Chat",
+    "speaking": "Practice Speaking",
+    "speakingText": "Improve your pronunciation with instant feedback!",
+    "startSpeaking": "Start Speaking"
   },
   "lessons": {
     "title": "Lessons",
