@@ -5,12 +5,21 @@ export class AudioRecorderService {
   private mediaRecorder: MediaRecorder | null = null;
   private audioChunks: Blob[] = [];
   private stream: MediaStream | null = null;
+  private audioContext: AudioContext | null = null;
+  private analyser: AnalyserNode | null = null;
 
   async startRecording(): Promise<void> {
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       this.mediaRecorder = new MediaRecorder(this.stream);
       this.audioChunks = [];
+
+      // Set up audio visualization
+      this.audioContext = new AudioContext();
+      this.analyser = this.audioContext.createAnalyser();
+      this.analyser.fftSize = 2048;
+      const source = this.audioContext.createMediaStreamSource(this.stream);
+      source.connect(this.analyser);
 
       this.mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -50,6 +59,10 @@ export class AudioRecorderService {
 
   isRecording(): boolean {
     return this.mediaRecorder !== null && this.mediaRecorder.state === 'recording';
+  }
+
+  getAnalyser(): AnalyserNode | null {
+    return this.analyser;
   }
 
   private async convertToWav(blob: Blob): Promise<Blob> {
@@ -130,6 +143,11 @@ export class AudioRecorderService {
       this.stream.getTracks().forEach(track => track.stop());
       this.stream = null;
     }
+    if (this.audioContext) {
+      this.audioContext.close();
+      this.audioContext = null;
+    }
+    this.analyser = null;
     this.mediaRecorder = null;
     this.audioChunks = [];
   }

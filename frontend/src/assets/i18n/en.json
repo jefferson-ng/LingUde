@@ -618,6 +618,8 @@
     "completeness": "Completeness",
     "whatYouSaid": "What You Said",
     "wordByWord": "Word-by-Word Analysis",
-    "wordByWordHelper": "Detailed pronunciation scores for each word:"
+    "wordByWordHelper": "Detailed pronunciation scores for each word:",
+    "recording": "Recording",
+    "yourRecording": "Your Recording"
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -14,7 +14,9 @@ import { PronunciationAnalyzeResponse, WordScore, PracticeSentence } from '../..
   templateUrl: './pronunciation.html',
   styleUrls: ['./pronunciation.css']
 })
-export class Pronunciation implements OnInit {
+export class Pronunciation implements OnInit, OnDestroy {
+  @ViewChild('waveformCanvas') waveformCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('playbackTimeline') playbackTimeline!: ElementRef<HTMLDivElement>;
   referenceText = '';
   isRecording = false;
   isAnalyzing = false;
@@ -28,6 +30,16 @@ export class Pronunciation implements OnInit {
   practiceSentences: PracticeSentence[] = [];
   selectedSentence: PracticeSentence | null = null;
   loadingSentences = false;
+
+  // Waveform visualization
+  private animationFrameId: number | null = null;
+
+  // Audio playback
+  private audioElement: HTMLAudioElement | null = null;
+  isPlaying = false;
+  currentTime = 0;
+  audioDuration = 0;
+  playbackProgress = 0;
 
   constructor(
     private pronunciationService: PronunciationService,
@@ -46,6 +58,11 @@ export class Pronunciation implements OnInit {
         console.error('Failed to load user learning data:', err);
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.stopWaveformVisualization();
+    this.cleanupAudioPlayback();
   }
 
   loadPracticeSentences() {
@@ -122,8 +139,10 @@ export class Pronunciation implements OnInit {
     try {
       this.error = null;
       this.result = null;
+      this.cleanupAudioPlayback();
       await this.audioRecorder.startRecording();
       this.isRecording = true;
+      this.startWaveformVisualization();
     } catch (err: any) {
       this.error = err.message || 'Failed to start recording';
     }
@@ -131,8 +150,10 @@ export class Pronunciation implements OnInit {
 
   async stopRecording() {
     try {
+      this.stopWaveformVisualization();
       this.audioBlob = await this.audioRecorder.stopRecording();
       this.isRecording = false;
+      this.setupAudioPlayback();
     } catch (err: any) {
       this.error = err.message || 'Failed to stop recording';
       this.isRecording = false;
@@ -225,5 +246,139 @@ export class Pronunciation implements OnInit {
       default:
         return 'badge-neutral';
     }
+  }
+
+  // Waveform visualization methods
+  private startWaveformVisualization() {
+    if (!this.waveformCanvas) {
+      setTimeout(() => this.startWaveformVisualization(), 100);
+      return;
+    }
+
+    const canvas = this.waveformCanvas.nativeElement;
+    const canvasContext = canvas.getContext('2d');
+    const analyser = this.audioRecorder.getAnalyser();
+
+    if (!canvasContext || !analyser) return;
+
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const draw = () => {
+      if (!this.isRecording) return;
+
+      this.animationFrameId = requestAnimationFrame(draw);
+      analyser.getByteTimeDomainData(dataArray);
+
+      canvasContext.fillStyle = '#1e293b';
+      canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+
+      canvasContext.lineWidth = 2;
+      canvasContext.strokeStyle = '#3b82f6';
+      canvasContext.beginPath();
+
+      const sliceWidth = canvas.width / bufferLength;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = (v * canvas.height) / 2;
+
+        if (i === 0) {
+          canvasContext.moveTo(x, y);
+        } else {
+          canvasContext.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+      }
+
+      canvasContext.lineTo(canvas.width, canvas.height / 2);
+      canvasContext.stroke();
+    };
+
+    draw();
+  }
+
+  private stopWaveformVisualization() {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+  }
+
+  // Audio playback methods
+  private setupAudioPlayback() {
+    if (!this.audioBlob) return;
+
+    this.cleanupAudioPlayback();
+
+    const url = URL.createObjectURL(this.audioBlob);
+    this.audioElement = new Audio(url);
+
+    this.audioElement.addEventListener('loadedmetadata', () => {
+      this.audioDuration = this.audioElement?.duration || 0;
+    });
+
+    this.audioElement.addEventListener('timeupdate', () => {
+      if (this.audioElement) {
+        this.currentTime = this.audioElement.currentTime;
+        this.playbackProgress = (this.currentTime / this.audioDuration) * 100;
+      }
+    });
+
+    this.audioElement.addEventListener('ended', () => {
+      this.isPlaying = false;
+      this.currentTime = 0;
+      this.playbackProgress = 0;
+    });
+  }
+
+  private cleanupAudioPlayback() {
+    if (this.audioElement) {
+      this.audioElement.pause();
+      this.audioElement.src = '';
+      this.audioElement = null;
+    }
+    this.isPlaying = false;
+    this.currentTime = 0;
+    this.audioDuration = 0;
+    this.playbackProgress = 0;
+  }
+
+  togglePlayback() {
+    if (!this.audioElement) return;
+
+    if (this.isPlaying) {
+      this.audioElement.pause();
+      this.isPlaying = false;
+    } else {
+      this.audioElement.play();
+      this.isPlaying = true;
+    }
+  }
+
+  seekAudio(event: MouseEvent) {
+    if (!this.audioElement || !this.playbackTimeline) return;
+
+    const timeline = this.playbackTimeline.nativeElement;
+    const rect = timeline.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const percentage = clickX / rect.width;
+    const newTime = percentage * this.audioDuration;
+
+    this.audioElement.currentTime = newTime;
+    this.currentTime = newTime;
+    this.playbackProgress = percentage * 100;
+  }
+
+  formatDuration(seconds: number): string {
+    if (!seconds || isNaN(seconds)) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 }

@@ -117,6 +117,47 @@
           </div>
         </div>
 
+        <!-- Audio Waveform Visualization -->
+        <div *ngIf="isRecording" class="waveform-container">
+          <canvas #waveformCanvas class="waveform-canvas"></canvas>
+          <div class="recording-indicator">
+            <span class="recording-dot"></span>
+            <span>{{ t('pronunciation.recording') }}</span>
+          </div>
+        </div>
+
+        <!-- Audio Playback Controls -->
+        <div *ngIf="audioBlob && !isRecording && !isAnalyzing" class="playback-container">
+          <div class="playback-header">
+            <span class="playback-title">{{ t('pronunciation.yourRecording') }}</span>
+            <span class="playback-duration" *ngIf="audioDuration">{{ formatDuration(audioDuration) }}</span>
+          </div>
+          <div class="playback-controls">
+            <button
+              (click)="togglePlayback()"
+              class="playback-button"
+              [class.playing]="isPlaying"
+            >
+              <svg *ngIf="!isPlaying" class="playback-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <svg *ngIf="isPlaying" class="playback-icon" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16"/>
+                <rect x="14" y="4" width="4" height="16"/>
+              </svg>
+            </button>
+            <div class="playback-progress">
+              <div class="playback-timeline" #playbackTimeline (click)="seekAudio($event)">
+                <div class="playback-progress-bar" [style.width.%]="playbackProgress"></div>
+              </div>
+              <div class="playback-time">
+                <span>{{ formatDuration(currentTime) }}</span>
+                <span>{{ formatDuration(audioDuration) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="action-buttons">
           <button
             (click)="analyze()"
