@@ -34,7 +34,8 @@
 }
 
 .language-icon {
-  font-size: 1.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .main-content {
@@ -81,7 +82,8 @@
 }
 
 .tab-icon {
-  font-size: 1.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 /* Practice Sentences */
