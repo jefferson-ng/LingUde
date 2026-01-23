@@ -94,16 +94,15 @@
       <!-- Recording Section -->
       <div class="card recording-section">
         <h2>{{ t('pronunciation.recordTitle') }}</h2>
-        <p class="helper-text">{{ t('pronunciation.recordHelper') }}</p>
 
-        <div class="recording-controls">
+        <div class="recording-controls-compact">
           <button
             (click)="toggleRecording()"
             [disabled]="isAnalyzing || !referenceText.trim()"
             [class.recording]="isRecording"
-            class="record-button"
+            class="record-button-compact"
           >
-            <div class="record-icon-wrapper" [class.pulse]="isRecording">
+            <div class="record-icon-wrapper-compact" [class.pulse]="isRecording">
               <svg *ngIf="!isRecording" class="record-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
@@ -119,7 +118,7 @@
             </span>
           </button>
 
-          <div *ngIf="audioBlob && !isRecording" class="audio-ready">
+          <div *ngIf="audioBlob && !isRecording" class="audio-ready-compact">
             <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
@@ -127,25 +126,28 @@
           </div>
         </div>
 
-        <!-- Audio Waveform Visualization -->
-        <div *ngIf="isRecording" class="waveform-container">
-          <canvas #waveformCanvas class="waveform-canvas"></canvas>
-          <div class="recording-indicator">
-            <span class="recording-dot"></span>
-            <span>{{ t('pronunciation.recording') }}</span>
+        <!-- Audio Waveform Visualization with Timer -->
+        <div *ngIf="isRecording" class="waveform-container-compact">
+          <div class="waveform-header">
+            <div class="recording-indicator-compact">
+              <span class="recording-dot"></span>
+              <span>{{ t('pronunciation.recording') }}</span>
+            </div>
+            <span class="recording-timer">{{ formatDuration(recordingTime) }}</span>
           </div>
+          <canvas #waveformCanvas class="waveform-canvas-compact"></canvas>
         </div>
 
         <!-- Audio Playback Controls -->
-        <div *ngIf="audioBlob && !isRecording && !isAnalyzing" class="playback-container">
-          <div class="playback-header">
+        <div *ngIf="audioBlob && !isRecording && !isAnalyzing" class="playback-container-compact">
+          <div class="playback-header-compact">
             <span class="playback-title">{{ t('pronunciation.yourRecording') }}</span>
-            <span class="playback-duration" *ngIf="audioDuration">{{ formatDuration(audioDuration) }}</span>
+            <span class="playback-duration">{{ formatDuration(audioDuration) }}</span>
           </div>
-          <div class="playback-controls">
+          <div class="playback-controls-compact">
             <button
               (click)="togglePlayback()"
-              class="playback-button"
+              class="playback-button-compact"
               [class.playing]="isPlaying"
             >
               <svg *ngIf="!isPlaying" class="playback-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -156,11 +158,11 @@
                 <rect x="14" y="4" width="4" height="16"/>
               </svg>
             </button>
-            <div class="playback-progress">
+            <div class="playback-progress-compact">
               <div class="playback-timeline" #playbackTimeline (click)="seekAudio($event)">
                 <div class="playback-progress-bar" [style.width.%]="playbackProgress"></div>
               </div>
-              <div class="playback-time">
+              <div class="playback-time-compact">
                 <span>{{ formatDuration(currentTime) }}</span>
                 <span>{{ formatDuration(audioDuration) }}</span>
               </div>
@@ -168,11 +170,11 @@
           </div>
         </div>
 
-        <div class="action-buttons">
+        <div class="action-buttons-compact">
           <button
             (click)="analyze()"
             [disabled]="!audioBlob || isAnalyzing || isRecording"
-            class="btn btn-primary"
+            class="btn btn-primary-compact"
           >
             <span *ngIf="!isAnalyzing">{{ t('pronunciation.analyze') }}</span>
             <span *ngIf="isAnalyzing">
@@ -182,11 +184,11 @@
           </button>
 
           <button
-            (click)="reset()"
+            (click)="retryRecording()"
             [disabled]="isRecording || isAnalyzing"
-            class="btn btn-secondary"
+            class="btn btn-secondary-compact"
           >
-            {{ t('pronunciation.reset') }}
+            {{ t('pronunciation.retry') }}
           </button>
         </div>
       </div>

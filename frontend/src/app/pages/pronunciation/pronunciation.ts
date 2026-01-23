@@ -34,6 +34,10 @@ export class Pronunciation implements OnInit, OnDestroy {
   // Waveform visualization
   private animationFrameId: number | null = null;
 
+  // Recording timer
+  recordingTime = 0;
+  private recordingInterval: any = null;
+
   // Audio playback
   private audioElement: HTMLAudioElement | null = null;
   isPlaying = false;
@@ -62,6 +66,7 @@ export class Pronunciation implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopWaveformVisualization();
+    this.stopRecordingTimer();
     this.cleanupAudioPlayback();
   }
 
@@ -166,8 +171,10 @@ export class Pronunciation implements OnInit, OnDestroy {
       this.error = null;
       this.result = null;
       this.cleanupAudioPlayback();
+      this.recordingTime = 0;
       await this.audioRecorder.startRecording();
       this.isRecording = true;
+      this.startRecordingTimer();
       this.startWaveformVisualization();
     } catch (err: any) {
       this.error = err.message || 'Failed to start recording';
@@ -176,6 +183,7 @@ export class Pronunciation implements OnInit, OnDestroy {
 
   async stopRecording() {
     try {
+      this.stopRecordingTimer();
       this.stopWaveformVisualization();
       this.audioBlob = await this.audioRecorder.stopRecording();
       this.isRecording = false;
@@ -183,6 +191,7 @@ export class Pronunciation implements OnInit, OnDestroy {
     } catch (err: any) {
       this.error = err.message || 'Failed to stop recording';
       this.isRecording = false;
+      this.stopRecordingTimer();
     }
   }
 
@@ -251,6 +260,16 @@ export class Pronunciation implements OnInit, OnDestroy {
     this.error = null;
     this.audioBlob = null;
     this.selectedSentence = null;
+    this.cleanupAudioPlayback();
+  }
+
+  retryRecording() {
+    // Only clear recording-related data, keep the sentence
+    this.result = null;
+    this.error = null;
+    this.audioBlob = null;
+    this.recordingTime = 0;
+    this.cleanupAudioPlayback();
   }
 
   getScoreColor(score: number): string {
@@ -271,6 +290,21 @@ export class Pronunciation implements OnInit, OnDestroy {
         return 'badge-error';
       default:
         return 'badge-neutral';
+    }
+  }
+
+  // Recording timer methods
+  private startRecordingTimer() {
+    this.recordingTime = 0;
+    this.recordingInterval = setInterval(() => {
+      this.recordingTime++;
+    }, 1000);
+  }
+
+  private stopRecordingTimer() {
+    if (this.recordingInterval) {
+      clearInterval(this.recordingInterval);
+      this.recordingInterval = null;
     }
   }
 
