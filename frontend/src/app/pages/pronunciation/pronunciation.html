@@ -200,100 +200,99 @@
       </div>
 
       <!-- Results Section -->
-      <div *ngIf="result && result.success" class="results-section">
+      <div *ngIf="result && result.success" class="results-section-compact">
         <!-- XP Award Banner -->
-        <div *ngIf="result.xpAwarded" class="card xp-award-banner">
-          <div class="xp-celebration">
-            <span class="xp-icon">🎉</span>
-            <div class="xp-content">
-              <h3>{{ t('pronunciation.xpEarned') }}</h3>
-              <div class="xp-amount">+{{ result.xpAwarded }} XP</div>
-            </div>
-            <span class="xp-icon">🎉</span>
-          </div>
-        </div>
-
-        <!-- Overall Scores -->
-        <div class="card scores-card">
-          <h2>{{ t('pronunciation.overallScores') }}</h2>
-          <div class="scores-grid">
-            <div class="score-item">
-              <div class="score-label">{{ t('pronunciation.pronunciation') }}</div>
-              <div
-                class="score-value"
-                [style.color]="getScoreColor(result.pronunciationScore)"
-              >
-                {{ result.pronunciationScore | number: '1.0-0' }}
-              </div>
-            </div>
-            <div class="score-item">
-              <div class="score-label">{{ t('pronunciation.accuracy') }}</div>
-              <div
-                class="score-value"
-                [style.color]="getScoreColor(result.accuracyScore)"
-              >
-                {{ result.accuracyScore | number: '1.0-0' }}
-              </div>
-            </div>
-            <div *ngIf="result.fluencyScore != null" class="score-item">
-              <div class="score-label">{{ t('pronunciation.fluency') }}</div>
-              <div
-                class="score-value"
-                [style.color]="getScoreColor(result.fluencyScore)"
-              >
-                {{ result.fluencyScore | number: '1.0-0' }}
-              </div>
-            </div>
-            <div *ngIf="result.completenessScore != null" class="score-item">
-              <div class="score-label">{{ t('pronunciation.completeness') }}</div>
-              <div
-                class="score-value"
-                [style.color]="getScoreColor(result.completenessScore)"
-              >
-                {{ result.completenessScore | number: '1.0-0' }}
-              </div>
+        <div *ngIf="result.xpAwarded" class="card xp-award-banner-compact">
+          <div class="xp-celebration-compact">
+            <svg class="xp-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <div class="xp-content-compact">
+              <span class="xp-label">{{ t('pronunciation.xpEarned') }}</span>
+              <span class="xp-amount-compact">+{{ result.xpAwarded }} XP</span>
             </div>
           </div>
         </div>
 
-        <!-- Transcript -->
-        <div class="card transcript-card">
-          <h2>{{ t('pronunciation.whatYouSaid') }}</h2>
-          <div class="transcript">{{ result.transcript }}</div>
-        </div>
+        <!-- Performance Summary -->
+        <div class="card performance-summary">
+          <div class="performance-header">
+            <div class="performance-insight">
+              <h3 class="insight-label">{{ getPerformanceInsight(result.pronunciationScore, result.accuracyScore).label }}</h3>
+              <p class="insight-sublabel">{{ getPerformanceInsight(result.pronunciationScore, result.accuracyScore).sublabel }}</p>
+            </div>
+          </div>
 
-        <!-- Word-level Scores -->
-        <div class="card words-card">
-          <h2>{{ t('pronunciation.wordByWord') }}</h2>
-          <p class="helper-text">{{ t('pronunciation.wordByWordHelper') }}</p>
-          <div class="words-list">
-            <div *ngFor="let word of result.words" class="word-item">
-              <div class="word-header">
-                <span class="word-text">{{ word.word }}</span>
-                <span
-                  class="word-badge"
-                  [ngClass]="getErrorTypeBadgeClass(word.errorType)"
-                >
-                  {{ word.errorType }}
-                </span>
+          <div class="performance-metrics">
+            <div class="metric-item">
+              <div class="metric-header">
+                <span class="metric-label">Pronunciation</span>
+                <span class="metric-value">{{ result.pronunciationScore | number: '1.0-0' }}%</span>
               </div>
-              <div class="word-score">
-                <div class="score-bar-container">
-                  <div
-                    class="score-bar"
-                    [style.width.%]="word.accuracyScore"
-                    [style.backgroundColor]="getScoreColor(word.accuracyScore)"
-                  ></div>
-                </div>
-                <span
-                  class="score-number"
-                  [style.color]="getScoreColor(word.accuracyScore)"
-                >
-                  {{ word.accuracyScore | number: '1.0-0' }}
-                </span>
+              <div class="metric-bar">
+                <div class="metric-progress" [style.width.%]="result.pronunciationScore" [style.backgroundColor]="getScoreColor(result.pronunciationScore)"></div>
+              </div>
+            </div>
+
+            <div class="metric-item">
+              <div class="metric-header">
+                <span class="metric-label">Word Accuracy</span>
+                <span class="metric-value">{{ result.accuracyScore | number: '1.0-0' }}%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-progress" [style.width.%]="result.accuracyScore" [style.backgroundColor]="getScoreColor(result.accuracyScore)"></div>
+              </div>
+            </div>
+
+            <div *ngIf="result.fluencyScore != null" class="metric-item">
+              <div class="metric-header">
+                <span class="metric-label">Fluency</span>
+                <span class="metric-value">{{ result.fluencyScore | number: '1.0-0' }}%</span>
+              </div>
+              <div class="metric-bar">
+                <div class="metric-progress" [style.width.%]="result.fluencyScore" [style.backgroundColor]="getScoreColor(result.fluencyScore)"></div>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Interactive Transcript -->
+        <div class="card transcript-analysis">
+          <h3 class="transcript-title">Your Pronunciation</h3>
+          <p class="transcript-hint">Hover over words to see detailed feedback</p>
+
+          <div class="transcript-words">
+            <span
+              *ngFor="let word of result.words; let i = index"
+              class="transcript-word"
+              [ngClass]="getConfidenceTint(word.accuracyScore)"
+              [class.needs-attention]="needsAttention(word.accuracyScore)"
+              (mouseenter)="showWordTooltip(i, $event)"
+              (mouseleave)="hideWordTooltip()"
+              [attr.aria-label]="word.word + ' - Score: ' + word.accuracyScore"
+              tabindex="0"
+            >
+              {{ word.word }}
+
+            </span>
+          </div>
+        </div>
+
+        <!-- Fixed Position Tooltip -->
+        <div *ngIf="hoveredWordIndex !== null && result?.words"
+             class="word-tooltip-fixed"
+             role="tooltip"
+             [style.top.px]="tooltipPosition.top"
+             [style.left.px]="tooltipPosition.left">
+          <div class="tooltip-header">
+            <span class="tooltip-word">{{ result.words[hoveredWordIndex].word }}</span>
+            <span class="tooltip-score" [style.color]="getScoreColor(result.words[hoveredWordIndex].accuracyScore)">
+              {{ result.words[hoveredWordIndex].accuracyScore | number: '1.0-0' }}%
+            </span>
+          </div>
+          <ul class="tooltip-feedback">
+            <li *ngFor="let tip of getWordFeedback(result.words[hoveredWordIndex])">{{ tip }}</li>
+          </ul>
         </div>
       </div>
     </div>

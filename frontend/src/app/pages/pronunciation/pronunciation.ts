@@ -293,6 +293,114 @@ export class Pronunciation implements OnInit, OnDestroy {
     }
   }
 
+  // New helper functions for coach-like UI
+  getPerformanceInsight(pronunciationScore: number, accuracyScore: number): { label: string; sublabel: string } {
+    const avgScore = (pronunciationScore + accuracyScore) / 2;
+
+    if (avgScore >= 95) {
+      return {
+        label: 'Excellent',
+        sublabel: 'Native-like clarity and precision'
+      };
+    } else if (avgScore >= 85) {
+      return {
+        label: 'Great Work',
+        sublabel: 'Clear and understandable with minor refinements'
+      };
+    } else if (avgScore >= 70) {
+      return {
+        label: 'Good Progress',
+        sublabel: 'Understandable with room for improvement'
+      };
+    } else if (avgScore >= 50) {
+      return {
+        label: 'Keep Practicing',
+        sublabel: 'Focus on clarity and pronunciation patterns'
+      };
+    } else {
+      return {
+        label: 'Needs Work',
+        sublabel: 'Review the basics and practice regularly'
+      };
+    }
+  }
+
+  getConfidenceTint(score: number): string {
+    if (score >= 95) return 'confidence-excellent';
+    if (score >= 85) return 'confidence-great';
+    if (score >= 70) return 'confidence-good';
+    if (score >= 50) return 'confidence-fair';
+    return 'confidence-needs-work';
+  }
+
+  needsAttention(score: number, threshold: number = 92): boolean {
+    return score < threshold;
+  }
+
+  getWordFeedback(word: any): string[] {
+    // Generate contextual feedback based on error type and score
+    const feedback: string[] = [];
+
+    if (word.errorType === 'Mispronunciation') {
+      feedback.push('Check pronunciation guide');
+      if (word.accuracyScore < 70) {
+        feedback.push('Try breaking into syllables');
+      }
+    } else if (word.errorType === 'Omission') {
+      feedback.push('Word was skipped');
+      feedback.push('Speak more slowly');
+    } else if (word.errorType === 'Insertion') {
+      feedback.push('Extra word detected');
+      feedback.push('Review sentence structure');
+    } else if (word.accuracyScore < 92 && word.accuracyScore >= 70) {
+      feedback.push('Good attempt, minor adjustments needed');
+    } else if (word.accuracyScore >= 92) {
+      feedback.push('Excellent pronunciation');
+    }
+
+    return feedback.length > 0 ? feedback : ['No specific feedback'];
+  }
+
+  // Tooltip state management
+  hoveredWordIndex: number | null = null;
+  tooltipPosition = { top: 0, left: 0 };
+
+  showWordTooltip(index: number, event: MouseEvent): void {
+    this.hoveredWordIndex = index;
+    this.updateTooltipPosition(event);
+  }
+
+  hideWordTooltip(): void {
+    this.hoveredWordIndex = null;
+  }
+
+  toggleWordTooltip(index: number, event: Event): void {
+    // For touch devices - toggle tooltip on tap
+    event.preventDefault();
+    if (this.hoveredWordIndex === index) {
+      this.hideWordTooltip();
+    } else {
+      this.hoveredWordIndex = index;
+      if (event instanceof MouseEvent) {
+        this.updateTooltipPosition(event);
+      } else if (event instanceof TouchEvent && event.touches.length > 0) {
+        const touch = event.touches[0];
+        this.updateTooltipPosition({ clientX: touch.clientX, clientY: touch.clientY } as MouseEvent);
+      }
+    }
+  }
+
+  private updateTooltipPosition(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const rect = target.getBoundingClientRect();
+
+    // Position tooltip above the word
+    this.tooltipPosition = {
+      top: rect.top + window.scrollY - 10, // 10px above the word
+      left: rect.left + window.scrollX + (rect.width / 2) // Center horizontally
+    };
+  }
+
   // Recording timer methods
   private startRecordingTimer() {
     this.recordingTime = 0;
