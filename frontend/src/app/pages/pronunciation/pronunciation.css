@@ -86,7 +86,111 @@
   height: 1.125rem;
 }
 
-/* Practice Sentences */
+/* Practice Sentence Display */
+.practice-sentence-display {
+  position: relative;
+}
+
+.sentence-display-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.sentence-display-header h2 {
+  margin: 0;
+}
+
+.reroll-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: #f3f4f6;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.reroll-button:hover:not(:disabled) {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.reroll-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.reroll-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: transform 0.3s;
+}
+
+.reroll-button:hover:not(:disabled) .reroll-icon {
+  transform: rotate(180deg);
+}
+
+.current-sentence-card {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #bae6fd;
+  border-radius: 1rem;
+  transition: all 0.3s;
+}
+
+.sentence-badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.sentence-badge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.level-badge {
+  background: #3b82f6;
+  color: white;
+}
+
+.topic-badge {
+  background: #8b5cf6;
+  color: white;
+}
+
+.type-badge {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.sentence-display-text {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.8;
+  color: #0c4a6e;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Old Practice Sentences (keep for backwards compatibility) */
 .practice-sentences {
   max-height: 500px;
 }
@@ -732,6 +836,23 @@
   .playback-icon {
     width: 1.5rem;
     height: 1.5rem;
+  }
+
+  .sentence-display-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reroll-button {
+    justify-content: center;
+  }
+
+  .sentence-display-text {
+    font-size: 1.25rem;
+  }
+
+  .current-sentence-card {
+    padding: 1.5rem;
   }
 }
 

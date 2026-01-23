@@ -620,6 +620,8 @@
     "wordByWord": "Wort-für-Wort-Analyse",
     "wordByWordHelper": "Detaillierte Aussprachebewertungen für jedes Wort:",
     "recording": "Aufnahme läuft",
-    "yourRecording": "Deine Aufnahme"
+    "yourRecording": "Deine Aufnahme",
+    "practiceExercise": "Übungsaufgabe",
+    "nextSentence": "Nächster Satz"
   }
 }

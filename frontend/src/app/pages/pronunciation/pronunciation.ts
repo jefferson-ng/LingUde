@@ -67,10 +67,15 @@ export class Pronunciation implements OnInit, OnDestroy {
 
   loadPracticeSentences() {
     this.loadingSentences = true;
-    this.pronunciationService.getPracticeSentences(5).subscribe({
+    this.pronunciationService.getPracticeSentences(10).subscribe({
       next: (sentences) => {
         this.practiceSentences = sentences;
         this.loadingSentences = false;
+        // Automatically select the first sentence
+        if (sentences.length > 0 && !this.selectedSentence) {
+          this.selectedSentence = sentences[0];
+          this.referenceText = sentences[0].sentence;
+        }
       },
       error: (err) => {
         console.error('Failed to load practice sentences:', err);
@@ -86,6 +91,27 @@ export class Pronunciation implements OnInit, OnDestroy {
     this.result = null;
     this.error = null;
     this.audioBlob = null;
+  }
+
+  getNextSentence() {
+    if (this.practiceSentences.length === 0) {
+      this.loadPracticeSentences();
+      return;
+    }
+
+    // Find current index
+    const currentIndex = this.selectedSentence
+      ? this.practiceSentences.findIndex(s => s.exerciseId === this.selectedSentence!.exerciseId)
+      : -1;
+
+    // Get next sentence (loop back to start if at the end)
+    const nextIndex = (currentIndex + 1) % this.practiceSentences.length;
+    this.selectSentence(this.practiceSentences[nextIndex]);
+
+    // If we've cycled through all sentences, load new ones
+    if (nextIndex === 0 && currentIndex !== -1) {
+      this.loadPracticeSentences();
+    }
   }
 
   switchMode(mode: 'exercise' | 'custom') {

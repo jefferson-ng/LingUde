@@ -42,9 +42,21 @@
       </div>
 
       <!-- Practice Sentences (Exercise Mode) -->
-      <div *ngIf="practiceMode === 'exercise'" class="card practice-sentences">
-        <h2>{{ t('pronunciation.chooseSentence') }}</h2>
-        <p class="helper-text">{{ t('pronunciation.chooseSentenceHelper') }}</p>
+      <div *ngIf="practiceMode === 'exercise'" class="card practice-sentence-display">
+        <div class="sentence-display-header">
+          <h2>{{ t('pronunciation.practiceExercise') }}</h2>
+          <button
+            (click)="getNextSentence()"
+            [disabled]="loadingSentences"
+            class="reroll-button"
+            [title]="t('pronunciation.nextSentence')"
+          >
+            <svg class="reroll-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+            </svg>
+            <span>{{ t('pronunciation.nextSentence') }}</span>
+          </button>
+        </div>
 
         <div *ngIf="loadingSentences" class="loading-state">
           <span class="spinner"></span>
@@ -58,22 +70,11 @@
           </button>
         </div>
 
-        <div *ngIf="!loadingSentences && practiceSentences.length > 0" class="sentences-list">
-          <div
-            *ngFor="let sentence of practiceSentences"
-            class="sentence-card"
-            [class.selected]="selectedSentence?.exerciseId === sentence.exerciseId"
-            (click)="selectSentence(sentence)"
-          >
-            <div class="sentence-header">
-              <span class="sentence-level">{{ sentence.level }}</span>
-              <span class="sentence-topic" *ngIf="sentence.topic">{{ sentence.topic }}</span>
-            </div>
-            <p class="sentence-text">{{ sentence.sentence }}</p>
-            <div class="sentence-footer">
-              <span class="sentence-type">{{ sentence.contentType }}</span>
-            </div>
+        <div *ngIf="!loadingSentences && selectedSentence" class="current-sentence-card">
+          <div class="sentence-badges">
+            <span class="sentence-badge level-badge">{{ selectedSentence.level }}</span>
           </div>
+          <p class="sentence-display-text">{{ selectedSentence.sentence }}</p>
         </div>
       </div>
 

@@ -620,6 +620,8 @@
     "wordByWord": "Word-by-Word Analysis",
     "wordByWordHelper": "Detailed pronunciation scores for each word:",
     "recording": "Recording",
-    "yourRecording": "Your Recording"
+    "yourRecording": "Your Recording",
+    "practiceExercise": "Practice Exercise",
+    "nextSentence": "Next Sentence"
   }
 }
