@@ -54,31 +54,56 @@ public class PracticeSentenceService {
 
         List<ExerciseFillBlank> fillBlanks = fillBlankRepository.findAll(fillBlankSpec);
         for (ExerciseFillBlank exercise : fillBlanks) {
-            // Replace ___ with the correct answer to create a complete sentence
-            String completeSentence = exercise.getSentenceWithBlank()
-                    .replace("___", exercise.getCorrectAnswer());
+            String sentenceWithBlank = exercise.getSentenceWithBlank();
+            String correctAnswer = exercise.getCorrectAnswer();
 
-            sentences.add(new PracticeSentenceResponse(
-                    exercise.getId(),
-                    completeSentence,
-                    exercise.getDifficultyLevel(),
-                    exercise.getTopic(),
-                    exercise.getContentType() != null ? exercise.getContentType().name() : "VOCABULARY"
-            ));
+            if (sentenceWithBlank == null || correctAnswer == null) {
+                continue;
+            }
+
+            // Replace all underscore patterns with the correct answer
+            String completeSentence = sentenceWithBlank
+                    .replaceAll("_{3,}", correctAnswer)  // Replace 3 or more underscores
+                    .replaceAll("_{2}", correctAnswer)   // Replace exactly 2 underscores
+                    .replaceAll("(?<!\\w)_+(?!\\w)", correctAnswer);  // Replace standalone underscores
+
+            // Trim and validate
+            completeSentence = completeSentence.trim();
+
+            // Only include complete sentences without any remaining underscores
+            if (!completeSentence.isEmpty()
+                && !completeSentence.contains("_")
+                && completeSentence.length() > 5) {
+                sentences.add(new PracticeSentenceResponse(
+                        exercise.getId(),
+                        completeSentence,
+                        exercise.getDifficultyLevel(),
+                        exercise.getTopic(),
+                        exercise.getContentType() != null ? exercise.getContentType().name() : "VOCABULARY"
+                ));
+            }
         }
 
-        // Fetch from MCQ exercises
+        // Fetch from MCQ exercises - but exclude synonym exercises
+        // Synonyms are questions, not complete sentences suitable for pronunciation
         Specification<ExerciseMcq> mcqSpec = (root, query, cb) ->
                 cb.and(
                         cb.equal(root.get("targetLanguage"), language),
-                        cb.equal(root.get("difficultyLevel"), level)
+                        cb.equal(root.get("difficultyLevel"), level),
+                        cb.notEqual(root.get("topic"), "synonyme") // Exclude synonym exercises
                 );
 
         List<ExerciseMcq> mcqs = mcqRepository.findAll(mcqSpec);
         for (ExerciseMcq exercise : mcqs) {
-            // Use question text as practice sentence if it's a complete sentence
+            // Only include if it's a complete sentence (not a question)
             String questionText = exercise.getQuestionText();
-            if (questionText != null && questionText.length() > 10) {
+            if (questionText != null
+                && questionText.length() > 10
+                && !questionText.contains("?")  // Exclude questions
+                && !questionText.toLowerCase().contains("welches")  // Exclude "which" questions
+                && !questionText.toLowerCase().contains("was")  // Exclude "what" questions
+                && !questionText.toLowerCase().contains("wer")  // Exclude "who" questions
+                && !questionText.contains("_")) {  // Exclude sentences with blanks
                 sentences.add(new PracticeSentenceResponse(
                         exercise.getId(),
                         questionText,
