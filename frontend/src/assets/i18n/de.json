@@ -21,6 +21,7 @@
     "learning": "Lernen",
     "lessons": "Lektionen",
     "goals": "Ziele",
+    "pronunciation": "Aussprache",
     "leaderboard": "Bestenliste",
     "statistics": "Statistiken",
     "friends": "Freunde",
@@ -586,5 +587,28 @@
     "copyLink": "Link kopieren",
     "linkCopied": "Link kopiert!",
     "days": "Tage"
+  },
+  "pronunciation": {
+    "title": "Aussprache-Bewertung",
+    "subtitle": "Übe deine Aussprache und erhalte sofortiges Feedback",
+    "referenceText": "Referenztext",
+    "referenceTextHelper": "Gib den Text ein, den du üben möchtest:",
+    "placeholder": "z.B., Hallo, wie geht es dir heute?",
+    "recordTitle": "Nimm deine Aussprache auf",
+    "recordHelper": "Klicke auf die Schaltfläche, um die Aufnahme zu starten/stoppen:",
+    "startRecording": "Aufnahme starten",
+    "stopRecording": "Aufnahme stoppen",
+    "audioRecorded": "Audio aufgenommen",
+    "analyze": "Aussprache analysieren",
+    "analyzing": "Analysiere...",
+    "reset": "Zurücksetzen",
+    "overallScores": "Gesamtbewertung",
+    "pronunciation": "Aussprache",
+    "accuracy": "Genauigkeit",
+    "fluency": "Flüssigkeit",
+    "completeness": "Vollständigkeit",
+    "whatYouSaid": "Was du gesagt hast",
+    "wordByWord": "Wort-für-Wort-Analyse",
+    "wordByWordHelper": "Detaillierte Aussprachebewertungen für jedes Wort:"
   }
 }

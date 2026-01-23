@@ -4,7 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } fro
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
-import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X, Shield, MessageCircle } from 'lucide-angular';
+import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X, Shield, MessageCircle, Mic } from 'lucide-angular';
 import { filter } from 'rxjs/operators';
 import { ShareButtonComponent } from './components/share-button/share-button';
 
@@ -31,6 +31,7 @@ export class App implements OnInit {
   readonly UsersIcon = Users;
   readonly ShieldIcon = Shield;
   readonly MessageCircleIcon = MessageCircle;
+  readonly MicIcon = Mic;
 
   protected readonly title = signal('LingUDE');
   protected readonly isAdmin = signal(false);
@@ -199,6 +200,7 @@ export class App implements OnInit {
     { path: '/dashboard', translationKey: 'nav.dashboard', icon: 'home' },
     { path: '/chat', translationKey: 'nav.chat', icon: 'message-circle' },
     { path: '/learning', translationKey: 'nav.learning', icon: 'graduation-cap' },
+    { path: '/pronunciation', translationKey: 'nav.pronunciation', icon: 'mic' },
     { path: '/friends', translationKey: 'nav.friends', icon: 'users' },
     { path: '/leaderboard', translationKey: 'nav.leaderboard', icon: 'trophy' }
   ];
