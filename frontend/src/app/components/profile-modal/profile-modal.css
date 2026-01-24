@@ -31,15 +31,17 @@
 
 /* Modal Container - Larger like Duolingo */
 .profile-modal {
-  background: white;
+  background: #f8fafc;
   border-radius: 24px;
   width: 90%;
   max-width: 680px;
-  max-height: 90vh;
+  max-height: 95vh;
   overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
+  padding: 0;
 }
 
 .profile-modal.closing {
@@ -61,13 +63,13 @@
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -75,16 +77,21 @@
   color: white;
   transition: all 0.2s;
   z-index: 10;
+  padding: 0;
 }
 
 .close-button:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .close-button lucide-icon {
-  width: 1.125rem;
-  height: 1.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Profile Header - Modern Clean Design */
@@ -98,6 +105,7 @@
   border-radius: 24px 24px 0 0;
   position: relative;
   overflow: hidden;
+  margin: 0;
 }
 
 /* Decorative background elements */
@@ -165,7 +173,9 @@
 
 /* Statistics Section - Duolingo Style */
 .statistics-section {
-  padding: 1.5rem 2rem;
+  padding: 2rem 2rem 1.5rem;
+  background: #f8fafc;
+  margin: 0;
 }
 
 .section-title {
@@ -182,7 +192,7 @@
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .stat-box {
@@ -262,7 +272,7 @@
 
 /* Level Progress Card - Like Dashboard */
 .level-progress-card {
-  margin-top: 0.75rem;
+  margin-top: 1rem;
   background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
   border-radius: 16px;
   padding: 1rem 1.25rem;
@@ -316,8 +326,9 @@
 
 /* Achievements Section - Duolingo Style List */
 .achievements-section {
-  padding: 1.5rem 2rem;
-  border-top: 1px solid #e2e8f0;
+  padding: 0 2rem 2rem;
+  background: #f8fafc;
+  border-top: none;
 }
 
 .achievement-count {
@@ -357,15 +368,15 @@
 .achievements-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .achievement-row {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
-  background: #f8fafc;
+  padding: 1.25rem;
+  background: white;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
   transition: all 0.2s;
@@ -497,8 +508,8 @@
 
 /* Share Card - Invite Friends */
 .share-card {
-  margin: 0 2rem;
-  padding: 1.25rem;
+  margin: 0 2rem 1.5rem;
+  padding: 1.5rem;
   background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
   border-radius: 16px;
   border: 1px solid #bfdbfe;
@@ -530,10 +541,12 @@
 
 /* Modal Footer */
 .modal-footer {
-  padding: 1.5rem 2rem 2rem;
+  padding: 0 2rem 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  background: #f8fafc;
+  margin: 0;
 }
 
 .logout-button {
@@ -542,7 +555,7 @@
   justify-content: center;
   gap: 0.75rem;
   width: 100%;
-  padding: 1rem;
+  padding: 1.125rem;
   background: #fee2e2;
   border: none;
   border-radius: 12px;
@@ -621,11 +634,12 @@
   }
 
   .statistics-section {
-    padding: 1.25rem 1.5rem;
+    padding: 1.5rem 1.5rem 1.25rem;
+    background: #f8fafc;
   }
 
   .stats-grid {
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 
   .stat-box {
@@ -642,11 +656,12 @@
   }
 
   .achievements-section {
-    padding: 1.25rem 1.5rem;
+    padding: 0 1.5rem 1.5rem;
+    background: #f8fafc;
   }
 
   .achievement-row {
-    padding: 0.875rem;
+    padding: 1rem;
   }
 
   .achievement-icon-wrapper {
@@ -668,12 +683,13 @@
   }
 
   .modal-footer {
-    padding: 1.25rem 1.5rem 1.5rem;
+    padding: 0 1.5rem 1.5rem;
+    background: #f8fafc;
   }
 
   .share-card {
-    margin: 0 1.5rem;
-    padding: 1rem;
+    margin: 0 1.5rem 1.25rem;
+    padding: 1.25rem;
   }
 
   .share-card-content {
