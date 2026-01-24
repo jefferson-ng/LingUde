@@ -138,6 +138,7 @@ export class ChatService {
           this.saveSessionToStorage(response.sessionId);
 
           // Add AI response to messages (user message already added)
+          // The component will handle the streaming effect
           const currentMessagesAfterSend = this.messagesSubject.value;
           const aiMessage: ChatMessage = {
             role: 'MODEL',

@@ -3140,7 +3140,7 @@
 
 /* Level Start Popup */
 .level-popup {
-  position: fixed;
+  position: absolute;
   background: linear-gradient(145deg, #60a5fa 0%, #3b82f6 100%);
   border-radius: 20px;
   padding: 1.75rem;
@@ -3153,8 +3153,17 @@
   align-items: stretch;
   gap: 1.25rem;
   animation: popupSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Position to the right of the level node */
+  top: 50%;
+  left: calc(100% + 20px);
   transform: translateY(-50%);
-  margin-left: 0;
+}
+
+/* Popup on left side for right-aligned levels */
+.level-popup.popup-left {
+  left: auto;
+  right: calc(100% + 20px);
+  animation: popupSlideInLeft 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Green styling for completed levels */
@@ -3176,14 +3185,38 @@
   border-right: 8px solid #60a5fa;
 }
 
+/* Arrow on right side for left-positioned popup */
+.level-popup.popup-left::before {
+  left: auto;
+  right: -8px;
+  border-right: none;
+  border-left: 8px solid #60a5fa;
+}
+
 .level-popup.completed::before {
   border-right-color: #34d399;
+}
+
+.level-popup.completed.popup-left::before {
+  border-right-color: transparent;
+  border-left-color: #34d399;
 }
 
 @keyframes popupSlideIn {
   from {
     opacity: 0;
     transform: translateY(-50%) translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+@keyframes popupSlideInLeft {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(10px);
   }
   to {
     opacity: 1;

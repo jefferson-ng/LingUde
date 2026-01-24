@@ -52,7 +52,8 @@
     "globalRanking": "globale Rangliste",
     "aiChat": "Chat mit Rob",
     "aiChatText": "Übe deine Sprachkenntnisse mit Rob dem Otter!",
-    "startChat": "Chat starten"
+    "startChat": "Chat starten",
+    "totalXp": "Gesamt-XP"
   },
   "lessons": {
     "title": "Lektionen",

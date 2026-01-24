@@ -2,6 +2,7 @@ package com.sep.sep_backend.user.dto;
 
 import com.sep.sep_backend.user.entity.UserLearning;
 import com.sep.sep_backend.user.entity.UserProfile;
+import com.sep.sep_backend.util.LevelUtils;
 
 /**
  * DTO representing a single entry in the leaderboard
@@ -35,8 +36,8 @@ public class LeaderboardEntryDTO {
         this.displayName = profile != null ? profile.getDisplayName() : null;
         this.avatarUrl = profile != null ? profile.getAvatarUrl() : null;
         this.xp = userLearning.getXp();
-        // Level calculation: level = floor(xp / 100) + 1
-        this.level = (userLearning.getXp() / 100) + 1;
+        // Level calculation using exponential leveling system
+        this.level = LevelUtils.calculateLevel(userLearning.getXp());
         this.streakCount = userLearning.getStreakCount();
     }
 

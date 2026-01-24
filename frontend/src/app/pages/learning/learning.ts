@@ -377,16 +377,6 @@ export class Learning implements OnInit {
     // Show popup next to the clicked level
     this.selectedLevel.set(level);
     
-    // Calculate position if event is available
-    if (event) {
-      const target = event.currentTarget as HTMLElement;
-      const rect = target.getBoundingClientRect();
-      this.popupPosition.set({
-        top: rect.top + window.scrollY + (rect.height / 2),
-        left: rect.right + 25 // 25px spacing from the level button
-      });
-    }
-    
     // Load exercises to calculate XP
     this.loadLevelXP(level);
   }
