@@ -58,6 +58,11 @@ export class Chat implements OnInit, AfterViewChecked {
   // For auto-scroll
   private shouldScrollToBottom = false;
 
+  // For streaming effect
+  protected streamingMessage = signal<string>('');
+  protected isStreaming = signal(false);
+  private streamingIntervalId: any = null;
+
   ngOnInit(): void {
     // Get current user info
     this.authService.user$.subscribe(user => {
@@ -69,7 +74,8 @@ export class Chat implements OnInit, AfterViewChecked {
     // Subscribe to messages
     this.chatService.messages$.subscribe(messages => {
       this.messages.set(messages);
-      this.shouldScrollToBottom = true;
+      // Always scroll to bottom when messages update
+      setTimeout(() => this.scrollToBottom(), 50);
     });
 
     // Subscribe to loading state
@@ -115,13 +121,15 @@ export class Chat implements OnInit, AfterViewChecked {
     if (!message || this.isLoading()) return;
 
     this.messageText.set('');
-    
+
     this.chatService.sendMessage(message).subscribe({
-      next: (_response) => {
-        // Tool calls and response info are handled by the service
+      next: (response) => {
+        // Start streaming animation for AI response
+        this.startStreamingEffect(response.response);
       },
       error: (err) => {
         console.error('Chat error:', err);
+        this.isStreaming.set(false);
         this.chatService.addDebugEntry({
           type: 'error',
           timestamp: new Date().toISOString(),
@@ -129,6 +137,39 @@ export class Chat implements OnInit, AfterViewChecked {
         });
       }
     });
+  }
+
+  private startStreamingEffect(fullText: string): void {
+    // Clear any existing streaming
+    if (this.streamingIntervalId) {
+      clearInterval(this.streamingIntervalId);
+    }
+
+    // Split text into words
+    const words = fullText.split(' ');
+    let currentIndex = 0;
+
+    this.streamingMessage.set('');
+    this.isStreaming.set(true);
+
+    // Stream words one by one
+    this.streamingIntervalId = setInterval(() => {
+      if (currentIndex < words.length) {
+        const currentText = this.streamingMessage();
+        const newText = currentText + (currentIndex > 0 ? ' ' : '') + words[currentIndex];
+        this.streamingMessage.set(newText);
+        currentIndex++;
+
+        // Auto-scroll during streaming
+        setTimeout(() => this.scrollToBottom(), 10);
+      } else {
+        // Streaming complete
+        clearInterval(this.streamingIntervalId);
+        this.streamingIntervalId = null;
+        this.isStreaming.set(false);
+        this.streamingMessage.set('');
+      }
+    }, 50); // 50ms between words for smooth effect
   }
 
   protected onKeyDown(event: KeyboardEvent): void {

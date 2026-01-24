@@ -14,14 +14,25 @@
         </div>
       </div>
 
-      <!-- Level Progress -->
-      <div class="level-card">
-        <div class="level-header">
-          <span class="level-label">Level {{ userLevel() }}</span>
-          <span class="level-xp">{{ userXP() }} XP</span>
+      <!-- XP Widgets Row -->
+      <div class="xp-widgets-row">
+        <!-- Level Progress Card - Header style -->
+        <div class="level-card">
+          <div class="level-card-header">
+            <span class="level-badge">Level {{ userLevel() }}</span>
+            <span class="level-xp-text">{{ xpForCurrentLevel() }}/{{ xpForNextLevel() }} XP</span>
+          </div>
+          <div class="level-progress-track">
+            <div class="level-progress-fill" [style.width.%]="progressPercent()"></div>
+          </div>
         </div>
-        <div class="level-progress-bar">
-          <div class="level-progress-fill" [style.width.%]="progressPercent()"></div>
+
+        <!-- Total XP Widget -->
+        <div class="total-xp-card">
+          <div class="total-xp-content">
+            <span class="total-xp-label">{{ t('dashboard.totalXp') || 'Total XP' }}</span>
+            <span class="total-xp-value">{{ userXP() }}</span>
+          </div>
         </div>
       </div>
 

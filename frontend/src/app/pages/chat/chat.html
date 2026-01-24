@@ -42,13 +42,14 @@
 
       <!-- Chat Messages -->
       <div class="messages-list" *ngIf="messages().length > 0">
-        <div 
-          *ngFor="let msg of messages()" 
-          class="message" 
+        <div
+          *ngFor="let msg of messages(); let last = last"
+          class="message"
           [class.user-message]="msg.role === 'USER'"
           [class.ai-message]="msg.role === 'MODEL'"
-          [class.tool-message]="msg.role === 'TOOL'">
-          
+          [class.tool-message]="msg.role === 'TOOL'"
+          [class.hidden]="last && msg.role === 'MODEL' && isStreaming()">
+
           <div class="message-avatar">
             @if (msg.role === 'USER') {
               <div class="user-avatar">{{ getUserInitial() }}</div>
@@ -56,7 +57,7 @@
               <img src="assets/robert-otter.png" alt="Rob" class="rob-message-avatar">
             }
           </div>
-          
+
           <div class="message-content">
             <div class="message-header">
               <span class="message-role">
@@ -68,8 +69,21 @@
           </div>
         </div>
 
+        <!-- Streaming message (replacing the last MODEL message temporarily) -->
+        <div class="message ai-message streaming-message" *ngIf="isStreaming()">
+          <div class="message-avatar">
+            <img src="assets/robert-otter.png" alt="Rob" class="rob-message-avatar">
+          </div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-role">{{ t('chat.tutor') }}</span>
+            </div>
+            <markdown class="message-text" [data]="streamingMessage()"></markdown>
+          </div>
+        </div>
+
         <!-- Loading indicator with Rob thinking animation -->
-        <div class="message ai-message rob-thinking" *ngIf="isLoading()">
+        <div class="message ai-message rob-thinking" *ngIf="isLoading() && !isStreaming()">
           <div class="message-avatar thinking-avatar">
             <img src="assets/robert-otter.png" alt="Rob" class="rob-message-avatar">
           </div>

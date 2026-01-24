@@ -7,6 +7,7 @@ import { LeaderboardService } from '../../services/leaderboard.service';
 import { ExerciseService } from '../../services/exercise.service';
 import { LeaderboardEntry } from '../../models/leaderboard.model';
 import { LucideAngularModule, Flame } from 'lucide-angular';
+import { calculateLevelProgress } from '../../utils/level.utils';
 
 @Component({
   selector: 'app-dashboard',
@@ -129,18 +130,12 @@ export class Dashboard implements OnInit {
     this.userXP.set(xp);
     this.userStreak.set(streak);
 
-    // Calculate level (100 XP per level)
-    const level = Math.floor(xp / 100) + 1;
-    this.userLevel.set(level);
-
-    // Calculate XP progress within current level
-    const xpInCurrentLevel = xp % 100;
-    this.xpForCurrentLevel.set(xpInCurrentLevel);
-    this.xpForNextLevel.set(100 - xpInCurrentLevel);
-
-    // Calculate progress percentage
-    const percent = (xpInCurrentLevel / 100) * 100;
-    this.progressPercent.set(percent);
+    // Calculate level progress using exponential formula
+    const progress = calculateLevelProgress(xp);
+    this.userLevel.set(progress.level);
+    this.xpForCurrentLevel.set(progress.xpInCurrentLevel);
+    this.xpForNextLevel.set(progress.xpRequiredForNextLevel);
+    this.progressPercent.set(progress.progressPercent);
   }
 
   private updateLearningInfo(language: string | null, current: string, target: string): void {
