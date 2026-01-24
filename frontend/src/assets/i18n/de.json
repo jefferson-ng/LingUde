@@ -590,7 +590,7 @@
     "title": "Aussprache-Bewertung",
     "subtitle": "Übe deine Aussprache und erhalte sofortiges Feedback",
     "exerciseMode": "Mit Übungen üben",
-    "customMode": "Eigener Text",
+    "customMode": "Übe mit eigenem Text",
     "chooseSentence": "Wähle einen Übungssatz",
     "chooseSentenceHelper": "Wähle einen Satz aus deinen Lektionen, um die Aussprache zu üben und XP zu verdienen:",
     "loadingSentences": "Lade Übungssätze...",
@@ -621,6 +621,7 @@
     "recording": "Aufnahme läuft",
     "yourRecording": "Deine Aufnahme",
     "practiceExercise": "Übungsaufgabe",
-    "nextSentence": "Nächster Satz"
+    "nextSentence": "Nächster Satz",
+    "selectLanguage": "Sprache auswählen"
   }
 }

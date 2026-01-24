@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -30,6 +30,14 @@ export class Pronunciation implements OnInit, OnDestroy {
   practiceSentences: PracticeSentence[] = [];
   selectedSentence: PracticeSentence | null = null;
   loadingSentences = false;
+
+  // Language selector
+  isLanguageDropdownOpen = signal<boolean>(false);
+  private languageDropdownTimeout: any = null;
+  availableLanguages = [
+    { code: 'DE' as const, name: 'German', flagCode: 'de' },
+    { code: 'EN' as const, name: 'English', flagCode: 'gb' }
+  ];
 
   // Waveform visualization
   private animationFrameId: number | null = null;
@@ -156,6 +164,46 @@ export class Pronunciation implements OnInit, OnDestroy {
       default:
         return 'English (UK)';
     }
+  }
+
+  // Language selector methods
+  onLanguageHover(): void {
+    if (this.languageDropdownTimeout) {
+      clearTimeout(this.languageDropdownTimeout);
+      this.languageDropdownTimeout = null;
+    }
+    this.isLanguageDropdownOpen.set(true);
+  }
+
+  onLanguageLeave(): void {
+    this.languageDropdownTimeout = setTimeout(() => {
+      this.isLanguageDropdownOpen.set(false);
+    }, 200);
+  }
+
+  selectLanguage(languageCode: 'DE' | 'EN'): void {
+    this.isLanguageDropdownOpen.set(false);
+
+    // Update user learning data
+    this.userLearningService.updateLearningConfig({ learningLanguage: languageCode }).subscribe({
+      next: (data: UserLearningData) => {
+        this.userLearningData = data;
+        // Reload practice sentences for the new language
+        this.practiceSentences = [];
+        this.selectedSentence = null;
+        this.referenceText = '';
+        this.result = null;
+        this.loadPracticeSentences();
+      },
+      error: (err: Error) => {
+        console.error('Failed to update language:', err);
+      }
+    });
+  }
+
+  getSelectedLanguage() {
+    const langCode = this.userLearningData?.learningLanguage || 'EN';
+    return this.availableLanguages.find(l => l.code === langCode) || this.availableLanguages[1];
   }
 
   async toggleRecording() {

@@ -1,16 +1,15 @@
 <ng-container *transloco="let t">
-  <div class="pronunciation-container">
-    <div class="header">
-      <h1>{{ t('pronunciation.title') }}</h1>
-      <div class="language-badge">
-        <svg class="language-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="2" y1="12" x2="22" y2="12"></line>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-        </svg>
-        <span>{{ languageDisplay }}</span>
+  <!-- Main Content -->
+  <div class="pronunciation-page-wrapper">
+    <div class="pronunciation-container">
+      <div class="header">
+        <h1>{{ t('pronunciation.title') }}</h1>
+        <!-- Current Language Indicator -->
+        <div class="current-language-indicator">
+          <span [class]="'fi fi-' + getSelectedLanguage().flagCode"></span>
+          <span class="language-name">{{ getSelectedLanguage().name }}</span>
+        </div>
       </div>
-    </div>
 
     <div class="main-content">
       <!-- Mode Selection -->
@@ -72,7 +71,7 @@
 
         <div *ngIf="!loadingSentences && selectedSentence" class="current-sentence-card">
           <div class="sentence-badges">
-            <span class="sentence-badge level-badge">{{ selectedSentence.level }}</span>
+            <span class="sentence-badge level-badge" [attr.data-level]="selectedSentence.level">{{ selectedSentence.level }}</span>
           </div>
           <p class="sentence-display-text">{{ selectedSentence.sentence }}</p>
         </div>
@@ -296,5 +295,6 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </ng-container>

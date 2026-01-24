@@ -590,7 +590,7 @@
     "title": "Pronunciation Assessment",
     "subtitle": "Practice your pronunciation and get instant feedback",
     "exerciseMode": "Practice with Exercises",
-    "customMode": "Custom Text",
+    "customMode": "Practice with your own text",
     "chooseSentence": "Choose a Practice Sentence",
     "chooseSentenceHelper": "Select a sentence from your lessons to practice pronunciation and earn XP:",
     "loadingSentences": "Loading practice sentences...",
@@ -621,6 +621,7 @@
     "recording": "Recording",
     "yourRecording": "Your Recording",
     "practiceExercise": "Practice Exercise",
-    "nextSentence": "Next Sentence"
+    "nextSentence": "Next Sentence",
+    "selectLanguage": "Select Language"
   }
 }
