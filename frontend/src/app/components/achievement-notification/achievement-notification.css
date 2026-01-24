@@ -59,23 +59,17 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  align-self: center;
   box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
-  animation: bounce 1s ease-in-out infinite;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
 }
 
 .achievement-icon {
   width: 2rem;
   height: 2rem;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .achievement-info {

@@ -77,8 +77,8 @@
                   <span class="achievement-title">{{ achievement.title }}</span>
                   <span class="achievement-description">{{ achievement.description }}</span>
                   
-                  <!-- Progress Bar -->
-                  @if (achievement.currentProgress !== undefined && achievement.targetProgress !== undefined) {
+                  <!-- Progress Bar (only show if not all milestones completed) -->
+                  @if (achievement.currentProgress !== undefined && achievement.targetProgress !== undefined && !achievement.unlocked) {
                     <div class="achievement-progress">
                       <div class="achievement-progress-bar">
                         <div class="achievement-progress-fill" [style.width.%]="achievement.progressPercent"></div>
