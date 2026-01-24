@@ -1,4 +1,13 @@
 <ng-container *transloco="let t">
+  <!-- Page Header with Share Button -->
+  <div class="friends-page-header">
+    <div class="friends-header-content">
+      <h1 class="friends-page-title">{{ t('friends.title') }}</h1>
+      <p class="friends-page-subtitle">{{ t('friends.subtitle') }}</p>
+    </div>
+    <app-share-button></app-share-button>
+  </div>
+
   <nav class="friends-nav">
 
     <!-- Friends Tab -->

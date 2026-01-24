@@ -33,6 +33,24 @@
     "xp": "XP",
     "logout": "Abmelden"
   },
+  "profile": {
+    "level": "Level",
+    "days": "Tage",
+    "achievements": "Erfolge",
+    "achievementUnlocked": "Erfolg freigeschaltet!",
+    "noAchievements": "Noch keine Erfolge. Lerne weiter, um sie freizuschalten!",
+    "statistics": "Statistiken",
+    "streakDays": "Streak-Tage",
+    "totalXP": "Gesamt-XP",
+    "currentLevel": "Aktuelles Level",
+    "xpToNextLevel": "XP bis zum nächsten Level",
+    "achievementGroups": {
+      "xpCollector": "Fleißiger Sammler",
+      "xpCollectorDesc": "Sammle XP und schalte Belohnungen frei",
+      "streakMaster": "Ausdauer-Champion",
+      "streakMasterDesc": "Halte deinen Lernstreak aufrecht"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Übersicht und Statistiken",
@@ -305,30 +323,6 @@
     "reviewGoal": {
       "title": "Wiederholung",
       "description": "Wiederhole 5 gelernte Wörter"
-    },
-    "achievement1": {
-      "title": "Erste Woche",
-      "description": "7 Tage Streak"
-    },
-    "achievement2": {
-      "title": "Fleißig",
-      "description": "10 Lektionen"
-    },
-    "achievement3": {
-      "title": "Zielstrebig",
-      "description": "30 Tagesziele"
-    },
-    "achievement4": {
-      "title": "Meister",
-      "description": "50 Lektionen"
-    },
-    "achievement5": {
-      "title": "Champion",
-      "description": "30 Tage Streak"
-    },
-    "achievement6": {
-      "title": "Experte",
-      "description": "100 Lektionen"
     }
   },
   "leaderboard": {

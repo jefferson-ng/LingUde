@@ -1,6 +1,39 @@
 .auth-container { max-width: 350px; margin: 40px auto; padding: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
 h2 { text-align: center; }
 input { width: 100%; margin-bottom: 1rem; padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc; }
-button { width: 100%; padding: 0.7rem; background: #1976d2; color: #fff; border: none; border-radius: 4px; font-weight: bold; }
+
+.password-input-wrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.password-input-wrapper input {
+  margin-bottom: 0;
+  padding-right: 2.5rem;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: color 0.2s;
+  width: auto;
+}
+
+.password-toggle-btn:hover {
+  color: #1976d2;
+  background: none;
+}
+
+button[type="submit"] { width: 100%; padding: 0.7rem; background: #1976d2; color: #fff; border: none; border-radius: 4px; font-weight: bold; }
 .error { color: #d32f2f; margin-top: 0.5rem; text-align: center; }
 a { display: block; text-align: center; margin-top: 1rem; color: #1976d2; }

@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslocoDirective, RouterLink],
+  imports: [CommonModule, FormsModule, TranslocoDirective, RouterLink, LucideAngularModule],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
@@ -17,6 +18,11 @@ export class RegisterComponent {
   username = '';
   password = '';
   error = '';
+  showPassword = false;
+
+  // Icons
+  readonly EyeIcon = Eye;
+  readonly EyeOffIcon = EyeOff;
 
   constructor(private auth: AuthService, private router: Router) {}
 
@@ -29,5 +35,9 @@ export class RegisterComponent {
     } catch (e: any) {
       this.error = e?.error?.message || 'Registrierung fehlgeschlagen';
     }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

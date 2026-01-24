@@ -1,0 +1,22 @@
+<div
+  *transloco="let t"
+  class="achievement-notification"
+  [class.visible]="isVisible()"
+  [class.leaving]="isLeaving()"
+>
+  <div class="notification-content">
+    <div class="achievement-icon-wrapper">
+      <lucide-icon [img]="getAchievementIcon()" class="achievement-icon"></lucide-icon>
+    </div>
+
+    <div class="achievement-info">
+      <div class="achievement-label">{{ t('profile.achievementUnlocked') }}</div>
+      <div class="achievement-title">{{ achievement().title }}</div>
+      <div class="achievement-description">{{ achievement().description }}</div>
+    </div>
+
+    <div class="trophy-decoration">
+      <lucide-icon [img]="TrophyIcon" [size]="20"></lucide-icon>
+    </div>
+  </div>
+</div>

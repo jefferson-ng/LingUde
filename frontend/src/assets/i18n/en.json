@@ -33,6 +33,24 @@
     "xp": "XP",
     "logout": "Log out"
   },
+  "profile": {
+    "level": "Level",
+    "days": "Days",
+    "achievements": "Achievements",
+    "achievementUnlocked": "Achievement Unlocked!",
+    "noAchievements": "No achievements yet. Keep learning to unlock them!",
+    "statistics": "Statistics",
+    "streakDays": "Streak Days",
+    "totalXP": "Total XP",
+    "currentLevel": "Current Level",
+    "xpToNextLevel": "XP to Next Level",
+    "achievementGroups": {
+      "xpCollector": "Diligent Collector",
+      "xpCollectorDesc": "Collect XP and unlock rewards",
+      "streakMaster": "Endurance Champion",
+      "streakMasterDesc": "Keep your learning streak going"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Overview and Statistics",
@@ -305,30 +323,6 @@
     "reviewGoal": {
       "title": "Review",
       "description": "Review 5 learned words"
-    },
-    "achievement1": {
-      "title": "First Week",
-      "description": "7-day streak"
-    },
-    "achievement2": {
-      "title": "Diligent",
-      "description": "10 lessons"
-    },
-    "achievement3": {
-      "title": "Determined",
-      "description": "30 daily goals"
-    },
-    "achievement4": {
-      "title": "Master",
-      "description": "50 lessons"
-    },
-    "achievement5": {
-      "title": "Champion",
-      "description": "30-day streak"
-    },
-    "achievement6": {
-      "title": "Expert",
-      "description": "100 lessons"
     }
   },
   "leaderboard": {

@@ -1,10 +1,11 @@
-import { Component, signal, inject, OnInit, computed } from '@angular/core';
+import { Component, signal, inject, OnInit, computed, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { CommonModule } from '@angular/common';
 import { UserLearningService } from '../../services/user-learning.service';
 import { LeaderboardService } from '../../services/leaderboard.service';
 import { ExerciseService } from '../../services/exercise.service';
+import { ProfileService } from '../../services/profile.service';
 import { LeaderboardEntry } from '../../models/leaderboard.model';
 import { LucideAngularModule, Flame } from 'lucide-angular';
 import { calculateLevelProgress } from '../../utils/level.utils';
@@ -15,11 +16,15 @@ import { calculateLevelProgress } from '../../utils/level.utils';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
   private userLearningService = inject(UserLearningService);
   private leaderboardService = inject(LeaderboardService);
   private router = inject(Router);
   private exerciseService = inject(ExerciseService);
+  private profileService = inject(ProfileService);
+  
+  // Achievement polling interval
+  private achievementCheckInterval?: ReturnType<typeof setInterval>;
 
   // Icons
   readonly FlameIcon = Flame;
@@ -55,6 +60,14 @@ export class Dashboard implements OnInit {
     this.loadUserData();
     this.loadLeaderboardData();
     this.loadExercisesToReview();
+    
+    // Check for achievements initially
+    this.checkAchievements();
+    
+    // Poll for achievements every 10 seconds
+    this.achievementCheckInterval = setInterval(() => {
+      this.checkAchievements();
+    }, 10000);
 
     // Subscribe to XP updates
     this.userLearningService.userLearning$.subscribe(data => {
@@ -200,5 +213,25 @@ export class Dashboard implements OnInit {
       }
     }
     this.completedLevelsCount.set(totalCount);
+  }
+  
+  /**
+   * Check for new achievements
+   */
+  private checkAchievements(): void {
+    this.profileService.getAllAchievements().subscribe({
+      error: (err) => {
+        console.error('Error checking achievements:', err);
+      }
+    });
+  }
+  
+  /**
+   * Clean up interval on component destroy
+   */
+  ngOnDestroy(): void {
+    if (this.achievementCheckInterval) {
+      clearInterval(this.achievementCheckInterval);
+    }
   }
 }

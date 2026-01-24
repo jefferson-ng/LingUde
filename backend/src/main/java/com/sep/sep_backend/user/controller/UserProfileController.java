@@ -1,9 +1,14 @@
 package com.sep.sep_backend.user.controller;
 
+import com.sep.sep_backend.user.dto.AchievementWithStatusDTO;
 import com.sep.sep_backend.user.dto.UserProfileResponse;
 import com.sep.sep_backend.user.service.UserProfileService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * REST controller for profile-related endpoints.
@@ -46,5 +51,20 @@ public class UserProfileController {
     public ResponseEntity<UserProfileResponse> getCurrentUserProfile() {
         UserProfileResponse response = userProfileService.getCurrentUserProfile();
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Returns all achievements with their unlock status for the current user.
+     * <p>
+     * This endpoint is used by the profile modal to display all achievements,
+     * both locked (grayed out) and unlocked.
+     * </p>
+     *
+     * @return HTTP 200 OK with list of {@link AchievementWithStatusDTO}
+     */
+    @GetMapping("/achievements/all")
+    public ResponseEntity<List<AchievementWithStatusDTO>> getAllAchievementsWithStatus() {
+        List<AchievementWithStatusDTO> achievements = userProfileService.getAllAchievementsWithStatus();
+        return ResponseEntity.ok(achievements);
     }
 }

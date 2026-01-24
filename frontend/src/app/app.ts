@@ -5,19 +5,24 @@ import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { UserLearningService } from './services/user-learning.service';
 import { LucideAngularModule, Home, BookOpen, Target, Trophy, Users, Settings, GraduationCap, LogOut, Menu, X, Shield, MessageCircle, Mic } from 'lucide-angular';
-import { filter } from 'rxjs/operators';
+import { filter, skip } from 'rxjs/operators';
 import { calculateLevelProgress } from './utils/level.utils';
-import { ShareButtonComponent } from './components/share-button/share-button';
+import { ProfileModalComponent } from './components/profile-modal/profile-modal';
+import { AchievementNotificationComponent } from './components/achievement-notification/achievement-notification';
+import { AchievementNotificationService, AchievementNotification } from './services/achievement-notification.service';
+import { ProfileService } from './services/profile.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, TranslocoDirective, LucideAngularModule, ShareButtonComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, TranslocoDirective, LucideAngularModule, ProfileModalComponent, AchievementNotificationComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
   private userLearningService = inject(UserLearningService);
   private router = inject(Router);
+  private achievementNotificationService = inject(AchievementNotificationService);
+  private profileService = inject(ProfileService);
 
   // Lucide Icons
   readonly HomeIcon = Home;
@@ -49,8 +54,10 @@ export class App implements OnInit {
   protected readonly isLoggedIn = signal(false);
   private auth = inject(AuthService);
   protected readonly isUserDropdownOpen = signal(false);
+  protected readonly isProfileModalOpen = signal(false);
   protected readonly isSidebarOpen = signal(false);
   protected readonly isOnLevelSelection = signal(false);
+  protected readonly currentAchievementNotification = signal<AchievementNotification | null>(null);
 
   /**
    * Initialize component and load user XP data from backend
@@ -58,6 +65,11 @@ export class App implements OnInit {
   ngOnInit(): void {
       // Ensure user info is loaded from storage on app startup
       this.auth.loadUserFromStorage();
+
+    // Subscribe to achievement notifications
+    this.achievementNotificationService.onAchievementUnlocked.subscribe(achievement => {
+      this.currentAchievementNotification.set(achievement);
+    });
 
     // Track current route to hide sidebar on level-selection
     this.router.events.pipe(
@@ -99,9 +111,36 @@ export class App implements OnInit {
         console.log('📢 Header updated: XP=' + data.xp + ', Streak=' + data.streakCount + ', LastActivity=' + lastActivityDate + ', Today=' + today + ', Active=' + isActive);
       }
     });
+
+    // Check for new achievements after XP/streak updates
+    // filter(data => !!data) ignores null emissions from BehaviorSubject
+    // skip(1) skips the first real data load (handled by loadUserXP)
+    this.userLearningService.userLearning$.pipe(
+      filter(data => !!data),
+      skip(1)
+    ).subscribe(() => {
+      this.checkForNewAchievements();
+    });
+  }
+
+  /**
+   * Check for newly unlocked achievements and show notifications
+   */
+  private checkForNewAchievements(): void {
+    if (!this.isLoggedIn()) return;
+
+    this.profileService.getAllAchievements().subscribe({
+      next: () => {
+        // The ProfileService internally handles detecting new achievements
+        // and triggers the notification via AchievementNotificationService
+      },
+      error: (err) => console.error('Error checking achievements:', err)
+    });
   }
   async onLogout(): Promise<void> {
     this.userLearningService.clearCache();
+    this.achievementNotificationService.reset();
+    this.profileService.reset();
     this.userXP.set(0);
     this.userStreak.set(0);
     await this.auth.logout();
@@ -124,6 +163,9 @@ export class App implements OnInit {
         const isActive = lastActivityDate === today && data.streakCount > 0;
         this.isStreakActiveToday.set(isActive);
         console.log('Loaded user XP and Streak in app header:', data.xp, data.streakCount, 'LastActivity:', lastActivityDate, 'Active today:', isActive);
+
+        // Initialize achievements (loads previously unlocked to detect new ones later)
+        this.profileService.getAllAchievements().subscribe();
       },
       error: (error) => {
         console.error('Error loading user XP:', error);
@@ -147,17 +189,35 @@ export class App implements OnInit {
   }
 
   /**
-   * Toggle user dropdown visibility
+   * Toggle user dropdown visibility (now opens profile modal)
    */
   toggleUserDropdown(): void {
-    this.isUserDropdownOpen.set(!this.isUserDropdownOpen());
+    if (this.isLoggedIn()) {
+      this.isProfileModalOpen.set(true);
+    }
   }
 
   /**
-   * Close user dropdown
+   * Close user dropdown (kept for compatibility)
    */
   closeUserDropdown(): void {
     this.isUserDropdownOpen.set(false);
+  }
+
+  /**
+   * Close profile modal
+   */
+  closeProfileModal(): void {
+    this.isProfileModalOpen.set(false);
+  }
+
+  /**
+   * Handle achievement notification animation completion
+   */
+  onAchievementNotificationComplete(): void {
+    this.currentAchievementNotification.set(null);
+    // Notify the service to show the next queued notification
+    this.achievementNotificationService.notificationComplete();
   }
 
   /**

@@ -39,10 +39,10 @@
   display: inline;
 }
 
-/* Share Dropdown Card */
+/* Share Dropdown Card - Opens upward */
 .share-dropdown {
   position: absolute;
-  top: calc(100% + 0.75rem);
+  bottom: calc(100% + 0.75rem);
   right: 0;
   width: 300px;
   background: white;
@@ -56,7 +56,7 @@
 @keyframes shareDropdownFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;

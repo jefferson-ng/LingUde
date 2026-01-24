@@ -1,0 +1,125 @@
+<ng-container *transloco="let t">
+  <div class="profile-modal-overlay"
+       [class.closing]="isClosing()"
+       (click)="onOverlayClick($event)">
+    <div class="profile-modal" [class.closing]="isClosing()">
+      <!-- Close Button -->
+      <button class="close-button" (click)="onClose()" type="button">
+        <lucide-icon [img]="CloseIcon"></lucide-icon>
+      </button>
+
+      <!-- Profile Header - Duolingo Style (centered) -->
+      <div class="profile-header">
+        <div class="avatar-container">
+          <div class="avatar-large">{{ getUserInitial() }}</div>
+        </div>
+        <h2 class="user-name">{{ userName() }}</h2>
+        <p class="user-email">{{ userEmail() }}</p>
+      </div>
+
+      <!-- Statistics Section - Dashboard Style Grid -->
+      <div class="statistics-section">
+        <h3 class="section-title">{{ t('profile.statistics') }}</h3>
+        <div class="stats-grid">
+          <!-- Streak Days -->
+          <div class="stat-box streak-box" [class.inactive]="!isStreakActiveToday()">
+            <lucide-icon [img]="FlameIcon" class="stat-box-icon"></lucide-icon>
+            <div class="stat-box-content">
+              <span class="stat-box-value">{{ userStreak() }}</span>
+              <span class="stat-box-label">{{ t('profile.streakDays') }}</span>
+            </div>
+          </div>
+
+          <!-- Total XP -->
+          <div class="stat-box xp-box">
+            <lucide-icon [img]="ZapIcon" class="stat-box-icon"></lucide-icon>
+            <div class="stat-box-content">
+              <span class="stat-box-value">{{ userXP() }}</span>
+              <span class="stat-box-label">{{ t('profile.totalXP') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Level Progress Card - Full Width like Dashboard -->
+        <div class="level-progress-card">
+          <div class="level-progress-header">
+            <span class="level-badge">Level {{ userLevel() }}</span>
+            <span class="level-xp-text">{{ xpInCurrentLevel() }}/{{ xpForNextLevel() }} XP</span>
+          </div>
+          <div class="level-progress-track">
+            <div class="level-progress-fill" [style.width.%]="xpProgressPercent()"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements Section -->
+      <div class="achievements-section">
+        <h3 class="section-title">
+          <span>{{ t('profile.achievements') }}</span>
+        </h3>
+
+        @if (isLoading()) {
+          <div class="achievements-loading">
+            <div class="loading-spinner"></div>
+          </div>
+        } @else if (groupedAchievements().length === 0) {
+          <div class="achievements-empty">
+            {{ t('profile.noAchievements') }}
+          </div>
+        } @else {
+          <div class="achievements-list">
+            @for (achievement of groupedAchievements(); track achievement.code) {
+              <div class="achievement-row" [class.locked]="!achievement.unlocked">
+                <div class="achievement-icon-wrapper">
+                  <lucide-icon [img]="getAchievementIcon(achievement.mainAchievement!)" class="achievement-icon"></lucide-icon>
+                </div>
+                <div class="achievement-details">
+                  <span class="achievement-title">{{ achievement.title }}</span>
+                  <span class="achievement-description">{{ achievement.description }}</span>
+                  
+                  <!-- Progress Bar -->
+                  @if (achievement.currentProgress !== undefined && achievement.targetProgress !== undefined) {
+                    <div class="achievement-progress">
+                      <div class="achievement-progress-bar">
+                        <div class="achievement-progress-fill" [style.width.%]="achievement.progressPercent"></div>
+                      </div>
+                      <span class="achievement-progress-text">{{ achievement.currentProgress }}/{{ achievement.targetProgress }}</span>
+                    </div>
+                  }
+                </div>
+
+                <!-- Star indicators for grouped achievements -->
+                @if (achievement.isGroup && achievement.milestones) {
+                  <div class="milestone-stars">
+                    @for (milestone of achievement.milestones; track milestone.code) {
+                      <span class="milestone-star" [class.unlocked]="milestone.unlocked">★</span>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Share Section - Invite Friends Card -->
+      <div class="share-card">
+        <div class="share-card-content">
+          <div class="share-card-text">
+            <span class="share-card-title">{{ t('share.title') }}</span>
+            <span class="share-card-subtitle">{{ t('share.subtitle') }}</span>
+          </div>
+          <app-share-button></app-share-button>
+        </div>
+      </div>
+
+      <!-- Footer with Logout -->
+      <div class="modal-footer">
+        <button class="logout-button" (click)="onLogout()" type="button">
+          <lucide-icon [img]="LogOutIcon"></lucide-icon>
+          <span>{{ t('user.logout') }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>

@@ -1,3 +1,32 @@
+/* Page Header */
+.friends-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.friends-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.friends-page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.friends-page-subtitle {
+  font-size: 0.9375rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Navigation Tabs */
 .friends-nav {
   display: flex;
   background: #FFFFFF;
@@ -72,6 +101,18 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .friends-page-header {
+    margin-bottom: 1rem;
+  }
+
+  .friends-page-title {
+    font-size: 1.5rem;
+  }
+
+  .friends-page-subtitle {
+    font-size: 0.875rem;
+  }
+
   .friends-nav {
     border-radius: 12px;
     margin-bottom: 16px;
@@ -90,6 +131,15 @@
 }
 
 @media (max-width: 480px) {
+  .friends-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .friends-page-title {
+    font-size: 1.25rem;
+  }
+
   .nav-tab {
     padding: 12px 8px;
     font-size: 14px;

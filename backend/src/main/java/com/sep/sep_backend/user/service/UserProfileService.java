@@ -1,6 +1,7 @@
 package com.sep.sep_backend.user.service;
 
 import com.sep.sep_backend.user.dto.AchievementSummaryDTO;
+import com.sep.sep_backend.user.dto.AchievementWithStatusDTO;
 import com.sep.sep_backend.user.dto.UserProfileResponse;
 import com.sep.sep_backend.user.entity.*;
 import com.sep.sep_backend.user.repository.AchievementRepository;
@@ -10,9 +11,12 @@ import com.sep.sep_backend.user.repository.UserProfileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -23,18 +27,21 @@ public class UserProfileService {
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementRepository achievementRepository;
     private final UserService userService;
+    private final AchievementService achievementService;
 
 
     public UserProfileService(UserProfileRepository userProfileRepository,
                               UserLearningRepository userLearningRepository,
                               UserAchievementRepository userAchievementRepository,
                               AchievementRepository achievementRepository,
-                              UserService userService) {
+                              UserService userService,
+                              AchievementService achievementService) {
         this.userProfileRepository = userProfileRepository;
         this.userLearningRepository = userLearningRepository;
         this.userAchievementRepository = userAchievementRepository;
         this.achievementRepository = achievementRepository;
         this.userService = userService;
+        this.achievementService = achievementService;
     }
 
 
@@ -173,7 +180,93 @@ public class UserProfileService {
         );
     }
 
+    /**
+     * Returns all achievements with their unlock status for the current user.
+     * <p>
+     * This method fetches ALL achievements from the catalog and indicates
+     * which ones the user has already earned. Before returning, it also
+     * checks if any achievements should be unlocked based on current progress.
+     * Unlocked achievements are sorted first, then by type.
+     * </p>
+     *
+     * @return list of all achievements with unlock status
+     */
+    @Transactional
+    public List<AchievementWithStatusDTO> getAllAchievementsWithStatus() {
 
+        // 1. Get the currently authenticated user
+        User user = userService.getCurrentUser();
+
+        // 2. Check and grant any missing achievements based on current progress
+        grantMissingAchievements(user);
+
+        // 3. Fetch all achievements from the catalog
+        List<Achievement> allAchievements = achievementRepository.findAll();
+
+        // 4. Fetch user's earned achievements and create a map for O(1) lookup
+        List<UserAchievement> userAchievements = userAchievementRepository.findByUser(user);
+        Map<UUID, LocalDateTime> earnedMap = userAchievements.stream()
+                .collect(Collectors.toMap(
+                        ua -> ua.getAchievement().getId(),
+                        UserAchievement::getEarnedAt
+                ));
+
+        // 5. Map to DTOs with unlock status
+        return allAchievements.stream()
+                .map(a -> {
+                    boolean isUnlocked = earnedMap.containsKey(a.getId());
+                    LocalDateTime earnedAt = earnedMap.get(a.getId());
+                    return new AchievementWithStatusDTO(
+                            a.getCode(),
+                            a.getTitle(),
+                            a.getDescription(),
+                            a.getIconUrl(),
+                            a.getType(),
+                            isUnlocked,
+                            earnedAt
+                    );
+                })
+                .sorted((a1, a2) -> {
+                    // Sort: unlocked first, then by type
+                    if (a1.isUnlocked() != a2.isUnlocked()) {
+                        return a1.isUnlocked() ? -1 : 1;
+                    }
+                    return a1.getType().compareTo(a2.getType());
+                })
+                .toList();
+    }
+
+    /**
+     * Checks the user's current progress and grants any achievements
+     * they've earned but haven't received yet.
+     */
+    private void grantMissingAchievements(User user) {
+        // Get user's learning data
+        Optional<UserLearning> learningOpt = userLearningRepository.findByUser(user);
+        if (learningOpt.isEmpty()) {
+            return;
+        }
+
+        UserLearning learning = learningOpt.get();
+        int xp = learning.getXp() != null ? learning.getXp() : 0;
+        int streak = learning.getStreakCount() != null ? learning.getStreakCount() : 0;
+
+        // Check XP milestones
+        if (xp >= 100) {
+            achievementService.grantAchievementIfNotOwned(user, "XP_100");
+        }
+        if (xp >= 600) {
+            achievementService.grantAchievementIfNotOwned(user, "XP_600");
+        }
+
+        // Check Streak milestones
+        if (streak >= 3) {
+            achievementService.grantAchievementIfNotOwned(user, "STREAK_3");
+        }
+        if (streak >= 7) {
+            achievementService.grantAchievementIfNotOwned(user, "STREAK_7");
+        }
+    }
 
     /**
      * Delete a user profile by ID
