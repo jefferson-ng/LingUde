@@ -36,24 +36,24 @@
         </div>
       </div>
 
-      <!-- Streak Card -->
-      <div class="streak-card" [class.inactive]="!isStreakActiveToday()">
-        <div class="streak-icon">
-          <lucide-icon [img]="FlameIcon" [size]="40"></lucide-icon>
+      <!-- Action Cards Row (Chat & Speaking) -->
+      <div class="action-cards-row">
+        <!-- AI Chat Card -->
+        <div class="action-card ai-chat" (click)="goToChat()">
+          <div class="chat-card-header">
+            <img src="assets/robert-otter.png" alt="Rob" class="chat-rob-avatar">
+            <h4 class="action-title">{{ t('dashboard.aiChat') }}</h4>
+          </div>
+          <p class="action-description">{{ t('dashboard.aiChatText') }}</p>
+          <button class="btn-start-chat">{{ t('dashboard.startChat') }}</button>
         </div>
-        <div class="streak-content">
-          <h3 class="streak-title">{{ userStreak() }} {{ userStreak() === 1 ? t('dashboard.day') : t('dashboard.days') }}</h3>
-          <p class="streak-subtitle">{{ t('dashboard.streak') }}</p>
+
+        <!-- Speaking Practice Card -->
+        <div class="action-card speaking-practice" (click)="goToSpeaking()">
+          <h4 class="action-title">{{ t('dashboard.speaking') }}</h4>
+          <p class="action-description">{{ t('dashboard.speakingText') }}</p>
+          <button class="btn-start-speaking">{{ t('dashboard.startSpeaking') }}</button>
         </div>
-        <p class="streak-message">
-          @if (isStreakActiveToday()) {
-            {{ t('dashboard.streakActive') }}
-          } @else if (userStreak() === 0) {
-            {{ t('dashboard.streakInactiveZero') }}
-          } @else {
-            {{ t('dashboard.streakInactive') }}
-          }
-        </p>
       </div>
 
       <!-- Leaderboard -->
@@ -120,21 +120,26 @@
         </div>
       </div>
 
-      <!-- Speaking Practice Card -->
-      <div class="action-card speaking-practice" (click)="goToSpeaking()">
-        <h4 class="action-title">{{ t('dashboard.speaking') }}</h4>
-        <p class="action-description">{{ t('dashboard.speakingText') }}</p>
-        <button class="btn-start-speaking">{{ t('dashboard.startSpeaking') }}</button>
-      </div>
-
-      <!-- AI Chat Card -->
-      <div class="action-card ai-chat" (click)="goToChat()">
-        <div class="chat-card-header">
-          <img src="assets/robert-otter.png" alt="Rob" class="chat-rob-avatar">
-          <h4 class="action-title">{{ t('dashboard.aiChat') }}</h4>
+      <!-- Streak Card (compact sidebar version) -->
+      <div class="streak-card-sidebar" [class.inactive]="!isStreakActiveToday()">
+        <div class="streak-sidebar-header">
+          <div class="streak-icon-sidebar">
+            <lucide-icon [img]="FlameIcon" [size]="28"></lucide-icon>
+          </div>
+          <div class="streak-content-sidebar">
+            <h3 class="streak-title-sidebar">{{ userStreak() }} {{ userStreak() === 1 ? t('dashboard.day') : t('dashboard.days') }}</h3>
+            <p class="streak-subtitle-sidebar">{{ t('dashboard.streak') }}</p>
+          </div>
         </div>
-        <p class="action-description">{{ t('dashboard.aiChatText') }}</p>
-        <button class="btn-start-chat">{{ t('dashboard.startChat') }}</button>
+        <p class="streak-message-sidebar">
+          @if (isStreakActiveToday()) {
+            {{ t('dashboard.streakActive') }}
+          } @else if (userStreak() === 0) {
+            {{ t('dashboard.streakInactiveZero') }}
+          } @else {
+            {{ t('dashboard.streakInactive') }}
+          }
+        </p>
       </div>
     </div>
   </div>
