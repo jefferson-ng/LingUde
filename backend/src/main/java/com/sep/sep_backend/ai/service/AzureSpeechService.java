@@ -1,6 +1,7 @@
 package com.sep.sep_backend.ai.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sep.sep_backend.ai.config.AzureSpeechConfig;
 import com.sep.sep_backend.ai.dto.PronunciationAnalyzeResponse;
@@ -102,7 +103,7 @@ public class AzureSpeechService {
 
     private PronunciationAnalyzeResponse parseAssessment(String jsonBody) throws JsonProcessingException {
         PronunciationAnalyzeResponse response = new PronunciationAnalyzeResponse();
-        Map<String, Object> payload = objectMapper.readValue(jsonBody, Map.class);
+        Map<String, Object> payload = objectMapper.readValue(jsonBody, new TypeReference<Map<String, Object>>() {});
 
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> nBest = (List<Map<String, Object>>) payload.get("NBest");
