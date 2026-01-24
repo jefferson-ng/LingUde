@@ -82,6 +82,11 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'pronunciation',
+        loadComponent: () => import('./pages/pronunciation/pronunciation').then(m => m.Pronunciation),
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'friends',
         component: FriendsLayout,
         canActivate: [AuthGuard],

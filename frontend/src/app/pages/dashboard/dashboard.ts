@@ -159,6 +159,10 @@ export class Dashboard implements OnInit {
     this.router.navigate(['/chat']);
   }
 
+  goToSpeaking(): void {
+    this.router.navigate(['/pronunciation']);
+  }
+
   /**
    * Load exercises that need review from backend
    */
