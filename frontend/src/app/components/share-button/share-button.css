@@ -39,10 +39,10 @@
   display: inline;
 }
 
-/* Share Dropdown Card - Opens upward */
+/* Share Dropdown Card - Opens downward by default */
 .share-dropdown {
   position: absolute;
-  bottom: calc(100% + 0.75rem);
+  top: calc(100% + 0.75rem);
   right: 0;
   width: 300px;
   background: white;
@@ -51,6 +51,12 @@
   padding: 1.25rem;
   z-index: 1000;
   animation: shareDropdownFadeIn 0.2s ease-out;
+}
+
+/* Opens upward when direction is 'up' */
+.share-dropdown.open-up {
+  top: auto;
+  bottom: calc(100% + 0.75rem);
 }
 
 @keyframes shareDropdownFadeIn {

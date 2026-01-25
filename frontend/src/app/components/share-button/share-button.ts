@@ -1,4 +1,4 @@
-import { Component, signal, HostListener, OnInit, inject } from '@angular/core';
+import { Component, signal, HostListener, OnInit, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { LucideAngularModule, Share2, Copy, Check } from 'lucide-angular';
@@ -13,6 +13,9 @@ import { ReferralService } from '../../services/referral.service';
 })
 export class ShareButtonComponent implements OnInit {
   private referralService = inject(ReferralService);
+
+  // Input to control dropdown direction
+  readonly direction = input<'up' | 'down'>('down');
 
   // Lucide Icons
   readonly ShareIcon = Share2;
