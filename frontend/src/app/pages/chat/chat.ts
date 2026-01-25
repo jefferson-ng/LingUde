@@ -7,6 +7,7 @@ import { MarkdownComponent } from 'ngx-markdown';
 import { ChatService } from '../../services/chat.service';
 import { ChatMessage, ChatSession } from '../../models/chat.model';
 import { AuthService } from '../../services/auth.service';
+import { ProfileService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-chat',
@@ -21,6 +22,7 @@ export class Chat implements OnInit, AfterViewChecked {
 
   private chatService = inject(ChatService);
   private authService = inject(AuthService);
+  private profileService = inject(ProfileService);
 
   // Icons
   readonly SendIcon = Send;
@@ -54,6 +56,7 @@ export class Chat implements OnInit, AfterViewChecked {
 
   // User info
   protected userName = signal<string>('');
+  protected userAvatarUrl = signal<string | null>(null);
 
   // For auto-scroll
   private shouldScrollToBottom = false;
@@ -68,6 +71,16 @@ export class Chat implements OnInit, AfterViewChecked {
     this.authService.user$.subscribe(user => {
       if (user) {
         this.userName.set(user.username);
+      }
+    });
+
+    // Load user avatar
+    this.profileService.getUserProfile().subscribe({
+      next: (profile) => {
+        this.userAvatarUrl.set(profile.avatarUrl);
+      },
+      error: (err) => {
+        console.error('Failed to load user profile:', err);
       }
     });
 

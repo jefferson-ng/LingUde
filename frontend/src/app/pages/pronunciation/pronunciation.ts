@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -30,6 +30,12 @@ export class Pronunciation implements OnInit, OnDestroy {
   practiceSentences: PracticeSentence[] = [];
   selectedSentence: PracticeSentence | null = null;
   loadingSentences = false;
+
+  // Language selector
+  availableLanguages = [
+    { code: 'DE' as const, name: 'German', flagCode: 'de' },
+    { code: 'EN' as const, name: 'English', flagCode: 'gb' }
+  ];
 
   // Waveform visualization
   private animationFrameId: number | null = null;
@@ -156,6 +162,11 @@ export class Pronunciation implements OnInit, OnDestroy {
       default:
         return 'English (UK)';
     }
+  }
+
+  getSelectedLanguage() {
+    const langCode = this.userLearningData?.learningLanguage || 'EN';
+    return this.availableLanguages.find(l => l.code === langCode) || this.availableLanguages[1];
   }
 
   async toggleRecording() {

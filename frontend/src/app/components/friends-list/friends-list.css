@@ -85,6 +85,21 @@
   border: 2px solid #B3DAFF;
 }
 
+.avatar-initials {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+  color: #1e40af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  border: 2px solid #B3DAFF;
+  flex-shrink: 0;
+}
+
 .friend-name {
   font-size: 16px;
   font-weight: 400;

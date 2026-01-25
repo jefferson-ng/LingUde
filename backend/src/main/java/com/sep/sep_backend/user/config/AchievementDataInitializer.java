@@ -31,16 +31,24 @@ public class AchievementDataInitializer implements CommandLineRunner {
                 "icon-xp-100.png",
                 AchievementType.XP_MILESTONE
         );
-
+        
         createIfMissing(
-                "XP_500",
-                "Rising Star",
-                "Earn a total of 500 XP.",
-                "icon-xp-500.png",
+                "XP_600",
+                "XP Master",
+                "Earn a total of 600 XP.",
+                "icon-xp-600.png",
                 AchievementType.XP_MILESTONE
         );
 
         // Streak achievements
+        createIfMissing(
+                "STREAK_3",
+                "Three Day Streak",
+                "Practice for 3 consecutive days.",
+                "icon-streak-3.png",
+                AchievementType.STREAK
+        );
+        
         createIfMissing(
                 "STREAK_7",
                 "One Week Streak",

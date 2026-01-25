@@ -77,6 +77,11 @@ export class FriendsList implements  OnInit{
       : friendship.requester;
   }
 
+  // Helper method to get the initial of a username
+  getInitial(username: string): string {
+    return username ? username.charAt(0).toUpperCase() : '?';
+  }
+
   //Method to handle unfriend action
 
   onUnfriend(friendshipId: string): void{

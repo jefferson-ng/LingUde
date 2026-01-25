@@ -150,15 +150,14 @@ public class UserLearningService {
         UserLearning saved = userLearningRepository.save(learning);
 
         // --- XP milestone achievements ---
-        // Example rule: unlock an achievement when the user reaches at least 100 XP.
-        // The achievement with code "XP_100" must be configured in the database.
+        // Unlock achievement when the user reaches 100 XP
         if (oldXp < 100 && newXp >= 100) {
             achievementService.grantAchievementIfNotOwned(user, "XP_100");
         }
 
-        // additional milestones can be added here, e.g.:
-        if (oldXp < 500 && newXp >= 500) {
-            achievementService.grantAchievementIfNotOwned(user, "XP_500");
+        // Unlock achievement when the user reaches 600 XP
+        if (oldXp < 600 && newXp >= 600) {
+            achievementService.grantAchievementIfNotOwned(user, "XP_600");
         }
 
 
@@ -219,16 +218,15 @@ public class UserLearningService {
         int newStreak = saved.getStreakCount() != null ? saved.getStreakCount() : 0;
 
         // --- Streak milestone achievements ---
-        // Example rule: unlock an achievement when the user reaches a 7-day streak.
-        // The achievement with code "STREAK_7" must be configured in the database.
+        // Unlock achievement when the user reaches a 3-day streak
+        if (oldStreak < 3 && newStreak >= 3) {
+            achievementService.grantAchievementIfNotOwned(user, "STREAK_3");
+        }
+
+        // Unlock achievement when the user reaches a 7-day streak
         if (oldStreak < 7 && newStreak >= 7) {
             achievementService.grantAchievementIfNotOwned(user, "STREAK_7");
         }
-
-        // Future extension: 30-day streak, 100-day streak, etc.
-        // if (oldStreak < 30 && newStreak >= 30) {
-        //     achievementService.grantAchievementIfNotOwned(user, "STREAK_30");
-        // }
 
         return Optional.of(saved);
     }

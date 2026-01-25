@@ -52,7 +52,11 @@
 
           <div class="message-avatar">
             @if (msg.role === 'USER') {
-              <div class="user-avatar">{{ getUserInitial() }}</div>
+              @if (userAvatarUrl()) {
+                <img [src]="userAvatarUrl()" alt="You" class="user-avatar-image">
+              } @else {
+                <div class="user-avatar">{{ getUserInitial() }}</div>
+              }
             } @else {
               <img src="assets/robert-otter.png" alt="Rob" class="rob-message-avatar">
             }

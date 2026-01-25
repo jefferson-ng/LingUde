@@ -176,6 +176,19 @@
   transition: all 0.2s;
 }
 
+.user-avatar-image {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: all 0.2s;
+}
+
+.user-avatar-button:hover .user-avatar-image {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
 /* User Dropdown */
 .user-dropdown {
   position: absolute;
@@ -567,26 +580,6 @@
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
   position: relative;
   will-change: width;
-}
-
-.xp-bar-fill::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
 }
 
 /* Level Badge Styling */

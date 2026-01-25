@@ -5,11 +5,12 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserLearningService } from '../../services/user-learning.service';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslocoDirective, RouterLink],
+  imports: [CommonModule, FormsModule, TranslocoDirective, RouterLink, LucideAngularModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
@@ -17,6 +18,11 @@ export class LoginComponent {
   email = '';
   password = '';
   error = '';
+  showPassword = false;
+
+  // Icons
+  readonly EyeIcon = Eye;
+  readonly EyeOffIcon = EyeOff;
 
   constructor(
     private auth: AuthService,
@@ -48,5 +54,9 @@ export class LoginComponent {
     } catch (e: any) {
       this.error = e?.error?.message || 'Login fehlgeschlagen';
     }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

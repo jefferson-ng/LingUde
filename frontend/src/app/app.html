@@ -18,40 +18,12 @@
         <div class="logo-section">
           <div class="user-profile">
             <button class="user-avatar-button" (click)="toggleUserDropdown()" type="button">
-              <div class="user-avatar">{{ userName() ? userName().charAt(0).toUpperCase() : 'M' }}</div>
+              @if (userAvatarUrl()) {
+                <img [src]="userAvatarUrl()" alt="Avatar" class="user-avatar-image">
+              } @else {
+                <div class="user-avatar">{{ userName() ? userName().charAt(0).toUpperCase() : 'M' }}</div>
+              }
             </button>
-
-            @if (isUserDropdownOpen() && isLoggedIn()) {
-              <div class="user-dropdown">
-                <div class="user-dropdown-header">
-                  <div class="user-avatar-large">{{ userName() ? userName().charAt(0).toUpperCase() : '?' }}</div>
-                  <div class="user-details">
-                    <span class="user-name">{{ userName() }}</span>
-                    <span class="user-email">{{ userEmail() }}</span>
-                  </div>
-                </div>
-                <div class="user-dropdown-stats">
-                  <div class="stat-item">
-                    <span class="stat-label">Level</span>
-                    <span class="stat-value">{{ userLevel() }}</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-label">XP</span>
-                    <span class="stat-value">{{ userXP() }}</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-label">Streak</span>
-                    <span class="stat-value">{{ userStreak() }} Tage</span>
-                  </div>
-                </div>
-                <div class="user-dropdown-actions">
-                  <button class="dropdown-action logout-action" type="button" (click)="onLogout()">
-                    <lucide-icon [img]="LogOutIcon" class="action-icon"></lucide-icon>
-                    <span>{{ t('user.logout') }}</span>
-                  </button>
-                </div>
-              </div>
-            }
           </div>
 
           <div class="logo-text-section">
@@ -154,9 +126,6 @@
               <div class="xp-bar-fill" [style.width.%]="xpProgressPercent()"></div>
             </div>
           </div>
-
-          <!-- Share Button -->
-          <app-share-button></app-share-button>
         </div>
       </header>
 
@@ -166,4 +135,20 @@
       </main>
     </div>
   </div>
+
+  <!-- Profile Modal -->
+  @if (isProfileModalOpen() && isLoggedIn()) {
+    <app-profile-modal
+      (close)="closeProfileModal()"
+      (logout)="onLogout()">
+    </app-profile-modal>
+  }
+
+  <!-- Achievement Notification -->
+  @if (currentAchievementNotification()) {
+    <app-achievement-notification
+      [achievement]="currentAchievementNotification()!"
+      (animationComplete)="onAchievementNotificationComplete()">
+    </app-achievement-notification>
+  }
 </ng-container>

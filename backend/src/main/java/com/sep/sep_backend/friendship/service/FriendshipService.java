@@ -32,10 +32,12 @@ public class FriendshipService {
 
     private final FriendshipRepository friendshipRepo;
     private final UserRepository userRepo;
+    private final UserProfileRepository userProfileRepo;
 
-    public FriendshipService(FriendshipRepository friendshipRepo, UserRepository userRepo) {
+    public FriendshipService(FriendshipRepository friendshipRepo, UserRepository userRepo, UserProfileRepository userProfileRepo) {
         this.friendshipRepo = friendshipRepo;
         this.userRepo = userRepo;
+        this.userProfileRepo = userProfileRepo;
     }
 
     /**
@@ -56,16 +58,21 @@ public class FriendshipService {
     /**
      * Converts a User entity to a UserSummaryDTO.
      * Extracts only essential user information for API responses.
+     * Includes the user's avatar URL from their profile if available.
      *
      * @param user the User entity to convert
-     * @return UserSummaryDTO containing user's id, username, and email
+     * @return UserSummaryDTO containing user's id, username, email, and avatarUrl
      */
     private UserSummaryDTO toUserSummary(User user) {
+        String avatarUrl = userProfileRepo.findByUser(user)
+            .map(UserProfile::getAvatarUrl)
+            .orElse(null);
 
         return new UserSummaryDTO(
             user.getId(),
             user.getUsername(),
-            user.getEmail()
+            user.getEmail(),
+            avatarUrl
         );
     }
 

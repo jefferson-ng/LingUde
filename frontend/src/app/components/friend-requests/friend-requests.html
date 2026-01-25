@@ -27,8 +27,13 @@
               <div class="request-card">
                 <div class="user-info">
                   <!-- Avatar -->
-
-                  <img [src]="request.requester.avatarUrl" alt="avatar" class="avatar-img">
+                  @if (request.requester.avatarUrl) {
+                    <img [src]="request.requester.avatarUrl" alt="avatar" class="avatar-img">
+                  } @else {
+                    <div class="avatar-placeholder">
+                      {{ getInitial(request.requester.username) }}
+                    </div>
+                  }
 
                   <div class="user-details">
                     <p class="user-name">{{ request.requester.username }}</p>
