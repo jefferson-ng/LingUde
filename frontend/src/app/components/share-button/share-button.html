@@ -12,7 +12,7 @@
     </button>
 
     @if (isDropdownOpen()) {
-      <div class="share-dropdown">
+      <div class="share-dropdown" [class.open-up]="direction() === 'up'">
         <div class="share-dropdown-header">
           <lucide-icon [img]="ShareIcon" class="share-header-icon"></lucide-icon>
           <span class="share-header-title">{{ t('share.title') }}</span>
