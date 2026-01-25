@@ -312,8 +312,9 @@
 /* Practice Widget Notification */
 .practice-widget-notification {
   position: fixed;
-  top: 100px;
-  right: 2rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 95;
   
   display: flex;
@@ -330,7 +331,7 @@
   font-size: 0.95rem;
   font-weight: 600;
   
-  animation: slideInRight 0.3s ease-out;
+  animation: slideInCenter 0.3s ease-out;
 }
 
 .practice-widget-notification .notification-icon {
@@ -340,24 +341,22 @@
   color: #047857;
 }
 
-@keyframes slideInRight {
+@keyframes slideInCenter {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translate(-50%, -50%) scale(0.9);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
 @media (max-width: 1200px) {
   .practice-widget-notification {
     left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    top: auto;
-    bottom: 2rem;
+    top: 50%;
+    transform: translate(-50%, -50%);
     max-width: calc(100% - 2rem);
   }
   

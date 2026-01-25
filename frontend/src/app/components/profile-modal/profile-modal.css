@@ -104,8 +104,9 @@
   text-align: center;
   border-radius: 24px 24px 0 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   margin: 0;
+  padding-bottom: 2rem;
 }
 
 /* Decorative background elements */
@@ -122,7 +123,7 @@
 }
 
 .avatar-container {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
   position: relative;
   z-index: 1;
 }
@@ -194,13 +195,48 @@
 
 /* Avatar Selector Grid */
 .avatar-selector {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
   background: white;
   border-radius: 16px;
   padding: 1.25rem;
-  margin-top: 1.25rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  width: 100%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  width: 320px;
   max-width: 320px;
+  z-index: 1000;
+  transform-origin: top center;
+  animation: dropdownExpand 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 0.25rem;
+}
+
+@keyframes dropdownExpand {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scaleY(0);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scaleY(1);
+    max-height: 500px;
+  }
+}
+
+.avatar-selector.closing {
+  animation: dropdownCollapse 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes dropdownCollapse {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) scaleY(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) scaleY(0);
+  }
 }
 
 .avatar-selector-title {
@@ -267,9 +303,8 @@
   color: white;
   font-size: 1.5rem;
   font-weight: 700;
-  margin: 0 0 0.375rem;
+  margin: 1.25rem 0 0.375rem;
   position: relative;
-  z-index: 1;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -278,7 +313,6 @@
   font-size: 0.875rem;
   margin: 0;
   position: relative;
-  z-index: 1;
   font-weight: 500;
 }
 

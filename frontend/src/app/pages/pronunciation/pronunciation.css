@@ -567,14 +567,14 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #94a3b8, #64748b);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #64748b, #475569);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(148, 163, 184, 0.4);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
 }
 
 .btn-secondary {
@@ -1196,14 +1196,14 @@
 }
 
 .btn-primary-compact {
-  background: linear-gradient(135deg, #94a3b8, #64748b);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
 }
 
 .btn-primary-compact:hover:not(:disabled) {
-  background: linear-gradient(135deg, #64748b, #475569);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(148, 163, 184, 0.4);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
 }
 
 .btn-secondary-compact {

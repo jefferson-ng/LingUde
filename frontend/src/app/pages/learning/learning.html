@@ -72,10 +72,8 @@
         <div class="widget-header">
           <div class="widget-icon" [class.mistakes]="practiceWidgetCount() > 0" [class.success]="practiceWidgetCount() === 0">
             @if (practiceWidgetCount() > 0) {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 22h20L12 2zm0 4l7.5 14h-15L12 6zm-1 5v4h2v-4h-2zm0 6v2h2v-2h-2z"/>
               </svg>
             } @else {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

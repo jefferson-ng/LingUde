@@ -20,6 +20,7 @@ const PREDEFINED_AVATARS = [
   'assets/avatars/avatar-8.png',
   'assets/avatars/avatar-9.png',
   'assets/avatars/avatar-10.png',
+  'assets/avatars/avatar-11.png',
 ];
 
 interface GroupedAchievement {
@@ -98,6 +99,7 @@ export class ProfileModalComponent implements OnInit {
   // Avatar state
   protected readonly userAvatarUrl = signal<string | null>(null);
   protected readonly isAvatarSelectorOpen = signal(false);
+  protected readonly isAvatarSelectorClosing = signal(false);
   protected readonly isSavingAvatar = signal(false);
   protected readonly predefinedAvatars = PREDEFINED_AVATARS;
 
@@ -178,6 +180,17 @@ export class ProfileModalComponent implements OnInit {
     this.onClose();
   }
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    // Check if click is outside avatar container and avatar selector
+    if (this.isAvatarSelectorOpen() && 
+        !target.closest('.avatar-container') && 
+        !target.closest('.avatar-selector')) {
+      this.closeAvatarSelector();
+    }
+  }
+
   onOverlayClick(event: MouseEvent): void {
     if ((event.target as HTMLElement).classList.contains('profile-modal-overlay')) {
       this.onClose();
@@ -189,7 +202,20 @@ export class ProfileModalComponent implements OnInit {
   }
 
   toggleAvatarSelector(): void {
-    this.isAvatarSelectorOpen.set(!this.isAvatarSelectorOpen());
+    if (this.isAvatarSelectorOpen()) {
+      this.closeAvatarSelector();
+    } else {
+      this.isAvatarSelectorClosing.set(false);
+      this.isAvatarSelectorOpen.set(true);
+    }
+  }
+
+  private closeAvatarSelector(): void {
+    this.isAvatarSelectorClosing.set(true);
+    setTimeout(() => {
+      this.isAvatarSelectorOpen.set(false);
+      this.isAvatarSelectorClosing.set(false);
+    }, 200);
   }
 
   selectAvatar(avatarUrl: string | null): void {
@@ -197,8 +223,8 @@ export class ProfileModalComponent implements OnInit {
     this.profileService.updateAvatar(avatarUrl).subscribe({
       next: () => {
         this.userAvatarUrl.set(avatarUrl);
-        this.isAvatarSelectorOpen.set(false);
         this.isSavingAvatar.set(false);
+        this.closeAvatarSelector();
       },
       error: (err) => {
         console.error('Failed to update avatar:', err);
