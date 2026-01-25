@@ -44,6 +44,7 @@
     "totalXP": "Total XP",
     "currentLevel": "Current Level",
     "xpToNextLevel": "XP to Next Level",
+    "chooseAvatar": "Choose Avatar",
     "achievementGroups": {
       "xpCollector": "Diligent Collector",
       "xpCollectorDesc": "Collect XP and unlock rewards",

@@ -283,4 +283,22 @@ public class UserProfileService {
     public void deleteUserProfileByUser(User user) {
         userProfileRepository.deleteByUser(user);
     }
+
+    /**
+     * Updates the avatar URL for the currently authenticated user.
+     * Creates a new profile if one doesn't exist.
+     *
+     * @param avatarUrl the new avatar URL (can be null to remove avatar)
+     */
+    public void updateAvatar(String avatarUrl) {
+        User user = userService.getCurrentUser();
+        UserProfile profile = userProfileRepository
+                .findByUser(user)
+                .orElseGet(() -> {
+                    UserProfile p = new UserProfile(user);
+                    return userProfileRepository.save(p);
+                });
+        profile.setAvatarUrl(avatarUrl);
+        userProfileRepository.save(profile);
+    }
 }

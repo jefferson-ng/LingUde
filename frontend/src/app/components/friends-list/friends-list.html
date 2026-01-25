@@ -42,12 +42,18 @@
 
                 <!-- Left: Avatar + Name -->
                 <div class="friend-info">
-                  <img
-                    [src]=" getFriendInfo(friendship).avatarUrl  "
-                    [alt]=" getFriendInfo(friendship).username"
-                    class="avatar"
-                  />
-                  <span class="friend-name"> {{ getFriendInfo(friendship).username}}</span>
+                  @if (getFriendInfo(friendship).avatarUrl) {
+                    <img
+                      [src]="getFriendInfo(friendship).avatarUrl"
+                      [alt]="getFriendInfo(friendship).username"
+                      class="avatar"
+                    />
+                  } @else {
+                    <div class="avatar-initials">
+                      {{ getInitial(getFriendInfo(friendship).username) }}
+                    </div>
+                  }
+                  <span class="friend-name">{{ getFriendInfo(friendship).username }}</span>
                 </div>
 
                 <!-- Right: Unfriend Icon -->

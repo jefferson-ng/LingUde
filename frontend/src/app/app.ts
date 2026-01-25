@@ -51,6 +51,7 @@ export class App implements OnInit {
   protected readonly xpProgressPercent = signal(0);
   protected readonly userName = signal('');
   protected readonly userEmail = signal('');
+  protected readonly userAvatarUrl = signal<string | null>(null);
   protected readonly isLoggedIn = signal(false);
   private auth = inject(AuthService);
   protected readonly isUserDropdownOpen = signal(false);
@@ -95,6 +96,7 @@ export class App implements OnInit {
       }
     });
     this.loadUserXP();
+    this.loadUserAvatar();
     this.userLearningService.userLearning$.subscribe(data => {
       if (data) {
         console.log('📢 Header received update from UserLearningService:', {xp: data.xp, streak: data.streakCount, lastActivity: data.lastActivityDate});
@@ -143,7 +145,22 @@ export class App implements OnInit {
     this.profileService.reset();
     this.userXP.set(0);
     this.userStreak.set(0);
+    this.userAvatarUrl.set(null);
     await this.auth.logout();
+  }
+
+  /**
+   * Load user avatar from backend
+   */
+  private loadUserAvatar(): void {
+    this.profileService.getUserProfile().subscribe({
+      next: (profile) => {
+        this.userAvatarUrl.set(profile.avatarUrl);
+      },
+      error: (err) => {
+        console.error('Error loading user avatar:', err);
+      }
+    });
   }
 
   /**
@@ -209,6 +226,8 @@ export class App implements OnInit {
    */
   closeProfileModal(): void {
     this.isProfileModalOpen.set(false);
+    // Refresh avatar in case it was changed
+    this.loadUserAvatar();
   }
 
   /**

@@ -44,6 +44,7 @@
     "totalXP": "Gesamt-XP",
     "currentLevel": "Aktuelles Level",
     "xpToNextLevel": "XP bis zum nächsten Level",
+    "chooseAvatar": "Avatar wählen",
     "achievementGroups": {
       "xpCollector": "Fleißiger Sammler",
       "xpCollectorDesc": "Sammle XP und schalte Belohnungen frei",

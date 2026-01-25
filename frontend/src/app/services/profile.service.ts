@@ -17,6 +17,18 @@ export interface AchievementWithStatus {
 }
 
 /**
+ * User profile response from the API
+ */
+export interface UserProfileResponse {
+  username: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  xp: number;
+  currentLevel: string;
+  achievements: AchievementWithStatus[];
+}
+
+/**
  * Service for fetching profile-related data including achievements.
  */
 @Injectable({
@@ -91,5 +103,24 @@ export class ProfileService {
   reset(): void {
     this.previouslyUnlocked.clear();
     this.isInitialized = false;
+  }
+
+  /**
+   * Fetches the current user's profile data.
+   *
+   * @returns Observable of UserProfileResponse
+   */
+  getUserProfile(): Observable<UserProfileResponse> {
+    return this.http.get<UserProfileResponse>(`${this.apiUrl}/me`);
+  }
+
+  /**
+   * Updates the avatar for the current user.
+   *
+   * @param avatarUrl the new avatar URL or null to remove
+   * @returns Observable that completes when the update is done
+   */
+  updateAvatar(avatarUrl: string | null): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/avatar`, { avatarUrl });
   }
 }

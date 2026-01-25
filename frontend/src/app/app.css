@@ -176,6 +176,19 @@
   transition: all 0.2s;
 }
 
+.user-avatar-image {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: all 0.2s;
+}
+
+.user-avatar-button:hover .user-avatar-image {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
 /* User Dropdown */
 .user-dropdown {
   position: absolute;

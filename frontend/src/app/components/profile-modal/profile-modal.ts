@@ -1,12 +1,26 @@
 import { Component, signal, output, inject, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
-import { LucideAngularModule, LogOut, X, Trophy, Flame, Star, Lock, Zap, TrendingUp, Target, Award, BookOpen, GraduationCap, Medal, LucideIconData } from 'lucide-angular';
+import { LucideAngularModule, LogOut, X, Trophy, Flame, Star, Lock, Zap, TrendingUp, Target, Award, BookOpen, GraduationCap, Medal, Pencil, LucideIconData } from 'lucide-angular';
 import { ProfileService, AchievementWithStatus } from '../../services/profile.service';
 import { AuthService } from '../../services/auth.service';
 import { UserLearningService } from '../../services/user-learning.service';
 import { calculateLevelProgress } from '../../utils/level.utils';
 import { ShareButtonComponent } from '../share-button/share-button';
+
+// Predefined avatar options - paths relative to assets folder
+const PREDEFINED_AVATARS = [
+  'assets/avatars/avatar-1.png',
+  'assets/avatars/avatar-2.png',
+  'assets/avatars/avatar-3.png',
+  'assets/avatars/avatar-4.png',
+  'assets/avatars/avatar-5.png',
+  'assets/avatars/avatar-6.png',
+  'assets/avatars/avatar-7.png',
+  'assets/avatars/avatar-8.png',
+  'assets/avatars/avatar-9.png',
+  'assets/avatars/avatar-10.png',
+];
 
 interface GroupedAchievement {
   code: string;
@@ -61,6 +75,7 @@ export class ProfileModalComponent implements OnInit {
   readonly BookOpenIcon = BookOpen;
   readonly GraduationCapIcon = GraduationCap;
   readonly MedalIcon = Medal;
+  readonly EditIcon = Pencil;
 
   // Outputs
   close = output<void>();
@@ -80,12 +95,19 @@ export class ProfileModalComponent implements OnInit {
   protected readonly isClosing = signal(false);
   protected readonly isStreakActiveToday = signal(false);
 
+  // Avatar state
+  protected readonly userAvatarUrl = signal<string | null>(null);
+  protected readonly isAvatarSelectorOpen = signal(false);
+  protected readonly isSavingAvatar = signal(false);
+  protected readonly predefinedAvatars = PREDEFINED_AVATARS;
+
   // Grouped achievements for display
   protected readonly groupedAchievements = signal<GroupedAchievement[]>([]);
 
   ngOnInit(): void {
     this.loadUserData();
     this.loadAchievements();
+    this.loadUserProfile();
   }
 
   private loadUserData(): void {
@@ -107,11 +129,22 @@ export class ProfileModalComponent implements OnInit {
         this.xpInCurrentLevel.set(progress.xpInCurrentLevel);
         this.xpForNextLevel.set(progress.xpRequiredForNextLevel);
         this.xpProgressPercent.set(progress.progressPercent);
-        
+
         // Check if streak is active today
         const today = new Date().toISOString().split('T')[0];
         const lastActivityDate = data.lastActivityDate?.split('T')[0];
         this.isStreakActiveToday.set(lastActivityDate === today && data.streakCount > 0);
+      }
+    });
+  }
+
+  private loadUserProfile(): void {
+    this.profileService.getUserProfile().subscribe({
+      next: (profile) => {
+        this.userAvatarUrl.set(profile.avatarUrl);
+      },
+      error: (err) => {
+        console.error('Failed to load user profile:', err);
       }
     });
   }
@@ -153,6 +186,25 @@ export class ProfileModalComponent implements OnInit {
 
   getUserInitial(): string {
     return this.userName() ? this.userName().charAt(0).toUpperCase() : '?';
+  }
+
+  toggleAvatarSelector(): void {
+    this.isAvatarSelectorOpen.set(!this.isAvatarSelectorOpen());
+  }
+
+  selectAvatar(avatarUrl: string | null): void {
+    this.isSavingAvatar.set(true);
+    this.profileService.updateAvatar(avatarUrl).subscribe({
+      next: () => {
+        this.userAvatarUrl.set(avatarUrl);
+        this.isAvatarSelectorOpen.set(false);
+        this.isSavingAvatar.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to update avatar:', err);
+        this.isSavingAvatar.set(false);
+      }
+    });
   }
 
   getUnlockedCount(): number {

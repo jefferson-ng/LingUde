@@ -1,10 +1,13 @@
 package com.sep.sep_backend.user.controller;
 
 import com.sep.sep_backend.user.dto.AchievementWithStatusDTO;
+import com.sep.sep_backend.user.dto.UpdateAvatarRequest;
 import com.sep.sep_backend.user.dto.UserProfileResponse;
 import com.sep.sep_backend.user.service.UserProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -66,5 +69,21 @@ public class UserProfileController {
     public ResponseEntity<List<AchievementWithStatusDTO>> getAllAchievementsWithStatus() {
         List<AchievementWithStatusDTO> achievements = userProfileService.getAllAchievementsWithStatus();
         return ResponseEntity.ok(achievements);
+    }
+
+    /**
+     * Updates the avatar for the currently authenticated user.
+     * <p>
+     * The avatar URL can be a path to a predefined avatar asset
+     * (e.g., "assets/avatars/avatar-1.png") or null to remove the avatar.
+     * </p>
+     *
+     * @param request the request containing the new avatar URL
+     * @return HTTP 200 OK on success
+     */
+    @PutMapping("/avatar")
+    public ResponseEntity<Void> updateAvatar(@RequestBody UpdateAvatarRequest request) {
+        userProfileService.updateAvatar(request.getAvatarUrl());
+        return ResponseEntity.ok().build();
     }
 }
