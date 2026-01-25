@@ -219,8 +219,31 @@
 	-nicht so gut: Zeiteinschätzung der Issues (entweder man kam bei ein paar Issues auf die Zeit oder die geplante Zeit reichte nicht aus)
 - Verbesserungsideen: bessere Zeiteinschätzung
 
+---
+
+## 4. Sprint Anfang
+
+**Datum:** 05.01.2026
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit / Herr Korn und Marvin als Lehrende
+
+**Themen:**
+-Übrig gebliebene Issues verteilt
+-Issues, die wir nicht mehr in dem Sprint schaffen in Closed gelegt
+-neue Issues erstellt (wie z.B. Bug fixes, etc.)
 
 
+---
 
+## 4. Sprint Ende
+
+**Datum:** 22.01.2026
+
+**Teilnehmer:** John, Jefferson, Tarek, Chaima, Emirhan, Hamit / Herr Korn und Marvin als Lehrende
+
+**Themen:**
+-besprochen, was wir alles nun geschafft haben
+-Demo kurz präsentiert
+-untereinander in der Gruppe abgeklärt, wie wir die Präsentation unsere Web-App präsentieren möchten
 
 
