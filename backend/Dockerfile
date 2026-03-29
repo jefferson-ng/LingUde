@@ -3,17 +3,19 @@ FROM gradle:jdk21 AS build
 
 WORKDIR /app
 
-# Copy Gradle wrapper and build files first (for caching)
+# Copy Gradle wrapper and build files first
 COPY build.gradle settings.gradle ./
 COPY gradle gradle
 COPY gradlew ./
-RUN ./gradlew --version
+
+# Download dependencies as a separate layer — only re-runs if build.gradle changes
+RUN ./gradlew dependencies --no-daemon
 
 # Copy source code
 COPY src src
 
-# Build the app (skip tests for speed in CI/CD)
-RUN ./gradlew clean bootJar -x test
+# Build the app (skip tests for speed; no clean needed in Docker)
+RUN ./gradlew bootJar -x test --no-daemon
 
 # ---- Stage 2: Run the application ----
 FROM eclipse-temurin:21-jre
